@@ -82,6 +82,8 @@ namespace TimeSeries
 		private bool	needToStop = false;
 
 		private double[,]	windowDelimiter = new double[2, 2] { { 0, 0 }, { 0, 0 } };
+		private System.Windows.Forms.TextBox currentLearningErrorRBox;
+		private System.Windows.Forms.TextBox currentPredictionErrorRBox;
 		private double[,]	predictionDelimiter = new double[2, 2] { { 0, 0 }, { 0, 0 } };
 		
 		// Constructor
@@ -166,6 +168,8 @@ namespace TimeSeries
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.solutionBox = new System.Windows.Forms.TextBox();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.currentLearningErrorRBox = new System.Windows.Forms.TextBox();
+			this.currentPredictionErrorRBox = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -175,8 +179,9 @@ namespace TimeSeries
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Controls.Add(this.dataList);
-			this.groupBox1.Controls.Add(this.loadDataButton);
+			this.groupBox1.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					this.dataList,
+																					this.loadDataButton});
 			this.groupBox1.Location = new System.Drawing.Point(10, 10);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(180, 380);
@@ -222,7 +227,8 @@ namespace TimeSeries
 			// 
 			// groupBox2
 			// 
-			this.groupBox2.Controls.Add(this.chart);
+			this.groupBox2.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					this.chart});
 			this.groupBox2.Location = new System.Drawing.Point(200, 10);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(300, 380);
@@ -239,24 +245,25 @@ namespace TimeSeries
 			// 
 			// groupBox3
 			// 
-			this.groupBox3.Controls.Add(this.moreSettingsButton);
-			this.groupBox3.Controls.Add(this.label10);
-			this.groupBox3.Controls.Add(this.iterationsBox);
-			this.groupBox3.Controls.Add(this.label9);
-			this.groupBox3.Controls.Add(this.label8);
-			this.groupBox3.Controls.Add(this.predictionSizeBox);
-			this.groupBox3.Controls.Add(this.label7);
-			this.groupBox3.Controls.Add(this.windowSizeBox);
-			this.groupBox3.Controls.Add(this.label6);
-			this.groupBox3.Controls.Add(this.label5);
-			this.groupBox3.Controls.Add(this.geneticMethodBox);
-			this.groupBox3.Controls.Add(this.label4);
-			this.groupBox3.Controls.Add(this.functionsSetBox);
-			this.groupBox3.Controls.Add(this.label3);
-			this.groupBox3.Controls.Add(this.selectionBox);
-			this.groupBox3.Controls.Add(this.label2);
-			this.groupBox3.Controls.Add(this.populationSizeBox);
-			this.groupBox3.Controls.Add(this.label1);
+			this.groupBox3.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					this.moreSettingsButton,
+																					this.label10,
+																					this.iterationsBox,
+																					this.label9,
+																					this.label8,
+																					this.predictionSizeBox,
+																					this.label7,
+																					this.windowSizeBox,
+																					this.label6,
+																					this.label5,
+																					this.geneticMethodBox,
+																					this.label4,
+																					this.functionsSetBox,
+																					this.label3,
+																					this.selectionBox,
+																					this.label2,
+																					this.populationSizeBox,
+																					this.label1});
 			this.groupBox3.Location = new System.Drawing.Point(510, 10);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(185, 240);
@@ -428,7 +435,7 @@ namespace TimeSeries
 			// startButton
 			// 
 			this.startButton.Enabled = false;
-			this.startButton.Location = new System.Drawing.Point(535, 364);
+			this.startButton.Location = new System.Drawing.Point(595, 364);
 			this.startButton.Name = "startButton";
 			this.startButton.TabIndex = 3;
 			this.startButton.Text = "&Start";
@@ -437,7 +444,7 @@ namespace TimeSeries
 			// stopButton
 			// 
 			this.stopButton.Enabled = false;
-			this.stopButton.Location = new System.Drawing.Point(620, 364);
+			this.stopButton.Location = new System.Drawing.Point(680, 364);
 			this.stopButton.Name = "stopButton";
 			this.stopButton.TabIndex = 4;
 			this.stopButton.Text = "S&top";
@@ -445,15 +452,18 @@ namespace TimeSeries
 			// 
 			// groupBox4
 			// 
-			this.groupBox4.Controls.Add(this.currentPredictionErrorBox);
-			this.groupBox4.Controls.Add(this.label13);
-			this.groupBox4.Controls.Add(this.currentLearningErrorBox);
-			this.groupBox4.Controls.Add(this.label12);
-			this.groupBox4.Controls.Add(this.currentIterationBox);
-			this.groupBox4.Controls.Add(this.label11);
+			this.groupBox4.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					this.currentPredictionErrorRBox,
+																					this.currentLearningErrorRBox,
+																					this.currentPredictionErrorBox,
+																					this.label13,
+																					this.currentLearningErrorBox,
+																					this.label12,
+																					this.currentIterationBox,
+																					this.label11});
 			this.groupBox4.Location = new System.Drawing.Point(510, 255);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(185, 100);
+			this.groupBox4.Size = new System.Drawing.Size(245, 100);
 			this.groupBox4.TabIndex = 5;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Current iteration:";
@@ -511,10 +521,11 @@ namespace TimeSeries
 			// 
 			// groupBox5
 			// 
-			this.groupBox5.Controls.Add(this.solutionBox);
+			this.groupBox5.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					this.solutionBox});
 			this.groupBox5.Location = new System.Drawing.Point(10, 395);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(685, 50);
+			this.groupBox5.Size = new System.Drawing.Size(745, 50);
 			this.groupBox5.TabIndex = 6;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Solution";
@@ -524,21 +535,40 @@ namespace TimeSeries
 			this.solutionBox.Location = new System.Drawing.Point(10, 20);
 			this.solutionBox.Name = "solutionBox";
 			this.solutionBox.ReadOnly = true;
-			this.solutionBox.Size = new System.Drawing.Size(665, 20);
+			this.solutionBox.Size = new System.Drawing.Size(725, 20);
 			this.solutionBox.TabIndex = 0;
 			this.solutionBox.Text = "";
+			// 
+			// currentLearningErrorRBox
+			// 
+			this.currentLearningErrorRBox.Location = new System.Drawing.Point(185, 45);
+			this.currentLearningErrorRBox.Name = "currentLearningErrorRBox";
+			this.currentLearningErrorRBox.ReadOnly = true;
+			this.currentLearningErrorRBox.Size = new System.Drawing.Size(50, 20);
+			this.currentLearningErrorRBox.TabIndex = 6;
+			this.currentLearningErrorRBox.Text = "";
+			// 
+			// currentPredictionErrorRBox
+			// 
+			this.currentPredictionErrorRBox.Location = new System.Drawing.Point(185, 70);
+			this.currentPredictionErrorRBox.Name = "currentPredictionErrorRBox";
+			this.currentPredictionErrorRBox.ReadOnly = true;
+			this.currentPredictionErrorRBox.Size = new System.Drawing.Size(50, 20);
+			this.currentPredictionErrorRBox.TabIndex = 7;
+			this.currentPredictionErrorRBox.Text = "";
 			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(704, 455);
-			this.Controls.Add(this.groupBox5);
-			this.Controls.Add(this.groupBox4);
-			this.Controls.Add(this.stopButton);
-			this.Controls.Add(this.startButton);
-			this.Controls.Add(this.groupBox3);
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
+			this.ClientSize = new System.Drawing.Size(764, 455);
+			this.Controls.AddRange(new System.Windows.Forms.Control[] {
+																		  this.groupBox5,
+																		  this.groupBox4,
+																		  this.stopButton,
+																		  this.startButton,
+																		  this.groupBox3,
+																		  this.groupBox2,
+																		  this.groupBox1});
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
@@ -861,7 +891,10 @@ namespace TimeSeries
 					string bestFunction = population.BestChromosome.ToString( );
 
 					// calculate best function and prediction error
+					double learningError = 0.0;
+					double learningErrorRelative = 0.0;
 					double predictionError = 0.0;
+					double predictionErrorRelative = 0.0;
 					// go through all the data
 					for ( int j = 0, n = data.Length - windowSize; j < n; j++ )
 					{
@@ -877,17 +910,26 @@ namespace TimeSeries
 						// calculate prediction error
 						if ( j >= n - predictionSize )
 						{
-							predictionError += Math.Abs( solution[j, 1] - data[windowSize + j] );
+							double d = Math.Abs( solution[j, 1] - data[windowSize + j] );
+							predictionError += d;
+							predictionErrorRelative += d / data[windowSize + j];
+						}
+						else
+						{
+							double d = Math.Abs( solution[j, 1] - data[windowSize + j] );
+							learningError += d;
+							learningErrorRelative += d / data[windowSize + j];
 						}
 					}
 					// update solution on the chart
 					chart.UpdateDataSeries( "solution", solution );
 				
 					// set current iteration's info
-					fitness.Evaluate( population.BestChromosome );
 					currentIterationBox.Text = i.ToString( );
-					currentLearningErrorBox.Text = fitness.Error.ToString( "F3" );
+					currentLearningErrorBox.Text = learningError.ToString( "F3" );
+					currentLearningErrorRBox.Text = learningErrorRelative.ToString( "F3" );
 					currentPredictionErrorBox.Text = predictionError.ToString( "F3" );
+					currentPredictionErrorRBox.Text = predictionErrorRelative.ToString( "F3" );
 				}
 				catch
 				{
