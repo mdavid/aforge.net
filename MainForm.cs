@@ -64,27 +64,30 @@ namespace TimeSeries
 		private System.Windows.Forms.ColumnHeader estimatedYColumnHeader;
 		private System.Windows.Forms.Button moreSettingsButton;
 		private System.Windows.Forms.ToolTip toolTip;
+		private System.Windows.Forms.TextBox currentLearningErrorRBox;
+		private System.Windows.Forms.TextBox currentPredictionErrorRBox;
 
 		private double[] data = null;
 		private double[,] dataToShow = null;
 
-		private int populationSize = 40;
-		private int iterations = 100;
+		private int populationSize = 100;
+		private int iterations = 30;
+		private int runs = 2;
 		private int windowSize = 5;
 		private int predictionSize = 1;
 		private int selectionMethod = 0;
 		private int functionsSet = 0;
 		private int geneticMethod = 0;
 
-		private int headLength = 20;
+		private int headLength = 31;
 
 		private Thread	workerThread = null;
 		private bool	needToStop = false;
 
 		private double[,]	windowDelimiter = new double[2, 2] { { 0, 0 }, { 0, 0 } };
-		private System.Windows.Forms.TextBox currentLearningErrorRBox;
-		private System.Windows.Forms.TextBox currentPredictionErrorRBox;
 		private double[,]	predictionDelimiter = new double[2, 2] { { 0, 0 }, { 0, 0 } };
+
+		private string	outputDirectory = null;
 		
 		// Constructor
 		public MainForm()
@@ -159,6 +162,8 @@ namespace TimeSeries
 			this.startButton = new System.Windows.Forms.Button();
 			this.stopButton = new System.Windows.Forms.Button();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.currentPredictionErrorRBox = new System.Windows.Forms.TextBox();
+			this.currentLearningErrorRBox = new System.Windows.Forms.TextBox();
 			this.currentPredictionErrorBox = new System.Windows.Forms.TextBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.currentLearningErrorBox = new System.Windows.Forms.TextBox();
@@ -168,8 +173,6 @@ namespace TimeSeries
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.solutionBox = new System.Windows.Forms.TextBox();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.currentLearningErrorRBox = new System.Windows.Forms.TextBox();
-			this.currentPredictionErrorRBox = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -296,6 +299,7 @@ namespace TimeSeries
 			// 
 			this.iterationsBox.Location = new System.Drawing.Point(125, 200);
 			this.iterationsBox.Name = "iterationsBox";
+			this.iterationsBox.ReadOnly = true;
 			this.iterationsBox.Size = new System.Drawing.Size(50, 20);
 			this.iterationsBox.TabIndex = 15;
 			this.iterationsBox.Text = "";
@@ -320,6 +324,7 @@ namespace TimeSeries
 			// 
 			this.predictionSizeBox.Location = new System.Drawing.Point(125, 160);
 			this.predictionSizeBox.Name = "predictionSizeBox";
+			this.predictionSizeBox.ReadOnly = true;
 			this.predictionSizeBox.Size = new System.Drawing.Size(50, 20);
 			this.predictionSizeBox.TabIndex = 12;
 			this.predictionSizeBox.Text = "";
@@ -337,6 +342,7 @@ namespace TimeSeries
 			// 
 			this.windowSizeBox.Location = new System.Drawing.Point(125, 135);
 			this.windowSizeBox.Name = "windowSizeBox";
+			this.windowSizeBox.ReadOnly = true;
 			this.windowSizeBox.Size = new System.Drawing.Size(50, 20);
 			this.windowSizeBox.TabIndex = 10;
 			this.windowSizeBox.Text = "";
@@ -420,6 +426,7 @@ namespace TimeSeries
 			// 
 			this.populationSizeBox.Location = new System.Drawing.Point(125, 20);
 			this.populationSizeBox.Name = "populationSizeBox";
+			this.populationSizeBox.ReadOnly = true;
 			this.populationSizeBox.Size = new System.Drawing.Size(50, 20);
 			this.populationSizeBox.TabIndex = 1;
 			this.populationSizeBox.Text = "";
@@ -467,6 +474,24 @@ namespace TimeSeries
 			this.groupBox4.TabIndex = 5;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Current iteration:";
+			// 
+			// currentPredictionErrorRBox
+			// 
+			this.currentPredictionErrorRBox.Location = new System.Drawing.Point(185, 70);
+			this.currentPredictionErrorRBox.Name = "currentPredictionErrorRBox";
+			this.currentPredictionErrorRBox.ReadOnly = true;
+			this.currentPredictionErrorRBox.Size = new System.Drawing.Size(50, 20);
+			this.currentPredictionErrorRBox.TabIndex = 7;
+			this.currentPredictionErrorRBox.Text = "";
+			// 
+			// currentLearningErrorRBox
+			// 
+			this.currentLearningErrorRBox.Location = new System.Drawing.Point(185, 45);
+			this.currentLearningErrorRBox.Name = "currentLearningErrorRBox";
+			this.currentLearningErrorRBox.ReadOnly = true;
+			this.currentLearningErrorRBox.Size = new System.Drawing.Size(50, 20);
+			this.currentLearningErrorRBox.TabIndex = 6;
+			this.currentLearningErrorRBox.Text = "";
 			// 
 			// currentPredictionErrorBox
 			// 
@@ -538,24 +563,6 @@ namespace TimeSeries
 			this.solutionBox.Size = new System.Drawing.Size(725, 20);
 			this.solutionBox.TabIndex = 0;
 			this.solutionBox.Text = "";
-			// 
-			// currentLearningErrorRBox
-			// 
-			this.currentLearningErrorRBox.Location = new System.Drawing.Point(185, 45);
-			this.currentLearningErrorRBox.Name = "currentLearningErrorRBox";
-			this.currentLearningErrorRBox.ReadOnly = true;
-			this.currentLearningErrorRBox.Size = new System.Drawing.Size(50, 20);
-			this.currentLearningErrorRBox.TabIndex = 6;
-			this.currentLearningErrorRBox.Text = "";
-			// 
-			// currentPredictionErrorRBox
-			// 
-			this.currentPredictionErrorRBox.Location = new System.Drawing.Point(185, 70);
-			this.currentPredictionErrorRBox.Name = "currentPredictionErrorRBox";
-			this.currentPredictionErrorRBox.ReadOnly = true;
-			this.currentPredictionErrorRBox.Size = new System.Drawing.Size(50, 20);
-			this.currentPredictionErrorRBox.TabIndex = 7;
-			this.currentPredictionErrorRBox.Text = "";
 			// 
 			// MainForm
 			// 
@@ -629,6 +636,9 @@ namespace TimeSeries
 					reader = File.OpenText( openFileDialog.FileName );
 					string	str = null;
 					int		i = 0;
+
+					outputDirectory = Path.GetDirectoryName( openFileDialog.FileName ) +
+						"\\" + Path.GetFileNameWithoutExtension( openFileDialog.FileName );
 
 					// read the data
 					while ( ( i < 50 ) && ( ( str = reader.ReadLine( ) ) != null ) )
@@ -860,16 +870,29 @@ namespace TimeSeries
 				(IChromosome) new GPTreeChromosome( gene ) :
 				(IChromosome) new GEPChromosome( gene, headLength ),
 				fitness,
-				( selectionMethod == 0 ) ? (ISelectionMethod) new EliteSelection( ) :
+				( selectionMethod == 0 ) ? (ISelectionMethod) new EliteSelection( 0.1 ) :
 				( selectionMethod == 1 ) ? (ISelectionMethod) new RankSelection( ) :
 				(ISelectionMethod) new RouletteWheelSelection( )
 				);
 			// iterations
-			int i = 1;
+			int i = 1, r = 1;
 			// solution array
 			int			solutionSize = data.Length - windowSize;
 			double[,]	solution = new double[solutionSize, 2];
 			double[]	input = new double[windowSize + constants.Length];
+
+			double learningError = 0.0;
+			double learningErrorRelative = 0.0;
+			double predictionError = 0.0;
+			double predictionErrorRelative = 0.0;
+
+			double[] errorL = new double [iterations];
+			double[] errorP = new double [iterations];
+
+			// create output directory
+			string outDir = outputDirectory + string.Format( " - {0} - {1} - {2}", predictionSize, geneticMethod, functionsSet );
+			if ( !Directory.Exists( outDir ) )
+				Directory.CreateDirectory( outDir );
 
 			// calculate X values to be used with solution function
 			for ( int j = 0; j < solutionSize; j++ )
@@ -891,10 +914,10 @@ namespace TimeSeries
 					string bestFunction = population.BestChromosome.ToString( );
 
 					// calculate best function and prediction error
-					double learningError = 0.0;
-					double learningErrorRelative = 0.0;
-					double predictionError = 0.0;
-					double predictionErrorRelative = 0.0;
+					learningError = 0.0;
+					learningErrorRelative = 0.0;
+					predictionError = 0.0;
+					predictionErrorRelative = 0.0;
 					// go through all the data
 					for ( int j = 0, n = data.Length - windowSize; j < n; j++ )
 					{
@@ -921,11 +944,13 @@ namespace TimeSeries
 							learningErrorRelative += d / data[windowSize + j];
 						}
 					}
+					learningErrorRelative *= 100;
+					predictionErrorRelative *= 100;
 					// update solution on the chart
 					chart.UpdateDataSeries( "solution", solution );
 				
 					// set current iteration's info
-					currentIterationBox.Text = i.ToString( );
+					currentIterationBox.Text = r.ToString( ) + " / " + i.ToString( );
 					currentLearningErrorBox.Text = learningError.ToString( "F3" );
 					currentLearningErrorRBox.Text = learningErrorRelative.ToString( "F3" );
 					currentPredictionErrorBox.Text = predictionError.ToString( "F3" );
@@ -937,13 +962,59 @@ namespace TimeSeries
 					chart.UpdateDataSeries( "solution", null );
 				}
 
+				errorL[i - 1] = learningErrorRelative;
+				errorP[i - 1] = predictionErrorRelative;
 
 				// increase current iteration
 				i++;
 
 				//
-				if ( ( iterations != 0 ) && ( i > iterations ) )
-					break;
+				if ( i > iterations )
+				{
+					// file # 1 - summary
+					string fileName1 = outDir + string.Format( "\\summary{0}.txt", r.ToString( "D2" ) );
+					StreamWriter writer = File.CreateText( fileName1 );
+
+					// learning error
+					writer.WriteLine( learningErrorRelative.ToString( ) );
+					// prediction errot
+					writer.WriteLine( predictionErrorRelative.ToString( ) );
+					// function
+					writer.WriteLine( population.BestChromosome.ToString( ) );
+
+					writer.Close( );
+
+					// file # 2 - data
+					string fileName2 = outDir + string.Format( "\\data{0}.csv", r.ToString( "D2" ) );
+					writer = File.CreateText( fileName2 );
+
+					for ( int j = 0, n = data.Length - windowSize; j < n; j++ )
+					{
+						writer.WriteLine( solution[j, 1].ToString( ) );
+					}
+
+					writer.Close( );
+
+					// file # 3 - progress
+					string fileName3 = outDir + string.Format( "\\progress{0}.csv", r.ToString( "D2" ) );
+					writer = File.CreateText( fileName3 );
+
+					for ( int j = 0; j < iterations; j++ )
+					{
+						writer.WriteLine( string.Format( "{0}; {1}", errorL[j].ToString( ), errorP[j].ToString( ) ) );
+					}
+
+					writer.Close( );
+
+
+					// reset iterator
+					i = 1;
+					// regenerate population
+					population.Regenerate( );
+					// check if all passes are done
+					if ( ++r > runs )
+						break;
+				}
 			}
 
 			// show solution
