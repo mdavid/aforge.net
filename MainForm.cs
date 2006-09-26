@@ -71,10 +71,10 @@ namespace TimeSeries
 		private double[,] dataToShow = null;
 
 		private int populationSize = 100;
-		private int iterations = 30;
-		private int runs = 2;
+		private int iterations = 1000;
+		private int runs = 15;
 		private int windowSize = 5;
-		private int predictionSize = 1;
+		private int predictionSize = 3;
 		private int selectionMethod = 0;
 		private int functionsSet = 0;
 		private int geneticMethod = 0;
@@ -870,9 +870,10 @@ namespace TimeSeries
 				(IChromosome) new GPTreeChromosome( gene ) :
 				(IChromosome) new GEPChromosome( gene, headLength ),
 				fitness,
-				( selectionMethod == 0 ) ? (ISelectionMethod) new EliteSelection( 0.1 ) :
+				( selectionMethod == 0 ) ? (ISelectionMethod) new EliteSelection( ) :
 				( selectionMethod == 1 ) ? (ISelectionMethod) new RankSelection( ) :
-				(ISelectionMethod) new RouletteWheelSelection( )
+				(ISelectionMethod) new RouletteWheelSelection( ),
+				0.1
 				);
 			// iterations
 			int i = 1, r = 1;
