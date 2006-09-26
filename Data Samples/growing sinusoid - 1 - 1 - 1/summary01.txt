@@ -1,0 +1,3 @@
+1126,26159375971
+157,508382547949
+$0 $7 $5 $5 * $3 $1 * ln $0 exp sin * cos $1 ln sin / exp $8 exp + / sin * $1 exp ln * exp sin + 
