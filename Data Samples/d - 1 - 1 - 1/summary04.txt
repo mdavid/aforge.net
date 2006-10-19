@@ -1,3 +1,0 @@
-2237,36825499828
-50,0435794810878
-$4 ln sin cos $10 $8 * cos cos + exp $21 exp ln $5 sqrt sin * sin exp + $17 + $21 $20 $12 $18 * ln ln $17 $18 sqrt + sqrt * + * * 
