@@ -1,3 +1,0 @@
-1877,89362251492
-20,6124526056301
-$19 $14 + $6 sqrt + sin $11 $2 * sqrt sqrt + $16 sqrt $4 sqrt + $9 sin $11 sqrt + * sqrt * 

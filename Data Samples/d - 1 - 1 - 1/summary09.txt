@@ -1,3 +1,0 @@
-1853,36445878692
-26,7153123882464
-$11 $2 * sqrt $17 $11 $2 * sqrt $21 $10 ln + $14 exp + sqrt exp - ln + $14 exp + sqrt exp - ln exp $14 + 
