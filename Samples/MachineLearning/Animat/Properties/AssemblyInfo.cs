@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "MachineLearning" )]
+[assembly: AssemblyTitle( "Animat" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "AForge" )]
-[assembly: AssemblyProduct( "AForge.MachineLearning" )]
-[assembly: AssemblyCopyright( "AForge.NET © 2007" )]
+[assembly: AssemblyCompany( "Hypercom Latvia" )]
+[assembly: AssemblyProduct( "Animat" )]
+[assembly: AssemblyCopyright( "Copyright © Hypercom Latvia 2007" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "841db34c-c0d3-4420-85dc-0ff19defd53f" )]
+[assembly: Guid( "072ee388-941b-4c71-bec5-58622a68210c" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,7 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
 [assembly: AssemblyVersion( "1.0.0.0" )]
 [assembly: AssemblyFileVersion( "1.0.0.0" )]
