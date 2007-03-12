@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QLearning.cs" />
+    <Compile Include="Sarsa.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AForge.MachineLearning.pfx" />
