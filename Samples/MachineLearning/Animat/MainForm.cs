@@ -1,3 +1,10 @@
+// AForge.NET Framework
+// Animat sample application
+//
+// Copyright © Andrew Kirillov, 2007
+// andrew.kirillov@gmail.com
+//
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,8 +48,10 @@ namespace Animat
         private double wallReward = -1;
         private double goalReward = 1;
 
-        // QLearning algorithm
+        // Q-Learning algorithm
         private QLearning qLearning = null;
+        // Sarsa algorithm
+        private Sarsa sarsa = null;
 
         // Form constructor
         public MainForm( )
@@ -54,6 +63,7 @@ namespace Animat
 
             // show settings
             ShowSettings( );
+            algorithmCombo.SelectedIndex = 0;
         }
 
         // Form is closing
@@ -100,6 +110,7 @@ namespace Animat
             {
                 loadButton.Enabled = enable;
 
+                algorithmCombo.Enabled = enable;
                 explorationRateBox.Enabled = enable;
                 learningRateBox.Enabled = enable;
                 iterationsBox.Enabled = enable;
@@ -302,15 +313,30 @@ namespace Animat
             GetSettings( );
             ShowSettings( );
 
-            // create new QLearning algorithm's instance
-            qLearning = new QLearning( 256, 4 );
+            iterationBox.Text = string.Empty;
+
+            // destroy algorithms
+            qLearning = null;
+            sarsa = null;
+
+            if ( algorithmCombo.SelectedIndex == 0 )
+            {
+                // create new QLearning algorithm's instance
+                qLearning = new QLearning( 256, 4 );
+                workerThread = new Thread( new ThreadStart( QLearningThread ) );
+            }
+            else
+            {
+                // create new Sarsa algorithm's instance
+                sarsa = new Sarsa( 256, 4 );
+                workerThread = new Thread( new ThreadStart( SarsaThread ) );
+            }
 
             // disable all settings controls except "Stop" button
             EnableControls( false );
 
             // run worker thread
             needToStop = false;
-            workerThread = new Thread( new ThreadStart( LearningThread ) );
             workerThread.Start( );
         }
 
@@ -331,7 +357,7 @@ namespace Animat
         private void showSolutionButton_Click( object sender, EventArgs e )
         {
             // check if learning algorithm was run before
-            if ( qLearning == null )
+            if ( ( qLearning == null ) && ( sarsa == null ) )
                 return;
 
             // disable all settings controls except "Stop" button
@@ -339,12 +365,12 @@ namespace Animat
 
             // run worker thread
             needToStop = false;
-            workerThread = new Thread( new ThreadStart( ShowSlutionThread ) );
+            workerThread = new Thread( new ThreadStart( ShowSolutionThread ) );
             workerThread.Start( );
         }
 
-        // Learning thread
-        private void LearningThread( )
+        // Q-Learning thread
+        private void QLearningThread( )
         {
             int iteration = 0;
             // curent coordinates of the agent
@@ -356,7 +382,7 @@ namespace Animat
                 // set exploration rate for this iteration
                 qLearning.ExplorationRate = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
                 // set learning rate for this iteration
-                qLearning.LerningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
+                qLearning.LearningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
 
                 // reset agent's coordinates to the starting position
                 agentCurrentX = agentStartX;
@@ -377,7 +403,7 @@ namespace Animat
                     // get agent's next state
                     int nextState = GetStateNumber( agentCurrentX, agentCurrentY );
                     // do learning of the agent - update his Q-function
-                    qLearning.UpdateState( currentState, nextState, action, reward );
+                    qLearning.UpdateState( currentState, action, reward, nextState );
                 }
 
                 System.Diagnostics.Debug.WriteLine( steps );
@@ -392,11 +418,76 @@ namespace Animat
             EnableControls( true );
         }
 
+        // Sarse thread
+        private void SarsaThread( )
+        {
+            int iteration = 0;
+            // curent coordinates of the agent
+            int agentCurrentX, agentCurrentY;
+
+			// loop
+            while ( ( !needToStop ) && ( iteration < learningIterations ) )
+            {
+                // set exploration rate for this iteration
+                sarsa.ExplorationRate = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
+                // set learning rate for this iteration
+                sarsa.LearningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
+
+                // reset agent's coordinates to the starting position
+                agentCurrentX = agentStartX;
+                agentCurrentY = agentStartY;
+
+                // steps performed by agent to get to the goal
+                int steps = 1;
+                // previous state and action
+                int previousState = GetStateNumber( agentCurrentX, agentCurrentY );
+                int previousAction = sarsa.GetAction( previousState );
+                // update agent's current position and get his reward
+                double reward = UpdateAgentPosition( ref agentCurrentX, ref agentCurrentY, previousAction );
+
+                while ( ( !needToStop ) && ( ( agentCurrentX != agentStopX ) || ( agentCurrentY != agentStopY ) ) )
+                {
+                    steps++;
+                    // get agent's next state
+                    int nextState = GetStateNumber( agentCurrentX, agentCurrentY );
+                    // get agent's next action
+                    int nextAction = sarsa.GetAction( nextState );
+                    // do learning of the agent - update his Q-function
+                    sarsa.UpdateState( previousState, previousAction, reward, nextState, nextAction );
+
+                    // update agent's new position and get his reward
+                    reward = UpdateAgentPosition( ref agentCurrentX, ref agentCurrentY, nextAction );
+
+                    previousState = nextState;
+                    previousAction = nextAction;
+                }
+
+                if ( !needToStop )
+                {
+                    // update Q-function if terminal state was reached
+                    sarsa.UpdateState( previousState, previousAction, reward );
+                }
+
+                System.Diagnostics.Debug.WriteLine( steps );
+
+                iteration++;
+
+                // show current iteration
+                SetText( iterationBox, iteration.ToString( ) );
+            }
+
+            // enable settings controls
+            EnableControls( true );
+        }
+
         // Show solution thread
-        private void ShowSlutionThread( )
+        private void ShowSolutionThread( )
         {
             // set exploration rate to 0, so agent uses only what he learnt
-            qLearning.ExplorationRate = 0;
+            if ( qLearning != null )
+                qLearning.ExplorationRate = 0;
+            else
+                sarsa.ExplorationRate = 0;
 
             // curent coordinates of the agent
             int agentCurrentX = agentStartX, agentCurrentY = agentStartY;
@@ -433,7 +524,7 @@ namespace Animat
                 // get agent's current state
                 int currentState = GetStateNumber( agentCurrentX, agentCurrentY );
                 // get the action for this state
-                int action = qLearning.GetAction( currentState );
+                int action = ( qLearning != null ) ? qLearning.GetAction( currentState ) : sarsa.GetAction( currentState );
                 // update agent's current position and get his reward
                 double reward = UpdateAgentPosition( ref agentCurrentX, ref agentCurrentY, action );
 
