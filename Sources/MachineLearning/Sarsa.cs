@@ -23,12 +23,10 @@ namespace AForge.MachineLearning
         // amount of possible actions
         private int actions;
         // q-values
-        private double[,] qvalues;
+        private double[][] qvalues;
+        // exploration policy
+        private IExplorationPolicy explorationPolicy;
 
-        // random number generator
-        private Random rand = new Random( (int) DateTime.Now.Ticks );
-        // exploration rate
-        private double explorationRate = 0.1;
         // discount factor
         private double discountFactor = 0.95;
         // learning rate
@@ -53,15 +51,15 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Exploration rate
+        /// Exploration policy
         /// </summary>
         /// 
-        /// <remarks>Determines the rate (probability) of exploration steps.</remarks>
+        /// <remarks>Policy, which is used to select actions.</remarks>
         /// 
-        public double ExplorationRate
+        public IExplorationPolicy ExplorationPolicy
         {
-            get { return explorationRate; }
-            set { explorationRate = value; }
+            get { return explorationPolicy; }
+            set { explorationPolicy = value; }
         }
 
         /// <summary>
@@ -96,13 +94,20 @@ namespace AForge.MachineLearning
         /// 
         /// <param name="states">Amount of possible states</param>
         /// <param name="actions">Amount of possible actions</param>
+        /// <param name="explorationPolicy">Exploration policy</param>
         /// 
-        public Sarsa( int states, int actions )
+        public Sarsa( int states, int actions, IExplorationPolicy explorationPolicy )
         {
             this.states = states;
             this.actions = actions;
+            this.explorationPolicy = explorationPolicy;
 
-            qvalues = new double[states, actions];
+            // create Q-array
+            qvalues = new double[states][];
+            for ( int i = 0; i < states; i++ )
+            {
+                qvalues[i] = new double[actions];
+            }
         }
 
         /// <summary>
@@ -113,30 +118,12 @@ namespace AForge.MachineLearning
         /// 
         /// <returns>Returns the action for the state</returns>
         /// 
-        /// <remarks>The method returns random action with the probability of
-        /// <see cref="ExplorationRate"/> value or an action, which maximizes
-        /// expected reward, otherwise.</remarks>
+        /// <remarks>The method returns an action according to current
+        /// <see cref="ExplorationPolicy">exploration policy</see>.</remarks>
         /// 
         public int GetAction( int state )
         {
-            // try to do exploration
-            if ( rand.NextDouble( ) < explorationRate )
-                return rand.Next( actions );
-
-            // select the action with maximum expected reward
-            double maxReward = double.MinValue;
-            int action = 0;
-
-            for ( int i = 0; i < actions; i++ )
-            {
-                if ( qvalues[state, i] > maxReward )
-                {
-                    maxReward = qvalues[state, i];
-                    action = i;
-                }
-            }
-
-            return action;
+            return explorationPolicy.ChooseAction( qvalues[state] );
         }
 
         /// <summary>
@@ -154,10 +141,12 @@ namespace AForge.MachineLearning
         /// 
         public void UpdateState( int previousState, int previousAction, double reward, int nextState, int nextAction )
         {
+            // previous state's action estimations
+            double[] previousActionEstimations = qvalues[previousState];
             // update expexted summary reward of the previous state
-            qvalues[previousState, previousAction] *= ( 1.0 - learningRate );
-            qvalues[previousState, previousAction] += ( learningRate * ( reward + discountFactor *
-                                                        qvalues[nextState, nextAction] ) );
+            previousActionEstimations[previousAction] *= ( 1.0 - learningRate );
+            previousActionEstimations[previousAction] += ( learningRate * ( reward + discountFactor * 
+                                                           qvalues[nextState][nextAction] ) );
 
         }
 
@@ -174,9 +163,11 @@ namespace AForge.MachineLearning
         /// 
         public void UpdateState( int previousState, int previousAction, double reward )
         {
+            // previous state's action estimations
+            double[] previousActionEstimations = qvalues[previousState];
             // update expexted summary reward of the previous state
-            qvalues[previousState, previousAction] *= ( 1.0 - learningRate );
-            qvalues[previousState, previousAction] += ( learningRate * reward );
+            previousActionEstimations[previousAction] *= ( 1.0 - learningRate );
+            previousActionEstimations[previousAction] += ( learningRate * reward );
         }
     }
 }
