@@ -10,7 +10,7 @@
     <RootNamespace>AForge.MachineLearning</RootNamespace>
     <AssemblyName>AForge.MachineLearning</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>AForge.MachineLearning.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>AForge.MachineLearning.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,12 +37,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exploration Policy\EpsilonGreedyExplorationPolicy.cs" />
+    <Compile Include="Exploration Policy\IExplorationPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QLearning.cs" />
     <Compile Include="Sarsa.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AForge.MachineLearning.pfx" />
+    <None Include="AForge.MachineLearning.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -322,13 +322,13 @@ namespace Animat
             if ( algorithmCombo.SelectedIndex == 0 )
             {
                 // create new QLearning algorithm's instance
-                qLearning = new QLearning( 256, 4 );
+                qLearning = new QLearning( 256, 4, new EpsilonGreedyExplorationPolicy( explorationRate ) );
                 workerThread = new Thread( new ThreadStart( QLearningThread ) );
             }
             else
             {
                 // create new Sarsa algorithm's instance
-                sarsa = new Sarsa( 256, 4 );
+                sarsa = new Sarsa( 256, 4, new EpsilonGreedyExplorationPolicy( explorationRate ) );
                 workerThread = new Thread( new ThreadStart( SarsaThread ) );
             }
 
@@ -375,12 +375,14 @@ namespace Animat
             int iteration = 0;
             // curent coordinates of the agent
             int agentCurrentX, agentCurrentY;
+            // exploration policy
+            EpsilonGreedyExplorationPolicy explorationPolicy = (EpsilonGreedyExplorationPolicy) qLearning.ExplorationPolicy;
 
 			// loop
             while ( ( !needToStop ) && ( iteration < learningIterations ) )
             {
                 // set exploration rate for this iteration
-                qLearning.ExplorationRate = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
+                explorationPolicy.Epsilon = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
                 // set learning rate for this iteration
                 qLearning.LearningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
 
@@ -424,12 +426,14 @@ namespace Animat
             int iteration = 0;
             // curent coordinates of the agent
             int agentCurrentX, agentCurrentY;
+            // exploration policy
+            EpsilonGreedyExplorationPolicy explorationPolicy = (EpsilonGreedyExplorationPolicy) sarsa.ExplorationPolicy;
 
 			// loop
             while ( ( !needToStop ) && ( iteration < learningIterations ) )
             {
                 // set exploration rate for this iteration
-                sarsa.ExplorationRate = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
+                explorationPolicy.Epsilon = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
                 // set learning rate for this iteration
                 sarsa.LearningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
 
@@ -484,10 +488,14 @@ namespace Animat
         private void ShowSolutionThread( )
         {
             // set exploration rate to 0, so agent uses only what he learnt
+            EpsilonGreedyExplorationPolicy exploratioRate = null;
+
             if ( qLearning != null )
-                qLearning.ExplorationRate = 0;
+                exploratioRate = (EpsilonGreedyExplorationPolicy) qLearning.ExplorationPolicy;
             else
-                sarsa.ExplorationRate = 0;
+                exploratioRate = (EpsilonGreedyExplorationPolicy) sarsa.ExplorationPolicy;
+
+            exploratioRate.Epsilon = 0;
 
             // curent coordinates of the agent
             int agentCurrentX = agentStartX, agentCurrentY = agentStartY;
