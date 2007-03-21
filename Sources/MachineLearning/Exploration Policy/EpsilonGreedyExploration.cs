@@ -20,7 +20,7 @@ namespace AForge.MachineLearning
     /// <para>According to the policy, the epsilon value is known also as exploration rate.</para>
     /// </remarks>
     /// 
-    public class EpsilonGreedyExplorationPolicy : IExplorationPolicy
+    public class EpsilonGreedyExploration : IExplorationPolicy
     {
         // exploration rate
         private double epsilon;
@@ -39,12 +39,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EpsilonGreedyExplorationPolicy"/> class
+        /// Initializes a new instance of the <see cref="EpsilonGreedyExploration"/> class
         /// </summary>
         /// 
         /// <param name="epsilon">Epsilon value (exploration rate)</param>
         /// 
-        public EpsilonGreedyExplorationPolicy( double epsilon )
+        public EpsilonGreedyExploration( double epsilon )
         {
             Epsilon = epsilon;
         }
@@ -63,6 +63,7 @@ namespace AForge.MachineLearning
         /// 
         public int ChooseAction( double[] actionEstimates )
         {
+            // actions count
             int actionsCount = actionEstimates.Length;
 
             // find the best action (greedy)
