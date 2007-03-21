@@ -322,13 +322,13 @@ namespace Animat
             if ( algorithmCombo.SelectedIndex == 0 )
             {
                 // create new QLearning algorithm's instance
-                qLearning = new QLearning( 256, 4, new EpsilonGreedyExplorationPolicy( explorationRate ) );
+                qLearning = new QLearning( 256, 4, new EpsilonGreedyExploration( explorationRate ) );
                 workerThread = new Thread( new ThreadStart( QLearningThread ) );
             }
             else
             {
                 // create new Sarsa algorithm's instance
-                sarsa = new Sarsa( 256, 4, new EpsilonGreedyExplorationPolicy( explorationRate ) );
+                sarsa = new Sarsa( 256, 4, new EpsilonGreedyExploration( explorationRate ) );
                 workerThread = new Thread( new ThreadStart( SarsaThread ) );
             }
 
@@ -376,7 +376,7 @@ namespace Animat
             // curent coordinates of the agent
             int agentCurrentX, agentCurrentY;
             // exploration policy
-            EpsilonGreedyExplorationPolicy explorationPolicy = (EpsilonGreedyExplorationPolicy) qLearning.ExplorationPolicy;
+            EpsilonGreedyExploration explorationPolicy = (EpsilonGreedyExploration) qLearning.ExplorationPolicy;
 
 			// loop
             while ( ( !needToStop ) && ( iteration < learningIterations ) )
@@ -427,7 +427,7 @@ namespace Animat
             // curent coordinates of the agent
             int agentCurrentX, agentCurrentY;
             // exploration policy
-            EpsilonGreedyExplorationPolicy explorationPolicy = (EpsilonGreedyExplorationPolicy) sarsa.ExplorationPolicy;
+            EpsilonGreedyExploration explorationPolicy = (EpsilonGreedyExploration) sarsa.ExplorationPolicy;
 
 			// loop
             while ( ( !needToStop ) && ( iteration < learningIterations ) )
@@ -488,12 +488,12 @@ namespace Animat
         private void ShowSolutionThread( )
         {
             // set exploration rate to 0, so agent uses only what he learnt
-            EpsilonGreedyExplorationPolicy exploratioRate = null;
+            EpsilonGreedyExploration exploratioRate = null;
 
             if ( qLearning != null )
-                exploratioRate = (EpsilonGreedyExplorationPolicy) qLearning.ExplorationPolicy;
+                exploratioRate = (EpsilonGreedyExploration) qLearning.ExplorationPolicy;
             else
-                exploratioRate = (EpsilonGreedyExplorationPolicy) sarsa.ExplorationPolicy;
+                exploratioRate = (EpsilonGreedyExploration) sarsa.ExplorationPolicy;
 
             exploratioRate.Epsilon = 0;
 
