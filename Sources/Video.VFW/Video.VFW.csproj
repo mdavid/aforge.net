@@ -4,13 +4,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{809725DC-6502-4732-A51C-DEB7FEA12975}</ProjectGuid>
+    <ProjectGuid>{22E852C0-17FF-4106-9DF6-41EABB8C0613}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AForge.Video</RootNamespace>
-    <AssemblyName>AForge.Video</AssemblyName>
+    <RootNamespace>AForge.Video.VFW</RootNamespace>
+    <AssemblyName>AForge.Video.VFW</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>AForge.Video.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>AForge.Video.VFW.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>AForge.Video.xml</DocumentationFile>
+    <DocumentationFile>AForge.Video.VFW.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,21 +29,19 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>AForge.Video.xml</DocumentationFile>
+    <DocumentationFile>AForge.Video.VFW.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IVideoSource.cs" />
-    <Compile Include="VideoEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AForge.Video.snk" />
+    <None Include="AForge.Video.VFW.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

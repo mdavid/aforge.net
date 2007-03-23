@@ -112,7 +112,7 @@ namespace AForge.Video
 		/// </summary>
         /// 
         /// <remarks>Waits for source stopping after it was signalled to stop using
-        /// <see cref=">SignalToStop"/> method.</remarks>
+        /// <see cref="SignalToStop"/> method.</remarks>
         /// 
 		void WaitForStop( );
 
