@@ -10,7 +10,7 @@ namespace AForge.MachineLearning
     using System;
 
     /// <summary>
-    /// Epsilon greedy exploration policy
+    /// Epsilon greedy exploration policy.
     /// </summary>
     /// 
     /// <remarks><para>The class implements epsilon greedy policy. Acording to the policy,
@@ -29,7 +29,7 @@ namespace AForge.MachineLearning
         private Random rand = new Random( (int) DateTime.Now.Ticks );
 
         /// <summary>
-        /// Epsilon value (exploration rate)
+        /// Epsilon value (exploration rate).
         /// </summary>
         /// 
         public double Epsilon
@@ -39,10 +39,10 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EpsilonGreedyExploration"/> class
+        /// Initializes a new instance of the <see cref="EpsilonGreedyExploration"/> class.
         /// </summary>
         /// 
-        /// <param name="epsilon">Epsilon value (exploration rate)</param>
+        /// <param name="epsilon">Epsilon value (exploration rate).</param>
         /// 
         public EpsilonGreedyExploration( double epsilon )
         {
@@ -50,12 +50,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Choose an action
+        /// Choose an action.
         /// </summary>
         /// 
-        /// <param name="actionEstimates">Action estimates</param>
+        /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action</returns>
+        /// <returns>Returns the next action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action

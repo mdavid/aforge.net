@@ -10,7 +10,7 @@ namespace AForge.MachineLearning
     using System;
 
     /// <summary>
-    /// Boltzmann distribution exploration policy
+    /// Boltzmann distribution exploration policy.
     /// </summary>
     /// 
     /// <remarks></remarks>
@@ -24,7 +24,7 @@ namespace AForge.MachineLearning
         private Random rand = new Random( (int) DateTime.Now.Ticks );
 
         /// <summary>
-        /// Termperature parameter of Boltzmann distribution
+        /// Termperature parameter of Boltzmann distribution.
         /// </summary>
         /// 
         public double Temperature
@@ -34,10 +34,10 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BoltzmannDistributionExploration"/> class
+        /// Initializes a new instance of the <see cref="BoltzmannDistributionExploration"/> class.
         /// </summary>
         /// 
-        /// <param name="temperature">Termperature parameter of Boltzmann distribution</param>
+        /// <param name="temperature">Termperature parameter of Boltzmann distribution.</param>
         /// 
         public BoltzmannDistributionExploration( double temperature )
         {
@@ -45,12 +45,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Choose an action
+        /// Choose an action.
         /// </summary>
         /// 
-        /// <param name="actionEstimates">Action estimates</param>
+        /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action</returns>
+        /// <returns>Returns the next action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action

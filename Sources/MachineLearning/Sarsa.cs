@@ -10,7 +10,7 @@ namespace AForge.MachineLearning
     using System;
 
     /// <summary>
-    /// Sarsa learning algorithm
+    /// Sarsa learning algorithm.
     /// </summary>
     /// 
     /// <remarks>The class provides implementation of Sarse algorithm, known as
@@ -33,7 +33,7 @@ namespace AForge.MachineLearning
         private double learningRate = 0.25;
 
         /// <summary>
-        /// Amount of possible states
+        /// Amount of possible states.
         /// </summary>
         /// 
         public int StatesCount
@@ -42,7 +42,7 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Amount of possible actions
+        /// Amount of possible actions.
         /// </summary>
         /// 
         public int ActionsCount
@@ -51,7 +51,7 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Exploration policy
+        /// Exploration policy.
         /// </summary>
         /// 
         /// <remarks>Policy, which is used to select actions.</remarks>
@@ -63,7 +63,7 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Learning rate
+        /// Learning rate.
         /// </summary>
         /// 
         /// <remarks>The value determines the amount of updates Q-function receives
@@ -77,7 +77,7 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Discount factor
+        /// Discount factor.
         /// </summary>
         /// 
         /// <remarks>Discount factor for the expected summary reward.</remarks>
@@ -89,12 +89,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sarsa"/> class
+        /// Initializes a new instance of the <see cref="Sarsa"/> class.
         /// </summary>
         /// 
-        /// <param name="states">Amount of possible states</param>
-        /// <param name="actions">Amount of possible actions</param>
-        /// <param name="explorationPolicy">Exploration policy</param>
+        /// <param name="states">Amount of possible states.</param>
+        /// <param name="actions">Amount of possible actions.</param>
+        /// <param name="explorationPolicy">Exploration policy.</param>
         /// 
         public Sarsa( int states, int actions, IExplorationPolicy explorationPolicy )
         {
@@ -111,12 +111,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Get next action from the specified state
+        /// Get next action from the specified state.
         /// </summary>
         /// 
-        /// <param name="state">Current state to get an action for</param>
+        /// <param name="state">Current state to get an action for.</param>
         /// 
-        /// <returns>Returns the action for the state</returns>
+        /// <returns>Returns the action for the state.</returns>
         /// 
         /// <remarks>The method returns an action according to current
         /// <see cref="ExplorationPolicy">exploration policy</see>.</remarks>
@@ -127,14 +127,14 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Update Q-function's value for the previous state-action pair
+        /// Update Q-function's value for the previous state-action pair.
         /// </summary>
         /// 
-        /// <param name="previousState">Curren state</param>
-        /// <param name="previousAction">Action, which lead from previous to the next state</param>
-        /// <param name="reward">Reward value, received by taking specified action from previous state</param>
-        /// <param name="nextState">Next state</param>
-        /// <param name="nextAction">Next action</param>
+        /// <param name="previousState">Curren state.</param>
+        /// <param name="previousAction">Action, which lead from previous to the next state.</param>
+        /// <param name="reward">Reward value, received by taking specified action from previous state.</param>
+        /// <param name="nextState">Next state.</param>
+        /// <param name="nextAction">Next action.</param>
         /// 
         /// <remarks>Updates Q-function's value for the previous state-action pair in
         /// the case if the next state is non terminal.</remarks>
@@ -151,12 +151,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Update Q-function's value for the previous state-action pair
+        /// Update Q-function's value for the previous state-action pair.
         /// </summary>
         /// 
-        /// <param name="previousState">Curren state</param>
-        /// <param name="previousAction">Action, which lead from previous to the next state</param>
-        /// <param name="reward">Reward value, received by taking specified action from previous state</param>
+        /// <param name="previousState">Curren state.</param>
+        /// <param name="previousAction">Action, which lead from previous to the next state.</param>
+        /// <param name="reward">Reward value, received by taking specified action from previous state.</param>
         /// 
         /// <remarks>Updates Q-function's value for the previous state-action pair in
         /// the case if the next state is terminal.</remarks>

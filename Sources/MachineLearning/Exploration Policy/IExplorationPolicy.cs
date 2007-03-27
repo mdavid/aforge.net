@@ -10,7 +10,7 @@ namespace AForge.MachineLearning
     using System;
 
     /// <summary>
-    /// Exploration policy interface
+    /// Exploration policy interface.
     /// </summary>
     /// 
     /// <remarks>The interface describes exploration policies, which are used in Reinforcement
@@ -19,12 +19,12 @@ namespace AForge.MachineLearning
     public interface IExplorationPolicy
     {
         /// <summary>
-        /// Choose an action
+        /// Choose an action.
         /// </summary>
         /// 
-        /// <param name="actionEstimates">Action estimates</param>
+        /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action</returns>
+        /// <returns>Returns the next action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action
