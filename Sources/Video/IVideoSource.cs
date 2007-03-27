@@ -10,7 +10,7 @@ namespace AForge.Video
 	using System;
 
 	/// <summary>
-	/// Video source interface
+	/// Video source interface.
 	/// </summary>
     /// 
     /// <remarks>The interface describes common methods for all
@@ -19,13 +19,13 @@ namespace AForge.Video
 	public interface IVideoSource
 	{
 		/// <summary>
-		/// New frame event
+		/// New frame event.
 		/// </summary>
         /// 
         event NewFrameEventHandler NewFrame;
 
 		/// <summary>
-		/// Video source
+		/// Video source.
 		/// </summary>
         /// 
         /// <remarks>The meaning of the property depends on particular video source.
@@ -35,7 +35,7 @@ namespace AForge.Video
 		string Source{ get; set; }
 
 		/// <summary>
-		/// Login value
+		/// Login value.
 		/// </summary>
         /// 
         /// <remarks>The property is required for video sources, which support
@@ -44,7 +44,7 @@ namespace AForge.Video
 		string Login{ get; set; }
 
 		/// <summary>
-		/// Password value
+		/// Password value.
 		/// </summary>
         /// 
         /// <remarks>The property is required for video sources, which support
@@ -53,7 +53,7 @@ namespace AForge.Video
         string Password { get; set;}
 
 		/// <summary>
-		/// Received frames count
+		/// Received frames count.
 		/// </summary>
         /// 
         /// <remarks>Number of frames the video source provided from the moment of the last
@@ -63,7 +63,7 @@ namespace AForge.Video
 		int FramesReceived{ get; }
 
 		/// <summary>
-		/// Received bytes count
+		/// Received bytes count.
 		/// </summary>
         /// 
         /// <remarks>Number of bytes the video source provided from the moment of the last
@@ -73,7 +73,7 @@ namespace AForge.Video
 		int BytesReceived{ get; }
 
 		/// <summary>
-		/// User data
+		/// User data.
 		/// </summary>
         /// 
         /// <remarks>The property allows to associate user data with video source object.</remarks>
@@ -81,7 +81,7 @@ namespace AForge.Video
 		object UserData{ get; set; }
 
 		/// <summary>
-		/// State of the video source
+		/// State of the video source.
 		/// </summary>
         /// 
         /// <remarks>Current state of video source object.</remarks>
@@ -89,7 +89,7 @@ namespace AForge.Video
 		bool IsRunning{ get; }
 
 		/// <summary>
-		/// Start video source
+		/// Start video source.
 		/// </summary>
         /// 
         /// <remarks>Start video source and return execution to caller. Video source
@@ -99,7 +99,7 @@ namespace AForge.Video
 		void Start( );
 
 		/// <summary>
-		/// Signal video source to stop its work
+		/// Signal video source to stop its work.
 		/// </summary>
         /// 
         /// <remarks>Signals video source to stop its background thread, stop to
@@ -108,7 +108,7 @@ namespace AForge.Video
 		void SignalToStop( );
 
 		/// <summary>
-		/// Wait for video source has stopped
+		/// Wait for video source has stopped.
 		/// </summary>
         /// 
         /// <remarks>Waits for source stopping after it was signalled to stop using
@@ -117,7 +117,7 @@ namespace AForge.Video
 		void WaitForStop( );
 
 		/// <summary>
-		/// Stop video source
+		/// Stop video source.
 		/// </summary>
         /// 
         /// <remarks>Stops video source aborting its thread.</remarks>
