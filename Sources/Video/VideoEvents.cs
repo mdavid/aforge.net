@@ -19,7 +19,16 @@ namespace AForge.Video
     public delegate void NewFrameEventHandler( object sender, NewFrameEventArgs eventArgs );
 
     /// <summary>
-    /// Arguments for new frame evemt from video source.
+    /// Delegate for video source error event handler.
+    /// </summary>
+    /// 
+    /// <param name="sender">Sender object.</param>
+    /// <param name="eventArgs">Event arguments.</param>
+    /// 
+    public delegate void VideoSourceErrorEventHandler( object sender, VideoSourceErrorEventArgs eventArgs );
+
+    /// <summary>
+    /// Arguments for new frame event from video source.
     /// </summary>
     /// 
     public class NewFrameEventArgs : EventArgs
@@ -44,6 +53,35 @@ namespace AForge.Video
         public System.Drawing.Bitmap Frame
         {
             get { return frame; }
+        }
+    }
+
+    /// <summary>
+    /// Arguments for video source error event from video source.
+    /// </summary>
+    /// 
+    public class VideoSourceErrorEventArgs : EventArgs
+    {
+        private string description;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoSourceErrorEventArgs"/> class.
+        /// </summary>
+        /// 
+        /// <param name="description">Error description.</param>
+        /// 
+        public VideoSourceErrorEventArgs( string description )
+        {
+            this.description = description;
+        }
+
+        /// <summary>
+        /// Video source error description.
+        /// </summary>
+        /// 
+        public string Description
+        {
+            get { return description; }
         }
     }
 }

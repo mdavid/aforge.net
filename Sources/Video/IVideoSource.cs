@@ -24,6 +24,15 @@ namespace AForge.Video
         /// 
         event NewFrameEventHandler NewFrame;
 
+        /// <summary>
+        /// Video source error event.
+        /// </summary>
+        /// 
+        /// <remarks>The event is used to notify client about any type error occurred in
+        /// video source object, for example exceptions.</remarks>
+        /// 
+        event VideoSourceErrorEventHandler VideoSourceError;
+
 		/// <summary>
 		/// Video source.
 		/// </summary>
@@ -33,24 +42,6 @@ namespace AForge.Video
         /// describing the video source.</remarks>
         /// 
 		string Source{ get; set; }
-
-		/// <summary>
-		/// Login value.
-		/// </summary>
-        /// 
-        /// <remarks>The property is required for video sources, which support
-        /// authentication.</remarks>
-        /// 
-		string Login{ get; set; }
-
-		/// <summary>
-		/// Password value.
-		/// </summary>
-        /// 
-        /// <remarks>The property is required for video sources, which support
-        /// authentication.</remarks>
-        /// 
-        string Password { get; set;}
 
 		/// <summary>
 		/// Received frames count.
