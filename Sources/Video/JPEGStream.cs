@@ -73,6 +73,8 @@ namespace AForge.Video
 		private bool	preventCaching = true;
         // frame interval in milliseconds
 		private int		frameInterval = 0;
+        // timeout value for web request
+        private int     requestTimeout = 10000;
 
         // buffer size used to download JPEG image
 		private const int	bufferSize = 512 * 1024;
@@ -220,6 +222,19 @@ namespace AForge.Video
 			get { return userData; }
 			set { userData = value; }
 		}
+
+        /// <summary>
+        /// Request timeout value.
+        /// </summary>
+        /// 
+        /// <remarks>The property sets timeout value in milliseconds for web requests.
+        /// Default value is 10000 milliseconds.</remarks>
+        /// 
+        public int RequestTimeout
+        {
+            get { return requestTimeout; }
+            set { requestTimeout = value; }
+        }
 
         /// <summary>
         /// State of the video source.
@@ -377,8 +392,6 @@ namespace AForge.Video
 			{
 				int	read, total = 0;
 
-                System.Diagnostics.Debug.WriteLine( "--" );
-
 				try
 				{
                     // set dowbload start time
@@ -395,6 +408,9 @@ namespace AForge.Video
                         // request with cache prevention
                         request = (HttpWebRequest) WebRequest.Create( source + ( ( source.IndexOf( '?' ) == -1 ) ? '?' : '&' ) + "fake=" + rand.Next( ).ToString( ) );
 					}
+                    // set timeout value for the request
+                    request.Timeout = requestTimeout;
+
 					// set login and password
 					if ( ( login != null ) && ( password != null ) && ( login != string.Empty ) )
                         request.Credentials = new NetworkCredential( login, password );
