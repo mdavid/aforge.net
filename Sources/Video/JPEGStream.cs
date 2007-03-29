@@ -12,7 +12,6 @@ namespace AForge.Video
 	using System.IO;
 	using System.Threading;
 	using System.Net;
-    using System.Reflection;
 
 	/// <summary>
 	/// JPEG video source.
@@ -57,29 +56,29 @@ namespace AForge.Video
 	public class JPEGStream : IVideoSource
 	{
         // URL for JPEG files
-		private string	source;
+		private string source;
         // login and password for HTTP authentication
-		private string	login = null;
-		private string	password = null;
+		private string login = null;
+		private string password = null;
         // user data associated with the video source
-		private object	userData = null;
+		private object userData = null;
         // received frames count
-		private int		framesReceived;
+		private int framesReceived;
         // recieved byte count
-		private int		bytesReceived;
+		private int bytesReceived;
         // use separate HTTP connection group or use default
-		private bool	useSeparateConnectionGroup = false;
+		private bool useSeparateConnectionGroup = false;
         // prevent cashing or not
-		private bool	preventCaching = true;
+		private bool preventCaching = true;
         // frame interval in milliseconds
-		private int		frameInterval = 0;
+		private int frameInterval = 0;
         // timeout value for web request
-        private int     requestTimeout = 10000;
+        private int requestTimeout = 10000;
 
         // buffer size used to download JPEG image
-		private const int	bufferSize = 512 * 1024;
+		private const int bufferSize = 512 * 1024;
         // size of portion to read at once
-		private const int	readSize = 1024;		
+		private const int readSize = 1024;		
 
 		private Thread	thread = null;
 		private ManualResetEvent stopEvent = null;
@@ -356,7 +355,7 @@ namespace AForge.Video
 		}
 
         /// <summary>
-        /// Free resource
+        /// Free resource.
         /// </summary>
         /// 
 		private void Free( )
@@ -369,24 +368,24 @@ namespace AForge.Video
 		}
 
         /// <summary>
-        /// Worker thread
+        /// Worker thread.
         /// </summary>
         /// 
 		private void WorkerThread( )
 		{
             // buffer to read stream
-			byte[]			buffer = new byte[bufferSize];
+			byte[] buffer = new byte[bufferSize];
             // HTTP web request
-			HttpWebRequest	request = null;
+			HttpWebRequest request = null;
             // web responce
-			WebResponse		response = null;
+			WebResponse response = null;
             // stream for JPEG downloading
-			Stream			stream = null;
+			Stream stream = null;
             // random generator to add fake parameter for cache preventing
-			Random			rand = new Random( (int) DateTime.Now.Ticks );
+			Random rand = new Random( (int) DateTime.Now.Ticks );
             // download start time and duration
-			DateTime		start;
-			TimeSpan		span;
+			DateTime start;
+			TimeSpan span;
 
 			while ( true )
 			{
@@ -410,7 +409,6 @@ namespace AForge.Video
 					}
                     // set timeout value for the request
                     request.Timeout = requestTimeout;
-
 					// set login and password
 					if ( ( login != null ) && ( password != null ) && ( login != string.Empty ) )
                         request.Credentials = new NetworkCredential( login, password );
