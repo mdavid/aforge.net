@@ -7,81 +7,45 @@
 
 namespace AForge.Video
 {
-    using System;
+	using System;
 	using System.Drawing;
 	using System.IO;
+	using System.Text;
 	using System.Threading;
 	using System.Net;
 
-	/// <summary>
-	/// JPEG video source.
+    /// <summary>
+    /// MJPEG video source.
     /// </summary>
     /// 
-    /// <remarks><para>The video source downloads constantly JPEG files from the specified URL.</para>
-    /// <para>Sample usage:</para>
-    /// <code>
-    /// // create JPEG video source
-    /// JPEGStream stream = new JPEGStream( "some url" );
-    /// // set NewFrame event handler
-    /// stream.NewFrame += new NewFrameEventHandler( video_NewFrame );
-    /// // start the video source
-    /// stream.Start( );
-    /// // ...
-    /// // signal to stop
-    /// stream.SignalToStop( );
-    /// // ...
+    /// <remarks></remarks>
     /// 
-    /// private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
-    /// {
-    ///     // get new frame
-    ///     Bitmap bitmap = eventArgs.Frame;
-    ///     // process the frame
-    /// }
-    /// </code>
-    /// <para><b>Note</b>: Some cameras produce HTTP header, which does conform strictly to
-    /// standard, what leads to .NET exception. To avoid this exception the <b>useUnsafeHeaderParsing</b>
-    /// configuration option of <b>httpWebRequest</b> should be set, what may be done using application
-    /// configuration file.</para>
-    /// <code>
-    /// &lt;configuration&gt;
-    /// 	&lt;system.net&gt;
-    /// 		&lt;settings&gt;
-    /// 			&lt;httpWebRequest useUnsafeHeaderParsing="true" /&gt;
-    /// 		&lt;/settings&gt;
-    /// 	&lt;/system.net&gt;
-    /// &lt;/configuration&gt;
-    /// </code>
-    /// </remarks>
-    /// 
-	public class JPEGStream : IVideoSource
+    public class MJPEGStream : IVideoSource
 	{
-        // URL for JPEG files
-		private string source;
+        // URL for MJPEG stream
+        private string source;
         // login and password for HTTP authentication
-		private string login = null;
+        private string login = null;
 		private string password = null;
         // user data associated with the video source
-		private object userData = null;
+        private object userData = null;
         // received frames count
-		private int framesReceived;
+        private int framesReceived;
         // recieved byte count
-		private int bytesReceived;
+        private int bytesReceived;
         // use separate HTTP connection group or use default
-		private bool useSeparateConnectionGroup = false;
-        // prevent cashing or not
-		private bool preventCaching = true;
-        // frame interval in milliseconds
-		private int frameInterval = 0;
+        private bool useSeparateConnectionGroup = true;
         // timeout value for web request
         private int requestTimeout = 10000;
 
-        // buffer size used to download JPEG image
-		private const int bufferSize = 512 * 1024;
+        // buffer size used to download MJPEG stream
+        private const int bufSize = 512 * 1024;
         // size of portion to read at once
-		private const int readSize = 1024;		
+        private const int readSize = 1024;
 
-		private Thread thread = null;
+		private Thread	thread = null;
 		private ManualResetEvent stopEvent = null;
+		private ManualResetEvent reloadEvent = null;
 
         /// <summary>
         /// New frame event.
@@ -106,48 +70,28 @@ namespace AForge.Video
         /// 
         /// <remarks>The property indicates to open web request in separate connection group.</remarks>
         /// 
-		public bool	SeparateConnectionGroup
+        public bool SeparateConnectionGroup
 		{
 			get { return useSeparateConnectionGroup; }
 			set { useSeparateConnectionGroup = value; }
 		}
 
         /// <summary>
-        /// Use or not caching.
-        /// </summary>
-        /// 
-        /// <remarks>If the property is set to <b>true</b>, then a fake parameter will be added
-        /// to URL to prevent caching. It's required for client, who are behind proxy server.</remarks>
-        /// 
-		public bool	PreventCaching
-		{
-			get { return preventCaching; }
-			set { preventCaching = value; }
-		}
-
-        /// <summary>
-        /// Frame interval.
-        /// </summary>
-        /// 
-        /// <remarks>The property sets the interval in milliseconds betwen frames. If the property is
-        /// set to 100, then the dired frame rate will be 10 frames per second.</remarks>
-        /// 
-		public int FrameInterval
-		{
-			get { return frameInterval; }
-			set { frameInterval = value; }
-		}
-
-        /// <summary>
         /// Video source.
         /// </summary>
         /// 
-        /// <remarks>URL, which provides JPEG files.</remarks>
+        /// <remarks>URL, which provides MJPEG stream.</remarks>
         /// 
-        public virtual string Source
+        public string Source
 		{
 			get { return source; }
-			set { source = value; }
+			set
+			{
+				source = value;
+				// signal to reload
+				if ( thread != null )
+					reloadEvent.Set( );
+			}
 		}
 
         /// <summary>
@@ -156,7 +100,7 @@ namespace AForge.Video
         /// 
         /// <remarks>Login required to access video source.</remarks>
         /// 
-		public string Login
+        public string Login
 		{
 			get { return login; }
 			set { login = value; }
@@ -251,7 +195,7 @@ namespace AForge.Video
 					if ( thread.Join( 0 ) == false )
 						return true;
 
-					// the thread is not running, free resources
+					// the thread is not running, so free resources
 					Free( );
 				}
 				return false;
@@ -259,18 +203,18 @@ namespace AForge.Video
 		}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JPEGStream"/> class.
+        /// Initializes a new instance of the <see cref="MJPEGStream"/> class.
         /// </summary>
         /// 
-        public JPEGStream( ) { }
+        public MJPEGStream( ) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JPEGStream"/> class.
         /// </summary>
         /// 
-        /// <param name="source">URL, which provides JPEG files.</param>
+        /// <param name="source">URL, which provides MJPEG stream.</param>
         /// 
-        public JPEGStream( string source )
+        public MJPEGStream( string source )
         {
             this.source = source;
         }
@@ -290,16 +234,17 @@ namespace AForge.Video
                 // check source
                 if ( ( source == null ) || ( source == string.Empty ) )
                     throw new ArgumentException( "Video source is not specified" );
-
-				framesReceived = 0;
+                
+                framesReceived = 0;
 				bytesReceived = 0;
 
 				// create events
-				stopEvent = new ManualResetEvent( false );
+				stopEvent	= new ManualResetEvent( false );
+				reloadEvent	= new ManualResetEvent( false );
 				
 				// create and start new thread
 				thread = new Thread( new ThreadStart( WorkerThread ) );
-				thread.Name = source; // mainly for debugging
+				thread.Name = source;
 				thread.Start( );
 			}
 		}
@@ -358,117 +303,213 @@ namespace AForge.Video
         /// Free resource.
         /// </summary>
         /// 
-		private void Free( )
+        private void Free( )
 		{
 			thread = null;
 
 			// release events
 			stopEvent.Close( );
 			stopEvent = null;
+			reloadEvent.Close( );
+			reloadEvent = null;
 		}
 
         /// <summary>
         /// Worker thread.
         /// </summary>
         /// 
-		private void WorkerThread( )
+        public void WorkerThread( )
 		{
             // buffer to read stream
-			byte[] buffer = new byte[bufferSize];
-            // HTTP web request
-			HttpWebRequest request = null;
-            // web responce
-			WebResponse response = null;
-            // stream for JPEG downloading
-			Stream stream = null;
-            // random generator to add fake parameter for cache preventing
-			Random rand = new Random( (int) DateTime.Now.Ticks );
-            // download start time and duration
-			DateTime start;
-			TimeSpan span;
+            byte[] buffer = new byte[bufSize];
 
 			while ( true )
 			{
-				int	read, total = 0;
+				// reset reload event
+				reloadEvent.Reset( );
+
+                // HTTP web request
+				HttpWebRequest request = null;
+                // web responce
+				WebResponse responce = null;
+                // stream for MJPEG downloading
+                Stream stream = null;
+                // new line delimiters
+				byte[] delimiter = null;
+				byte[] delimiter2 = null;
+                // boundary betweeen images
+				byte[]			boundary = null;
+                // length of delimiters and boundary
+				int boundaryLen, delimiterLen = 0, delimiter2Len = 0;
+                // read amounts and positions
+				int read, todo = 0, total = 0, pos = 0, align = 1;
+				int start = 0, stop = 0;
+
+				// align
+				//  1 = searching for image start
+				//  2 = searching for image end
 
 				try
 				{
-                    // set dowbload start time
-					start = DateTime.Now;
-
 					// create request
-					if ( !preventCaching )
-					{
-                        // request without cache prevention
-                        request = (HttpWebRequest) WebRequest.Create( source );
-					}
-					else
-					{
-                        // request with cache prevention
-                        request = (HttpWebRequest) WebRequest.Create( source + ( ( source.IndexOf( '?' ) == -1 ) ? '?' : '&' ) + "fake=" + rand.Next( ).ToString( ) );
-					}
+                    request = (HttpWebRequest) WebRequest.Create( source );
                     // set timeout value for the request
                     request.Timeout = requestTimeout;
-					// set login and password
+                    // set login and password
 					if ( ( login != null ) && ( password != null ) && ( login != string.Empty ) )
                         request.Credentials = new NetworkCredential( login, password );
 					// set connection group name
 					if ( useSeparateConnectionGroup )
                         request.ConnectionGroupName = GetHashCode( ).ToString( );
 					// get response
-                    response = request.GetResponse( );
+                    responce = request.GetResponse( );
+
+					// check content type
+                    string contentType = responce.ContentType;
+                    if ( contentType.IndexOf( "multipart/x-mixed-replace" ) == -1 )
+                    {
+                        // provide information to clients
+                        if ( VideoSourceError != null )
+                        {
+                            VideoSourceError( this, new VideoSourceErrorEventArgs( "Invalid content type" ) );
+                        }
+
+                        request.Abort( );
+                        request = null;
+                        responce.Close( );
+                        responce = null;
+
+                        // need to stop ?
+                        if ( stopEvent.WaitOne( 0, true ) )
+                            break;
+                        continue;
+                    }
+
+					// get boundary
+					ASCIIEncoding encoding = new ASCIIEncoding( );
+                    boundary = encoding.GetBytes( contentType.Substring( contentType.IndexOf( "boundary=", 0 ) + 9 ) );
+					boundaryLen = boundary.Length;
+
 					// get response stream
-                    stream = response.GetResponseStream( );
+                    stream = responce.GetResponseStream( );
 
 					// loop
-					while ( !stopEvent.WaitOne( 0, true ) )
+					while ( ( !stopEvent.WaitOne( 0, true ) ) && ( !reloadEvent.WaitOne( 0, true ) ) )
 					{
 						// check total read
-						if ( total > bufferSize - readSize )
+						if ( total > bufSize - readSize )
 						{
-							total = 0;
+							total = pos = todo = 0;
 						}
 
 						// read next portion from stream
 						if ( ( read = stream.Read( buffer, total, readSize ) ) == 0 )
-							break;
+							throw new ApplicationException( );
 
 						total += read;
+						todo += read;
 
 						// increment received bytes counter
 						bytesReceived += read;
-					}
-
-					if ( !stopEvent.WaitOne( 0, true ) )
-					{
-						// increment frames counter
-						framesReceived++;
-
-						// provide new image to clients
-						if ( NewFrame != null )
+				
+						// do we know the delimiter ?
+						if ( delimiter == null )
 						{
-							Bitmap bitmap = (Bitmap) Bitmap.FromStream( new MemoryStream( buffer, 0, total ) );
-							// notify client
-                            NewFrame( this, new NewFrameEventArgs( bitmap ) );
-							// release the image
-                            bitmap.Dispose( );
-                            bitmap = null;
+							// find boundary
+							pos = ByteArrayUtils.Find( buffer, boundary, pos, todo );
+
+							if ( pos == -1 )
+							{
+								// was not found
+								todo = boundaryLen - 1;
+								pos = total - todo;
+								continue;
+							}
+
+                            // data to process further
+							todo = total - pos;
+
+							if ( todo < 2 )
+								continue;
+
+							// check new line delimiter type
+							if ( buffer[pos + boundaryLen] == 10 )
+							{
+								delimiterLen = 2;
+								delimiter = new byte[2] { 10, 10 };
+								delimiter2Len = 1;
+								delimiter2 = new byte[1] { 10 };
+							}
+							else
+							{
+								delimiterLen = 4;
+								delimiter = new byte[4]  {13, 10, 13, 10 };
+								delimiter2Len = 2;
+								delimiter2 = new byte[2] { 13, 10 };
+							}
+
+							pos += boundaryLen + delimiter2Len;
+							todo = total - pos;
 						}
-					}
 
-					// wait for a while ?
-					if ( frameInterval > 0 )
-					{
-						// get download duration
-						span = DateTime.Now.Subtract( start );
-						// miliseconds to sleep
-						int msec = frameInterval - (int) span.TotalMilliseconds;
-
-						while ( ( msec > 0 ) && ( stopEvent.WaitOne( 0, true ) == false ) )
+						// search for image start
+						if ( align == 1 )
 						{
-							// sleeping ...
-							Thread.Sleep( ( msec < 100 ) ? msec : 100 );
-							msec -= 100;
+							start = ByteArrayUtils.Find( buffer, delimiter, pos, todo );
+							if ( start != -1 )
+							{
+								// found delimiter
+								start	+= delimiterLen;
+								pos		= start;
+								todo	= total - pos;
+								align	= 2;
+							}
+							else
+							{
+								// delimiter not found
+								todo	= delimiterLen - 1;
+								pos		= total - todo;
+							}
+						}
+
+						// search for image end
+						while ( ( align == 2 ) && ( todo >= boundaryLen ) )
+						{
+							stop = ByteArrayUtils.Find( buffer, boundary, pos, todo );
+							if (stop != -1)
+							{
+								pos		= stop;
+								todo	= total - pos;
+
+								// increment frames counter
+								framesReceived ++;
+
+								// image at stop
+								if ( NewFrame != null )
+								{
+									Bitmap bitmap = (Bitmap) Bitmap.FromStream ( new MemoryStream( buffer, start, stop - start ) );
+									// notify client
+                                    NewFrame( this, new NewFrameEventArgs( bitmap ) );
+									// release the image
+                                    bitmap.Dispose( );
+                                    bitmap = null;
+								}
+
+								// shift array
+								pos		= stop + boundaryLen;
+								todo	= total - pos;
+								Array.Copy( buffer, pos, buffer, 0, todo );
+
+								total	= todo;
+								pos		= 0;
+								align	= 1;
+							}
+							else
+							{
+								// delimiter not found
+								todo	= boundaryLen - 1;
+								pos		= total - todo;
+							}
 						}
 					}
 				}
@@ -480,6 +521,11 @@ namespace AForge.Video
                         VideoSourceError( this, new VideoSourceErrorEventArgs( exception.Message ) );
 
                     }
+                    // wait for a while before the next try
+					Thread.Sleep( 250 );
+				}
+				catch ( ApplicationException )
+				{
 					// wait for a while before the next try
 					Thread.Sleep( 250 );
 				}
@@ -501,10 +547,10 @@ namespace AForge.Video
 						stream = null;
 					}
 					// close response
-					if ( response != null )
+					if ( responce != null )
 					{
-                        response.Close( );
-                        response = null;
+                        responce.Close( );
+                        responce = null;
 					}
 				}
 
