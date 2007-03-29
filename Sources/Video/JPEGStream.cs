@@ -80,7 +80,7 @@ namespace AForge.Video
         // size of portion to read at once
 		private const int readSize = 1024;		
 
-		private Thread	thread = null;
+		private Thread thread = null;
 		private ManualResetEvent stopEvent = null;
 
         /// <summary>

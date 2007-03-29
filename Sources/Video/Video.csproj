@@ -38,8 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ByteArrayUtils.cs" />
     <Compile Include="IVideoSource.cs" />
     <Compile Include="JPEGStream.cs" />
+    <Compile Include="MJPEGStream.cs" />
     <Compile Include="VideoEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
