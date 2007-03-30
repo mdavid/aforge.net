@@ -9,6 +9,7 @@
     <contentPlacement>AboveNamespaces</contentPlacement>
     <dependencies>
         <dependencyItem depPath="D:\Andrew\AForge\video\Release\AForge.dll" />
+        <dependencyItem depPath="D:\Andrew\AForge\video\Release\AForge.Video.dll" />
     </dependencies>
     <projectSummary />
     <sandcastlePath />

@@ -33,12 +33,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge, Version=1.1.0.0, Culture=neutral, PublicKeyToken=f85e6447777c5a04, processorArchitecture=MSIL" />
+    <Reference Include="AForge.Video, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AVIFileVideoSource.cs" />
     <Compile Include="AVIReader.cs" />
     <Compile Include="AVIWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

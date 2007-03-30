@@ -1,4 +1,4 @@
-// AForge Video Library
+// AForge Video for Windows Library
 // AForge.NET framework
 //
 // Copyright © Andrew Kirillov, 2007
