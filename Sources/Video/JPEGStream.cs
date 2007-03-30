@@ -106,7 +106,7 @@ namespace AForge.Video
         /// 
         /// <remarks>The property indicates to open web request in separate connection group.</remarks>
         /// 
-		public bool	SeparateConnectionGroup
+		public bool SeparateConnectionGroup
 		{
 			get { return useSeparateConnectionGroup; }
 			set { useSeparateConnectionGroup = value; }
@@ -119,7 +119,7 @@ namespace AForge.Video
         /// <remarks>If the property is set to <b>true</b>, then a fake parameter will be added
         /// to URL to prevent caching. It's required for client, who are behind proxy server.</remarks>
         /// 
-		public bool	PreventCaching
+		public bool PreventCaching
 		{
 			get { return preventCaching; }
 			set { preventCaching = value; }
@@ -130,7 +130,8 @@ namespace AForge.Video
         /// </summary>
         /// 
         /// <remarks>The property sets the interval in milliseconds betwen frames. If the property is
-        /// set to 100, then the dired frame rate will be 10 frames per second.</remarks>
+        /// set to 100, then the desired frame rate will be 10 frames per second. Default value is 0 -
+        /// get new frames as fast as possible.</remarks>
         /// 
 		public int FrameInterval
 		{
@@ -478,7 +479,6 @@ namespace AForge.Video
                     if ( VideoSourceError != null )
                     {
                         VideoSourceError( this, new VideoSourceErrorEventArgs( exception.Message ) );
-
                     }
 					// wait for a while before the next try
 					Thread.Sleep( 250 );
