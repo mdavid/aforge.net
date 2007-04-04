@@ -72,22 +72,22 @@ namespace AForge.MachineLearning
             // action probabilities
             double[] actionProbabilities = new double[actionsCount];
             // actions sum
-            double sum = 0, probailitiesSum = 0;
+            double sum = 0, probabilitiesSum = 0;
 
             for ( int i = 0; i < actionsCount; i++ )
             {
                 double actionProbability = Math.Exp( actionEstimates[i] / temperature );
 
                 actionProbabilities[i] = actionProbability;
-                probailitiesSum += actionProbability;
+                probabilitiesSum += actionProbability;
             }
 
             // get random number, which determines which action to choose
-            double actionRandomNumber = rand.Next( );
+            double actionRandomNumber = rand.NextDouble( );
 
             for ( int i = 0; i < actionsCount; i++ )
             {
-                sum += actionProbabilities[i] / probailitiesSum;
+                sum += actionProbabilities[i] / probabilitiesSum;
                 if ( actionRandomNumber <= sum )
                     return i;
             }
