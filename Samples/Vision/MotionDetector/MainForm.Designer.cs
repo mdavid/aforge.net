@@ -43,6 +43,8 @@ namespace MotionDetector
             this.statusBar = new System.Windows.Forms.StatusStrip( );
             this.fpsLabel = new System.Windows.Forms.ToolStripStatusLabel( );
             this.panel1 = new System.Windows.Forms.Panel( );
+            this.openJPEGURLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
+            this.openMJPEGURLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.cameraWindow = new MotionDetector.CameraWindow( );
             this.menuMenu.SuspendLayout( );
             this.statusBar.SuspendLayout( );
@@ -57,13 +59,15 @@ namespace MotionDetector
             this.helpToolStripMenuItem} );
             this.menuMenu.Location = new System.Drawing.Point( 0, 0 );
             this.menuMenu.Name = "menuMenu";
-            this.menuMenu.Size = new System.Drawing.Size( 425, 24 );
+            this.menuMenu.Size = new System.Drawing.Size( 432, 24 );
             this.menuMenu.TabIndex = 0;
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.openJPEGURLToolStripMenuItem,
+            this.openMJPEGURLToolStripMenuItem,
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem} );
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -74,19 +78,19 @@ namespace MotionDetector
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ( (System.Windows.Forms.Keys) ( ( System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O ) ) );
-            this.openToolStripMenuItem.Size = new System.Drawing.Size( 151, 22 );
+            this.openToolStripMenuItem.Size = new System.Drawing.Size( 168, 22 );
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler( this.openToolStripMenuItem_Click );
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size( 148, 6 );
+            this.toolStripMenuItem1.Size = new System.Drawing.Size( 165, 6 );
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size( 151, 22 );
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size( 168, 22 );
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler( this.exitToolStripMenuItem_Click );
             // 
@@ -125,15 +129,15 @@ namespace MotionDetector
             // 
             this.statusBar.Items.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.fpsLabel} );
-            this.statusBar.Location = new System.Drawing.Point( 0, 320 );
+            this.statusBar.Location = new System.Drawing.Point( 0, 334 );
             this.statusBar.Name = "statusBar";
-            this.statusBar.Size = new System.Drawing.Size( 425, 22 );
+            this.statusBar.Size = new System.Drawing.Size( 432, 22 );
             this.statusBar.TabIndex = 3;
             // 
             // fpsLabel
             // 
             this.fpsLabel.Name = "fpsLabel";
-            this.fpsLabel.Size = new System.Drawing.Size( 410, 17 );
+            this.fpsLabel.Size = new System.Drawing.Size( 417, 17 );
             this.fpsLabel.Spring = true;
             this.fpsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -143,8 +147,22 @@ namespace MotionDetector
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point( 0, 24 );
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size( 425, 296 );
+            this.panel1.Size = new System.Drawing.Size( 432, 310 );
             this.panel1.TabIndex = 4;
+            // 
+            // openJPEGURLToolStripMenuItem
+            // 
+            this.openJPEGURLToolStripMenuItem.Name = "openJPEGURLToolStripMenuItem";
+            this.openJPEGURLToolStripMenuItem.Size = new System.Drawing.Size( 168, 22 );
+            this.openJPEGURLToolStripMenuItem.Text = "Open JPEG &URL";
+            this.openJPEGURLToolStripMenuItem.Click += new System.EventHandler( this.openJPEGURLToolStripMenuItem_Click );
+            // 
+            // openMJPEGURLToolStripMenuItem
+            // 
+            this.openMJPEGURLToolStripMenuItem.Name = "openMJPEGURLToolStripMenuItem";
+            this.openMJPEGURLToolStripMenuItem.Size = new System.Drawing.Size( 168, 22 );
+            this.openMJPEGURLToolStripMenuItem.Text = "Open &MJPEG URL";
+            this.openMJPEGURLToolStripMenuItem.Click += new System.EventHandler( this.openMJPEGURLToolStripMenuItem_Click );
             // 
             // cameraWindow
             // 
@@ -159,7 +177,7 @@ namespace MotionDetector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size( 425, 342 );
+            this.ClientSize = new System.Drawing.Size( 432, 356 );
             this.Controls.Add( this.panel1 );
             this.Controls.Add( this.statusBar );
             this.Controls.Add( this.menuMenu );
@@ -195,6 +213,8 @@ namespace MotionDetector
         private System.Windows.Forms.StatusStrip statusBar;
         private System.Windows.Forms.ToolStripStatusLabel fpsLabel;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem openJPEGURLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openMJPEGURLToolStripMenuItem;
     }
 }
 

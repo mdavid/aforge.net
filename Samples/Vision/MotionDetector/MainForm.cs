@@ -58,7 +58,8 @@ namespace MotionDetector
         // "About" menu item clicked
         private void aboutToolStripMenuItem_Click( object sender, EventArgs e )
         {
-
+            AboutForm form = new AboutForm( );
+            form.ShowDialog( );
         }
 
         // "Open" menu item clieck - open AVI file
@@ -70,6 +71,54 @@ namespace MotionDetector
                 AVIFileVideoSource fileSource = new AVIFileVideoSource( openFileDialog.FileName );
 
                 OpenVideoSource( fileSource );
+            }
+        }
+
+        // Open JPEG URL
+        private void openJPEGURLToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            URLForm form = new URLForm( );
+
+            form.Description = "Enter URL of an updating JPEG from a web camera:";
+            form.URLs = new string[]
+				{
+					"http://61.220.38.10/axis-cgi/jpg/image.cgi?camera=1",
+					"http://212.98.46.120/axis-cgi/jpg/image.cgi?resolution=352x240",
+					"http://webcam.mmhk.cz/axis-cgi/jpg/image.cgi?resolution=320x240",
+					"http://195.243.185.195/axis-cgi/jpg/image.cgi?camera=1"
+				};
+
+            if ( form.ShowDialog( this ) == DialogResult.OK )
+            {
+                // create video source
+                JPEGStream jpegSource = new JPEGStream( form.URL );
+
+                // open it
+                OpenVideoSource( jpegSource );
+            }
+        }
+
+        // Open MJPEG URL
+        private void openMJPEGURLToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            URLForm form = new URLForm( );
+
+            form.Description = "Enter URL of an MJPEG video stream:";
+            form.URLs = new string[]
+				{
+					"http://129.186.47.239/axis-cgi/mjpg/video.cgi?resolution=352x240",
+					"http://195.243.185.195/axis-cgi/mjpg/video.cgi?camera=3",
+					"http://195.243.185.195/axis-cgi/mjpg/video.cgi?camera=4",
+                    "http://chipmunk.uvm.edu/cgi-bin/webcam/nph-update.cgi?dummy=garb"
+				};
+
+            if ( form.ShowDialog( this ) == DialogResult.OK )
+            {
+                // create video source
+                MJPEGStream mjpegSource = new MJPEGStream( form.URL );
+
+                // open it
+                OpenVideoSource( mjpegSource );
             }
         }
 
@@ -111,6 +160,7 @@ namespace MotionDetector
 
                 // detach camera from camera window
                 cameraWindow.Camera = null;
+                Application.DoEvents( );
 
                 // signal camera to stop
                 camera.SignalToStop( );
