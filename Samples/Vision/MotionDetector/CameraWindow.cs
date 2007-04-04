@@ -67,6 +67,9 @@ namespace MotionDetector
 
                 // unlock
                 Monitor.Exit( this );
+
+                // repaint the control
+                Invalidate( );
             }
         }
 
