@@ -23,7 +23,9 @@ namespace MotionDetector
     public partial class MainForm : Form
     {
         // motion detector
-        IMotionDetector detector = null;
+        private IMotionDetector detector = null;
+        // motion detector's type
+        private int detectorType = 0;
 
         // statistics length
         private const int statLength = 15;
@@ -214,6 +216,54 @@ namespace MotionDetector
         private void MainForm_SizeChanged( object sender, EventArgs e )
         {
             cameraWindow.UpdatePosition( );
+        }
+
+        // Turn off motion detection
+        private void noneToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            detectorType = 0;
+            SetMotionDetector( null );
+        }
+
+        // Turn on motion detector type #1 - two frames difference
+        private void detector1ToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            detectorType = 1;
+            SetMotionDetector( new TwoFramesDifferenceMotionDetector( ) );
+        }
+
+        // Set motion detector
+        private void SetMotionDetector( IMotionDetector detector )
+        {
+            this.detector = detector;
+
+            // set motion detector to camera
+            Camera camera = cameraWindow.Camera;
+
+            if ( camera != null )
+            {
+                camera.Lock( );
+                camera.MotionDetector = detector;
+
+                // reset statistics
+                statIndex = statReady = 0;
+                camera.Unlock( );
+            }
+        }
+
+        // Motion menu is opening
+        private void motionToolStripMenuItem_DropDownOpening( object sender, EventArgs e )
+        {
+            ToolStripMenuItem[] items = new ToolStripMenuItem[]
+			{
+				noneToolStripMenuItem, detector1ToolStripMenuItem,
+			};
+
+            for ( int i = 0; i < items.Length; i++ )
+            {
+                items[i].Checked = ( i == detectorType );
+            }
+
         }
     }
 }
