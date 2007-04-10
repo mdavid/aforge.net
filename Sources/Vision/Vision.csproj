@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundModelingHighPrecisionMotionDetector.cs" />
+    <Compile Include="ImageProcessingTools.cs" />
     <Compile Include="IMotionDetector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwoFramesDifferenceMotionDetector.cs" />

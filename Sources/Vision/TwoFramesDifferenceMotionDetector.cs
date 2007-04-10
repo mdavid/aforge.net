@@ -15,7 +15,26 @@ namespace AForge.Vision
     /// Motion detector based on two frames difference.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The class implements the simplest motion detector, which is based on
+    /// two continues frames difference. The difference frame is threshold and the amount of
+    /// difference pixels is calculated. To suppress stand-alone noisy pixels erosion
+    /// morphological operator may be applied.</para>
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create motion detector with noise suppresion
+    /// IMotionDetector detector = new TwoFramesDifferenceMotionDetector( false, true );
+    /// // feed first image to the detector
+    /// detector.ProcessFrame( image );
+    /// // ...
+    /// // feed next image
+    /// detector.ProcessFrame( nextImage );
+    /// // check amount of motion
+    /// if ( detector.MotionLevel &gt; 0.005 )
+    /// {
+    ///     // motion amount is greater then 0.5% - fire alarm
+    /// }
+    /// </code>
+    /// </remarks>
     /// 
     public class TwoFramesDifferenceMotionDetector : IMotionDetector
     {
@@ -46,7 +65,8 @@ namespace AForge.Vision
         /// Highlight motion regions or not.
         /// </summary>
         /// 
-        /// <remarks><para>Turning the value on leads to more processing time of video frame.</para>
+        /// <remarks><para>Turning the value on leads to more processing time of video frame. Default values
+        /// is <b>false</b>.</para>
         /// </remarks>
         /// 
         public bool HighlightMotionRegions
@@ -61,7 +81,8 @@ namespace AForge.Vision
         /// 
         /// <remarks><para>The value specifies if additional filtering should be
         /// done to suppress standalone noisy pixels.</para>
-        /// <para>Turning the value on leads to more processing time of video frame.</para>
+        /// <para>Turning the value on leads to more processing time of video frame. Default values
+        /// is <b>false</b>.</para>
         /// </remarks>
         /// 
         public bool SuppressNoise
@@ -90,7 +111,7 @@ namespace AForge.Vision
         /// </summary>
         /// 
         /// <remarks>The value specifies the amount off difference between pixels, which is treated
-        /// as motion pixel.</remarks>
+        /// as motion pixel. Default value is <b>15</b>.</remarks>
         /// 
         public int DifferenceThreshold
         {
@@ -176,7 +197,7 @@ namespace AForge.Vision
                     ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );
 
                 // convert source frame to grayscale
-                CrayscaleImage( imageData, previousFrame );
+                ImageProcessingTools.CrayscaleImage( imageData, previousFrame );
 
                 // unlock source image
                 image.UnlockBits( imageData );
@@ -195,9 +216,9 @@ namespace AForge.Vision
                 PixelFormat.Format24bppRgb );
 
             // convert current image to grayscale
-            CrayscaleImage( imageData, currentFrame );
+            ImageProcessingTools.CrayscaleImage( imageData, currentFrame );
 
-            // pointers to previous and source frames
+            // pointers to previous and current frames
             byte* prevFrame = (byte*) previousFrame.ToPointer( );
             byte* currFrame = (byte*) currentFrame.ToPointer( );
             // difference value
@@ -308,33 +329,6 @@ namespace AForge.Vision
             {
                 Marshal.FreeHGlobal( tempFrame );
                 tempFrame = IntPtr.Zero;
-            }
-        }
-
-        /// <summary>
-        /// Grayscale source image.
-        /// </summary>
-        /// 
-        /// <param name="sourceImage">Source color image.</param>
-        /// <param name="destBuffer">Destination buffer for grayscale image.</param>
-        /// 
-        private unsafe void CrayscaleImage( BitmapData sourceImage, IntPtr destBuffer )
-        {
-            // do the job
-            byte* src = (byte*) sourceImage.Scan0.ToPointer( );
-            byte* dst = (byte*) destBuffer.ToPointer( );
-            int srcOffset = sourceImage.Stride - width * 3;
-
-			// for each line
-            for ( int y = 0; y < height; y++ )
-            {
-                // for each pixel
-                for ( int x = 0; x < width; x++, src += 3, dst++ )
-                {
-                    // use integer arithmetic to instead of doubles to speed up calculation
-                    *dst = (byte) ( ( 2125 * src[2] + 7154 * src[1] + 721 * src[0] ) / 10000 );
-                }
-                src += srcOffset;
             }
         }
     }

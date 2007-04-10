@@ -229,7 +229,14 @@ namespace MotionDetector
         private void detector1ToolStripMenuItem_Click( object sender, EventArgs e )
         {
             detectorType = 1;
-            SetMotionDetector( new TwoFramesDifferenceMotionDetector( ) );
+            SetMotionDetector( new TwoFramesDifferenceMotionDetector( true, true ) );
+        }
+
+        // Turn on motion detector type #2 - high precision background modeling
+        private void detector2ToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            detectorType = 2;
+            SetMotionDetector( new BackgroundModelingHighPrecisionMotionDetector( true, true ) );
         }
 
         // Set motion detector
@@ -256,7 +263,7 @@ namespace MotionDetector
         {
             ToolStripMenuItem[] items = new ToolStripMenuItem[]
 			{
-				noneToolStripMenuItem, detector1ToolStripMenuItem,
+				noneToolStripMenuItem, detector1ToolStripMenuItem, detector2ToolStripMenuItem
 			};
 
             for ( int i = 0; i < items.Length; i++ )
@@ -264,6 +271,7 @@ namespace MotionDetector
                 items[i].Checked = ( i == detectorType );
             }
 
+            Bitmap image, nextImage;
         }
     }
 }
