@@ -24,7 +24,7 @@ namespace AForge.MachineLearning
     /// where <i>t</i> is <see cref="Temperature"/>.</para>
     /// </remarks>
     /// 
-    public class BoltzmannDistributionExploration : IExplorationPolicy
+    public class BoltzmannExploration : IExplorationPolicy
     {
         // termperature parameter of Boltzmann distribution
         private double temperature;
@@ -43,12 +43,12 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BoltzmannDistributionExploration"/> class.
+        /// Initializes a new instance of the <see cref="BoltzmannExploration"/> class.
         /// </summary>
         /// 
         /// <param name="temperature">Termperature parameter of Boltzmann distribution.</param>
         /// 
-        public BoltzmannDistributionExploration( double temperature )
+        public BoltzmannExploration( double temperature )
         {
             Temperature = temperature;
         }
