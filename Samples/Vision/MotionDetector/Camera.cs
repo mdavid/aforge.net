@@ -22,6 +22,7 @@ namespace MotionDetector
 		private IVideoSource	videoSource = null;
 		private IMotionDetector	motionDetecotor = null;
 		private Bitmap			lastFrame = null;
+        private string          lastVideoSourceError = null;
 
 		// image dimension
 		private int width = -1;
@@ -31,34 +32,41 @@ namespace MotionDetector
 		private double	alarmLevel = 0.005;
 
 		// public events
-		public event EventHandler	NewFrame;
-		public event EventHandler	Alarm;
+		public event EventHandler NewFrame;
+		public event EventHandler Alarm;
+        public event EventHandler VideoSourceError;
 
-		// LastFrame property
+		// Last video frame
 		public Bitmap LastFrame
 		{
 			get { return lastFrame; }
 		}
 
-		// Width property
+        // Last video source error
+        public string LastVideoSourceError
+        {
+            get { return lastVideoSourceError; }
+        }
+
+		// Video frame width
 		public int Width
 		{
 			get { return width; }
 		}
 
-		// Height property
+		// Vodeo frame height
 		public int Height
 		{
 			get { return height; }
 		}
 
-		// FramesReceived property
+		// Frames received from the last access to the property
 		public int FramesReceived
 		{
 			get { return ( videoSource == null ) ? 0 : videoSource.FramesReceived; }
 		}
 
-		// BytesReceived property
+        // Bytes received from the last access to the property
 		public int BytesReceived
 		{
 			get { return ( videoSource == null ) ? 0 : videoSource.BytesReceived; }
@@ -70,7 +78,7 @@ namespace MotionDetector
 			get { return ( videoSource == null ) ? false : videoSource.IsRunning; }
 		}
 
-		// MotionDetector property
+		// Motion detector used for motion detection
 		public IMotionDetector MotionDetector
 		{
 			get { return motionDetecotor; }
@@ -85,6 +93,7 @@ namespace MotionDetector
 			this.videoSource = source;
 			this.motionDetecotor = detector;
 			videoSource.NewFrame += new NewFrameEventHandler( video_NewFrame );
+            videoSource.VideoSourceError += new VideoSourceErrorEventHandler( video_VideoSourceError );
 		}
 
 		// Start video source
@@ -159,6 +168,9 @@ namespace MotionDetector
 					lastFrame.Dispose( );
 				}
 
+                // reset error
+                lastVideoSourceError = null;
+                // get new frame
 				lastFrame = (Bitmap) e.Frame.Clone( );
 
 				// apply motion detector
@@ -193,5 +205,24 @@ namespace MotionDetector
 			if ( NewFrame != null )
 				NewFrame( this, new EventArgs( ) );
 		}
+
+        // On video source error
+        private void video_VideoSourceError( object sender, VideoSourceErrorEventArgs e )
+        {
+            // reset motion detector
+            if ( motionDetecotor != null )
+            {
+                motionDetecotor.Reset( );
+            }
+
+            // save video source error's description
+            lastVideoSourceError = e.Description;
+
+            // notify clients about the error
+            if ( VideoSourceError != null )
+            {
+                VideoSourceError( this, new EventArgs( ) );
+            }
+        }
 	}
 }

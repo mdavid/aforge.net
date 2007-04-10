@@ -49,6 +49,7 @@ namespace MotionDetector
                 {
                     camera.NewFrame -= new EventHandler( camera_NewFrame );
                     camera.Alarm -= new EventHandler( camera_Alarm );
+                    camera.VideoSourceError -= new EventHandler( camera_VideoSourceError );
                     timer.Stop( );
                 }
 
@@ -62,6 +63,7 @@ namespace MotionDetector
                 {
                     camera.NewFrame += new EventHandler( camera_NewFrame );
                     camera.Alarm += new EventHandler( camera_Alarm );
+                    camera.VideoSourceError += new EventHandler( camera_VideoSourceError );
                     timer.Start( );
                 }
 
@@ -109,7 +111,7 @@ namespace MotionDetector
                     camera.Lock( );
 
                     // draw frame
-                    if ( camera.LastFrame != null )
+                    if ( ( camera.LastFrame != null ) && ( camera.LastVideoSourceError == null ) )
                     {
                         g.DrawImage( camera.LastFrame, rc.X + 1, rc.Y + 1, rc.Width - 2, rc.Height - 2 );
                         firstFrame = false;
@@ -120,7 +122,9 @@ namespace MotionDetector
                         Font drawFont = new Font( "Arial", 12 );
                         SolidBrush drawBrush = new SolidBrush( Color.White );
 
-                        g.DrawString( "Connecting ...", drawFont, drawBrush, new PointF( 5, 5 ) );
+                        g.DrawString( ( camera.LastVideoSourceError == null ) ?
+                            "Connecting ..." : camera.LastVideoSourceError,
+                            drawFont, drawBrush, new PointF( 5, 5 ) );
 
                         drawBrush.Dispose( );
                         drawFont.Dispose( );
@@ -189,6 +193,12 @@ namespace MotionDetector
         {
             // flash for 2 seconds
             flash = (int) ( 2 * ( 1000 / timer.Interval ) );
+        }
+
+        // On video source error
+        private void camera_VideoSourceError( object sender, System.EventArgs e )
+        {
+            Invalidate( );
         }
 
         // On timer
