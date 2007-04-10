@@ -31,6 +31,7 @@ namespace Animat
             this.groupBox1 = new System.Windows.Forms.GroupBox( );
             this.worldSizeBox = new System.Windows.Forms.TextBox( );
             this.label1 = new System.Windows.Forms.Label( );
+            this.cellWorld = new Animat.CellWorld( );
             this.loadButton = new System.Windows.Forms.Button( );
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog( );
             this.groupBox2 = new System.Windows.Forms.GroupBox( );
@@ -55,7 +56,6 @@ namespace Animat
             this.label2 = new System.Windows.Forms.Label( );
             this.stopButton = new System.Windows.Forms.Button( );
             this.startLearningButton = new System.Windows.Forms.Button( );
-            this.cellWorld = new Animat.CellWorld( );
             this.groupBox1.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
             this.groupBox3.SuspendLayout( );
@@ -90,6 +90,16 @@ namespace Animat
             this.label1.Size = new System.Drawing.Size( 59, 13 );
             this.label1.TabIndex = 2;
             this.label1.Text = "World size:";
+            // 
+            // cellWorld
+            // 
+            this.cellWorld.Coloring = null;
+            this.cellWorld.Location = new System.Drawing.Point( 10, 20 );
+            this.cellWorld.Map = null;
+            this.cellWorld.Name = "cellWorld";
+            this.cellWorld.Size = new System.Drawing.Size( 280, 280 );
+            this.cellWorld.TabIndex = 1;
+            this.cellWorld.Text = "cellWorld1";
             // 
             // loadButton
             // 
@@ -149,7 +159,7 @@ namespace Animat
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size( 96, 13 );
             this.label10.TabIndex = 0;
-            this.label10.Text = "Learning algorithm:";
+            this.label10.Text = "Learning &algorithm:";
             // 
             // goalRewardBox
             // 
@@ -164,7 +174,7 @@ namespace Animat
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size( 70, 15 );
             this.label9.TabIndex = 12;
-            this.label9.Text = "Goal reward:";
+            this.label9.Text = "&Goal reward:";
             // 
             // wallRewardBox
             // 
@@ -179,7 +189,7 @@ namespace Animat
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size( 80, 15 );
             this.label8.TabIndex = 10;
-            this.label8.Text = "Wall reward:";
+            this.label8.Text = "&Wall reward:";
             // 
             // moveRewardBox
             // 
@@ -194,7 +204,7 @@ namespace Animat
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size( 100, 15 );
             this.label7.TabIndex = 8;
-            this.label7.Text = "Move reward:";
+            this.label7.Text = "&Move reward:";
             // 
             // label6
             // 
@@ -218,7 +228,7 @@ namespace Animat
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size( 96, 13 );
             this.label5.TabIndex = 6;
-            this.label5.Text = "Learning iterations:";
+            this.label5.Text = "Learning &iterations:";
             // 
             // learningRateBox
             // 
@@ -234,7 +244,7 @@ namespace Animat
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size( 95, 13 );
             this.label4.TabIndex = 4;
-            this.label4.Text = "Initial learning rate:";
+            this.label4.Text = "Initial learning &rate:";
             // 
             // explorationRateBox
             // 
@@ -250,7 +260,7 @@ namespace Animat
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size( 109, 13 );
             this.label3.TabIndex = 2;
-            this.label3.Text = "Initial exploration rate:";
+            this.label3.Text = "Initial &exploration rate:";
             // 
             // groupBox3
             // 
@@ -315,16 +325,6 @@ namespace Animat
             this.startLearningButton.Text = "&Start";
             this.startLearningButton.UseVisualStyleBackColor = true;
             this.startLearningButton.Click += new System.EventHandler( this.startLearningButton_Click );
-            // 
-            // cellWorld
-            // 
-            this.cellWorld.Coloring = null;
-            this.cellWorld.Location = new System.Drawing.Point( 10, 20 );
-            this.cellWorld.Map = null;
-            this.cellWorld.Name = "cellWorld";
-            this.cellWorld.Size = new System.Drawing.Size( 280, 280 );
-            this.cellWorld.TabIndex = 1;
-            this.cellWorld.Text = "cellWorld1";
             // 
             // MainForm
             // 
