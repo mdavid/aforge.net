@@ -82,9 +82,9 @@ namespace AForge.MachineLearning
             // try to do exploration
             if ( rand.NextDouble( ) < epsilon )
             {
-                int randomAction = rand.Next( actionsCount  - 1 );
+                int randomAction = rand.Next( actionsCount - 1 );
 
-                if ( randomAction == greedyAction )
+                if ( randomAction >= greedyAction )
                     randomAction++;
 
                 return randomAction;
