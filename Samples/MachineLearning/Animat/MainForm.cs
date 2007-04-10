@@ -322,13 +322,13 @@ namespace Animat
             if ( algorithmCombo.SelectedIndex == 0 )
             {
                 // create new QLearning algorithm's instance
-                qLearning = new QLearning( 256, 4, new EpsilonGreedyExploration( explorationRate ) );
+                qLearning = new QLearning( 256, 4, new TabuSearchExploration( 4, new EpsilonGreedyExploration( explorationRate ) ) );
                 workerThread = new Thread( new ThreadStart( QLearningThread ) );
             }
             else
             {
                 // create new Sarsa algorithm's instance
-                sarsa = new Sarsa( 256, 4, new EpsilonGreedyExploration( explorationRate ) );
+                sarsa = new Sarsa( 256, 4, new TabuSearchExploration( 4, new EpsilonGreedyExploration( explorationRate ) ) );
                 workerThread = new Thread( new ThreadStart( SarsaThread ) );
             }
 
@@ -376,7 +376,8 @@ namespace Animat
             // curent coordinates of the agent
             int agentCurrentX, agentCurrentY;
             // exploration policy
-            EpsilonGreedyExploration explorationPolicy = (EpsilonGreedyExploration) qLearning.ExplorationPolicy;
+            TabuSearchExploration tabuPolicy = (TabuSearchExploration) qLearning.ExplorationPolicy;
+            EpsilonGreedyExploration explorationPolicy = (EpsilonGreedyExploration) tabuPolicy.BasePolicy;
 
 			// loop
             while ( ( !needToStop ) && ( iteration < learningIterations ) )
@@ -385,6 +386,8 @@ namespace Animat
                 explorationPolicy.Epsilon = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
                 // set learning rate for this iteration
                 qLearning.LearningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
+                // clear tabu list
+                tabuPolicy.ResetTabuList( );
 
                 // reset agent's coordinates to the starting position
                 agentCurrentX = agentStartX;
@@ -406,6 +409,9 @@ namespace Animat
                     int nextState = GetStateNumber( agentCurrentX, agentCurrentY );
                     // do learning of the agent - update his Q-function
                     qLearning.UpdateState( currentState, action, reward, nextState );
+
+                    // set tabu action
+                    tabuPolicy.SetTabuAction( ( action + 2 ) % 4, 1 );
                 }
 
                 System.Diagnostics.Debug.WriteLine( steps );
@@ -427,7 +433,8 @@ namespace Animat
             // curent coordinates of the agent
             int agentCurrentX, agentCurrentY;
             // exploration policy
-            EpsilonGreedyExploration explorationPolicy = (EpsilonGreedyExploration) sarsa.ExplorationPolicy;
+            TabuSearchExploration tabuPolicy = (TabuSearchExploration) sarsa.ExplorationPolicy;
+            EpsilonGreedyExploration explorationPolicy = (EpsilonGreedyExploration) tabuPolicy.BasePolicy;
 
 			// loop
             while ( ( !needToStop ) && ( iteration < learningIterations ) )
@@ -436,6 +443,8 @@ namespace Animat
                 explorationPolicy.Epsilon = explorationRate - ( (double) iteration / learningIterations ) * explorationRate;
                 // set learning rate for this iteration
                 sarsa.LearningRate = learningRate - ( (double) iteration / learningIterations ) * learningRate;
+                // clear tabu list
+                tabuPolicy.ResetTabuList( );
 
                 // reset agent's coordinates to the starting position
                 agentCurrentX = agentStartX;
@@ -452,6 +461,10 @@ namespace Animat
                 while ( ( !needToStop ) && ( ( agentCurrentX != agentStopX ) || ( agentCurrentY != agentStopY ) ) )
                 {
                     steps++;
+
+                    // set tabu action
+                    tabuPolicy.SetTabuAction( ( previousAction + 2 ) % 4, 1 );
+
                     // get agent's next state
                     int nextState = GetStateNumber( agentCurrentX, agentCurrentY );
                     // get agent's next action
@@ -488,14 +501,18 @@ namespace Animat
         private void ShowSolutionThread( )
         {
             // set exploration rate to 0, so agent uses only what he learnt
-            EpsilonGreedyExploration exploratioRate = null;
+            TabuSearchExploration tabuPolicy = null;
+            EpsilonGreedyExploration exploratioPolicy = null;
 
             if ( qLearning != null )
-                exploratioRate = (EpsilonGreedyExploration) qLearning.ExplorationPolicy;
+                tabuPolicy = (TabuSearchExploration) qLearning.ExplorationPolicy;
             else
-                exploratioRate = (EpsilonGreedyExploration) sarsa.ExplorationPolicy;
+                tabuPolicy = (TabuSearchExploration) sarsa.ExplorationPolicy;
 
-            exploratioRate.Epsilon = 0;
+            exploratioPolicy = (EpsilonGreedyExploration) tabuPolicy.BasePolicy;
+
+            exploratioPolicy.Epsilon = 0;
+            tabuPolicy.ResetTabuList( );
 
             // curent coordinates of the agent
             int agentCurrentX = agentStartX, agentCurrentY = agentStartY;
