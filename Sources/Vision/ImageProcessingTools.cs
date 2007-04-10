@@ -29,7 +29,7 @@ namespace AForge.Vision
         /// <param name="sourceImage">Source color image.</param>
         /// <param name="destBuffer">Destination buffer for grayscale image.</param>
         /// 
-        public static unsafe void CrayscaleImage( BitmapData sourceImage, IntPtr destBuffer )
+        public static unsafe void GrayscaleImage( BitmapData sourceImage, IntPtr destBuffer )
         {
             int width = sourceImage.Width;
             int height = sourceImage.Height;
