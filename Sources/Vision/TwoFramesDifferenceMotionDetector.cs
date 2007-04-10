@@ -197,7 +197,7 @@ namespace AForge.Vision
                     ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );
 
                 // convert source frame to grayscale
-                ImageProcessingTools.CrayscaleImage( imageData, previousFrame );
+                ImageProcessingTools.GrayscaleImage( imageData, previousFrame );
 
                 // unlock source image
                 image.UnlockBits( imageData );
@@ -216,7 +216,7 @@ namespace AForge.Vision
                 PixelFormat.Format24bppRgb );
 
             // convert current image to grayscale
-            ImageProcessingTools.CrayscaleImage( imageData, currentFrame );
+            ImageProcessingTools.GrayscaleImage( imageData, currentFrame );
 
             // pointers to previous and current frames
             byte* prevFrame = (byte*) previousFrame.ToPointer( );
