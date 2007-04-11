@@ -229,14 +229,24 @@ namespace MotionDetector
         private void detector1ToolStripMenuItem_Click( object sender, EventArgs e )
         {
             detectorType = 1;
-            SetMotionDetector( new TwoFramesDifferenceMotionDetector( true, true ) );
+            SetMotionDetector( new TwoFramesDifferenceMotionDetector(
+                highlightMotionRegionsToolStripMenuItem.Checked, true ) );
         }
 
         // Turn on motion detector type #2 - high precision background modeling
         private void detector2ToolStripMenuItem_Click( object sender, EventArgs e )
         {
             detectorType = 2;
-            SetMotionDetector( new BackgroundModelingHighPrecisionMotionDetector( true, true ) );
+            SetMotionDetector( new BackgroundModelingHighPrecisionMotionDetector(
+                highlightMotionRegionsToolStripMenuItem.Checked, true ) );
+        }
+
+        // Turn on motion detector type #3 - low precision background modeling
+        private void detector3ToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            detectorType = 3;
+            SetMotionDetector( new BackgroundModelingLowPrecisionMotionDetector(
+                highlightMotionRegionsToolStripMenuItem.Checked ) );
         }
 
         // Set motion detector
@@ -263,15 +273,30 @@ namespace MotionDetector
         {
             ToolStripMenuItem[] items = new ToolStripMenuItem[]
 			{
-				noneToolStripMenuItem, detector1ToolStripMenuItem, detector2ToolStripMenuItem
+				noneToolStripMenuItem, detector1ToolStripMenuItem, detector2ToolStripMenuItem,
+                detector3ToolStripMenuItem
 			};
 
             for ( int i = 0; i < items.Length; i++ )
             {
                 items[i].Checked = ( i == detectorType );
             }
+        }
 
-            Bitmap image, nextImage;
+        // Turn on/off motion regions highlight
+        private void highlightMotionRegionsToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            highlightMotionRegionsToolStripMenuItem.Checked = !highlightMotionRegionsToolStripMenuItem.Checked;
+
+            // update motion detector
+            Camera camera = cameraWindow.Camera;
+            if ( camera != null )
+            {
+                IMotionDetector detector = camera.MotionDetector;
+
+                if ( detector != null )
+                    detector.HighlightMotionRegions = highlightMotionRegionsToolStripMenuItem.Checked;
+            }
         }
     }
 }

@@ -41,6 +41,8 @@ namespace MotionDetector
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator( );
             this.detector1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
+            this.detector2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
+            this.detector3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog( );
@@ -49,7 +51,8 @@ namespace MotionDetector
             this.fpsLabel = new System.Windows.Forms.ToolStripStatusLabel( );
             this.panel1 = new System.Windows.Forms.Panel( );
             this.cameraWindow = new MotionDetector.CameraWindow( );
-            this.detector2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator( );
+            this.highlightMotionRegionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.menuMenu.SuspendLayout( );
             this.statusBar.SuspendLayout( );
             this.panel1.SuspendLayout( );
@@ -118,7 +121,10 @@ namespace MotionDetector
             this.noneToolStripMenuItem,
             this.toolStripMenuItem2,
             this.detector1ToolStripMenuItem,
-            this.detector2ToolStripMenuItem} );
+            this.detector2ToolStripMenuItem,
+            this.detector3ToolStripMenuItem,
+            this.toolStripMenuItem3,
+            this.highlightMotionRegionsToolStripMenuItem} );
             this.motionToolStripMenuItem.Name = "motionToolStripMenuItem";
             this.motionToolStripMenuItem.Size = new System.Drawing.Size( 51, 20 );
             this.motionToolStripMenuItem.Text = "&Motion";
@@ -127,21 +133,35 @@ namespace MotionDetector
             // noneToolStripMenuItem
             // 
             this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            this.noneToolStripMenuItem.Size = new System.Drawing.Size( 152, 22 );
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size( 199, 22 );
             this.noneToolStripMenuItem.Text = "&None";
             this.noneToolStripMenuItem.Click += new System.EventHandler( this.noneToolStripMenuItem_Click );
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size( 149, 6 );
+            this.toolStripMenuItem2.Size = new System.Drawing.Size( 196, 6 );
             // 
             // detector1ToolStripMenuItem
             // 
             this.detector1ToolStripMenuItem.Name = "detector1ToolStripMenuItem";
-            this.detector1ToolStripMenuItem.Size = new System.Drawing.Size( 152, 22 );
+            this.detector1ToolStripMenuItem.Size = new System.Drawing.Size( 199, 22 );
             this.detector1ToolStripMenuItem.Text = "Detector &1";
             this.detector1ToolStripMenuItem.Click += new System.EventHandler( this.detector1ToolStripMenuItem_Click );
+            // 
+            // detector2ToolStripMenuItem
+            // 
+            this.detector2ToolStripMenuItem.Name = "detector2ToolStripMenuItem";
+            this.detector2ToolStripMenuItem.Size = new System.Drawing.Size( 199, 22 );
+            this.detector2ToolStripMenuItem.Text = "Detector &2";
+            this.detector2ToolStripMenuItem.Click += new System.EventHandler( this.detector2ToolStripMenuItem_Click );
+            // 
+            // detector3ToolStripMenuItem
+            // 
+            this.detector3ToolStripMenuItem.Name = "detector3ToolStripMenuItem";
+            this.detector3ToolStripMenuItem.Size = new System.Drawing.Size( 199, 22 );
+            this.detector3ToolStripMenuItem.Text = "Detector &3";
+            this.detector3ToolStripMenuItem.Click += new System.EventHandler( this.detector3ToolStripMenuItem_Click );
             // 
             // helpToolStripMenuItem
             // 
@@ -202,12 +222,19 @@ namespace MotionDetector
             this.cameraWindow.Size = new System.Drawing.Size( 320, 240 );
             this.cameraWindow.TabIndex = 1;
             // 
-            // detector2ToolStripMenuItem
+            // toolStripMenuItem3
             // 
-            this.detector2ToolStripMenuItem.Name = "detector2ToolStripMenuItem";
-            this.detector2ToolStripMenuItem.Size = new System.Drawing.Size( 152, 22 );
-            this.detector2ToolStripMenuItem.Text = "Detector &2";
-            this.detector2ToolStripMenuItem.Click += new System.EventHandler( this.detector2ToolStripMenuItem_Click );
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size( 196, 6 );
+            // 
+            // highlightMotionRegionsToolStripMenuItem
+            // 
+            this.highlightMotionRegionsToolStripMenuItem.Checked = true;
+            this.highlightMotionRegionsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.highlightMotionRegionsToolStripMenuItem.Name = "highlightMotionRegionsToolStripMenuItem";
+            this.highlightMotionRegionsToolStripMenuItem.Size = new System.Drawing.Size( 199, 22 );
+            this.highlightMotionRegionsToolStripMenuItem.Text = "Highlight motion regions";
+            this.highlightMotionRegionsToolStripMenuItem.Click += new System.EventHandler( this.highlightMotionRegionsToolStripMenuItem_Click );
             // 
             // MainForm
             // 
@@ -255,6 +282,9 @@ namespace MotionDetector
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem detector1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem detector2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem detector3ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem highlightMotionRegionsToolStripMenuItem;
     }
 }
 
