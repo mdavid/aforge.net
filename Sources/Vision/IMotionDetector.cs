@@ -22,7 +22,7 @@ namespace AForge.Vision
         /// Highlight motion regions or not.
         /// </summary>
         /// 
-        bool HighlightMotionRegions { get; set; }
+        bool HighlightMotionRegions{ get; set; }
 
 		/// <summary>
 		/// Motion level value.

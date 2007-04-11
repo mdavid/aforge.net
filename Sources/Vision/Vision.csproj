@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundModelingHighPrecisionMotionDetector.cs" />
+    <Compile Include="BackgroundModelingLowPrecisionMotionDetector.cs" />
     <Compile Include="ImageProcessingTools.cs" />
     <Compile Include="IMotionDetector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
