@@ -13,7 +13,7 @@ namespace AForge.Video.DirectShow
     using AForge.Video.DirectShow.Internals;
 
     /// <summary>
-    /// Direct Show filter information.
+    /// DirectShow filter information.
     /// </summary>
     /// 
     public class FilterInfo : IComparable
@@ -71,8 +71,44 @@ namespace AForge.Video.DirectShow
             return ( this.Name.CompareTo( f.Name ) );
         }
 
+        /// <summary>
+        /// Create an instance of the filter.
+        /// </summary>
+        /// 
+        /// <returns>Returns filter's object, which implements <b>IBaseFilter</b> interface.</returns>
+        /// 
+        /// <remarks>The returned filter's object should be released using <b>Marshal.ReleaseComObject()</b>.</remarks>
+        /// 
+        public object CreateFilter( )
+        {
+            // filter's object
+            object filterObject = null;
+            // bind context and moniker objects
+            IBindCtx bindCtx = null;
+            IMoniker moniker = null;
 
+            int n = 0;
+
+            // create bind context
+            if ( Win32.CreateBindCtx( 0, out bindCtx ) == 0 )
+            {
+                // convert moniker`s string to a moniker
+                if ( Win32.MkParseDisplayName( bindCtx, MonikerString, ref n, out moniker ) == 0 )
+                {
+                    // get device base filter
+                    Guid filterId = typeof( IBaseFilter ).GUID;
+                    moniker.BindToObject( null, null, ref filterId, out filterObject );
+
+                    Marshal.ReleaseComObject( moniker );
+                }
+                Marshal.ReleaseComObject( bindCtx );
+            }
+            return filterObject;
+        }
+
+        //
         // Get moniker string of the moniker
+        //
         private string GetMonikerString( IMoniker moniker )
         {
             string str;
@@ -80,7 +116,9 @@ namespace AForge.Video.DirectShow
             return str;
         }
 
+        //
         // Get filter name represented by the moniker
+        //
         private string GetName( IMoniker moniker )
         {
             Object bagObj = null;
@@ -122,7 +160,9 @@ namespace AForge.Video.DirectShow
             }
         }
 
+        //
         // Get filter name represented by the moniker string
+        //
         private string GetName( string monikerString )
         {
             IBindCtx bindCtx = null;

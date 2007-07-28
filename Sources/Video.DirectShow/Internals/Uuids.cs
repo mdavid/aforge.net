@@ -11,7 +11,7 @@ namespace AForge.Video.DirectShow.Internals
     using System.Runtime.InteropServices;
 
 	/// <summary>
-	/// Direct Show class IDs
+	/// DirectShow class IDs.
 	/// </summary>
     [ComVisible( false )]
     public class Clsid

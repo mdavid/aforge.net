@@ -11,7 +11,7 @@ namespace AForge.Video.DirectShow
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// Direct Show filter categories.
+    /// DirectShow filter categories.
     /// </summary>
     [ComVisible( false )]
     public class FilterCategory
