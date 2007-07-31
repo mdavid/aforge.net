@@ -11,15 +11,16 @@ namespace AForge.Video.DirectShow.Internals
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// The interface provides methods for building a filter graph. An application can use it to add filters to
-    /// the graph, connect or disconnect filters, remove filters, and perform other basic operations. 
+    /// This interface provides methods that enable an application to build a filter graph.
     /// </summary>
     /// 
     [ComImport,
-    Guid( "56A8689F-0AD4-11CE-B03A-0020AF0BA770" ),
+    Guid( "56A868A9-0AD4-11CE-B03A-0020AF0BA770" ),
     InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-    internal interface IFilterGraph
+    internal interface IGraphBuilder
     {
+        // --- IFilterGraph Methods
+        
         /// <summary>
         /// Adds a filter to the graph and gives it a name.
         /// </summary>
@@ -109,5 +110,89 @@ namespace AForge.Video.DirectShow.Internals
         /// 
         [PreserveSig]
         int SetDefaultSyncSource( );
+
+        // --- IGraphBuilder methods
+        
+        /// <summary>
+        /// Connects two pins. If they will not connect directly, this method connects them with intervening transforms.
+        /// </summary>
+        /// 
+        /// <param name="pinOut">Output pin.</param>
+        /// <param name="pinIn">Input pin.</param>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int Connect( [In] IPin pinOut, [In] IPin pinIn );
+
+        /// <summary>
+        /// Adds a chain of filters to a specified output pin to render it.
+        /// </summary>
+        /// 
+        /// <param name="pinOut">Output pin.</param>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int Render( [In] IPin pinOut );
+
+        /// <summary>
+        /// Builds a filter graph that renders the specified file.
+        /// </summary>
+        /// 
+        /// <param name="file">Specifies a string that contains file name or device moniker.</param>
+        /// <param name="playList">Reserved.</param>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int RenderFile(
+            [In, MarshalAs( UnmanagedType.LPWStr )] string file,
+            [In, MarshalAs( UnmanagedType.LPWStr )] string playList);
+
+        /// <summary>
+        /// Adds a source filter to the filter graph for a specific file.
+        /// </summary>
+        /// 
+        /// <param name="fileName">Specifies the name of the file to load.</param>
+        /// <param name="filterName">[in] Specifies a name for the source filter.</param>
+        /// <param name="filter">Variable that receives the interface of the source filter.</param>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int AddSourceFilter(
+            [In, MarshalAs( UnmanagedType.LPWStr )] string fileName,
+            [In, MarshalAs( UnmanagedType.LPWStr )] string filterName,
+            [Out] out IBaseFilter filter );
+
+        /// <summary>
+        /// Sets the file for logging actions taken when attempting to perform an operation.
+        /// </summary>
+        /// 
+        /// <param name="hFile">Handle to the log file.</param>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int SetLogFile( IntPtr hFile );
+
+        /// <summary>
+        /// Requests that the graph builder return as soon as possible from its current task.
+        /// </summary>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int Abort( );
+
+        /// <summary>
+        /// Queries whether the current operation should continue.
+        /// </summary>
+        /// 
+        /// <returns>Return's <b>HRESULT</b> error code.</returns>
+        /// 
+        [PreserveSig]
+        int ShouldOperationContinue( );
     }
 }

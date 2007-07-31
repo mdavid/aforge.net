@@ -79,7 +79,7 @@ namespace AForge.Video.DirectShow
         /// 
         /// <remarks>The returned filter's object should be released using <b>Marshal.ReleaseComObject()</b>.</remarks>
         /// 
-        public object CreateFilter( )
+        public static object CreateFilter( string filterMoniker )
         {
             // filter's object
             object filterObject = null;
@@ -93,7 +93,7 @@ namespace AForge.Video.DirectShow
             if ( Win32.CreateBindCtx( 0, out bindCtx ) == 0 )
             {
                 // convert moniker`s string to a moniker
-                if ( Win32.MkParseDisplayName( bindCtx, MonikerString, ref n, out moniker ) == 0 )
+                if ( Win32.MkParseDisplayName( bindCtx, filterMoniker, ref n, out moniker ) == 0 )
                 {
                     // get device base filter
                     Guid filterId = typeof( IBaseFilter ).GUID;

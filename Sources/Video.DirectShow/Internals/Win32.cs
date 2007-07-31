@@ -15,7 +15,7 @@ namespace AForge.Video.DirectShow.Internals
     /// Some Win32 API used internally.
     /// </summary>
     /// 
-    public class Win32
+    internal class Win32
     {
         /// <summary>
         /// Supplies a pointer to an implementation of <b>IBindCtx</b> (a bind context object).
@@ -48,5 +48,21 @@ namespace AForge.Video.DirectShow.Internals
         public static extern
         int MkParseDisplayName( IBindCtx pbc, string szUserName,
             ref int pchEaten, out IMoniker ppmk );
+
+        /// <summary>
+        /// Copy a block of memory.
+        /// </summary>
+        /// 
+        /// <param name="dst">Destination pointer.</param>
+        /// <param name="src">Source pointer.</param>
+        /// <param name="count">Memory block's length to copy.</param>
+        /// 
+        /// <returns>Return's the value of <b>dst</b> - pointer to destination.</returns>
+        /// 
+        [DllImport( "ntdll.dll" )]
+        public static extern int memcpy(
+            int dst,
+            int src,
+            int count );
     }
 }

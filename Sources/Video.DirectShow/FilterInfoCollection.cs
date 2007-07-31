@@ -17,6 +17,20 @@ namespace AForge.Video.DirectShow
     /// Collection of filters' information objects.
     /// </summary>
     /// 
+    /// <remarks><para>The class allows to enumerate DirectShow filters of specified category. For
+    /// a list of categories see <see cref="FilterCategory"/>.</para>
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // enumerate video devices
+    /// videoDevices = new FilterInfoCollection( FilterCategory.VideoInputDevice );
+    /// // list devices
+    /// foreach ( FilterInfo device in videoDevices )
+    /// {
+    ///     // ...
+    /// }
+    /// </code>
+    /// </remarks>
+    /// 
     public class FilterInfoCollection : CollectionBase
     {
         /// <summary>

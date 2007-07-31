@@ -18,13 +18,13 @@ namespace AForge.Video.DirectShow.Internals
     [ComImport,
     Guid( "55272A00-42CB-11CE-8135-00AA004BB851" ),
     InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-    public interface IPropertyBag
+    internal interface IPropertyBag
     {
         /// <summary>
         /// Read a property from property bag.
         /// </summary>
         /// 
-        /// <param name="pszPropName">Property name to read.</param>
+        /// <param name="propertyName">Property name to read.</param>
         /// <param name="pVar">Property value.</param>
         /// <param name="pErrorLog">Caller's error log.</param>
         /// 
@@ -32,7 +32,7 @@ namespace AForge.Video.DirectShow.Internals
         /// 
         [PreserveSig]
         int Read(
-            [In, MarshalAs( UnmanagedType.LPWStr )] string pszPropName,
+            [In, MarshalAs( UnmanagedType.LPWStr )] string propertyName,
             [In, Out, MarshalAs( UnmanagedType.Struct )] ref object pVar,
             [In] IntPtr pErrorLog );
 
@@ -40,14 +40,14 @@ namespace AForge.Video.DirectShow.Internals
         /// Write property to property bag.
         /// </summary>
         /// 
-        /// <param name="pszPropName">Property name to read.</param>
+        /// <param name="propertyName">Property name to read.</param>
         /// <param name="pVar">Property value.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
         int Write(
-            [In, MarshalAs( UnmanagedType.LPWStr )] string pszPropName,
+            [In, MarshalAs( UnmanagedType.LPWStr )] string propertyName,
             [In, MarshalAs( UnmanagedType.Struct )] ref object pVar );
     }
 }

@@ -17,31 +17,31 @@ namespace AForge.Video.DirectShow.Internals
     [ComImport,
     Guid( "56A86891-0AD4-11CE-B03A-0020AF0BA770" ),
     InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-    public interface IPin
+    internal interface IPin
     {
         /// <summary>
         /// Connects the pin to another pin.
         /// </summary>
         /// 
-        /// <param name="pReceivePin">Other pin to connect to.</param>
-        /// <param name="pmt">Type to use for the connections (optional).</param>
+        /// <param name="receivePin">Other pin to connect to.</param>
+        /// <param name="mediaType">Type to use for the connections (optional).</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int Connect( [In] IPin pReceivePin, [In, MarshalAs( UnmanagedType.LPStruct )] AMMediaType pmt );
+        int Connect( [In] IPin receivePin, [In, MarshalAs( UnmanagedType.LPStruct )] AMMediaType mediaType );
 
         /// <summary>
         /// Makes a connection to this pin and is called by a connecting pin.
         /// </summary>
         /// 
-        /// <param name="pReceivePin">Connecting pin.</param>
-        /// <param name="pmt">Media type of the samples to be streamed.</param>
+        /// <param name="receivePin">Connecting pin.</param>
+        /// <param name="mediaType">Media type of the samples to be streamed.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int ReceiveConnection( [In] IPin pReceivePin, [In, MarshalAs( UnmanagedType.LPStruct )] AMMediaType pmt );
+        int ReceiveConnection( [In] IPin receivePin, [In, MarshalAs( UnmanagedType.LPStruct )] AMMediaType mediaType );
 
         /// <summary>
         /// Breaks the current pin connection.
@@ -56,18 +56,18 @@ namespace AForge.Video.DirectShow.Internals
         /// Returns a pointer to the connecting pin.
         /// </summary>
         /// 
-        /// <param name="ppPin">Receives <b>IPin</b> interface of connected pin (if any).</param>
+        /// <param name="pin">Receives <b>IPin</b> interface of connected pin (if any).</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int ConnectedTo( [Out] out IPin ppPin );
+        int ConnectedTo( [Out] out IPin pin );
 
         /// <summary>
         /// Returns the media type of this pin's connection.
         /// </summary>
         /// 
-        /// <param name="pmt">Pointer to an <see cref="AMMediaType"/> structure. If the pin is connected,
+        /// <param name="mediaType">Pointer to an <see cref="AMMediaType"/> structure. If the pin is connected,
         /// the media type is returned. Otherwise, the structure is initialized to a default state in which
         /// all elements are 0, with the exception of <b>lSampleSize</b>, which is set to 1, and
         /// <b>FixedSizeSamples</b>, which is set to <b>true</b>.</param>
@@ -75,62 +75,62 @@ namespace AForge.Video.DirectShow.Internals
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int ConnectionMediaType( [Out, MarshalAs( UnmanagedType.LPStruct )] AMMediaType pmt );
+        int ConnectionMediaType( [Out, MarshalAs( UnmanagedType.LPStruct )] AMMediaType mediaType );
 
         /// <summary>
         /// Retrieves information about this pin (for example, the name, owning filter, and direction).
         /// </summary>
         /// 
-        /// <param name="pInfo"><see cref="PinInfo"/> structure that receives the pin information.</param>
+        /// <param name="pinInfo"><see cref="PinInfo"/> structure that receives the pin information.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int QueryPinInfo( [Out, MarshalAs( UnmanagedType.LPStruct )] PinInfo pInfo );
+        int QueryPinInfo( [Out, MarshalAs( UnmanagedType.LPStruct )] PinInfo pinInfo );
 
         /// <summary>
         /// Retrieves the direction for this pin.
         /// </summary>
         /// 
-        /// <param name="pPinDir">Receives direction of the pin.</param>
+        /// <param name="pinDirection">Receives direction of the pin.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int QueryDirection( out PinDirection pPinDir );
+        int QueryDirection( out PinDirection pinDirection );
 
         /// <summary>
         /// Retrieves an identifier for the pin.
         /// </summary>
         /// 
-        /// <param name="Id">Pin identifier.</param>
+        /// <param name="id">Pin identifier.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int QueryId( [Out, MarshalAs( UnmanagedType.LPWStr )] out string Id );
+        int QueryId( [Out, MarshalAs( UnmanagedType.LPWStr )] out string id );
 
         /// <summary>
         /// Queries whether a given media type is acceptable by the pin.
         /// </summary>
         /// 
-        /// <param name="pmt"><see cref="AMMediaType"/> structure that specifies the media type.</param>
+        /// <param name="mediaType"><see cref="AMMediaType"/> structure that specifies the media type.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int QueryAccept( [In, MarshalAs( UnmanagedType.LPStruct )] AMMediaType pmt );
+        int QueryAccept( [In, MarshalAs( UnmanagedType.LPStruct )] AMMediaType mediaType );
 
         /// <summary>
         /// Provides an enumerator for this pin's preferred media types.
         /// </summary>
         /// 
-        /// <param name="ppEnum">Address of a variable that receives a pointer to the <b>IEnumMediaTypes</b> interface.</param>
+        /// <param name="enumerator">Address of a variable that receives a pointer to the <b>IEnumMediaTypes</b> interface.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int EnumMediaTypes( IntPtr ppEnum );
+        int EnumMediaTypes( IntPtr enumerator );
 
         /// <summary>
         /// Provides an array of the pins to which this pin internally connects.
@@ -176,16 +176,16 @@ namespace AForge.Video.DirectShow.Internals
         /// Specifies that samples following this call are grouped as a segment with a given start time, stop time, and rate.
         /// </summary>
         /// 
-        /// <param name="tStart">Start time of the segment, relative to the original source, in 100-nanosecond units.</param>
-        /// <param name="tStop">End time of the segment, relative to the original source, in 100-nanosecond units.</param>
-        /// <param name="dRate">Rate at which this segment should be processed, as a percentage of the original rate.</param>
+        /// <param name="start">Start time of the segment, relative to the original source, in 100-nanosecond units.</param>
+        /// <param name="stop">End time of the segment, relative to the original source, in 100-nanosecond units.</param>
+        /// <param name="rate">Rate at which this segment should be processed, as a percentage of the original rate.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
         int NewSegment(
-            long tStart,
-            long tStop,
-            double dRate );
+            long start,
+            long stop,
+            double rate );
     }
 }
