@@ -18,7 +18,7 @@ namespace AForge.Video.DirectShow.Internals
     [ComImport,
     Guid( "56A86895-0AD4-11CE-B03A-0020AF0BA770" ),
     InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-    public interface IBaseFilter
+    internal interface IBaseFilter
     {
         // --- IPersist Methods
 
@@ -26,12 +26,12 @@ namespace AForge.Video.DirectShow.Internals
         /// Returns the class identifier (CLSID) for the component object.
         /// </summary>
         /// 
-        /// <param name="pClassID">Points to the location of the CLSID on return.</param>
+        /// <param name="ClassID">Points to the location of the CLSID on return.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int GetClassID( [Out] out Guid pClassID );
+        int GetClassID( [Out] out Guid ClassID );
 
         // --- IMediaFilter Methods
 
@@ -57,46 +57,46 @@ namespace AForge.Video.DirectShow.Internals
         /// Runs the filter.
         /// </summary>
         /// 
-        /// <param name="tStart">Reference time corresponding to stream time 0.</param>
+        /// <param name="start">Reference time corresponding to stream time 0.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int Run( long tStart );
+        int Run( long start );
 
         /// <summary>
         /// Retrieves the state of the filter (running, stopped, or paused).
         /// </summary>
         /// 
-        /// <param name="dwMilliSecsTimeout">Time-out interval, in milliseconds.</param>
-        /// <param name="filtState">Pointer to a variable that receives filter's state.</param>
+        /// <param name="milliSecsTimeout">Time-out interval, in milliseconds.</param>
+        /// <param name="filterState">Pointer to a variable that receives filter's state.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int GetState( int dwMilliSecsTimeout, [Out] out int filtState );
+        int GetState( int milliSecsTimeout, [Out] out int filterState );
 
         /// <summary>
         /// Sets the reference clock for the filter or the filter graph.
         /// </summary>
         /// 
-        /// <param name="pClock">Pointer to the clock's <b>IReferenceClock</b> interface, or NULL. </param>
+        /// <param name="clock">Pointer to the clock's <b>IReferenceClock</b> interface, or NULL. </param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int SetSyncSource( [In] IntPtr pClock );
+        int SetSyncSource( [In] IntPtr clock );
 
         /// <summary>
         /// Retrieves the current reference clock.
         /// </summary>
         /// 
-        /// <param name="pClock">Address of a variable that receives a pointer to the clock's IReferenceClock interface.</param>
+        /// <param name="clock">Address of a variable that receives a pointer to the clock's IReferenceClock interface.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int GetSyncSource( [Out] out IntPtr pClock );
+        int GetSyncSource( [Out] out IntPtr clock );
 
         // --- IBaseFilter Methods
 
@@ -104,58 +104,58 @@ namespace AForge.Video.DirectShow.Internals
         /// Enumerates the pins on this filter.
         /// </summary>
         /// 
-        /// <param name="ppEnum">Address of a variable that receives a pointer to the IEnumPins interface.</param>
+        /// <param name="enumPins">Address of a variable that receives a pointer to the IEnumPins interface.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int EnumPins( [Out] out IEnumPins ppEnum );
+        int EnumPins( [Out] out IEnumPins enumPins );
 
         /// <summary>
         /// Retrieves the pin with the specified identifier.
         /// </summary>
         /// 
-        /// <param name="Id">Pointer to a constant wide-character string that identifies the pinþ</param>
-        /// <param name="ppPin">Address of a variable that receives a pointer to the pin's IPin interface.</param>
+        /// <param name="id">Pointer to a constant wide-character string that identifies the pinþ</param>
+        /// <param name="pin">Address of a variable that receives a pointer to the pin's IPin interface.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int FindPin( [In, MarshalAs( UnmanagedType.LPWStr )] string Id, [Out] out IPin ppPin );
+        int FindPin( [In, MarshalAs( UnmanagedType.LPWStr )] string id, [Out] out IPin pin );
 
         /// <summary>
         /// Notifies the filter that it has joined or left the filter graph.
         /// </summary>
         /// 
-        /// <param name="pInfo">Pointer to <b>FilterInfo</b> structure</param>
+        /// <param name="filterInfo">Pointer to <b>FilterInfo</b> structure</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int QueryFilterInfo( [Out] FilterInfo pInfo );
+        int QueryFilterInfo( [Out] FilterInfo filterInfo );
 
         /// <summary>
         /// Retrieves information about the filter.
         /// </summary>
         /// 
-        /// <param name="pGraph">Pointer to the Filter Graph Manager's <b>IFilterGraph</b> interface, or NULL
+        /// <param name="graph">Pointer to the Filter Graph Manager's <b>IFilterGraph</b> interface, or NULL
         /// if the filter is leaving the graph.</param>
-        /// <param name="pName">Pointer to a wide-character string that specifies a name for the filter.</param>
+        /// <param name="name">String that specifies a name for the filter.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int JoinFilterGraph( [In] IFilterGraph pGraph, [In, MarshalAs( UnmanagedType.LPWStr )] string pName );
+        int JoinFilterGraph( [In] IFilterGraph graph, [In, MarshalAs( UnmanagedType.LPWStr )] string name );
 
         /// <summary>
         /// Retrieves a string containing vendor information.
         /// </summary>
         /// 
-        /// <param name="pVendorInfo"> Address of a variable that receives a pointer to a wide-character string containing the vendor information.</param>
+        /// <param name="vendorInfo">Receives a string containing the vendor information.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
         /// 
         [PreserveSig]
-        int QueryVendorInfo( [Out, MarshalAs( UnmanagedType.LPWStr )] out string pVendorInfo );
+        int QueryVendorInfo( [Out, MarshalAs( UnmanagedType.LPWStr )] out string vendorInfo );
     }
 }

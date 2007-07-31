@@ -4,7 +4,7 @@
     </assemblies>
     <namespaceSummaries>
         <namespaceSummaryItem name="" isDocumented="False" />
-        <namespaceSummaryItem name="AForge.Video.VFW" isDocumented="True">The &lt;b&gt;AForge.Video&lt;/b&gt; namespace contains &lt;i&gt;Video for Windows&lt;/i&gt; related classes.</namespaceSummaryItem>
+        <namespaceSummaryItem name="AForge.Video.VFW" isDocumented="True">The &lt;b&gt;AForge.Video.VFW&lt;/b&gt; namespace contains &lt;i&gt;Video for Windows&lt;/i&gt; related classes.</namespaceSummaryItem>
     </namespaceSummaries>
     <contentPlacement>AboveNamespaces</contentPlacement>
     <dependencies>
