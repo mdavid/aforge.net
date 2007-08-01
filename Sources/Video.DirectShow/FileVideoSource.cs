@@ -17,17 +17,15 @@ namespace AForge.Video.DirectShow
     using AForge.Video.DirectShow.Internals;
 
     /// <summary>
-    /// Video source for local video capture device (for example USB webcam).
+    /// Video source for video files.
     /// </summary>
     /// 
-    /// <remarks><para>The video source captures video data from local video capture device.
-    /// DirectShow is used for capturing.</para>
+    /// <remarks><para>The video source provides access to video files. DirectShow is used to access video
+    /// files.</para>
     /// <para>Sample usage:</para>
     /// <code>
-    /// // enumerate video devices
-    /// videoDevices = new FilterInfoCollection( FilterCategory.VideoInputDevice );
     /// // create video source
-    /// VideoCaptureDevice videoSource = new VideoCaptureDevice( videoDevices[0].MonikerString );
+    /// FileVideoSource videoSource = new FileVideoSource( fileName );
     /// // set NewFrame event handler
     /// videoSource.NewFrame += new NewFrameEventHandler( video_NewFrame );
     /// // start the video source
@@ -46,10 +44,10 @@ namespace AForge.Video.DirectShow
     /// </code>
     /// </remarks>
     /// 
-    public class VideoCaptureDevice : IVideoSource
+    public class FileVideoSource : IVideoSource
     {
-        // moniker string of video capture device
-        private string deviceMoniker;
+        // video file name
+        private string fileName;
         // user data associated with the video source
         private object userData = null;
         // received frames count
@@ -81,12 +79,12 @@ namespace AForge.Video.DirectShow
         /// Video source.
         /// </summary>
         /// 
-        /// <remarks>Video source is represented by moniker string of video capture device.</remarks>
+        /// <remarks>Video source is represented by video file name.</remarks>
         /// 
         public virtual string Source
         {
-            get { return deviceMoniker; }
-            set { deviceMoniker = value; }
+            get { return fileName; }
+            set { fileName = value; }
         }
 
         /// <summary>
@@ -161,20 +159,20 @@ namespace AForge.Video.DirectShow
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VideoCaptureDevice"/> class.
+        /// Initializes a new instance of the <see cref="FileVideoSource"/> class.
         /// </summary>
         /// 
-        public VideoCaptureDevice( ) { }
+        public FileVideoSource( ) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VideoCaptureDevice"/> class.
+        /// Initializes a new instance of the <see cref="FileVideoSource"/> class.
         /// </summary>
         /// 
-        /// <param name="deviceMoniker">Moniker string of video capture device.</param>
+        /// <param name="fileName">Video file name.</param>
         /// 
-        public VideoCaptureDevice( string deviceMoniker )
+        public FileVideoSource( string fileName )
         {
-            this.deviceMoniker = deviceMoniker;
+            this.fileName = fileName;
         }
 
         /// <summary>
@@ -190,7 +188,7 @@ namespace AForge.Video.DirectShow
             if ( thread == null )
             {
                 // check source
-                if ( ( deviceMoniker == null ) || ( deviceMoniker == string.Empty ) )
+                if ( ( fileName == null ) || ( fileName == string.Empty ) )
                     throw new ArgumentException( "Video source is not specified" );
 
                 framesReceived = 0;
@@ -201,7 +199,7 @@ namespace AForge.Video.DirectShow
 
                 // create and start new thread
                 thread = new Thread( new ThreadStart( WorkerThread ) );
-                thread.Name = deviceMoniker; // mainly for debugging
+                thread.Name = fileName; // mainly for debugging
                 thread.Start( );
             }
         }
@@ -284,11 +282,12 @@ namespace AForge.Video.DirectShow
             object grabberObject = null;
 
             // interfaces
-            IGraphBuilder   graph = null;
-            IBaseFilter     sourceBase = null;
-            IBaseFilter     grabberBase = null;
-            ISampleGrabber  sampleGrabber = null;
-            IMediaControl   mediaControl = null;
+            IGraphBuilder       graph = null;
+            IBaseFilter         sourceBase = null;
+            IBaseFilter         grabberBase = null;
+            ISampleGrabber      sampleGrabber = null;
+            IMediaControl       mediaControl = null;
+            IFileSourceFilter   fileSource = null;
 
             try
             {
@@ -302,12 +301,15 @@ namespace AForge.Video.DirectShow
                 graph = (IGraphBuilder) graphObject;
 
                 // create source device's object
-                sourceObject = FilterInfo.CreateFilter( deviceMoniker );
-                if ( sourceObject == null )
-                    throw new ApplicationException( "Failed creating device object for moniker" );
+                type = Type.GetTypeFromCLSID( Clsid.AsyncReader );
+                if ( type == null )
+                    throw new ApplicationException( "Failed creating filter async reader" );
 
-                // get base filter interface of source device
+                sourceObject = Activator.CreateInstance( type );
                 sourceBase = (IBaseFilter) sourceObject;
+                fileSource = (IFileSourceFilter) sourceObject;
+
+                fileSource.Load( fileName, null );
 
                 // get type for sample grabber
                 type = Type.GetTypeFromCLSID( Clsid.SampleGrabber );
@@ -333,7 +335,7 @@ namespace AForge.Video.DirectShow
                 if ( graph.Connect( Tools.GetOutPin( sourceBase, 0 ), Tools.GetInPin( grabberBase, 0 ) ) < 0 )
                     throw new ApplicationException( "Failed connecting filters" );
 
-				// get media type
+                // get media type
                 if ( sampleGrabber.GetConnectedMediaType( mediaType ) == 0 )
                 {
                     VideoInfoHeader vih = (VideoInfoHeader) Marshal.PtrToStructure( mediaType.FormatPtr, typeof( VideoInfoHeader ) );
@@ -384,6 +386,7 @@ namespace AForge.Video.DirectShow
                 grabberBase     = null;
                 sampleGrabber   = null;
                 mediaControl    = null;
+                fileSource      = null;
 
                 if ( graphObject != null )
                 {
@@ -421,7 +424,7 @@ namespace AForge.Video.DirectShow
         //
         private class Grabber : ISampleGrabberCB
         {
-            private VideoCaptureDevice parent;
+            private FileVideoSource parent;
             private int width, height;
 
             // Width property
@@ -438,7 +441,7 @@ namespace AForge.Video.DirectShow
             }
 
             // Constructor
-            public Grabber( VideoCaptureDevice parent )
+            public Grabber( FileVideoSource parent )
             {
                 this.parent = parent;
             }
@@ -449,7 +452,7 @@ namespace AForge.Video.DirectShow
                 return 0;
             }
 
-			// Callback method that receives a pointer to the sample buffer
+            // Callback method that receives a pointer to the sample buffer
             public int BufferCB( double sampleTime, IntPtr buffer, int bufferLen )
             {
                 // create new image
@@ -479,7 +482,7 @@ namespace AForge.Video.DirectShow
                 image.UnlockBits( imageData );
 
                 // notify parent
-                parent.OnNewFrame( image);
+                parent.OnNewFrame( image );
 
                 // release the image
                 image.Dispose( );

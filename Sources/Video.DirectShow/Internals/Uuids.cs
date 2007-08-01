@@ -42,6 +42,15 @@ namespace AForge.Video.DirectShow.Internals
         /// 
         public static readonly Guid SampleGrabber =
             new Guid( 0xC1F400A0, 0x3F08, 0x11D3, 0x9F, 0x0B, 0x00, 0x60, 0x08, 0x03, 0x9E, 0x37 );
+
+        /// <summary>
+        /// Async reader.
+        /// </summary>
+        /// 
+        /// <remarks>Equals to CLSID_AsyncReader.</remarks>
+        /// 
+        public static readonly Guid AsyncReader =
+            new Guid( 0xE436EBB5, 0x524F, 0x11CE, 0x9F, 0x53, 0x00, 0x20, 0xAF, 0x0B, 0xA7, 0x70 );
     }
 
     /// <summary>
