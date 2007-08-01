@@ -140,6 +140,20 @@ namespace MotionDetector
             }
         }
 
+        // Open video file using DirectShow
+        private void openVideoFileusingDirectShowToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            if ( openFileDialog.ShowDialog( ) == DialogResult.OK )
+            {
+                // create video source
+                FileVideoSource fileSource = new FileVideoSource( openFileDialog.FileName );
+
+                // open it
+                OpenVideoSource( fileSource );
+            }
+
+        }
+
         // Open video source
         private void OpenVideoSource( IVideoSource source )
         {
