@@ -17,10 +17,11 @@ namespace AForge.Video.DirectShow
     using AForge.Video.DirectShow.Internals;
 
     /// <summary>
-    /// Video source from local video capture device (for example USB webcam).
+    /// Video source for local video capture device (for example USB webcam).
     /// </summary>
     /// 
-    /// <remarks><para>The video source captures video data from local video capture device.</para>
+    /// <remarks><para>The video source captures video data from local video capture device.
+    /// DirectShow is used for capturing.</para>
     /// <para>Sample usage:</para>
     /// <code>
     /// // enumerate video devices
@@ -382,7 +383,7 @@ namespace AForge.Video.DirectShow
                 sourceBase      = null;
                 grabberBase     = null;
                 sampleGrabber   = null;
-                mediaControl = null;
+                mediaControl    = null;
 
                 if ( graphObject != null )
                 {
