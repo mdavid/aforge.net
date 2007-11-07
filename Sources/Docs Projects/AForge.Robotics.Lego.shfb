@@ -1,0 +1,38 @@
+﻿<project schemaVersion="1.3.3.1">
+    <assemblies>
+        <assembly assemblyPath="D:\Andrew\AForge\Lego\Release\AForge.Robotics.Lego.dll" xmlCommentsPath="D:\Andrew\AForge\Lego\Release\AForge.Robotics.Lego.xml" commentsOnly="False" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="AForge.Robotics.Lego.NXT" isDocumented="True">The &lt;b&gt;AForge.Robotics.Lego&lt;/b&gt; namespace contains set of classes, which allow to communicate with Lego Mindstorm NXT brick sending different commands to it and manipulate the device.</namespaceSummaryItem>
+    </namespaceSummaries>
+    <contentPlacement>AboveNamespaces</contentPlacement>
+    <projectSummary />
+    <sandcastlePath />
+    <hhcPath />
+    <hxcompPath />
+    <outputPath>..\..\Docs\</outputPath>
+    <helpFileFormat>HtmlHelp1x</helpFileFormat>
+    <cleanIntermediates>True</cleanIntermediates>
+    <purgeDuplicateTopics>True</purgeDuplicateTopics>
+    <cppCommentsFixup>False</cppCommentsFixup>
+    <frameworkVersion>2.0.50727</frameworkVersion>
+    <binaryTOC>True</binaryTOC>
+    <includeFavorites>False</includeFavorites>
+    <preliminary>False</preliminary>
+    <rootNSContainer>False</rootNSContainer>
+    <helpTitle>AForge.Robotics.Lego Class Library</helpTitle>
+    <htmlHelpName>AForge.Robotics.Lego</htmlHelpName>
+    <language>en-US</language>
+    <copyrightHref />
+    <copyrightText />
+    <feedbackEMailAddress />
+    <headerText />
+    <projectLinks>Local</projectLinks>
+    <sdkLinks>None</sdkLinks>
+    <presentationStyle>Prototype</presentationStyle>
+    <namingMethod>Guid</namingMethod>
+    <syntaxFilters>CSharp</syntaxFilters>
+    <missingTags>Summary, Parameter, Returns, AutoDocumentCtors</missingTags>
+    <visibleItems>InheritedMembers, Protected, SealedProtected</visibleItems>
+</project>
