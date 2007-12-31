@@ -8,6 +8,7 @@
 namespace AForge.Robotics.Lego.NXT
 {
     using System;
+    using System.IO;
     using System.IO.Ports;
 
     /// <summary>
@@ -185,6 +186,10 @@ namespace AForge.Robotics.Lego.NXT
             {
                 return CommunicationStatus.Timeout;
             }
+            catch ( IOException )
+            {
+                return CommunicationStatus.Failed;
+            }
 
             return CommunicationStatus.Success;
         }
@@ -259,6 +264,10 @@ namespace AForge.Robotics.Lego.NXT
             catch ( TimeoutException )
             {
                 return CommunicationStatus.Timeout;
+            }
+            catch ( IOException )
+            {
+                return CommunicationStatus.Failed;
             }
 
             return CommunicationStatus.Success;
