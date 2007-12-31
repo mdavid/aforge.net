@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "WindowsApplication1" )]
+[assembly: AssemblyTitle( "Lego NXT Test" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Hypercom Latvia" )]
-[assembly: AssemblyProduct( "WindowsApplication1" )]
-[assembly: AssemblyCopyright( "Copyright © Hypercom Latvia 2007" )]
+[assembly: AssemblyCompany( "AForge" )]
+[assembly: AssemblyProduct( "Lego NXT Test" )]
+[assembly: AssemblyCopyright( "AForge.NET © 2007" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
