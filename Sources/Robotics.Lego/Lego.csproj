@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NXT\INXTCommunicationInterface.cs" />
+    <Compile Include="NXT\MotorState.cs" />
     <Compile Include="NXT\NXTBrick.cs" />
     <Compile Include="NXT\NXTDefines.cs" />
     <Compile Include="NXT\SerialCommunication.cs" />
