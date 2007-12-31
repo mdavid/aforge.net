@@ -53,7 +53,12 @@ namespace AForge.Robotics.Lego.NXT
         /// <summary>
         /// Message is too big for sending over communication interface.
         /// </summary>
-        TooBigMessage
+        TooBigMessage,
+
+        /// <summary>
+        /// Invalid argument was passed.
+        /// </summary>
+        InvalidArgument
     }
 
     /// <summary>

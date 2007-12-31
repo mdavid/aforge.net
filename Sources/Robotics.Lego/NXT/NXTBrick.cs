@@ -90,8 +90,8 @@ namespace AForge.Robotics.Lego.NXT
         /// <param name="protocolVersion">Protocol version.</param>
         /// <param name="firmwareVersion">Firmware version.</param>
         /// 
-        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if message was read successfully, or
-        /// another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
         /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
         /// property is updated with device error code.</returns>
         ///
@@ -122,8 +122,8 @@ namespace AForge.Robotics.Lego.NXT
         /// <param name="btSignalStrength">Bluetooth signal strength.</param>
         /// <param name="freeUserFlash">Free user Flash.</param>
         /// 
-        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if message was read successfully, or
-        /// another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
         /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
         /// property is updated with device error code.</returns>
         /// 
@@ -159,8 +159,8 @@ namespace AForge.Robotics.Lego.NXT
         /// 
         /// <param name="batteryLevel">Battery level in millivolts.</param>
         /// 
-        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if message was read successfully, or
-        /// another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
         /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
         /// property is updated with device error code.</returns>
         /// 
@@ -188,8 +188,8 @@ namespace AForge.Robotics.Lego.NXT
         /// 
         /// <param name="deviceName">Device name to set for the brick.</param>
         /// 
-        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if message was read successfully, or
-        /// another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
         /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
         /// property is updated with device error code.</returns>
         /// 
@@ -203,6 +203,115 @@ namespace AForge.Robotics.Lego.NXT
             System.Text.ASCIIEncoding.ASCII.GetBytes( deviceName, 0, Math.Min( deviceName.Length, 14 ), communicationBuffer, 2 );
 
             return SendMessageAndGetReply( communicationBuffer, 18, communicationBuffer );
+        }
+
+        /// <summary>
+        /// Reset motor position.
+        /// </summary>
+        /// 
+        /// <param name="motorPort">Motor to reset.</param>
+        /// 
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
+        /// property is updated with device error code.</returns>
+        /// 
+        public CommunicationStatus ResetMotorPosition( OutputPort motorPort )
+        {
+            // prepare message
+            communicationBuffer[0] = (byte) CommandType.DirectCommand;
+            communicationBuffer[1] = (byte) DirectCommand.ResetMotorPosition;
+            communicationBuffer[2] = (byte) motorPort;
+
+            return SendMessageAndGetReply( communicationBuffer, 3, communicationBuffer );
+        }
+
+        /// <summary>
+        /// Set motor state.
+        /// </summary>
+        /// 
+        /// <param name="motorPort">Motor to set state for.</param>
+        /// <param name="motorState">Motor's state.</param>
+        /// 
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
+        /// property is updated with device error code.</returns>
+        /// 
+        public CommunicationStatus SetMotorState( OutputPort motorPort, MotorState motorState )
+        {
+            // prepare message
+            communicationBuffer[0] = (byte) CommandType.DirectCommand;
+            communicationBuffer[1] = (byte) DirectCommand.SetOutputState;
+            communicationBuffer[2] = (byte) motorPort;
+            communicationBuffer[3] = (byte) motorState.Power;
+            communicationBuffer[4] = (byte) motorState.Mode;
+            communicationBuffer[5] = (byte) motorState.Regulation;
+            communicationBuffer[6] = (byte) motorState.TurnRatio;
+            communicationBuffer[7] = (byte) motorState.RunState;
+            // tacho limit
+            communicationBuffer[8]  = (byte) ( motorState.TachoLimit & 0xFF );
+            communicationBuffer[9]  = (byte) ( ( motorState.TachoLimit >> 8 ) & 0xFF );
+            communicationBuffer[10] = (byte) ( ( motorState.TachoLimit >> 16 ) & 0xFF );
+            communicationBuffer[11] = (byte) ( ( motorState.TachoLimit >> 24 ) & 0xFF ); 
+
+            return SendMessageAndGetReply( communicationBuffer, 12, communicationBuffer );
+        }
+
+        /// <summary>
+        /// Get motor state.
+        /// </summary>
+        /// 
+        /// <param name="motorPort">Motor to get state for.</param>
+        /// <param name="motorState">Motor's state.</param>
+        /// 
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
+        /// property is updated with device error code.</returns>
+        /// 
+        public CommunicationStatus GetMotorState( OutputPort motorPort, out MotorState motorState )
+        {
+            motorState = new MotorState( );
+
+            // check motor port
+            if ( motorPort == OutputPort.All )
+            {
+                return CommunicationStatus.InvalidArgument;
+            }
+
+            CommunicationStatus status = CommunicationStatus.Success;
+
+            // prepare message
+            communicationBuffer[0] = (byte) CommandType.DirectCommand;
+            communicationBuffer[1] = (byte) DirectCommand.GetOutputState;
+            communicationBuffer[2] = (byte) motorPort;
+
+            status = SendMessageAndGetReply( communicationBuffer, 3, communicationBuffer );
+
+            if ( status == CommunicationStatus.Success )
+            {
+                motorState.Power        = (sbyte) communicationBuffer[4];
+                motorState.Mode         = (MotorMode) communicationBuffer[5];
+                motorState.Regulation   = (RegulationMode) communicationBuffer[6];
+                motorState.TurnRatio    = (sbyte) communicationBuffer[7];
+                motorState.RunState     = (RunState) communicationBuffer[8];
+
+                // tacho limit
+                motorState.TachoLimit = communicationBuffer[9] | ( communicationBuffer[10] << 8 ) |
+                        ( communicationBuffer[11] << 16 ) | ( communicationBuffer[12] << 24 );
+                // tacho count
+                motorState.TachoCount = communicationBuffer[13] | ( communicationBuffer[14] << 8 ) |
+                        ( communicationBuffer[15] << 16 ) | ( communicationBuffer[16] << 24 );
+                // block tacho count
+                motorState.BlockTachoCount = communicationBuffer[17] | ( communicationBuffer[18] << 8 ) |
+                        ( communicationBuffer[19] << 16 ) | ( communicationBuffer[20] << 24 );
+                // rotation count
+                motorState.RotationCount = communicationBuffer[21] | ( communicationBuffer[22] << 8 ) |
+                        ( communicationBuffer[23] << 16 ) | ( communicationBuffer[24] << 24 );
+            }
+
+            return status;
         }
 
 
@@ -232,14 +341,10 @@ namespace AForge.Robotics.Lego.NXT
                 // read message
                 status = communicationInterface.ReadMessage( reply, ref bytesRead );
 
-                if (  status == CommunicationStatus.Success )
+                if ( status == CommunicationStatus.Success )
                 {
                     // check for errors
-                    if ( reply[2] == 0 )
-                    {
-                        status = CommunicationStatus.Success;
-                    }
-                    else
+                    if ( reply[2] != 0 )
                     {
                         // set last error
                         lastError = (DeviceError) reply[2];

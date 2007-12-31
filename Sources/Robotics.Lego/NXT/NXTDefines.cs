@@ -72,7 +72,49 @@ namespace AForge.Robotics.Lego.NXT
         /// <summary>
         /// Get battery level.
         /// </summary>
-        GetBatteryLevel = 0x0B
+        GetBatteryLevel = 0x0B,
+
+        /// <summary>
+        /// Set output state.
+        /// </summary>
+        SetOutputState = 0x04,
+
+        /// <summary>
+        /// Get output state.
+        /// </summary>
+        GetOutputState = 0x06,
+
+        /// <summary>
+        /// Reset motor position.
+        /// </summary>
+        ResetMotorPosition = 0x0A
+    }
+
+    /// <summary>
+    /// Definition of possible NXT output ports.
+    /// </summary>
+    /// 
+    public enum OutputPort : byte
+    {
+        /// <summary>
+        /// First motor coonected to port A.
+        /// </summary>
+        MotorA = 0x00,
+
+        /// <summary>
+        /// Second motor coonected to port B.
+        /// </summary>
+        MotorB = 0x01,
+
+        /// <summary>
+        /// Third motor coonected to port C.
+        /// </summary>
+        MotorC = 0x02,
+
+        /// <summary>
+        /// All ports.
+        /// </summary>
+        All = 0xFF
     }
 
     /// <summary>
@@ -264,5 +306,87 @@ namespace AForge.Robotics.Lego.NXT
         /// Bad arguments.
         /// </summary>
         BadArguments = 0xFF
+    }
+
+    /// <summary>
+    /// List of possible motor modes.
+    /// </summary>
+    /// 
+    /// <remarks>Motor mode is a bit field, so several modes can be combined.</remarks>
+    /// 
+    [FlagsAttribute]
+    public enum MotorMode : byte
+    {
+        /// <summary>
+        /// Mode is not set.
+        /// </summary>
+        None = 0x00,
+
+        /// <summary>
+        /// Turn on the motor.
+        /// </summary>
+        On = 0x01,
+
+        /// <summary>
+        /// Brake.
+        /// </summary>
+        Brake = 0x02,
+
+        /// <summary>
+        /// Turn on regulated mode.
+        /// </summary>
+        Regulated = 0x04
+    }
+
+    /// <summary>
+    /// Motor regulation modes.
+    /// </summary>
+    /// 
+    public enum RegulationMode : byte
+    {
+        /// <summary>
+        /// No regulation will be enabled.
+        /// </summary>
+        Idle = 0x00,
+
+        /// <summary>
+        /// Power control will be enabled on specified motor.
+        /// </summary>
+        Speed = 0x01,
+
+        /// <summary>
+        /// Synchronization will be enabled.
+        /// </summary>
+        /// 
+        /// <remarks><note>Synchronization need to be enabled on two motors.</note></remarks>
+        /// 
+        Sync = 0x02
+    }
+
+    /// <summary>
+    /// Motor run states.
+    /// </summary>
+    /// 
+    public enum RunState : byte
+    {
+        /// <summary>
+        /// Motor will be idle.
+        /// </summary>
+        Idle = 0x00,
+
+        /// <summary>
+        /// Motor will ramp-up.
+        /// </summary>
+        RampUp = 0x10,
+
+        /// <summary>
+        /// Motor will be running.
+        /// </summary>
+        Running = 0x20,
+
+        /// <summary>
+        /// Motor will ramp-down.
+        /// </summary>
+        RampDown = 0x40
     }
 }
