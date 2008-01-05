@@ -1,7 +1,7 @@
 // AForge.NET Framework
 // Lego Mindstorm NXT test application
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -29,6 +29,15 @@ namespace NXTTest
         // run states
         private RunState[] runStates = new RunState[]
             { RunState.Idle, RunState.RampUp, RunState.Running, RunState.RampDown };
+        // sensor types
+        private SensorType[] sensorTypes = new SensorType[]
+            { SensorType.NoSensor, SensorType.Switch, SensorType.Temperature, SensorType.Reflection,
+              SensorType.Angle, SensorType.LightActive, SensorType.LightInactive, SensorType.SoundDB,
+              SensorType.SoundDBA, SensorType.Custom, SensorType.Lowspeed, SensorType.Lowspeed9V };
+        // sensor modes
+        private SensorMode[] sensorModes = new SensorMode[]
+            { SensorMode.Raw, SensorMode.Boolean, SensorMode.TransitionCNT, SensorMode.PeriodicCounter,
+              SensorMode.PCTFullScale, SensorMode.Celsius, SensorMode.Fahrenheit, SensorMode.AngleSteps };
 
         // Constructor
         public MainForm( )
@@ -42,6 +51,9 @@ namespace NXTTest
             motorCombo.SelectedIndex = 0;
             regulationModeCombo.SelectedIndex = 0;
             runStateCombo.SelectedIndex = 2;
+            inputPortCombo.SelectedIndex = 0;
+            sensorTypeCombo.SelectedIndex = 0;
+            sensorModeCombo.SelectedIndex = 0;
         }
 
         // On "Connect" button click
@@ -59,6 +71,8 @@ namespace NXTTest
                 resetMotorButton.Enabled    = true;
                 setMotorStateButton.Enabled = true;
                 getMotorStateButton.Enabled = true;
+                getInputButton.Enabled = true;
+                setInputModeButton.Enabled = true;
             }
             else
             {
@@ -84,10 +98,21 @@ namespace NXTTest
             blockTachoCountBox.Text = string.Empty;
             rotationCountBox.Text = string.Empty;
 
+            validCheck.Checked = false;
+            calibratedCheck.Checked = false;
+            sensorTypeBox.Text = string.Empty;
+            sensorModeBox.Text = string.Empty;
+            rawInputBox.Text = string.Empty;
+            normalizedInputBox.Text = string.Empty;
+            scaledInputBox.Text = string.Empty;
+            calibratedInputBox.Text = string.Empty;
+
             // disable controls
             resetMotorButton.Enabled    = false;
             setMotorStateButton.Enabled = false;
             getMotorStateButton.Enabled = false;
+            getInputButton.Enabled = false;
+            setInputModeButton.Enabled = false;
         }
 
         // Collect information about Lego NXT brick
@@ -158,6 +183,12 @@ namespace NXTTest
             return (OutputPort) motorCombo.SelectedIndex;
         }
 
+        // Returns selected input port
+        private InputPort GetSelectedInputPort( )
+        {
+            return (InputPort) inputPortCombo.SelectedIndex;
+        }
+
         // On motor "Reset" button click
         private void resetMotorButton_Click( object sender, EventArgs e )
         {
@@ -213,6 +244,40 @@ namespace NXTTest
             else
             {
                 System.Diagnostics.Debug.WriteLine( "Failed getting motor state" );
+            }
+        }
+
+        // On "Get input" button click
+        private void getInputButton_Click( object sender, EventArgs e )
+        {
+            InputValues inputValues;
+
+            // get input values
+            if ( nxt.GetInputValues( GetSelectedInputPort( ), out inputValues ) == CommunicationStatus.Success )
+            {
+                validCheck.Checked      = inputValues.IsValid;
+                calibratedCheck.Checked = inputValues.IsCalibrated;
+                sensorTypeBox.Text      = inputValues.SensorType.ToString( );
+                sensorModeBox.Text      = inputValues.SensorMode.ToString( );
+                rawInputBox.Text        = inputValues.Raw.ToString( );
+                normalizedInputBox.Text = inputValues.Normalized.ToString( );
+                scaledInputBox.Text     = inputValues.Scaled.ToString( );
+                calibratedInputBox.Text = inputValues.Calibrated.ToString( );
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine( "Failed getting input values" );
+            }
+        }
+
+        // On "Set mode" button click
+        private void setInputModeButton_Click( object sender, EventArgs e )
+        {
+            if ( nxt.SetInputMode( GetSelectedInputPort( ),
+                sensorTypes[sensorTypeCombo.SelectedIndex],
+                sensorModes[sensorModeCombo.SelectedIndex] ) != CommunicationStatus.Success )
+            {
+                System.Diagnostics.Debug.WriteLine( "Failed setting input mode" );
             }
         }
     }
