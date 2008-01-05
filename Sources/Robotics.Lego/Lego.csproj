@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NXT\InputValues.cs" />
     <Compile Include="NXT\INXTCommunicationInterface.cs" />
     <Compile Include="NXT\MotorState.cs" />
     <Compile Include="NXT\NXTBrick.cs" />

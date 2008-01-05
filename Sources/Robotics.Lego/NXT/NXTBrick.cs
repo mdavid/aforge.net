@@ -1,7 +1,7 @@
 // AForge Lego Robotics Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -314,6 +314,91 @@ namespace AForge.Robotics.Lego.NXT
             return status;
         }
 
+        /// <summary>
+        /// Set input mode for specified input port.
+        /// </summary>
+        /// 
+        /// <param name="inputPort">Input port to set mode for.</param>
+        /// <param name="type">Sensor's type.</param>
+        /// <param name="mode">Sensor's mode.</param>
+        /// 
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
+        /// property is updated with device error code.</returns>
+        /// 
+        public CommunicationStatus SetInputMode( InputPort inputPort, SensorType type, SensorMode mode )
+        {
+            // prepare message
+            communicationBuffer[0] = (byte) CommandType.DirectCommand;
+            communicationBuffer[1] = (byte) DirectCommand.SetInputMode;
+            communicationBuffer[2] = (byte) inputPort;
+            communicationBuffer[3] = (byte) type;
+            communicationBuffer[4] = (byte) mode;
+
+            return SendMessageAndGetReply( communicationBuffer, 5, communicationBuffer );
+        }
+
+        /// <summary>
+        /// Get input values of specified input port.
+        /// </summary>
+        /// 
+        /// <param name="inputPort">Input port to get values of.</param>
+        /// <param name="inputValues">Retrieved input values.</param>
+        /// 
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
+        /// property is updated with device error code.</returns>
+        /// 
+        public CommunicationStatus GetInputValues( InputPort inputPort, out InputValues inputValues )
+        {
+            CommunicationStatus status = CommunicationStatus.Success;
+
+            inputValues = new InputValues( );
+
+            // prepare message
+            communicationBuffer[0] = (byte) CommandType.DirectCommand;
+            communicationBuffer[1] = (byte) DirectCommand.GetInputValues;
+            communicationBuffer[2] = (byte) inputPort;
+
+            status = SendMessageAndGetReply( communicationBuffer, 3, communicationBuffer );
+
+            if ( status == CommunicationStatus.Success )
+            {
+                inputValues.IsValid         = ( communicationBuffer[4] != 0 );
+                inputValues.IsCalibrated    = ( communicationBuffer[5] != 0 );
+                inputValues.SensorType      = (SensorType) communicationBuffer[6];
+                inputValues.SensorMode      = (SensorMode) communicationBuffer[7];
+                inputValues.Raw             = (ushort) ( communicationBuffer[8] | ( communicationBuffer[9] << 8 ) );
+                inputValues.Normalized      = (ushort) ( communicationBuffer[10] | ( communicationBuffer[11] << 8 ) );
+                inputValues.Scaled          = (short) ( communicationBuffer[12] | ( communicationBuffer[13] << 8 ) );
+                inputValues.Calibrated      = (short) ( communicationBuffer[14] | ( communicationBuffer[15] << 8 ) );
+            }
+
+            return status;
+        }
+
+        /// <summary>
+        /// Reset input scaled value of specified input port. 
+        /// </summary>
+        /// 
+        /// <param name="inputPort">Input port to reset.</param>
+        /// 
+        /// <returns>Returns <see cref="CommunicationStatus.Success"/> if communication with NXT device was
+        /// successful, or another value describing error. In the case if <see cref="CommunicationStatus.DeviceError"/> or
+        /// <see cref="CommunicationStatus.UnknownDeviceError"/> status is returned, <see cref="LastDeviceError"/>
+        /// property is updated with device error code.</returns>
+        /// 
+        public CommunicationStatus ResetInputScaledValue( InputPort inputPort )
+        {
+            // prepare message
+            communicationBuffer[0] = (byte) CommandType.DirectCommand;
+            communicationBuffer[1] = (byte) DirectCommand.ResetInputScaledValue;
+            communicationBuffer[2] = (byte) inputPort;
+
+            return SendMessageAndGetReply( communicationBuffer, 3, communicationBuffer );
+        }
 
         #region Private methods
 

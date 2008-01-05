@@ -1,7 +1,7 @@
 // AForge Lego Robotics Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -87,7 +87,22 @@ namespace AForge.Robotics.Lego.NXT
         /// <summary>
         /// Reset motor position.
         /// </summary>
-        ResetMotorPosition = 0x0A
+        ResetMotorPosition = 0x0A,
+
+        /// <summary>
+        /// Set input mode.
+        /// </summary>
+        SetInputMode = 0x05,
+
+        /// <summary>
+        /// Get input values.
+        /// </summary>
+        GetInputValues = 0x07,
+
+        /// <summary>
+        /// Reset input scaled value.
+        /// </summary>
+        ResetInputScaledValue = 0x08
     }
 
     /// <summary>
@@ -97,17 +112,17 @@ namespace AForge.Robotics.Lego.NXT
     public enum OutputPort : byte
     {
         /// <summary>
-        /// First motor coonected to port A.
+        /// First motor connected to port A.
         /// </summary>
         MotorA = 0x00,
 
         /// <summary>
-        /// Second motor coonected to port B.
+        /// Second motor connected to port B.
         /// </summary>
         MotorB = 0x01,
 
         /// <summary>
-        /// Third motor coonected to port C.
+        /// Third motor connected to port C.
         /// </summary>
         MotorC = 0x02,
 
@@ -115,6 +130,32 @@ namespace AForge.Robotics.Lego.NXT
         /// All ports.
         /// </summary>
         All = 0xFF
+    }
+
+    /// <summary>
+    /// Definition of possible NXT input ports.
+    /// </summary>
+    public enum InputPort : byte
+    {
+        /// <summary>
+        /// First input port.
+        /// </summary>
+        Port1,
+
+        /// <summary>
+        /// Second input port.
+        /// </summary>
+        Port2,
+
+        /// <summary>
+        /// Third input port.
+        /// </summary>
+        Port3,
+
+        /// <summary>
+        /// Fourth input port.
+        /// </summary>
+        Port4
     }
 
     /// <summary>
@@ -388,5 +429,125 @@ namespace AForge.Robotics.Lego.NXT
         /// Motor will ramp-down.
         /// </summary>
         RampDown = 0x40
+    }
+
+    /// <summary>
+    /// Lego NXT sensor types.
+    /// </summary>
+    /// 
+    /// <remarks><note>Information is extremely limited due to limited information provided
+    /// by LEGO.</note></remarks>
+    /// 
+    public enum SensorType : byte
+    {
+        /// <summary>
+        /// No sensor.
+        /// </summary>
+        NoSensor = 0x00,
+
+        /// <summary>
+        /// Switch sensor.
+        /// </summary>
+        Switch = 0x01,
+
+        /// <summary>
+        /// Temperature sensor.
+        /// </summary>
+        Temperature = 0x02,
+
+        /// <summary>
+        /// Reflection sensor.
+        /// </summary>
+        Reflection = 0x03,
+
+        /// <summary>
+        /// Angle sensor.
+        /// </summary>
+        Angle = 0x04,
+
+        /// <summary>
+        /// Light activity sensor.
+        /// </summary>
+        LightActive = 0x05,
+
+        /// <summary>
+        /// Light inactivity sensor.
+        /// </summary>
+        LightInactive = 0x06,
+
+        /// <summary>
+        /// Sound sensor (in dB).
+        /// </summary>
+        SoundDB = 0x07,
+
+        /// <summary>
+        /// Sound sensor (in dBA).
+        /// </summary>
+        SoundDBA = 0x08,
+
+        /// <summary>
+        /// Custom sensor.
+        /// </summary>
+        Custom = 0x09,
+
+        /// <summary>
+        /// Low speed sensor.
+        /// </summary>
+        Lowspeed = 0x0A,
+
+        /// <summary>
+        /// Low speed sensor (9V).
+        /// </summary>
+        Lowspeed9V = 0x0B
+    }
+
+    /// <summary>
+    /// Lego NXT sensor modes.
+    /// </summary>
+    /// 
+    /// <remarks><note>Information is extremely limited due to limited information provided
+    /// by LEGO.</note></remarks>
+    ///
+    public enum SensorMode : byte
+    {
+        /// <summary>
+        /// Raw mode.
+        /// </summary>
+        Raw = 0x00,
+
+        /// <summary>
+        /// Boolean mode.
+        /// </summary>
+        Boolean = 0x20,
+
+        /// <summary>
+        /// ?
+        /// </summary>
+        TransitionCNT = 0x40,
+
+        /// <summary>
+        /// Periodic counter mode.
+        /// </summary>
+        PeriodicCounter = 0x60,
+
+        /// <summary>
+        /// ?
+        /// </summary>
+        PCTFullScale = 0x80,
+
+        /// <summary>
+        /// Celsius mode.
+        /// </summary>
+        Celsius = 0xA0,
+
+        /// <summary>
+        /// Fahrenheit mode.
+        /// </summary>
+        Fahrenheit = 0xC0,
+
+        /// <summary>
+        /// Angle steps mode.
+        /// </summary>
+        AngleSteps = 0xE0
     }
 }
