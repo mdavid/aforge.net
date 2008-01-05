@@ -50,6 +50,12 @@ namespace NXTTest
             this.firmwareBox = new System.Windows.Forms.TextBox( );
             this.label2 = new System.Windows.Forms.Label( );
             this.groupBox3 = new System.Windows.Forms.GroupBox( );
+            this.rotationCountBox = new System.Windows.Forms.TextBox( );
+            this.label16 = new System.Windows.Forms.Label( );
+            this.blockTachoCountBox = new System.Windows.Forms.TextBox( );
+            this.label15 = new System.Windows.Forms.Label( );
+            this.tachoCountBox = new System.Windows.Forms.TextBox( );
+            this.label14 = new System.Windows.Forms.Label( );
             this.groupBox4 = new System.Windows.Forms.GroupBox( );
             this.runStateCombo = new System.Windows.Forms.ComboBox( );
             this.label13 = new System.Windows.Forms.Label( );
@@ -69,13 +75,30 @@ namespace NXTTest
             this.setMotorStateButton = new System.Windows.Forms.Button( );
             this.resetMotorButton = new System.Windows.Forms.Button( );
             this.motorCombo = new System.Windows.Forms.ComboBox( );
-            this.label14 = new System.Windows.Forms.Label( );
-            this.tachoCountBox = new System.Windows.Forms.TextBox( );
-            this.label15 = new System.Windows.Forms.Label( );
-            this.blockTachoCountBox = new System.Windows.Forms.TextBox( );
-            this.label16 = new System.Windows.Forms.Label( );
-            this.rotationCountBox = new System.Windows.Forms.TextBox( );
             this.toolTip = new System.Windows.Forms.ToolTip( this.components );
+            this.groupBox6 = new System.Windows.Forms.GroupBox( );
+            this.getInputButton = new System.Windows.Forms.Button( );
+            this.inputPortCombo = new System.Windows.Forms.ComboBox( );
+            this.validCheck = new System.Windows.Forms.CheckBox( );
+            this.calibratedCheck = new System.Windows.Forms.CheckBox( );
+            this.label17 = new System.Windows.Forms.Label( );
+            this.sensorTypeBox = new System.Windows.Forms.TextBox( );
+            this.label18 = new System.Windows.Forms.Label( );
+            this.sensorModeBox = new System.Windows.Forms.TextBox( );
+            this.label19 = new System.Windows.Forms.Label( );
+            this.rawInputBox = new System.Windows.Forms.TextBox( );
+            this.label20 = new System.Windows.Forms.Label( );
+            this.normalizedInputBox = new System.Windows.Forms.TextBox( );
+            this.label21 = new System.Windows.Forms.Label( );
+            this.scaledInputBox = new System.Windows.Forms.TextBox( );
+            this.label22 = new System.Windows.Forms.Label( );
+            this.calibratedInputBox = new System.Windows.Forms.TextBox( );
+            this.label23 = new System.Windows.Forms.Label( );
+            this.label24 = new System.Windows.Forms.Label( );
+            this.sensorTypeCombo = new System.Windows.Forms.ComboBox( );
+            this.label25 = new System.Windows.Forms.Label( );
+            this.sensorModeCombo = new System.Windows.Forms.ComboBox( );
+            this.setInputModeButton = new System.Windows.Forms.Button( );
             this.groupBox1.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
             this.groupBox3.SuspendLayout( );
@@ -83,6 +106,7 @@ namespace NXTTest
             this.groupBox5.SuspendLayout( );
             ( (System.ComponentModel.ISupportInitialize) ( this.turnRatioUpDown ) ).BeginInit( );
             ( (System.ComponentModel.ISupportInitialize) ( this.powerUpDown ) ).BeginInit( );
+            this.groupBox6.SuspendLayout( );
             this.SuspendLayout( );
             // 
             // groupBox1
@@ -295,6 +319,60 @@ namespace NXTTest
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Motor control";
+            // 
+            // rotationCountBox
+            // 
+            this.rotationCountBox.Location = new System.Drawing.Point( 110, 280 );
+            this.rotationCountBox.Name = "rotationCountBox";
+            this.rotationCountBox.ReadOnly = true;
+            this.rotationCountBox.Size = new System.Drawing.Size( 100, 20 );
+            this.rotationCountBox.TabIndex = 12;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point( 10, 283 );
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size( 80, 13 );
+            this.label16.TabIndex = 11;
+            this.label16.Text = "Rotation count:";
+            this.toolTip.SetToolTip( this.label16, "Current position relative to last reset of motor\'s rotation sensor" );
+            // 
+            // blockTachoCountBox
+            // 
+            this.blockTachoCountBox.Location = new System.Drawing.Point( 110, 255 );
+            this.blockTachoCountBox.Name = "blockTachoCountBox";
+            this.blockTachoCountBox.ReadOnly = true;
+            this.blockTachoCountBox.Size = new System.Drawing.Size( 100, 20 );
+            this.blockTachoCountBox.TabIndex = 10;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point( 10, 258 );
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size( 97, 13 );
+            this.label15.TabIndex = 9;
+            this.label15.Text = "Block tacho count:";
+            this.toolTip.SetToolTip( this.label15, "Current position relative to last programmed movement" );
+            // 
+            // tachoCountBox
+            // 
+            this.tachoCountBox.Location = new System.Drawing.Point( 110, 230 );
+            this.tachoCountBox.Name = "tachoCountBox";
+            this.tachoCountBox.ReadOnly = true;
+            this.tachoCountBox.Size = new System.Drawing.Size( 100, 20 );
+            this.tachoCountBox.TabIndex = 8;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point( 10, 233 );
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size( 71, 13 );
+            this.label14.TabIndex = 7;
+            this.label14.Text = "Tacho count:";
+            this.toolTip.SetToolTip( this.label14, "Number of counts since last reset of motor counter" );
             // 
             // groupBox4
             // 
@@ -520,69 +598,273 @@ namespace NXTTest
             this.motorCombo.Size = new System.Drawing.Size( 65, 21 );
             this.motorCombo.TabIndex = 0;
             // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point( 10, 233 );
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size( 71, 13 );
-            this.label14.TabIndex = 7;
-            this.label14.Text = "Tacho count:";
-            this.toolTip.SetToolTip( this.label14, "Number of counts since last reset of motor counter" );
-            // 
-            // tachoCountBox
-            // 
-            this.tachoCountBox.Location = new System.Drawing.Point( 110, 230 );
-            this.tachoCountBox.Name = "tachoCountBox";
-            this.tachoCountBox.ReadOnly = true;
-            this.tachoCountBox.Size = new System.Drawing.Size( 100, 20 );
-            this.tachoCountBox.TabIndex = 8;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point( 10, 258 );
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size( 97, 13 );
-            this.label15.TabIndex = 9;
-            this.label15.Text = "Block tacho count:";
-            this.toolTip.SetToolTip( this.label15, "Current position relative to last programmed movement" );
-            // 
-            // blockTachoCountBox
-            // 
-            this.blockTachoCountBox.Location = new System.Drawing.Point( 110, 255 );
-            this.blockTachoCountBox.Name = "blockTachoCountBox";
-            this.blockTachoCountBox.ReadOnly = true;
-            this.blockTachoCountBox.Size = new System.Drawing.Size( 100, 20 );
-            this.blockTachoCountBox.TabIndex = 10;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point( 10, 283 );
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size( 80, 13 );
-            this.label16.TabIndex = 11;
-            this.label16.Text = "Rotation count:";
-            this.toolTip.SetToolTip( this.label16, "Current position relative to last reset of motor\'s rotation sensor" );
-            // 
-            // rotationCountBox
-            // 
-            this.rotationCountBox.Location = new System.Drawing.Point( 110, 280 );
-            this.rotationCountBox.Name = "rotationCountBox";
-            this.rotationCountBox.ReadOnly = true;
-            this.rotationCountBox.Size = new System.Drawing.Size( 100, 20 );
-            this.rotationCountBox.TabIndex = 12;
-            // 
             // toolTip
             // 
             this.toolTip.BackColor = System.Drawing.Color.FromArgb( ( (int) ( ( (byte) ( 192 ) ) ) ), ( (int) ( ( (byte) ( 255 ) ) ) ), ( (int) ( ( (byte) ( 192 ) ) ) ) );
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add( this.setInputModeButton );
+            this.groupBox6.Controls.Add( this.sensorModeCombo );
+            this.groupBox6.Controls.Add( this.label25 );
+            this.groupBox6.Controls.Add( this.sensorTypeCombo );
+            this.groupBox6.Controls.Add( this.label23 );
+            this.groupBox6.Controls.Add( this.label24 );
+            this.groupBox6.Controls.Add( this.calibratedInputBox );
+            this.groupBox6.Controls.Add( this.label22 );
+            this.groupBox6.Controls.Add( this.scaledInputBox );
+            this.groupBox6.Controls.Add( this.label21 );
+            this.groupBox6.Controls.Add( this.normalizedInputBox );
+            this.groupBox6.Controls.Add( this.label20 );
+            this.groupBox6.Controls.Add( this.rawInputBox );
+            this.groupBox6.Controls.Add( this.label19 );
+            this.groupBox6.Controls.Add( this.sensorModeBox );
+            this.groupBox6.Controls.Add( this.label18 );
+            this.groupBox6.Controls.Add( this.sensorTypeBox );
+            this.groupBox6.Controls.Add( this.label17 );
+            this.groupBox6.Controls.Add( this.calibratedCheck );
+            this.groupBox6.Controls.Add( this.validCheck );
+            this.groupBox6.Controls.Add( this.getInputButton );
+            this.groupBox6.Controls.Add( this.inputPortCombo );
+            this.groupBox6.Location = new System.Drawing.Point( 585, 10 );
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size( 170, 310 );
+            this.groupBox6.TabIndex = 8;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Input ports";
+            // 
+            // getInputButton
+            // 
+            this.getInputButton.Enabled = false;
+            this.getInputButton.Location = new System.Drawing.Point( 95, 19 );
+            this.getInputButton.Name = "getInputButton";
+            this.getInputButton.Size = new System.Drawing.Size( 65, 23 );
+            this.getInputButton.TabIndex = 1;
+            this.getInputButton.Text = "Get &input";
+            this.getInputButton.UseVisualStyleBackColor = true;
+            this.getInputButton.Click += new System.EventHandler( this.getInputButton_Click );
+            // 
+            // inputPortCombo
+            // 
+            this.inputPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.inputPortCombo.FormattingEnabled = true;
+            this.inputPortCombo.Items.AddRange( new object[] {
+            "Port 1",
+            "Port 2",
+            "Port 3",
+            "Port 4"} );
+            this.inputPortCombo.Location = new System.Drawing.Point( 10, 20 );
+            this.inputPortCombo.Name = "inputPortCombo";
+            this.inputPortCombo.Size = new System.Drawing.Size( 75, 21 );
+            this.inputPortCombo.TabIndex = 0;
+            // 
+            // validCheck
+            // 
+            this.validCheck.AutoSize = true;
+            this.validCheck.Enabled = false;
+            this.validCheck.Location = new System.Drawing.Point( 10, 50 );
+            this.validCheck.Name = "validCheck";
+            this.validCheck.Size = new System.Drawing.Size( 60, 17 );
+            this.validCheck.TabIndex = 2;
+            this.validCheck.Text = "Is Valid";
+            this.validCheck.UseVisualStyleBackColor = true;
+            // 
+            // calibratedCheck
+            // 
+            this.calibratedCheck.AutoSize = true;
+            this.calibratedCheck.Enabled = false;
+            this.calibratedCheck.Location = new System.Drawing.Point( 80, 50 );
+            this.calibratedCheck.Name = "calibratedCheck";
+            this.calibratedCheck.Size = new System.Drawing.Size( 84, 17 );
+            this.calibratedCheck.TabIndex = 3;
+            this.calibratedCheck.Text = "Is Calibrated";
+            this.calibratedCheck.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point( 10, 78 );
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size( 66, 13 );
+            this.label17.TabIndex = 4;
+            this.label17.Text = "Sensor type:";
+            // 
+            // sensorTypeBox
+            // 
+            this.sensorTypeBox.Location = new System.Drawing.Point( 80, 75 );
+            this.sensorTypeBox.Name = "sensorTypeBox";
+            this.sensorTypeBox.ReadOnly = true;
+            this.sensorTypeBox.Size = new System.Drawing.Size( 80, 20 );
+            this.sensorTypeBox.TabIndex = 5;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point( 10, 103 );
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size( 72, 13 );
+            this.label18.TabIndex = 6;
+            this.label18.Text = "Sensor mode:";
+            // 
+            // sensorModeBox
+            // 
+            this.sensorModeBox.Location = new System.Drawing.Point( 80, 100 );
+            this.sensorModeBox.Name = "sensorModeBox";
+            this.sensorModeBox.ReadOnly = true;
+            this.sensorModeBox.Size = new System.Drawing.Size( 80, 20 );
+            this.sensorModeBox.TabIndex = 7;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point( 10, 128 );
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size( 32, 13 );
+            this.label19.TabIndex = 8;
+            this.label19.Text = "Row:";
+            // 
+            // rawInputBox
+            // 
+            this.rawInputBox.Location = new System.Drawing.Point( 80, 125 );
+            this.rawInputBox.Name = "rawInputBox";
+            this.rawInputBox.ReadOnly = true;
+            this.rawInputBox.Size = new System.Drawing.Size( 80, 20 );
+            this.rawInputBox.TabIndex = 9;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point( 10, 153 );
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size( 62, 13 );
+            this.label20.TabIndex = 10;
+            this.label20.Text = "Normalized:";
+            // 
+            // normalizedInputBox
+            // 
+            this.normalizedInputBox.Location = new System.Drawing.Point( 80, 150 );
+            this.normalizedInputBox.Name = "normalizedInputBox";
+            this.normalizedInputBox.ReadOnly = true;
+            this.normalizedInputBox.Size = new System.Drawing.Size( 80, 20 );
+            this.normalizedInputBox.TabIndex = 11;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point( 10, 178 );
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size( 43, 13 );
+            this.label21.TabIndex = 12;
+            this.label21.Text = "Scaled:";
+            // 
+            // scaledInputBox
+            // 
+            this.scaledInputBox.Location = new System.Drawing.Point( 80, 175 );
+            this.scaledInputBox.Name = "scaledInputBox";
+            this.scaledInputBox.ReadOnly = true;
+            this.scaledInputBox.Size = new System.Drawing.Size( 80, 20 );
+            this.scaledInputBox.TabIndex = 13;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point( 10, 203 );
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size( 57, 13 );
+            this.label22.TabIndex = 14;
+            this.label22.Text = "Calibrated:";
+            // 
+            // calibratedInputBox
+            // 
+            this.calibratedInputBox.Location = new System.Drawing.Point( 80, 200 );
+            this.calibratedInputBox.Name = "calibratedInputBox";
+            this.calibratedInputBox.ReadOnly = true;
+            this.calibratedInputBox.Size = new System.Drawing.Size( 80, 20 );
+            this.calibratedInputBox.TabIndex = 15;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point( 10, 263 );
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size( 72, 13 );
+            this.label23.TabIndex = 17;
+            this.label23.Text = "Sensor mode:";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point( 10, 238 );
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size( 66, 13 );
+            this.label24.TabIndex = 16;
+            this.label24.Text = "Sensor type:";
+            // 
+            // sensorTypeCombo
+            // 
+            this.sensorTypeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.sensorTypeCombo.FormattingEnabled = true;
+            this.sensorTypeCombo.Items.AddRange( new object[] {
+            "No Sensor",
+            "Switch",
+            "Temperature",
+            "Reflection",
+            "Angle",
+            "Light Active",
+            "Light Inactive",
+            "Sound (dB)",
+            "Sound (dBA)",
+            "Custom",
+            "Lowspeed",
+            "Lowspeed 9V"} );
+            this.sensorTypeCombo.Location = new System.Drawing.Point( 80, 235 );
+            this.sensorTypeCombo.Name = "sensorTypeCombo";
+            this.sensorTypeCombo.Size = new System.Drawing.Size( 80, 21 );
+            this.sensorTypeCombo.TabIndex = 18;
+            // 
+            // label25
+            // 
+            this.label25.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label25.Location = new System.Drawing.Point( 10, 227 );
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size( 150, 2 );
+            this.label25.TabIndex = 19;
+            // 
+            // sensorModeCombo
+            // 
+            this.sensorModeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.sensorModeCombo.FormattingEnabled = true;
+            this.sensorModeCombo.Items.AddRange( new object[] {
+            "Raw",
+            "Boolean",
+            "Transition CNT",
+            "Periodic Counter",
+            "PCT Full Scale",
+            "Celsius",
+            "Fahrenheit",
+            "Angle Steps"} );
+            this.sensorModeCombo.Location = new System.Drawing.Point( 80, 260 );
+            this.sensorModeCombo.Name = "sensorModeCombo";
+            this.sensorModeCombo.Size = new System.Drawing.Size( 80, 21 );
+            this.sensorModeCombo.TabIndex = 20;
+            // 
+            // setInputModeButton
+            // 
+            this.setInputModeButton.Enabled = false;
+            this.setInputModeButton.Location = new System.Drawing.Point( 80, 283 );
+            this.setInputModeButton.Name = "setInputModeButton";
+            this.setInputModeButton.Size = new System.Drawing.Size( 80, 23 );
+            this.setInputModeButton.TabIndex = 21;
+            this.setInputModeButton.Text = "Set &mode";
+            this.setInputModeButton.UseVisualStyleBackColor = true;
+            this.setInputModeButton.Click += new System.EventHandler( this.setInputModeButton_Click );
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size( 584, 329 );
+            this.ClientSize = new System.Drawing.Size( 772, 329 );
+            this.Controls.Add( this.groupBox6 );
             this.Controls.Add( this.groupBox3 );
             this.Controls.Add( this.groupBox2 );
             this.Controls.Add( this.groupBox1 );
@@ -603,6 +885,8 @@ namespace NXTTest
             this.groupBox5.PerformLayout( );
             ( (System.ComponentModel.ISupportInitialize) ( this.turnRatioUpDown ) ).EndInit( );
             ( (System.ComponentModel.ISupportInitialize) ( this.powerUpDown ) ).EndInit( );
+            this.groupBox6.ResumeLayout( false );
+            this.groupBox6.PerformLayout( );
             this.ResumeLayout( false );
 
         }
@@ -656,6 +940,29 @@ namespace NXTTest
         private System.Windows.Forms.TextBox blockTachoCountBox;
         private System.Windows.Forms.TextBox rotationCountBox;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.ComboBox inputPortCombo;
+        private System.Windows.Forms.Button getInputButton;
+        private System.Windows.Forms.CheckBox calibratedCheck;
+        private System.Windows.Forms.CheckBox validCheck;
+        private System.Windows.Forms.TextBox sensorModeBox;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox sensorTypeBox;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox rawInputBox;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.TextBox normalizedInputBox;
+        private System.Windows.Forms.TextBox calibratedInputBox;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.TextBox scaledInputBox;
+        private System.Windows.Forms.ComboBox sensorTypeCombo;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.ComboBox sensorModeCombo;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Button setInputModeButton;
     }
 }
 
