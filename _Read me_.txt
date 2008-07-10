@@ -17,3 +17,7 @@ be built without issues. The branch is 100% aimed for developers, not for
 the framework users. If you are willing to start using the code – OK, but don’t
 expect we’ll support you. If you are willing to join and contribute – you are
 welcome.
+
+Unless the AForge.NET 2.0 is released, all the code in this branch should
+be considered as GPL licensed, what does not allow its usage in closed
+sources applications.
