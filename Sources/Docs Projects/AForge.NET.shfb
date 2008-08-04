@@ -1,10 +1,12 @@
 ﻿<project schemaVersion="1.6.0.7">
     <assemblies>
+        <assembly assemblyPath="..\..\Release\AForge.Controls.dll" xmlCommentsPath="..\..\Release\AForge.Controls.xml" commentsOnly="False" />
         <assembly assemblyPath="..\..\Release\AForge.Imaging.dll" xmlCommentsPath="..\..\Release\AForge.Imaging.xml" commentsOnly="False" />
         <assembly assemblyPath="..\..\Release\AForge.Imaging.Formats.dll" xmlCommentsPath="..\..\Release\AForge.Imaging.Formats.xml" commentsOnly="False" />
     </assemblies>
     <namespaceSummaries>
         <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="AForge.Controls" isDocumented="True">The &lt;b&gt;AForge.Controls&lt;/b&gt; namespace contains different useful UI controls, which may be used together with other classes of &lt;b&gt;AForge.NET&lt;/b&gt; framework.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging.Formats" isDocumented="True">The &lt;b&gt;AForge.Imaging.Formats&lt;/b&gt; namespace contains interfaces and classes, which are used to handle different image file formats.</namespaceSummaryItem>
     </namespaceSummaries>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
