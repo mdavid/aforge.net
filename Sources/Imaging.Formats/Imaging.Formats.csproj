@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FITSCodec.cs" />
     <Compile Include="IImageDecoder.cs" />
     <Compile Include="PNMCodec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
