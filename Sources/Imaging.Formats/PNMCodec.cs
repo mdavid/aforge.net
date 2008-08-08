@@ -14,6 +14,75 @@ namespace AForge.Imaging.Formats
     using System.Text;
 
     /// <summary>
+    /// Information about PNM image's frame.
+    /// </summary>
+    public sealed class PNMImageInfo : ImageInfo
+    {
+        // PNM file version (1-6)
+        private int version;
+        // maximum data value
+        private int maxDataValue;
+
+        /// <summary>
+        /// PNM file version (format), [1, 6].
+        /// </summary>
+        public int Version
+        {
+            get { return version; }
+            set { version = value; }
+        }
+
+        /// <summary>
+        /// Maximum pixel's value in source PNM image.
+        /// </summary>
+        /// 
+        /// <remarks><para>The value is used to scale image's data converting them
+        /// from original data range to the range of
+        /// <see cref="ImageInfo.BitsPerPixel">supported bits per pixel</see> format.</para></remarks>
+        /// 
+        public int MaxDataValue
+        {
+            get { return maxDataValue; }
+            set { maxDataValue = value; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PNMImageInfo"/> class.
+        /// </summary>
+        /// 
+        public PNMImageInfo( ) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PNMImageInfo"/> class.
+        /// </summary>
+        /// 
+        /// <param name="width">Image's width.</param>
+        /// <param name="height">Image's height.</param>
+        /// <param name="bitsPerPixel">Number of bits per image's pixel.</param>
+        /// <param name="frameIndex">Frame's index.</param>
+        /// <param name="totalFrames">Total frames in the image.</param>
+        /// 
+        public PNMImageInfo( int width, int height, int bitsPerPixel, int frameIndex, int totalFrames ) :
+            base( width, height, bitsPerPixel, frameIndex, totalFrames ) { }
+
+        /// <summary>
+        /// Creates a new object that is a copy of the current instance. 
+        /// </summary>
+        /// 
+        /// <returns>A new object that is a copy of this instance.</returns>
+        /// 
+        public override object Clone( )
+        {
+            PNMImageInfo clone = new PNMImageInfo( width, height, bitsPerPixel, frameIndex, totalFrames );
+
+            clone.version = version;
+            clone.maxDataValue = maxDataValue;
+
+            return clone;
+        }
+    }
+
+    /// <summary>
     /// PNM image format decoder.
     /// </summary>
     /// 
@@ -36,6 +105,13 @@ namespace AForge.Imaging.Formats
     /// 
     public class PNMCodec : IImageDecoder
     {
+        // stream with PNM encoded data
+        private Stream stream = null;
+        // information about images retrieved from header
+        private PNMImageInfo imageInfo = null;
+        // stream position pointing to beginning of data - right after header
+        private long dataPosition = 0;
+
         /// <summary>
         /// Decode first frame of PNM image.
         /// </summary>
@@ -44,10 +120,90 @@ namespace AForge.Imaging.Formats
         /// 
         /// <returns>Returns decoded image frame.</returns>
         /// 
+        /// <exception cref="FormatException">Not a PNM image format.</exception>
         /// <exception cref="NotSupportedException">Format of the PNM image is not supported.</exception>
-        /// <exception cref="ArgumentException">The stream contains invalid PNM image.</exception>
+        /// <exception cref="ArgumentException">The stream contains invalid (broken) PNM image.</exception>
         /// 
         public Bitmap DecodeSingleFrame( Stream stream )
+        {
+            PNMImageInfo imageInfo = ReadHeader( stream );
+
+            return ReadImageFrame( stream, imageInfo );
+        }
+
+        /// <summary>
+        /// Open specified stream.
+        /// </summary>
+        /// 
+        /// <param name="stream">Stream to open.</param>
+        /// 
+        /// <returns>Returns number of images found in the specified stream.</returns>
+        /// 
+        /// <exception cref="FormatException">Not a PNM image format.</exception>
+        /// <exception cref="NotSupportedException">Format of the PNM image is not supported.</exception>
+        /// <exception cref="ArgumentException">The stream contains invalid (broken) PNM image.</exception>
+        ///
+        public int Open( Stream stream )
+        {
+            // close previous decoding
+            Close( );
+
+            this.imageInfo    = ReadHeader( stream );
+            this.stream       = stream;
+            this.dataPosition = stream.Seek( 0, SeekOrigin.Current );
+
+            return imageInfo.TotalFrames;
+        }
+
+        /// <summary>
+        /// Decode specified frame.
+        /// </summary>
+        /// 
+        /// <param name="frameIndex">Image frame to decode.</param>
+        /// <param name="imageInfo">Receives information about decoded frame.</param>
+        /// 
+        /// <returns>Returns decoded frame.</returns>
+        /// 
+        /// <exception cref="NullReferenceException">No image stream was opened previously.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Stream does not contain frame with specified index.</exception>
+        /// <exception cref="ArgumentException">The stream contains invalid (broken) PNM image.</exception>
+        /// 
+        public Bitmap DecodeFrame( int frameIndex, out ImageInfo imageInfo )
+        {
+            // check requested frame index
+            if ( frameIndex != 0 )
+            {
+                throw new ArgumentOutOfRangeException( "Currently opened stream does not contain frame with specified index." );
+            }
+
+            // seek to the required frame
+            stream.Seek( dataPosition, SeekOrigin.Begin );
+
+            // read required frame
+            Bitmap image = ReadImageFrame( stream, this.imageInfo );
+
+            // provide also frame information
+            imageInfo = (PNMImageInfo) this.imageInfo.Clone( );
+
+            return image;
+        }
+
+        /// <summary>
+        /// Close decoding of previously opened stream.
+        /// </summary>
+        /// 
+        /// <remarks><para>The method does not close stream itself, but just closes
+        /// decoding cleaning all associated data with it.</para></remarks>
+        /// 
+        public void Close( )
+        {
+            stream    = null;
+            imageInfo = null;
+        }
+
+        // Read and process PNM header. After the header is read stream pointer will
+        // point to data.
+        private PNMImageInfo ReadHeader( Stream stream )
         {
             // read magic word
             byte magic1 = (byte) stream.ReadByte( );
@@ -56,7 +212,7 @@ namespace AForge.Imaging.Formats
             // check if it is valid PNM image
             if ( ( magic1 != 'P' ) || ( magic2 < '1' ) || ( magic2 > '6' ) )
             {
-                throw new ArgumentException( "The stream does not contain valid PNM image." );
+                throw new FormatException( "The stream does not contain PNM image." );
             }
 
             // check if it is P5 or P6 format
@@ -70,7 +226,7 @@ namespace AForge.Imaging.Formats
             try
             {
                 // read image's width and height
-                width  = ReadIntegerValue( stream );
+                width = ReadIntegerValue( stream );
                 height = ReadIntegerValue( stream );
                 // read pixel's highiest value
                 maxValue = ReadIntegerValue( stream );
@@ -92,15 +248,26 @@ namespace AForge.Imaging.Formats
                 throw new NotSupportedException( "255 is the maximum pixel's value, which is supported for now." );
             }
 
+            // prepare image information
+            PNMImageInfo imageInfo = new PNMImageInfo( width, height, ( magic2 == '5' ) ? 8 : 24, 0, 1 );
+            imageInfo.Version = (int) ( magic2 - '0' );
+            imageInfo.MaxDataValue = maxValue;
+
+            return imageInfo;
+        }
+
+        // Read image frame from the specified stream (current stream's position is used)
+        private Bitmap ReadImageFrame( Stream stream, PNMImageInfo imageInfo )
+        {
             try
             {
                 // decode PNM image depending on its format
-                switch ( magic2 )
+                switch ( imageInfo.Version )
                 {
-                    case (byte) '5':
-                        return ReadP5Image( stream, width, height, maxValue );
-                    case (byte) '6':
-                        return ReadP6Image( stream, width, height, maxValue );
+                    case 5:
+                        return ReadP5Image( stream, imageInfo.Width, imageInfo.Height, imageInfo.MaxDataValue );
+                    case 6:
+                        return ReadP6Image( stream, imageInfo.Width, imageInfo.Height, imageInfo.MaxDataValue );
                 }
             }
             catch
@@ -110,7 +277,6 @@ namespace AForge.Imaging.Formats
 
             return null;
         }
-
 
         // Load P5 PGM image (grayscale PNM image with binary encoding)
         private unsafe Bitmap ReadP5Image( Stream stream, int width, int height, int maxValue )
