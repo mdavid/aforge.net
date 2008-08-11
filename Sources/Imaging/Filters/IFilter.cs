@@ -1,12 +1,13 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
+    using System;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -35,7 +36,6 @@ namespace AForge.Imaging.Filters
         ///
         Bitmap Apply( Bitmap image );
 
-
         /// <summary>
         /// Apply filter to an image.
         /// </summary>
@@ -50,5 +50,28 @@ namespace AForge.Imaging.Filters
         /// unchanged.</remarks>
         /// 
         Bitmap Apply( BitmapData imageData );
+
+        /// <summary>
+        /// Apply filter to an image.
+        /// </summary>
+        /// 
+        /// <param name="imageData">Pointer to source image in unmanaged memory.</param>
+        /// <param name="width">Image's width.</param>
+        /// <param name="height">Image's height.</param>
+        /// <param name="stride">Image's stride (line size).</param>
+        /// <param name="format">Image's pixel format.</param>
+        /// <param name="destData">Pointer to destination buffer in unmanaged memory, which receives
+        /// resulting image.</param>
+        /// <param name="destSize">Size of destination buffer.</param>
+        /// <param name="width">Receives width of the resulting image put into destination buffer.</param>
+        /// <param name="height">Receives height of the resulting image put into destination buffer.</param>
+        /// <param name="destStride">Receives stride of the resulting image put into destination buffer.</param>
+        /// 
+        /// <remarks>The filter accepts bitmap data as input and returns the result
+        /// of image processing filter as new image. The source image data are kept
+        /// unchanged.</remarks>
+        /// 
+        void Apply( IntPtr imageData, int width, int height, int stride, PixelFormat format,
+            IntPtr destData, int destSize, out int width, out int height, out int destStride );
     }
 }
