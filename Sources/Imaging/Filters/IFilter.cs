@@ -63,8 +63,8 @@ namespace AForge.Imaging.Filters
         /// <param name="destData">Pointer to destination buffer in unmanaged memory, which receives
         /// resulting image.</param>
         /// <param name="destSize">Size of destination buffer.</param>
-        /// <param name="width">Receives width of the resulting image put into destination buffer.</param>
-        /// <param name="height">Receives height of the resulting image put into destination buffer.</param>
+        /// <param name="destWidth">Receives width of the resulting image put into destination buffer.</param>
+        /// <param name="destHeight">Receives height of the resulting image put into destination buffer.</param>
         /// <param name="destStride">Receives stride of the resulting image put into destination buffer.</param>
         /// 
         /// <remarks>The filter accepts bitmap data as input and returns the result
@@ -72,6 +72,6 @@ namespace AForge.Imaging.Filters
         /// unchanged.</remarks>
         /// 
         void Apply( IntPtr imageData, int width, int height, int stride, PixelFormat format,
-            IntPtr destData, int destSize, out int width, out int height, out int destStride );
+            IntPtr destData, int destSize, out int destWidth, out int destHeight, out int destStride );
     }
 }
