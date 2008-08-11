@@ -1,12 +1,13 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
+    using System;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -16,8 +17,8 @@ namespace AForge.Imaging.Filters
     /// 
     /// <remarks>The interface defines the set of methods, which should be
     /// implemented by filters, which are capable to do image processing
-    /// directly on the source image. Not all of image processing filters
-    /// can be applied directly to the source image - only filter, which do not
+    /// directly on the source image. Not all image processing filters
+    /// can be applied directly to the source image - only filters, which do not
     /// change image's dimension and pixel format, can be applied directly to the
     /// source image.</remarks>
     /// 
@@ -29,8 +30,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="image">Image to apply filter to.</param>
         /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image.</remarks>
+        /// <remarks>The method applies filter directly to the provided image data.</remarks>
         /// 
         void ApplyInPlace( Bitmap image );
 
@@ -40,10 +40,23 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="imageData">Image to apply filter to.</param>
         /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image data.</remarks>
+        /// <remarks>The method applies filter directly to the provided image data.</remarks>
         /// 
         void ApplyInPlace( BitmapData imageData );
+
+        /// <summary>
+        /// Apply filter to an image in unmanaged memory.
+        /// </summary>
+        /// 
+        /// <param name="imageData">Pointer to an image in unmanaged memory.</param>
+        /// <param name="width">Image's width.</param>
+        /// <param name="height">Image's height.</param>
+        /// <param name="stride">Image's stride (line size).</param>
+        /// <param name="format">Image's pixel format.</param>
+        /// 
+        /// <remarks>The method applies filter directly to the provided image data.</remarks>
+        /// 
+        void ApplyInPlace( IntPtr imageData, int width, int height, int stride, PixelFormat format );
     }
 }
 
