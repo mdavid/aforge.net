@@ -41,10 +41,16 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters\IFilter.cs" />
+    <Compile Include="Filters\IInPlaceFilter.cs" />
+    <Compile Include="Filters\IInPlacePartialFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AForge.Imaging.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Filters\Base classes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
