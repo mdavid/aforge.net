@@ -74,9 +74,11 @@
   <ItemGroup>
     <Reference Include="AForge, Version=1.3.0.0, Culture=neutral, PublicKeyToken=75f8e82c5042a70f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Core\bin\Debug\AForge.dll</HintPath>
     </Reference>
     <Reference Include="AForge.Math, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e12ceb15b47eb5cc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Math\bin\Debug\AForge.Math.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -102,6 +104,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BlobCounterBase.cs" />
+    <Compile Include="BlobStatistics.cs" />
     <Compile Include="BlockMatch.cs" />
     <Compile Include="ColorConverter.cs">
       <SubType>Code</SubType>
