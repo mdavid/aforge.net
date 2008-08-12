@@ -7,9 +7,11 @@ namespace ParallelTest
     {
         static void Main( string[] args )
         {
-            int matrixSize = 500;
+            int matrixSize = 10;
             int runs = 10;
             int tests = 5;
+			
+			Console.WriteLine( "Starting test with " + Parallel.ThreadsCount + " threads" );
 
             // allocate matrixes for all tests
             double[,] a  = new double[matrixSize, matrixSize];
