@@ -1,5 +1,11 @@
-﻿using System;
-using AForge;
+﻿// AForge.NET Framework
+// Parallel computations sample application
+//
+// Copyright © Andrew Kirillov, 2008
+// andrew.kirillov@gmail.com
+//
+
+using System;
 
 namespace ParallelTest
 {
@@ -7,18 +13,20 @@ namespace ParallelTest
     {
         static void Main( string[] args )
         {
-            int matrixSize = 10;
+            int matrixSize = 250;
             int runs = 10;
             int tests = 5;
-			
-			Console.WriteLine( "Starting test with " + Parallel.ThreadsCount + " threads" );
+
+            double test1time = 0;
+            double test2time = 0;
+
+            Console.WriteLine( "Starting test with " + AForge.Parallel.ThreadsCount + " threads" );
 
             // allocate matrixes for all tests
             double[,] a  = new double[matrixSize, matrixSize];
             double[,] b  = new double[matrixSize, matrixSize];
             double[,] c1 = new double[matrixSize, matrixSize];
             double[,] c2 = new double[matrixSize, matrixSize];
-            double[,] c3 = new double[matrixSize, matrixSize];
 
             Random rand = new Random( );
 
@@ -46,7 +54,8 @@ namespace ParallelTest
                 DateTime end = DateTime.Now;
                 TimeSpan span = end - start;
 
-                Console.Write( span.TotalMilliseconds + "\t | " );
+                Console.Write( span.TotalMilliseconds.ToString( "F3" ) + "\t | " );
+                test1time += span.TotalMilliseconds;
 
                 // test 2
                 start = DateTime.Now;
@@ -59,14 +68,26 @@ namespace ParallelTest
                 end = DateTime.Now;
                 span = end - start;
 
-                Console.Write( span.TotalMilliseconds + "\t | " );
+                Console.Write( span.TotalMilliseconds.ToString( "F3" ) + "\t | " );
+                test2time += span.TotalMilliseconds;
 
                 Console.WriteLine( " " );
             }
 
+            // provide average performance
+            test1time /= tests;
+            test2time /= tests;
+
+            Console.WriteLine( "----------- AVG -----------" );
+            Console.WriteLine( test1time.ToString( "F3" ) + "\t | " + test2time.ToString( "F3" ) + "\t | " );
+
             Console.WriteLine( "Done" );
+
+            // clean-up resources used for parallel computation
+            AForge.Parallel.Cleanup( );
         }
 
+        // Test #1 - multiply 2 square matrixes without using parallel computations
         private static void Test1( double[,] a, double[,] b, double[,] c )
         {
             int s = a.GetLength( 0 );
@@ -87,6 +108,7 @@ namespace ParallelTest
             }
         }
 
+        // Test #2 - multiply 2 square matrixes using parallel computations
         private static void Test2( double[,] a, double[,] b, double[,] c )
         {
             int s = a.GetLength( 0 );
