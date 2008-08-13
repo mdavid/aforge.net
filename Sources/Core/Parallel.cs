@@ -17,7 +17,7 @@ namespace AForge
     /// <remarks><para>The class allows to parallel loop's iteration computing them in separate threads,
     /// what allows their simultaneous execution on multiple CPUs/cores.
     /// </para></remarks>
-    /// 
+    ///
     public class Parallel
     {
         /// <summary>
@@ -122,16 +122,38 @@ namespace AForge
             mutex.ReleaseMutex( );
         }
 
+        /// <summary>
+        /// Clean-up resources used by Parallel class instance.
+        /// </summary>
+        /// 
+        /// <remarks><para>All applications, which use Parallel class for parallel computations,
+        /// should call this method. The method terminates all worker threads used for parallel
+        /// computations and frees all resources used for synchronization.</para>
+        /// 
+        /// <para><note>Application's main thread will not exit (application will not terminate),
+        /// if this method is not called after using Parallel class's services.</note></para>
+        /// </remarks>
+        /// 
+        public static void Cleanup( )
+        {
+            // !!! TODO !!!
+            // work on solution, which does not require from user to call this method
+            // clean-up should be done automatically
+
+
+            mutex.WaitOne( );
+
+            if ( instance != null )
+            {
+                instance.Terminate( );
+                instance = null;
+            }
+
+            mutex.ReleaseMutex( );
+        }
+
         // Private constructor to avoid class instantiation
         private Parallel( ) { }
-
-        /// <summary>
-        /// Class destructor to perform clean-up.
-        /// </summary>
-        ~Parallel( )
-        {
-            Terminate( );
-        }
 
         // Get instace of the Parallel class
         private static Parallel Instance
@@ -152,7 +174,7 @@ namespace AForge
                         // reinitialize
                         instance.Initialize( );
 
-                        // TODO: change reinitialization to keep already created objects
+                        // TODO: change reinitialization to reuse already created objects
                     }
                 }
                 return instance;
@@ -214,16 +236,16 @@ namespace AForge
                 // close events
                 jobAvailable[i].Close( );
                 threadAvailable[i].Close( );
-
-                // clean all array references
-                jobAvailable    = null;
-                threadAvailable = null;
-                threads         = null;
-                waitHandles     = null;
-                startIndex      = null;
-                stopIndex       = null;
-                loopBodies      = null;
             }
+
+            // clean all array references
+            jobAvailable    = null;
+            threadAvailable = null;
+            threads         = null;
+            waitHandles     = null;
+            startIndex      = null;
+            stopIndex       = null;
+            loopBodies      = null;
         }
 
         // Added parallel job for the first available worker thread
