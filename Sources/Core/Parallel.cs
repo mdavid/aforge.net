@@ -122,36 +122,6 @@ namespace AForge
             mutex.ReleaseMutex( );
         }
 
-        /// <summary>
-        /// Clean-up resources used by Parallel class instance.
-        /// </summary>
-        /// 
-        /// <remarks><para>All applications, which use Parallel class for parallel computations,
-        /// should call this method. The method terminates all worker threads used for parallel
-        /// computations and frees all resources used for synchronization.</para>
-        /// 
-        /// <para><note>Application's main thread will not exit (application will not terminate),
-        /// if this method is not called after using Parallel class's services.</note></para>
-        /// </remarks>
-        /// 
-        public static void Cleanup( )
-        {
-            // !!! TODO !!!
-            // work on solution, which does not require from user to call this method
-            // clean-up should be done automatically
-
-
-            mutex.WaitOne( );
-
-            if ( instance != null )
-            {
-                instance.Terminate( );
-                instance = null;
-            }
-
-            mutex.ReleaseMutex( );
-        }
-
         // Private constructor to avoid class instantiation
         private Parallel( ) { }
 
@@ -217,6 +187,7 @@ namespace AForge
                 waitHandles[i]     = threadAvailable[i];
 
                 threads[i] = new Thread( new ParameterizedThreadStart( WorkerThread ) );
+                threads[i].IsBackground = true;
                 threads[i].Start( i );
             }
         }
