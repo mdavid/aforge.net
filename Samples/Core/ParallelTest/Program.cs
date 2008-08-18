@@ -82,9 +82,6 @@ namespace ParallelTest
             Console.WriteLine( test1time.ToString( "F3" ) + "\t | " + test2time.ToString( "F3" ) + "\t | " );
 
             Console.WriteLine( "Done" );
-
-            // clean-up resources used for parallel computation
-            AForge.Parallel.Cleanup( );
         }
 
         // Test #1 - multiply 2 square matrixes without using parallel computations
