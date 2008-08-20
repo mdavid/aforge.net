@@ -15,8 +15,8 @@
         <namespaceSummaryItem name="AForge.Robotics.Lego" isDocumented="True">The &lt;b&gt;AForge.Robotics.Lego&lt;/b&gt; namespace contains set of classes, which allow to manipulate different Lego Mindstorm robotics devices. The list of supported devices includes Lego Minstorm RCX and Lego Mindstorm NXT.</namespaceSummaryItem>
     </namespaceSummaries>
     <additionalContent contentSiteMap="" topicFileTransform="">
-        <contentItem sourcePath="..\Robotics.Lego\Images\nxt.jpg" destPath="" excludeItems="False" />
-        <contentItem sourcePath="..\Robotics.Lego\Images\rcx.jpg" destPath="" excludeItems="False" />
+        <contentItem sourcePath="..\Robotics.Lego\Images\nxt.jpg" destPath="img\robotics\" excludeItems="False" />
+        <contentItem sourcePath="..\Robotics.Lego\Images\rcx.jpg" destPath="img\robotics\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>

@@ -18,7 +18,7 @@ namespace AForge.Robotics.Lego
     /// <para>The class allows to manipulate with Lego Mindstorms NXT device,
     /// setting/getting its motors' state, getting information about sensors'
     /// values and retrieving generic information about the NXT brick.</para>
-    /// <para><img src="nxt.jpg" width="250" height="201" /></para>
+    /// <para><img src="img/robotics/nxt.jpg" width="250" height="201" /></para>
     /// 
     /// <para><note>Only communication through Bluetooth (virtual serial port) is supported at this point.</note></para>
     /// 
