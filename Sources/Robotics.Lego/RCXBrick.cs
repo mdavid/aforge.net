@@ -19,12 +19,12 @@ namespace AForge.Robotics.Lego
     /// <para>The class allows to manipulate with Lego Mindstorms RCX device,
     /// setting its motors' state, getting information about sensors'
     /// values and performing some other manipulations.</para>
-    /// <para><img src="rcx.jpg" width="312" height="251" /></para>
+    /// <para><img src="img/robotics/rcx.jpg" width="312" height="251" /></para>
     /// 
     /// <para><note>Only communication through USB IR tower is supported at this point.</note></para>
     /// 
     /// <para><note>The class uses GhostAPI to communicate with Lego RCX device, so its
-    /// libraries should be placed into applications folder.</note></para>
+    /// libraries (GhostAPI.dll, PbkComm32.dll and PbkUsbPort.dll) should be placed into applications folder.</note></para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
