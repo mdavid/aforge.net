@@ -1,7 +1,7 @@
 // AForge Video for Windows Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 namespace AForge.Video.VFW
@@ -177,10 +177,10 @@ namespace AForge.Video.VFW
 		}
 
         /// <summary>
-        /// Dispose the object
+        /// Dispose the object.
         /// </summary>
         /// 
-        /// <param name="disposing">Indicates if disposing was initiated manually</param>
+        /// <param name="disposing">Indicates if disposing was initiated manually.</param>
         /// 
         protected virtual void Dispose( bool disposing )
 		{
@@ -275,7 +275,7 @@ namespace AForge.Video.VFW
 		}
 
         /// <summary>
-        /// Close video file
+        /// Close video file.
         /// </summary>
         /// 
         public void Close( )
@@ -313,10 +313,10 @@ namespace AForge.Video.VFW
 		}
 
         /// <summary>
-        /// Add new frame to the AVI file 
+        /// Add new frame to the AVI file.
         /// </summary>
         /// 
-        /// <param name="frameImage">New frame image</param>
+        /// <param name="frameImage">New frame image.</param>
         /// 
         /// <remarks>This method throws <see cref="System.ApplicationException"/> in the case
         /// of failure.</remarks>
@@ -347,7 +347,7 @@ namespace AForge.Video.VFW
 
                 for ( int y = 0; y < height; y++ )
                 {
-                    AForge.Win32.memcpy( dst, src, dstStride );
+                    Win32.memcpy( dst, src, dstStride );
                     dst += dstStride;
                     src -= srcStride;
                 }

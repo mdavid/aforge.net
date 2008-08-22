@@ -1,7 +1,7 @@
 // AForge Video for Windows Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 namespace AForge.Video.VFW
@@ -17,6 +17,23 @@ namespace AForge.Video.VFW
     /// 
     internal class Win32
     {
+        /// <summary>
+        /// Copy a block of memory.
+        /// </summary>
+        /// 
+        /// <param name="dst">Destination pointer.</param>
+        /// <param name="src">Source pointer.</param>
+        /// <param name="count">Memory block's length to copy.</param>
+        /// 
+        /// <returns>Return's the value of <b>dst</b> - pointer to destination.</returns>
+        /// 
+        [DllImport( "ntdll.dll" )]
+        public static extern int memcpy(
+            int dst,
+            int src,
+            int count );
+
+
         // --- Video for Windows Functions
 
         /// <summary>

@@ -1,7 +1,7 @@
 // AForge Video for Windows Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 namespace AForge.Video.VFW
@@ -17,6 +17,7 @@ namespace AForge.Video.VFW
     /// </summary>
     /// 
     /// <remarks><para>The class allows to read AVI files using Video for Windows API.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // instantiate AVI reader
@@ -234,7 +235,7 @@ namespace AForge.Video.VFW
         }
 
         /// <summary>
-        /// Close video file
+        /// Close video file.
         /// </summary>
         /// 
         public void Close( )
@@ -309,7 +310,7 @@ namespace AForge.Video.VFW
 
                     for ( int y = 0; y < height; y++ )
                     {
-                        AForge.Win32.memcpy( dst, src, srcStride );
+                        Win32.memcpy( dst, src, srcStride );
                         dst -= dstStride;
                         src += srcStride;
                     }
@@ -321,7 +322,7 @@ namespace AForge.Video.VFW
                     int src = DIB.ToInt32( ) + Marshal.SizeOf( typeof( Win32.BITMAPINFOHEADER ) );
 
                     // copy the whole image
-                    AForge.Win32.memcpy( dst, src, srcStride * height );
+                    Win32.memcpy( dst, src, srcStride * height );
                 }
 
                 // unlock bitmap data
