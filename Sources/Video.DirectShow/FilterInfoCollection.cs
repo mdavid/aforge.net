@@ -1,7 +1,7 @@
 // AForge Direct Show Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2008
 // andrew.kirillov@gmail.com
 //
 
@@ -19,6 +19,7 @@ namespace AForge.Video.DirectShow
     /// 
     /// <remarks><para>The class allows to enumerate DirectShow filters of specified category. For
     /// a list of categories see <see cref="FilterCategory"/>.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // enumerate video devices

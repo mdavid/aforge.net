@@ -22,6 +22,7 @@ namespace AForge.Video.DirectShow
     /// 
     /// <remarks><para>The video source captures video data from local video capture device.
     /// DirectShow is used for capturing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // enumerate video devices
@@ -68,7 +69,12 @@ namespace AForge.Video.DirectShow
         /// New frame event.
         /// </summary>
         /// 
-        /// <remarks>Notifies client about new available frame from video source.</remarks>
+        /// <remarks><para>Notifies clients about new available frame from video source.</para>
+        /// 
+        /// <para><note>Since video source may have multiple clients, each client is responsible for
+        /// making a copy (cloning) of the passed video frame, because the video source disposes its
+        /// own original copy after notifying of clients.</note></para>
+        /// </remarks>
         /// 
         public event NewFrameEventHandler NewFrame;
 
@@ -76,8 +82,8 @@ namespace AForge.Video.DirectShow
         /// Video source error event.
         /// </summary>
         /// 
-        /// <remarks>The event is used to notify client about any type error occurred in
-        /// video source object, for example exceptions.</remarks>
+        /// <remarks>This event is used to notify clients about any type of errors occurred in
+        /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
 
@@ -145,7 +151,7 @@ namespace AForge.Video.DirectShow
         /// State of the video source.
         /// </summary>
         /// 
-        /// <remarks>Current state of video source object.</remarks>
+        /// <remarks>Current state of video source object - running or not.</remarks>
         /// 
         public bool IsRunning
         {
@@ -171,9 +177,12 @@ namespace AForge.Video.DirectShow
         /// <remarks><para>The property sets desired frame size. However capture
         /// device may not always provide frame with configured size due to the fact
         /// that the size is not supported by it.</para>
+        /// 
         /// <para>If the property is set to size (0, 0), then capture device uses its own
         /// default frame size configuration.</para>
+        /// 
         /// <para>Default value of the property is set to (0, 0).</para>
+        /// 
         /// <para><note>The property should be configured before video source is started
         /// to take effect.</note></para></remarks>
         /// 
@@ -190,9 +199,12 @@ namespace AForge.Video.DirectShow
         /// <remarks><para>The property sets desired capture frame rate. However capture
         /// device may not always provide the exact configured frame rate due to its
         /// capabilities, system performance, etc.</para>
+        /// 
         /// <para>If the property is set to 0, then capture device uses its own default
         /// frame rate.</para>
+        /// 
         /// <para>Default value of the property is set to 0.</para>
+        /// 
         /// <para><note>The property should be configured before video source is started
         /// to take effect.</note></para></remarks>
         /// 
@@ -223,7 +235,7 @@ namespace AForge.Video.DirectShow
         /// Start video source.
         /// </summary>
         /// 
-        /// <remarks>Start video source and return execution to caller. Video source
+        /// <remarks>Starts video source and return execution to caller. Video source
         /// object creates background thread and notifies about new frames with the
         /// help of <see cref="NewFrame"/> event.</remarks>
         /// 

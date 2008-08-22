@@ -1,7 +1,7 @@
 // AForge Video Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -20,6 +20,7 @@ namespace AForge.Video
     /// 
     /// <remarks><para>The video source downloads JPEG images from the specified URL, which represents
     /// MJPEG stream.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create MJPEG video source
@@ -32,6 +33,7 @@ namespace AForge.Video
     /// // signal to stop
     /// stream.SignalToStop( );
     /// </code>
+    /// 
     /// <para><note>Some cameras produce HTTP header, which does conform strictly to
     /// standard, what leads to .NET exception. To avoid this exception the <b>useUnsafeHeaderParsing</b>
     /// configuration option of <b>httpWebRequest</b> should be set, what may be done using application
@@ -78,7 +80,12 @@ namespace AForge.Video
         /// New frame event.
         /// </summary>
         /// 
-        /// <remarks>Notifies client about new available frame from video source.</remarks>
+        /// <remarks><para>Notifies clients about new available frame from video source.</para>
+        /// 
+        /// <para><note>Since video source may have multiple clients, each client is responsible for
+        /// making a copy (cloning) of the passed video frame, because the video source disposes its
+        /// own original copy after notifying of clients.</note></para>
+        /// </remarks>
         /// 
         public event NewFrameEventHandler NewFrame;
 
@@ -86,8 +93,8 @@ namespace AForge.Video
         /// Video source error event.
         /// </summary>
         /// 
-        /// <remarks>The event is used to notify client about any type error occurred in
-        /// video source object, for example exceptions.</remarks>
+        /// <remarks>This event is used to notify clients about any type of errors occurred in
+        /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
 
@@ -210,7 +217,7 @@ namespace AForge.Video
         /// State of the video source.
         /// </summary>
         /// 
-        /// <remarks>Current state of video source object.</remarks>
+        /// <remarks>Current state of video source object - running or not.</remarks>
         /// 
         public bool IsRunning
 		{
@@ -250,7 +257,7 @@ namespace AForge.Video
         /// Start video source.
         /// </summary>
         /// 
-        /// <remarks>Start video source and return execution to caller. Video source
+        /// <remarks>Starts video source and return execution to caller. Video source
         /// object creates background thread and notifies about new frames with the
         /// help of <see cref="NewFrame"/> event.</remarks>
         /// 
