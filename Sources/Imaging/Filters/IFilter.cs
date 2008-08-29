@@ -55,23 +55,33 @@ namespace AForge.Imaging.Filters
         /// Apply filter to an image.
         /// </summary>
         /// 
-        /// <param name="imageData">Pointer to source image in unmanaged memory.</param>
-        /// <param name="width">Image's width.</param>
-        /// <param name="height">Image's height.</param>
-        /// <param name="stride">Image's stride (line size).</param>
-        /// <param name="format">Image's pixel format.</param>
-        /// <param name="destData">Pointer to destination buffer in unmanaged memory, which receives
-        /// resulting image.</param>
-        /// <param name="destSize">Size of destination buffer.</param>
-        /// <param name="destWidth">Receives width of the resulting image put into destination buffer.</param>
-        /// <param name="destHeight">Receives height of the resulting image put into destination buffer.</param>
-        /// <param name="destStride">Receives stride of the resulting image put into destination buffer.</param>
+        /// <param name="image">Image in unmanaged memory.</param>
         /// 
-        /// <remarks>The filter accepts bitmap data as input and returns the result
-        /// of image processing filter as new image. The source image data are kept
-        /// unchanged.</remarks>
+        /// <returns>Returns filter's result obtained by applying the filter to
+        /// the source image.</returns>
         /// 
-        void Apply( IntPtr imageData, int width, int height, int stride, PixelFormat format,
-            IntPtr destData, int destSize, out int destWidth, out int destHeight, out int destStride );
+        /// <remarks>The method keeps the source image unchanged and returns the
+        /// the result of image processing filter as new image.</remarks> 
+        /// 
+        UnmanagedImage Apply( UnmanagedImage image );
+
+        /// <summary>
+        /// Apply filter to an image.
+        /// </summary>
+        /// 
+        /// <param name="sourceImage">Source image to be processed.</param>
+        /// <param name="destinationImage">Destination image to store filter's result.</param>
+        /// 
+        /// <remarks><para>The method keeps the source image unchanged and puts the
+        /// the result of image processing filter into destination image.</para>
+        /// 
+        /// <para><note>The destination image must have the size, which is expected by
+        /// the filter.</note></para>
+        /// </remarks>
+        /// 
+        /// <exception cref="ArgumentException">In the case if destination image has incorrect
+        /// size.</exception>
+        /// 
+        void Apply( UnmanagedImage sourceImage, UnmanagedImage destinationImage );
     }
 }

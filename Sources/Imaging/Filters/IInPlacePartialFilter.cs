@@ -19,7 +19,7 @@ namespace AForge.Imaging.Filters
     /// implemented by filters, which are capable to do image processing
     /// directly on the source image. Not all image processing filters
     /// can be applied directly to the source image - only filters, which do not
-    /// change image's dimension and pixel format, can be applied directly to the
+    /// change image dimension and pixel format, can be applied directly to the
     /// source image.</para>
     /// 
     /// <para>The interface also supports partial image filtering, allowing to specify
@@ -33,7 +33,7 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         /// <param name="image">Image to apply filter to.</param>
-        /// <param name="rect">Image's rectangle for processing by filter.</param>
+        /// <param name="rect">Image rectangle for processing by filter.</param>
         /// 
         /// <remarks>The method applies filter directly to the provided image data.</remarks>
         /// 
@@ -44,7 +44,7 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         /// <param name="imageData">Image to apply filter to.</param>
-        /// <param name="rect">Image's rectangle for processing by filter.</param>
+        /// <param name="rect">Image rectangle for processing by filter.</param>
         /// 
         /// <remarks>The method applies filter directly to the provided image data.</remarks>
         /// 
@@ -54,16 +54,11 @@ namespace AForge.Imaging.Filters
         /// Apply filter to an image in unmanaged memory.
         /// </summary>
         /// 
-        /// <param name="imageData">Pointer to an image in unmanaged memory.</param>
-        /// <param name="width">Image's width.</param>
-        /// <param name="height">Image's height.</param>
-        /// <param name="stride">Image's stride (line size).</param>
-        /// <param name="format">Image's pixel format.</param>
-        /// <param name="rect">Image's rectangle for processing by filter.</param>
+        /// <param name="image">Image in unmanaged memory.</param>
+        /// <param name="rect">Image rectangle for processing by filter.</param>
         /// 
-        /// <remarks>The method applies filter directly to the provided image data.</remarks>
+        /// <remarks>The method applies filter directly to the provided image.</remarks>
         /// 
-        void ApplyInPlace( IntPtr imageData, int width, int height, int stride, PixelFormat format,
-            Rectangle rect );
+        void ApplyInPlace( UnmanagedImage image, Rectangle rect );
     }
 }

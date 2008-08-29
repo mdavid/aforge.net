@@ -46,6 +46,7 @@
     <Compile Include="Filters\IInPlacePartialFilter.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnmanagedImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AForge.Imaging.snk" />
