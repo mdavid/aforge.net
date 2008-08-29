@@ -48,15 +48,11 @@ namespace AForge.Imaging.Filters
         /// Apply filter to an image in unmanaged memory.
         /// </summary>
         /// 
-        /// <param name="imageData">Pointer to an image in unmanaged memory.</param>
-        /// <param name="width">Image's width.</param>
-        /// <param name="height">Image's height.</param>
-        /// <param name="stride">Image's stride (line size).</param>
-        /// <param name="format">Image's pixel format.</param>
+        /// <param name="image">Image in unmanaged memory.</param>
         /// 
         /// <remarks>The method applies filter directly to the provided image data.</remarks>
         /// 
-        void ApplyInPlace( IntPtr imageData, int width, int height, int stride, PixelFormat format );
+        void ApplyInPlace( UnmanagedImage image );
     }
 }
 
