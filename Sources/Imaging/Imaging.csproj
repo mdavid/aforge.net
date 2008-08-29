@@ -41,6 +41,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters\Base classes\BaseFilter.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\IInPlaceFilter.cs" />
     <Compile Include="Filters\IInPlacePartialFilter.cs" />
