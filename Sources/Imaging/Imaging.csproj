@@ -41,7 +41,12 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColorConverter.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
+    <Compile Include="Filters\Color Filters\Grayscale.cs" />
+    <Compile Include="Filters\Color Filters\GrayscaleBT709.cs" />
+    <Compile Include="Filters\Color Filters\GrayscaleRMY.cs" />
+    <Compile Include="Filters\Color Filters\GrayscaleY.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\IInPlaceFilter.cs" />
     <Compile Include="Filters\IInPlacePartialFilter.cs" />
