@@ -13,6 +13,7 @@
         <namespaceSummaryItem name="" isDocumented="False" />
         <namespaceSummaryItem name="AForge" isDocumented="True">The &lt;b&gt;AForge&lt;/b&gt; namespace is a core namespace &lt;b&gt;AForge.NET&lt;/b&gt; framework, which contains core classes used by other namespaces of the framework and classes, which can be used independently for various purposes.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Controls" isDocumented="True">The &lt;b&gt;AForge.Controls&lt;/b&gt; namespace contains different useful UI controls, which may be used together with other classes of &lt;b&gt;AForge.NET&lt;/b&gt; framework.</namespaceSummaryItem>
+        <namespaceSummaryItem name="AForge.Imaging" isDocumented="True">The &lt;b&gt;AForge.Imaging&lt;/b&gt; namespace contains interfaces and classes for different image processing routines.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging.Filters" isDocumented="True">The &lt;b&gt;AForge.Imaging.Filters&lt;/b&gt; namespace contains collection of interfaces and classes, which provide different image processing filters. Classes of this namespace allow to do different transformation of a source image, doing it directly on the source image or providing new image as a result of image processing routine.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging.Formats" isDocumented="True">The &lt;b&gt;AForge.Imaging.Formats&lt;/b&gt; namespace contains interfaces and classes, which are used to handle different image file formats.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Robotics.Lego" isDocumented="True">The &lt;b&gt;AForge.Robotics.Lego&lt;/b&gt; namespace contains set of classes, which allow to manipulate different Lego Mindstorm robotics devices. The list of supported devices includes Lego Minstorm RCX and Lego Mindstorm NXT.</namespaceSummaryItem>
@@ -23,6 +24,8 @@
     <additionalContent contentSiteMap="" topicFileTransform="">
         <contentItem sourcePath="..\Robotics.Lego\Images\nxt.jpg" destPath="img\robotics\" excludeItems="False" />
         <contentItem sourcePath="..\Robotics.Lego\Images\rcx.jpg" destPath="img\robotics\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\grayscale.jpg" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\sample1.jpg" destPath="img\imaging\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>

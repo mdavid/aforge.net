@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -30,7 +30,7 @@ namespace AForge.Imaging
         /// Index of green component.
         /// </summary>
         public const short G = 1;
-        
+
         /// <summary>
         /// Index of blue component.
         /// </summary>
@@ -212,13 +212,12 @@ namespace AForge.Imaging
     }
 
 
-
     /// <summary>
     /// Converts colors from different color spaces.
     /// </summary>
     /// 
     /// <remarks>The class provides static methods, which implement conversation
-    /// between <b>RGB</b> and other color palettes.</remarks>
+    /// between <b>RGB</b> and other color spaces.</remarks>
     /// 
     public sealed class ColorConverter
     {
