@@ -137,21 +137,21 @@ namespace AForge.Controls
             BitmapData sourceData = source.LockBits( new Rectangle( 0, 0, width, height ),
                 ImageLockMode.ReadOnly, source.PixelFormat );
             BitmapData newData = newImage.LockBits( new Rectangle( 0, 0, width, height ),
-                ImageLockMode.ReadOnly, newImage.PixelFormat );
+                ImageLockMode.ReadWrite, newImage.PixelFormat );
 
             unsafe
             {
                 // base pointers
                 int sourceBasePtr = (int) sourceData.Scan0.ToPointer( );
-                int newBasePtr = (int) newData.Scan0.ToPointer( );
+                int newBasePtr    = (int) newData.Scan0.ToPointer( );
                 // image strides
                 int sourceStride = sourceData.Stride;
-                int newStride = newData.Stride;
+                int newStride    = newData.Stride;
 
                 for ( int y = 0; y < height; y++ )
                 {
                     ushort* sourcePtr = (ushort*) ( sourceBasePtr + y * sourceStride );
-                    byte* newPtr = (byte*) ( newBasePtr + y * newStride );
+                    byte*   newPtr    = (byte*)   ( newBasePtr + y * newStride );
 
                     for ( int x = 0, lineSize = width * layers; x < lineSize; x++, sourcePtr++, newPtr++ )
                     {
