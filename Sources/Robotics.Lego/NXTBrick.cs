@@ -327,11 +327,11 @@ namespace AForge.Robotics.Lego
             /// <summary>
             /// Power, [-100, 100].
             /// </summary>
-            public sbyte Power;
+            public int Power;
             /// <summary>
             /// Turn ratio, [-100, 100].
             /// </summary>
-            public sbyte TurnRatio;
+            public int TurnRatio;
             /// <summary>
             /// Mode (bit field).
             /// </summary>
