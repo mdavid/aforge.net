@@ -30,6 +30,10 @@ namespace AForge
         /// <param name="count">Memory block's length to copy.</param>
         /// 
         /// <returns>Return's the value of <b>dst</b> - pointer to destination.</returns>
+        /// 
+        /// <remarks><para>This function is required because of the fact that .NET does
+        /// not provide any way to copy unmanaged blocks, but provides only methods to
+        /// copy from unmanaged memory to managed memory and vise versa.</para></remarks>
         ///
         public static IntPtr CopyUnmanagedMemory( IntPtr dst, IntPtr src, int count )
         {
@@ -49,6 +53,10 @@ namespace AForge
         /// <param name="count">Memory block's length to copy.</param>
         /// 
         /// <returns>Return's the value of <b>dst</b> - pointer to destination.</returns>
+        /// 
+        /// <remarks><para>This function is required because of the fact that .NET does
+        /// not provide any way to copy unmanaged blocks, but provides only methods to
+        /// copy from unmanaged memory to managed memory and vise versa.</para></remarks>
         /// 
         public static unsafe byte* CopyUnmanagedMemory( byte* dst, byte* src, int count )
         {
