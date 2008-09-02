@@ -47,7 +47,7 @@ namespace AForge.Imaging.Filters
         /// of image processing.</para>
         /// </remarks>
         /// 
-        public abstract Dictionary<PixelFormat, PixelFormat> FormatTransalations { get; }
+        protected abstract Dictionary<PixelFormat, PixelFormat> FormatTransalations { get; }
 
 		/// <summary>
 		/// Apply filter to an image.

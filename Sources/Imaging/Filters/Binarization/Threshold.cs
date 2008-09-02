@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -31,12 +32,22 @@ namespace AForge.Imaging.Filters
     /// <img src="threshold.jpg" width="480" height="361" />
     /// </remarks>
     /// 
-    public class Threshold : FilterGrayToGrayPartial
+    public class Threshold : BaseInPlacePartialFilter
     {
         /// <summary>
         /// Threshold value.
         /// </summary>
         protected byte threshold = 128;
+
+        private List<PixelFormat> supportedFormats = new List<PixelFormat>( );
+
+        protected override List<PixelFormat> SupportedFormats
+        {
+            get
+            {
+                return supportedFormats;
+            }
+        }
 
         /// <summary>
         /// Threshold value.
@@ -54,7 +65,10 @@ namespace AForge.Imaging.Filters
         /// Initializes a new instance of the <see cref="Threshold"/> class.
         /// </summary>
         /// 
-        public Threshold( ) { }
+        public Threshold( )
+        {
+            supportedFormats.Add( PixelFormat.Format8bppIndexed );
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Threshold"/> class.
@@ -63,6 +77,7 @@ namespace AForge.Imaging.Filters
         /// <param name="threshold">Threshold value.</param>
         /// 
         public Threshold( byte threshold )
+            : this( )
         {
             this.threshold = threshold;
         }
@@ -71,22 +86,22 @@ namespace AForge.Imaging.Filters
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
+        /// <param name="image">Image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
         /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
             int startX  = rect.Left;
             int startY  = rect.Top;
             int stopX   = startX + rect.Width;
             int stopY   = startY + rect.Height;
-            int offset  = imageData.Stride - rect.Width;
+            int offset  = image.Stride - rect.Width;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX );
+            ptr += ( startY * image.Stride + startX );
 
             // for each line	
             for ( int y = startY; y < stopY; y++ )

@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="ColorConverter.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
+    <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
+    <Compile Include="Filters\Binarization\Threshold.cs" />
     <Compile Include="Filters\Color Filters\Grayscale.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleBT709.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleRMY.cs" />
