@@ -221,7 +221,7 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, width, height ),
                 ImageLockMode.ReadWrite, destination.PixelFormat );
 
-            // Win32.memcpy( destinationData.Scan0, sourceData.Scan0, height * sourceData.Stride );
+            AForge.SystemTools.CopyUnmanagedMemory( destinationData.Scan0, sourceData.Scan0, height * sourceData.Stride );
 
             // unlock destination image
             destination.UnlockBits( destinationData );

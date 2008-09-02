@@ -21,6 +21,9 @@ namespace AForge
     /// 
     public class SystemTools
     {
+        // Private constructor to avoid class instantiation
+        private SystemTools( ) { }
+
         /// <summary>
         /// Copy block of unmanaged memory.
         /// </summary>
