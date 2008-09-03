@@ -51,7 +51,7 @@ namespace AForge.Imaging.Filters
         /// <summary>
         /// Format translations dictionary.
         /// </summary>
-        protected override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
         {
             get { return formatTransalations; }
         }
