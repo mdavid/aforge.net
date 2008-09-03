@@ -35,19 +35,13 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         /// <remarks><para>The dictionary defines, which pixel formats are supported for
-        /// source images and which pixel formats will be used for resulting image.
+        /// source images and which pixel format will be used for resulting image.
         /// </para>
         /// 
-        /// <para>Keys of this dictionary defines all pixel formats are supported for sources
-        /// images, but corresponding values define what will be resulting pixel format. For
-        /// example, if value <see cref="System.Drawing.Imaging.PixelFormat">Format16bppGrayScale</see>
-        /// is put into the dictionary with the
-        /// <see cref="System.Drawing.Imaging.PixelFormat">Format48bppRgb</see> key, then it means
-        /// that the filter accepts color 48 bpp image and produces 16 bpp grayscale image as a result
-        /// of image processing.</para>
+        /// <para>See <see cref="IFilterInformation.FormatTransalations"/> for more information.</para>
         /// </remarks>
-        /// 
-        protected abstract Dictionary<PixelFormat, PixelFormat> FormatTransalations { get; }
+        ///
+        public abstract Dictionary<PixelFormat, PixelFormat> FormatTransalations { get; }
 
 		/// <summary>
 		/// Apply filter to an image.
