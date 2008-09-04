@@ -239,5 +239,119 @@ namespace AForge.Imaging
 
             return image;
         }
+
+        /// <summary>
+        /// Create managed image from the unmanaged.
+        /// </summary>
+        /// 
+        /// <returns>Returns managed copy of the unmanaged image.</returns>
+        /// 
+        /// <remarks><para>The method creates a managed copy of the unmanaged image with the
+        /// same size and pixel format.</para></remarks>
+        /// 
+        public Bitmap ToManagedImage( )
+        {
+            // create new image of required format
+            Bitmap dstImage = ( pixelFormat == PixelFormat.Format8bppIndexed ) ?
+                AForge.Imaging.Image.CreateGrayscaleImage( width, height ) :
+                new Bitmap( width, height, pixelFormat );
+
+            // lock destination bitmap data
+            BitmapData dstData = dstImage.LockBits(
+                new Rectangle( 0, 0, width, height ),
+                ImageLockMode.ReadWrite, pixelFormat );
+
+            int dstStride = dstData.Stride;
+            int lineSize  = Math.Min( stride, dstStride );
+
+            unsafe
+            {
+                byte* dst = (byte*) dstData.Scan0.ToPointer( );
+                byte* src = (byte*) imageData.ToPointer( );
+
+                // copy image
+                for ( int y = 0; y < height; y++ )
+                {
+                    AForge.SystemTools.CopyUnmanagedMemory( dst, src, lineSize );
+                    dst += dstStride;
+                    src += stride;
+                }
+            }
+
+            // unlock destination images
+            dstImage.UnlockBits( dstData );
+
+            return dstImage;
+        }
+
+        /// <summary>
+        /// Create unmanaged image from the specified managed image.
+        /// </summary>
+        /// 
+        /// <param name="image">Source managed image.</param>
+        /// 
+        /// <returns>Returns new unmanaged image, which is a copy of source managed image.</returns>
+        /// 
+        /// <remarks><para>The method creates an exact copy of specified managed image, but allocated
+        /// in unmanaged memory.</para></remarks>
+        /// 
+        /// <exception cref="ArgumentException">Unsupported pixel format of source image.</exception>
+        /// 
+        public static UnmanagedImage FromManagedImage( Bitmap image )
+        {
+            UnmanagedImage dstImage = null;
+
+            BitmapData sourceData = image.LockBits( new Rectangle( 0, 0, image.Width, image.Height ),
+                ImageLockMode.ReadOnly, image.PixelFormat );
+
+            try
+            {
+                dstImage = FromManagedImage( sourceData );
+            }
+            finally
+            {
+                image.UnlockBits( sourceData );
+            }
+
+            return dstImage;
+        }
+
+        /// <summary>
+        /// Create unmanaged image from the specified managed image.
+        /// </summary>
+        /// 
+        /// <param name="imageData">Source locked image data.</param>
+        /// 
+        /// <returns>Returns new unmanaged image, which is a copy of source managed image.</returns>
+        /// 
+        /// <remarks><para>The method creates an exact copy of specified managed image, but allocated
+        /// in unmanaged memory.</para></remarks>
+        /// 
+        /// <exception cref="ArgumentException">Unsupported pixel format of source image.</exception>
+        /// 
+        public static UnmanagedImage FromManagedImage( BitmapData imageData )
+        {
+            PixelFormat pixelFormat = imageData.PixelFormat;
+
+            // check source pixel format
+            if (
+                ( pixelFormat != PixelFormat.Format8bppIndexed ) &&
+                ( pixelFormat != PixelFormat.Format16bppGrayScale ) &&
+                ( pixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( pixelFormat != PixelFormat.Format32bppArgb ) &&
+                ( pixelFormat != PixelFormat.Format48bppRgb ) &&
+                ( pixelFormat != PixelFormat.Format64bppArgb ) )
+            {
+                throw new ArgumentException( "Unsupported pixel format of the source image." );
+            }
+
+            // allocate memory for the image
+            IntPtr dstImageData = System.Runtime.InteropServices.Marshal.AllocHGlobal( imageData.Stride * imageData.Height );
+
+            UnmanagedImage image = new UnmanagedImage( dstImageData, imageData.Width, imageData.Height, imageData.Stride, pixelFormat );
+            image.mustBeDisposed = true;
+
+            return image;
+        }
     }
 }
