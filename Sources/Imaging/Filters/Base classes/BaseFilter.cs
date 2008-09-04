@@ -28,7 +28,7 @@ namespace AForge.Imaging.Filters
     /// overriding abstract <see cref="FormatTransalations"/> property.</para>
     /// </remarks>
     /// 
-    public abstract class BaseFilter : IFilter
+    public abstract class BaseFilter : IFilter, IFilterInformation
     {
         /// <summary>
         /// Format translations dictionary.
