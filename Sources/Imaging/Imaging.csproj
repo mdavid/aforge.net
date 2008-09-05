@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blob.cs" />
+    <Compile Include="BlobCounter.cs" />
+    <Compile Include="BlobCounterBase.cs" />
     <Compile Include="ColorConverter.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="Filters\IInPlacePartialFilter.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecursiveBlobCounter.cs" />
     <Compile Include="UnmanagedImage.cs" />
   </ItemGroup>
   <ItemGroup>

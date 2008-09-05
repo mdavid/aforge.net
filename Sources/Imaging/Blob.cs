@@ -47,7 +47,7 @@ namespace AForge.Imaging
         }
 
         /// <summary>
-        /// Blob's rectangle on the original image.
+        /// Blob's rectangle in the original image.
         /// </summary>
         public Rectangle Rectangle
         {
@@ -55,7 +55,7 @@ namespace AForge.Imaging
         }
 
         /// <summary>
-        /// Blob's ID on the original image.
+        /// Blob's ID in the original image.
         /// </summary>
         public int ID
         {
@@ -67,7 +67,7 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <param name="id">Blob's ID in the original image.</param>
-        /// <param name="rect">Blob's rectangle on the original image.</param>
+        /// <param name="rect">Blob's rectangle in the original image.</param>
         /// 
         /// <remarks><para>This constructor leaves <see cref="Image"/> property not initialized. The blob's
         /// image may be extracted later using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob )"/>
@@ -75,7 +75,7 @@ namespace AForge.Imaging
         /// 
         public Blob( int id, Rectangle rect )
         {
-            this.id = id;
+            this.id   = id;
             this.rect = rect;
         }
 
@@ -89,8 +89,8 @@ namespace AForge.Imaging
         /// 
         public Blob( int id, Rectangle rect, Bitmap image )
         {
-            this.id = id;
-            this.rect = rect;
+            this.id    = id;
+            this.rect  = rect;
             this.image = image;
         }
     }
