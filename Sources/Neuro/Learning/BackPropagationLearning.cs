@@ -244,7 +244,7 @@ namespace AForge.Neuro.Learning
 			// neuron's weights updates
 			double[]	neuronWeightUpdates;
 			// error value
-			double		error;
+			// double		error;
 
 			// 1 - calculate updates for the last layer fisrt
 			layer = network[0];
@@ -252,28 +252,27 @@ namespace AForge.Neuro.Learning
 			layerWeightsUpdates = weightsUpdates[0];
 			layerThresholdUpdates = thresholdsUpdates[0];
 
+            // cache for frequently used values
+            double ca = learningRate * momentum;
+            double cb = learningRate * (1 - momentum);
+            double cbe;
+
 			// for each neuron of the layer
 			for ( int i = 0, n = layer.NeuronsCount; i < n; i++ )
 			{
 				neuron	= layer[i];
-				error	= errors[i];
+				cbe	= errors[i] * cb;
 				neuronWeightUpdates	= layerWeightsUpdates[i];
 
 				// for each weight of the neuron
 				for ( int j = 0, m = neuron.InputsCount; j < m; j++ )
 				{
 					// calculate weight update
-					neuronWeightUpdates[j] = learningRate * (
-						momentum * neuronWeightUpdates[j] +
-						( 1.0 - momentum ) * error * input[j]
-						);
+					neuronWeightUpdates[j] = ca * neuronWeightUpdates[j] + cbe *  input[j];
 				}
 
 				// calculate treshold update
-				layerThresholdUpdates[i] = learningRate * (
-					momentum * layerThresholdUpdates[i] +
-					( 1.0 - momentum ) * error
-					);
+				layerThresholdUpdates[i] = ca * layerThresholdUpdates[i] + cbe;
 			}
 
 			// 2 - for all other layers
@@ -289,24 +288,18 @@ namespace AForge.Neuro.Learning
 				for ( int i = 0, n = layer.NeuronsCount; i < n; i++ )
 				{
 					neuron	= layer[i];
-					error	= errors[i];
+					cbe	= errors[i] * cb;
 					neuronWeightUpdates	= layerWeightsUpdates[i];
 
 					// for each synapse of the neuron
 					for ( int j = 0, m = neuron.InputsCount; j < m; j++ )
 					{
 						// calculate weight update
-						neuronWeightUpdates[j] = learningRate * (
-							momentum * neuronWeightUpdates[j] +
-							( 1.0 - momentum ) * error * layerPrev[j].Output
-							);
+						neuronWeightUpdates[j] = ca * neuronWeightUpdates[j] + cbe * layerPrev[j].Output;
 					}
 
 					// calculate treshold update
-					layerThresholdUpdates[i] = learningRate * (
-						momentum * layerThresholdUpdates[i] +
-						( 1.0 - momentum ) * error
-						);
+					layerThresholdUpdates[i] = ca * layerThresholdUpdates[i] + cbe;
 				}
 			}
 		}
