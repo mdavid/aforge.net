@@ -3,6 +3,10 @@
 // Copyright © Andrew Kirillov, 2005-2006
 // andrew.kirillov@gmail.com
 //
+// Copyright © Cezary Wagner, 2008
+// changes optimizing algorithm performance
+// Cezary.Wagner@gmail.com
+//
 
 namespace AForge.Neuro.Learning
 {
