@@ -41,7 +41,7 @@ namespace AForge.Neuro
         /// 
         /// <remarks>The generator is used for neuron's weights randomization.</remarks>
         /// 
-        protected static Random rand = new Random( (int) DateTime.Now.Ticks );
+        protected static Random rand = new Random();
 
         /// <summary>
         /// Random generator range.
