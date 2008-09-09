@@ -49,6 +49,7 @@ namespace AForge.Neuro.Learning
             Debug.Assert(crossOverRate >= 0.0 && crossOverRate <= 1.0);
             Debug.Assert(mutationRate >= 0.0 && crossOverRate <= 1.0);
 
+            this.network = activationNetwork;
             this.populationSize = populationSize;
             this.geneGenerator = geneGenerator;
             this.geneMutationGenerator = geneMutationGenerator;
@@ -72,6 +73,7 @@ namespace AForge.Neuro.Learning
             DoubleRange range = new DoubleRange(-mutationRange, mutationRange);
             UniformGenerator generator = new UniformGenerator(range);
 
+            this.network = activationNetwork;
             this.populationSize = populationSize;
             this.geneGenerator = generator;
             this.geneMutationGenerator = generator;
@@ -91,6 +93,7 @@ namespace AForge.Neuro.Learning
             Debug.Assert(input.Length > 0);
             Debug.Assert(output.Length > 0);
             Debug.Assert(input.Length == output.Length);
+            Debug.Assert(network.InputsCount == input.Length);
 
             int inputSize = input[0].Length;
             int outputSize = output[0].Length;
