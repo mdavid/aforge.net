@@ -75,6 +75,8 @@ namespace AForge.Video.DirectShow
         /// Create an instance of the filter.
         /// </summary>
         /// 
+        /// <param name="filterMoniker">Filter's moniker string.</param>
+        /// 
         /// <returns>Returns filter's object, which implements <b>IBaseFilter</b> interface.</returns>
         /// 
         /// <remarks>The returned filter's object should be released using <b>Marshal.ReleaseComObject()</b>.</remarks>

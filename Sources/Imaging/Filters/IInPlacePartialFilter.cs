@@ -26,6 +26,9 @@ namespace AForge.Imaging.Filters
     /// image rectangle, which should be filtered.</para>
     /// </remarks>
     /// 
+    /// <seealso cref="IFilter"/>
+    /// <seealso cref="IInPlaceFilter"/>
+    /// 
     public interface IInPlacePartialFilter
     {
         /// <summary>

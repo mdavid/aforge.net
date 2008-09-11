@@ -179,6 +179,7 @@ namespace AForge.Imaging
         /// the case if their width is smaller than <see cref="MinWidth"/> <b>and</b> height is
         /// smaller than <see cref="MinHeight"/>. In both modes the idea with filtering by objects'
         /// maximum size is the same as filtering by objects' minimum size.</para>
+        /// 
         /// <para>Default value is set to <b>false</b>, what means uncoupled filtering by size.</para>
         /// </remarks>
         /// 

@@ -22,6 +22,9 @@ namespace AForge.Imaging.Filters
     /// change image's dimension and pixel format, can be applied directly to the
     /// source image.</remarks>
     /// 
+    /// <seealso cref="IFilter"/>
+    /// <seealso cref="IInPlacePartialFilter"/>
+    /// 
     public interface IInPlaceFilter
     {
         /// <summary>
