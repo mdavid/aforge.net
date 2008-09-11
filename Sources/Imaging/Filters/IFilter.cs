@@ -20,6 +20,9 @@ namespace AForge.Imaging.Filters
     /// keep the source image unchanged and returt the result of image processing
     /// filter as new image.</remarks>
     /// 
+    /// <seealso cref="IInPlaceFilter"/>
+    /// <seealso cref="IInPlacePartialFilter"/>
+    /// 
     public interface IFilter
     {
         /// <summary>

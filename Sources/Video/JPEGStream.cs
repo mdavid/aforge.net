@@ -40,7 +40,7 @@ namespace AForge.Video
     /// }
     /// </code>
     /// 
-    /// <para><note>Some cameras produce HTTP header, which does conform strictly to
+    /// <para><note>Some cameras produce HTTP header, which does not conform strictly to
     /// standard, what leads to .NET exception. To avoid this exception the <b>useUnsafeHeaderParsing</b>
     /// configuration option of <b>httpWebRequest</b> should be set, what may be done using application
     /// configuration file.</note></para>

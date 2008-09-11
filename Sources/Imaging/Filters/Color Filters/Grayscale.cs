@@ -37,7 +37,11 @@ namespace AForge.Imaging.Filters
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/grayscale.jpg" width="480" height="361" />
     /// </remarks>
-    /// 
+    ///
+    /// <seealso cref="GrayscaleBT709"/>
+    /// <seealso cref="GrayscaleRMY"/>
+    /// <seealso cref="GrayscaleY"/>
+    ///
     public class Grayscale : BaseFilter
     {
         // RGB coefficients for grayscale transformation

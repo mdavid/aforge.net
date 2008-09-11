@@ -23,6 +23,10 @@ namespace AForge.Imaging.Filters
     /// </list>
     /// </remarks>
     /// 
+    /// <seealso cref="Grayscale"/>
+    /// <seealso cref="GrayscaleBT709"/>
+    /// <seealso cref="GrayscaleRMY"/>
+    ///
     public sealed class GrayscaleY : Grayscale
     {
         /// <summary>
