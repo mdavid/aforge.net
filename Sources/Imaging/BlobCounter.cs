@@ -91,7 +91,7 @@ namespace AForge.Imaging
             int offset = stride - imageWidth;
 
             // check pixel format
-            if ( image.PixelFormat == PixelFormat.Format8bppIndexed )
+            if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
             {
                 throw new ArgumentException( "Unsupported pixel format of the source image." );
             }
@@ -305,7 +305,7 @@ namespace AForge.Imaging
                     reMap[i] = ++objectsCount;
                 }
             }
-            // second pass to compete remapping
+            // second pass to complete remapping
             for ( int i = 1; i <= labelsCount; i++ )
             {
                 if ( map[i] != i )
