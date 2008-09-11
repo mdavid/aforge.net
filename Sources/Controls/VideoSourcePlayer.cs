@@ -25,7 +25,32 @@ namespace AForge.Controls
     /// <remarks><para>The control is aimed to play video sources, which implement
     /// <see cref="AForge.Video.IVideoSource"/> interface. To start playing a video
     /// the <see cref="VideoSource"/> property should be initialized first and then
-    /// <see cref="Start"/> method should be called.</para></remarks>
+    /// <see cref="Start"/> method should be called. In the case if user needs to
+    /// perform some sort of image processing with video frames before they are displayed,
+    /// the <see cref="NewFrame"/> event may be used.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // set new frame event handler if we need processing of new frames
+    /// playerControl.NewFrame += new VideoSourcePlayer.NewFrameHandler( this.playerControl_NewFrame );
+    /// 
+    /// // create video source
+    /// IVideoSource videoSource = new ...
+    /// // start playing it
+    /// playerControl.VideoSource = videoSource;
+    /// playerControl.Start( );
+    /// ...
+    /// 
+    /// // new frame event handler
+    /// private void playerControl_NewFrame( object sender, ref Bitmap image )
+    /// {
+    ///     // process new frame somehow ...
+    ///     
+    ///     // Note: it may be even changed, so the control will display the result
+    ///     // of image processing done here
+    /// }
+    /// </code>
+    /// </remarks>
     /// 
     public partial class VideoSourcePlayer : Control
     {
@@ -38,7 +63,7 @@ namespace AForge.Controls
         // controls border color
         private Color borderColor = Color.Black;
 
-        private bool autosize = true;
+        private bool autosize = false;
         private bool needSizeUpdate = false;
         private bool firstFrameNotProcessed = true;
 
@@ -55,7 +80,7 @@ namespace AForge.Controls
         /// of parent's control.
         /// </para></remarks>
         /// 
-        [DefaultValue( true )]
+        [DefaultValue( false )]
         public bool AutoSizeControl
         {
             get { return autosize; }
@@ -191,10 +216,13 @@ namespace AForge.Controls
         {
             lock ( this )
             {
-                firstFrameNotProcessed = true;
+                if ( videoSource != null )
+                {
+                    firstFrameNotProcessed = true;
 
-                videoSource.Start( );
-                Invalidate( );
+                    videoSource.Start( );
+                    Invalidate( );
+                }
             }
         }
 
@@ -212,14 +240,17 @@ namespace AForge.Controls
         {
             lock ( this )
             {
-                videoSource.Stop( );
-
-                if ( currentFrame != null )
+                if ( videoSource != null )
                 {
-                    currentFrame.Dispose( );
-                    currentFrame = null;
+                    videoSource.Stop( );
+
+                    if ( currentFrame != null )
+                    {
+                        currentFrame.Dispose( );
+                        currentFrame = null;
+                    }
+                    Invalidate( );
                 }
-                Invalidate( );
             }
         }
 
@@ -234,7 +265,10 @@ namespace AForge.Controls
         {
             lock ( this )
             {
-                videoSource.SignalToStop( );
+                if ( videoSource != null )
+                {
+                    videoSource.SignalToStop( );
+                }
             }
         }
 
@@ -249,14 +283,17 @@ namespace AForge.Controls
         {
             lock ( this )
             {
-                videoSource.WaitForStop( );
-
-                if ( currentFrame != null )
+                if ( videoSource != null )
                 {
-                    currentFrame.Dispose( );
-                    currentFrame = null;
+                    videoSource.WaitForStop( );
+
+                    if ( currentFrame != null )
+                    {
+                        currentFrame.Dispose( );
+                        currentFrame = null;
+                    }
+                    Invalidate( );
                 }
-                Invalidate( );
             }
         }
 
@@ -369,20 +406,17 @@ namespace AForge.Controls
         // Parent Changed event handler
         private void VideoSourcePlayer_ParentChanged( object sender, EventArgs e )
         {
-            if ( autosize )
+            if ( parent != null )
             {
-                if ( parent != null )
-                {
-                    parent.SizeChanged -= new EventHandler( parent_SizeChanged );
-                }
+                parent.SizeChanged -= new EventHandler( parent_SizeChanged );
+            }
 
-                parent = this.Parent;
+            parent = this.Parent;
 
-                // set handler for Size Changed parent's event
-                if ( parent != null )
-                {
-                    parent.SizeChanged += new EventHandler( parent_SizeChanged );
-                }
+            // set handler for Size Changed parent's event
+            if ( parent != null )
+            {
+                parent.SizeChanged += new EventHandler( parent_SizeChanged );
             }
         }
 
