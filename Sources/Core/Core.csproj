@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntRange.cs" />
     <Compile Include="Parallel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemTools.cs">
