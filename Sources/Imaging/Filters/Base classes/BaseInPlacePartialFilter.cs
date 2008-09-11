@@ -187,7 +187,7 @@ namespace AForge.Imaging.Filters
             }
 
             // usually stride will be the same for 2 images of the size size/format,
-            // but since this a public a method and users may provide any evil, we need check it
+            // but since this a public a method and users may provide any evil, we to need check it
             int dstStride = destinationImage.Stride;
             int srcStride = sourceImage.Stride;
             int lineSize  = Math.Min( srcStride, dstStride );
@@ -238,8 +238,11 @@ namespace AForge.Imaging.Filters
         ///
         public void ApplyInPlace( BitmapData imageData )
         {
+            // check pixel format of the source image
+            CheckSourceFormat( imageData.PixelFormat );
+
             // apply the filter
-            ApplyInPlace( imageData, new Rectangle( 0, 0, imageData.Width, imageData.Height ) );
+            ProcessFilter( new UnmanagedImage( imageData ), new Rectangle( 0, 0, imageData.Width, imageData.Height ) );
         }
 
         /// <summary>
@@ -282,7 +285,7 @@ namespace AForge.Imaging.Filters
             try
             {
                 // apply the filter
-                ApplyInPlace( data, rect );
+                ApplyInPlace( new UnmanagedImage( data ), rect );
             }
             finally
             {
@@ -304,15 +307,8 @@ namespace AForge.Imaging.Filters
         ///
         public void ApplyInPlace( BitmapData imageData, Rectangle rect )
         {
-            // check pixel format of the source image
-            CheckSourceFormat( imageData.PixelFormat );
-
-            // validate rectangle
-            rect.Intersect( new Rectangle( 0, 0, imageData.Width, imageData.Height ) );
-
-            // process the filter if rectangle is not empty
-            if ( ( rect.Width | rect.Height ) != 0 )
-                ProcessFilter( new UnmanagedImage( imageData ), rect );
+            // apply the filter
+            ApplyInPlace( new UnmanagedImage( imageData ), rect );
         }
 
         /// <summary>
@@ -331,8 +327,12 @@ namespace AForge.Imaging.Filters
             // check pixel format of the source image
             CheckSourceFormat( image.PixelFormat );
 
-            // process the filter
-            ProcessFilter( image, rect );
+            // validate rectangle
+            rect.Intersect( new Rectangle( 0, 0, image.Width, image.Height ) );
+
+            // process the filter if rectangle is not empty
+            if ( ( rect.Width | rect.Height ) != 0 )
+                ProcessFilter( image, rect );
         }
 
         /// <summary>
