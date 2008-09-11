@@ -13,16 +13,25 @@ namespace AForge.Imaging.Filters
     using System.Drawing.Imaging;
 
     /// <summary>
-    /// Base class for filters, which may be applied directly to the source image or its part.
+    /// Base class for filters, which require source image backup to make them applicable to
+    /// source image (or its part) directly.
     /// </summary>
     /// 
-    /// <remarks><para>The abstract class is the base class for all filters, which can
-    /// be applied to an image producing new image as a result of image processing or
-    /// applied directly to the source image (or its part) without changing its size and
-    /// pixel format.</para>
-    /// </remarks>
+    /// <remarks><para>The base class is used for filters, which can not do
+    /// direct manipulations with source image. To make effect of in-place filtering,
+    /// these filters create a background copy of the original image (done by this
+    /// base class) and then do manipulations with it putting result back to the original
+    /// source image.</para>
     /// 
-    public abstract class BaseInPlacePartialFilter : IFilter, IInPlaceFilter, IInPlacePartialFilter, IFilterInformation
+    /// <para><note>The background copy of the source image is created only in the case of in-place
+    /// filtering. Otherwise background copy is not created - source image is processed and result is
+    /// put to destination image.</note></para>
+    /// 
+    /// <para>The base class is for those filters, which support as filtering entire image, as
+    /// partial filtering of specified rectangle only.</para>
+    /// </remarks>
+    ///
+    public abstract class BaseUsingCopyPartialFilter : IFilter, IInPlaceFilter, IInPlacePartialFilter, IFilterInformation
     {
         /// <summary>
         /// Format translations dictionary.
@@ -74,32 +83,32 @@ namespace AForge.Imaging.Filters
             return dstImage;
         }
 
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The filter accepts bitmap data as input and returns the result
-        /// of image processing filter as new image. The source image data are kept
-        /// unchanged.</remarks>
-        ///
+		/// <summary>
+		/// Apply filter to an image.
+		/// </summary>
+		/// 
+		/// <param name="imageData">Source image to apply filter to.</param>
+		/// 
+		/// <returns>Returns filter's result obtained by applying the filter to
+		/// the source image.</returns>
+		/// 
+		/// <remarks>The filter accepts bitmap data as input and returns the result
+		/// of image processing filter as new image. The source image data are kept
+		/// unchanged.</remarks>
+		///
         /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
         ///
         public Bitmap Apply( BitmapData imageData )
         {
-            // destination image format
-            PixelFormat dstPixelFormat = imageData.PixelFormat;
-
             // check pixel format of the source image
-            CheckSourceFormat( dstPixelFormat );
+            CheckSourceFormat( imageData.PixelFormat );
 
-            // get image dimension
+            // get width and height
             int width  = imageData.Width;
             int height = imageData.Height;
+
+            // destination image format
+            PixelFormat dstPixelFormat = FormatTransalations[imageData.PixelFormat];
 
             // create new image of required format
             Bitmap dstImage = ( dstPixelFormat == PixelFormat.Format8bppIndexed ) ?
@@ -111,11 +120,8 @@ namespace AForge.Imaging.Filters
                 new Rectangle( 0, 0, width, height ),
                 ImageLockMode.ReadWrite, dstPixelFormat );
 
-            // copy image
-            AForge.SystemTools.CopyUnmanagedMemory( dstData.Scan0, imageData.Scan0, imageData.Stride * height );
-
             // process the filter
-            ProcessFilter( new UnmanagedImage( dstData ), new Rectangle( 0, 0, width, height ) );
+            ProcessFilter( new UnmanagedImage( imageData ), new UnmanagedImage( dstData ), new Rectangle( 0, 0, width, height ) );
 
             // unlock destination images
             dstImage.UnlockBits( dstData );
@@ -143,9 +149,10 @@ namespace AForge.Imaging.Filters
             CheckSourceFormat( image.PixelFormat );
 
             // create new destination image
-            UnmanagedImage dstImage = UnmanagedImage.Create( image.Width, image.Height, image.PixelFormat );
+            UnmanagedImage dstImage = UnmanagedImage.Create( image.Width, image.Height, FormatTransalations[image.PixelFormat] );
 
-            Apply( image, dstImage );
+            // process the filter
+            ProcessFilter( image, dstImage, new Rectangle( 0, 0, image.Width, image.Height ) );
 
             return dstImage;
         }
@@ -171,13 +178,13 @@ namespace AForge.Imaging.Filters
         ///
         public void Apply( UnmanagedImage sourceImage, UnmanagedImage destinationImage )
         {
-            // check pixel format of the source image
+            // check pixel format of the source and destination images
             CheckSourceFormat( sourceImage.PixelFormat );
 
             // ensure destination image has correct format
-            if ( destinationImage.PixelFormat != sourceImage.PixelFormat )
+            if ( destinationImage.PixelFormat != FormatTransalations[sourceImage.PixelFormat] )
             {
-                throw new ArgumentException( "Destination pixel format must be the same as pixel format of source image." );
+                throw new ArgumentException( "Destination pixel format is specified incorrectly." );
             }
 
             // ensure destination image has correct size
@@ -186,28 +193,8 @@ namespace AForge.Imaging.Filters
                 throw new ArgumentException( "Destination image must have the same width and height as source image." );
             }
 
-            // usually stride will be the same for 2 images of the size size/format,
-            // but since this a public a method and users may provide any evil, we to need check it
-            int dstStride = destinationImage.Stride;
-            int srcStride = sourceImage.Stride;
-            int lineSize  = Math.Min( srcStride, dstStride );
-
-            unsafe
-            {
-                byte* dst = (byte*) destinationImage.ImageData.ToPointer( );
-                byte* src = (byte*) sourceImage.ImageData.ToPointer( );
-
-                // copy image
-                for ( int y = 0, height = sourceImage.Height; y < height; y++ )
-                {
-                    AForge.SystemTools.CopyUnmanagedMemory( dst, src, lineSize );
-                    dst += dstStride;
-                    src += srcStride;
-                }
-            }
-
             // process the filter
-            ProcessFilter( destinationImage, new Rectangle( 0, 0, destinationImage.Width, destinationImage.Height ) );
+            ProcessFilter( sourceImage, destinationImage, new Rectangle( 0, 0, sourceImage.Width, sourceImage.Height ) );
         }
 
         /// <summary>
@@ -238,11 +225,8 @@ namespace AForge.Imaging.Filters
         ///
         public void ApplyInPlace( BitmapData imageData )
         {
-            // check pixel format of the source image
-            CheckSourceFormat( imageData.PixelFormat );
-
             // apply the filter
-            ProcessFilter( new UnmanagedImage( imageData ), new Rectangle( 0, 0, imageData.Width, imageData.Height ) );
+            ApplyInPlace( new UnmanagedImage( imageData ), new Rectangle( 0, 0, imageData.Width, imageData.Height ) );
         }
 
         /// <summary>
@@ -257,11 +241,8 @@ namespace AForge.Imaging.Filters
         ///
         public void ApplyInPlace( UnmanagedImage image )
         {
-            // check pixel format of the source image
-            CheckSourceFormat( image.PixelFormat );
-
-            // process the filter
-            ProcessFilter( image, new Rectangle( 0, 0, image.Width, image.Height ) );
+            // apply the filter
+            ApplyInPlace( image, new Rectangle( 0, 0, image.Width, image.Height ) );
         }
 
         /// <summary>
@@ -332,17 +313,31 @@ namespace AForge.Imaging.Filters
 
             // process the filter if rectangle is not empty
             if ( ( rect.Width | rect.Height ) != 0 )
-                ProcessFilter( image, rect );
+            {
+                // create a copy of the source image
+                int size = image.Stride * image.Height;
+
+                IntPtr imageCopy = MemoryManager.Alloc( size );
+                AForge.SystemTools.CopyUnmanagedMemory( imageCopy, image.ImageData, size );
+
+                // process the filter
+                ProcessFilter(
+                    new UnmanagedImage( imageCopy, image.Width, image.Height, image.Stride, image.PixelFormat ),
+                    image, rect );
+
+                MemoryManager.Free( imageCopy );
+            }
         }
 
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="image">Source image data.</param>
+        /// <param name="sourceData">Source image data.</param>
+        /// <param name="destinationData">Destination image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
-        ///
-        protected abstract unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect );
+        /// 
+        protected abstract unsafe void ProcessFilter( UnmanagedImage sourceData, UnmanagedImage destinationData, Rectangle rect );
 
         // Check pixel format of the source image
         private void CheckSourceFormat( PixelFormat pixelFormat )
