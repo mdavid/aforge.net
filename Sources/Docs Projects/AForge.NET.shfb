@@ -2,6 +2,7 @@
     <assemblies>
         <assembly assemblyPath="..\..\Release\AForge.Controls.dll" xmlCommentsPath="..\..\Release\AForge.Controls.xml" commentsOnly="False" />
         <assembly assemblyPath="..\..\Release\AForge.dll" xmlCommentsPath="..\..\Release\AForge.xml" commentsOnly="False" />
+        <assembly assemblyPath="..\..\Release\AForge.Fuzzy.dll" xmlCommentsPath="..\..\Release\AForge.Fuzzy.xml" commentsOnly="False" />
         <assembly assemblyPath="..\..\Release\AForge.Imaging.dll" xmlCommentsPath="..\..\Release\AForge.Imaging.xml" commentsOnly="False" />
         <assembly assemblyPath="..\..\Release\AForge.Imaging.Formats.dll" xmlCommentsPath="..\..\Release\AForge.Imaging.Formats.xml" commentsOnly="False" />
         <assembly assemblyPath="..\..\Release\AForge.Math.dll" xmlCommentsPath="..\..\Release\AForge.Math.xml" commentsOnly="False" />
@@ -14,6 +15,7 @@
         <namespaceSummaryItem name="" isDocumented="False" />
         <namespaceSummaryItem name="AForge" isDocumented="True">The &lt;b&gt;AForge&lt;/b&gt; namespace is a core namespace &lt;b&gt;AForge.NET&lt;/b&gt; framework, which contains core classes used by other namespaces of the framework and classes, which can be used independently for various purposes.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Controls" isDocumented="True">The &lt;b&gt;AForge.Controls&lt;/b&gt; namespace contains different useful UI controls, which may be used together with other classes of &lt;b&gt;AForge.NET&lt;/b&gt; framework.</namespaceSummaryItem>
+        <namespaceSummaryItem name="AForge.Fuzzy" isDocumented="True">The &lt;b&gt;AForge.Fuzzy&lt;/b&gt; namespace contains set of interfaces and classes to operate with fuzzy sets.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging" isDocumented="True">The &lt;b&gt;AForge.Imaging&lt;/b&gt; namespace contains interfaces and classes for different image processing routines.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging.Filters" isDocumented="True">The &lt;b&gt;AForge.Imaging.Filters&lt;/b&gt; namespace contains collection of interfaces and classes, which provide different image processing filters. Classes of this namespace allow to do different transformation of a source image, doing it directly on the source image or providing new image as a result of image processing routine.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging.Formats" isDocumented="True">The &lt;b&gt;AForge.Imaging.Formats&lt;/b&gt; namespace contains interfaces and classes, which are used to handle different image file formats.</namespaceSummaryItem>
