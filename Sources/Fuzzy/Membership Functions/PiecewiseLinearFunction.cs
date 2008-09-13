@@ -82,7 +82,7 @@ namespace AForge.Fuzzy
         {
             this.points = points;
 
-            // check if X points are in a sequence
+            // check if X points are in a sequence and if Y values are in [0..1] range
             for ( int i = 0, n = points.Length; i < n; i++ )
             {
                 if ( ( points[i].Y < 0 ) || ( points[i].Y > 1 ) )
