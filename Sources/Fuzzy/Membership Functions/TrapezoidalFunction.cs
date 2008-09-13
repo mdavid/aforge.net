@@ -24,7 +24,7 @@ namespace AForge.Fuzzy
     /// <code>
     /// // creating a typical triangular fuzzy set /\
     /// TrapezoidalFunction function1 = new TrapezoidalFunction( 10, 20, 30 );
-    /// // creating a right fuzzy set, the rigth side of the set is fuzzy but the left is crisp
+    /// // creating a right fuzzy set, the rigth side of the set is fuzzy but the left is opened
     /// TrapezoidalFunction function2 = new TrapezoidalFunction( 10, 20, 30, TrapezoidalFunction.EdgeType.Right );
     /// </code>
     /// 
