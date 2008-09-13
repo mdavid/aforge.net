@@ -1,5 +1,5 @@
 // AForge.NET Framework
-// Simple Player sample application
+// Fyzzy Set sample application
 //
 // Copyright © Andrew Kirillov, 2008
 // andrew.kirillov@gmail.com
