@@ -291,7 +291,7 @@ namespace AForge.Imaging
         /// 
         /// <remarks><para>Processes the image and builds objects map, which is used later to extracts blobs.</para></remarks>
         /// 
-        /// <exception cref="ArgumentException">In the case if source image's pixel format is not supported.</exception>
+        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ProcessImage( Bitmap image )
         {
@@ -320,7 +320,7 @@ namespace AForge.Imaging
         /// 
         /// <remarks><para>Processes the image and builds objects map, which is used later to extracts blobs.</para></remarks>
         /// 
-        /// <exception cref="ArgumentException">In the case if source image's pixel format is not supported.</exception>
+        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ProcessImage( BitmapData imageData )
         {
@@ -336,7 +336,7 @@ namespace AForge.Imaging
         /// 
         /// <remarks><para>Processes the image and builds objects map, which is used later to extracts blobs.</para></remarks>
         /// 
-        /// <exception cref="ArgumentException">In the case if source image's pixel format is not supported.</exception>
+        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ProcessImage( UnmanagedImage image )
         {
