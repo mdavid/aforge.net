@@ -116,7 +116,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format24bppRgb )
                 )
             {
-                throw new ArgumentException( "Source image can be graysclae (8 bpp indexed) or color (24 bpp) image only" );
+                throw new ArgumentException( "Unsupported pixel format of the source image." );
             }
 
             // lock bitmap data
@@ -125,7 +125,7 @@ namespace AForge.Imaging
                 ImageLockMode.ReadOnly, image.PixelFormat );
 
             // gather statistics
-            ProcessImage( imageData );
+            ProcessImage( new UnmanagedImage( imageData ) );
 
             // unlock image
             image.UnlockBits( imageData );
@@ -140,40 +140,54 @@ namespace AForge.Imaging
         /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
         /// 
         public VerticalIntensityStatistics( BitmapData imageData )
+            : this( new UnmanagedImage( imageData ) )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HorizontalIntensityStatistics"/> class.
+        /// </summary>
+        /// 
+        /// <param name="image">Source unmanaged image.</param>
+        /// 
+        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// 
+        public VerticalIntensityStatistics( UnmanagedImage image )
         {
             // check image format
             if (
-                ( imageData.PixelFormat != PixelFormat.Format8bppIndexed ) &&
-                ( imageData.PixelFormat != PixelFormat.Format24bppRgb )
+                ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
+                ( image.PixelFormat != PixelFormat.Format24bppRgb )
                 )
             {
-                throw new ArgumentException( "Source image can be graysclae (8 bpp indexed) or color (24 bpp) image only" );
+                throw new ArgumentException( "Unsupported pixel format of the source image." );
             }
 
-            ProcessImage( imageData );
+            // gather statistics
+            ProcessImage( image );
         }
 
         /// <summary>
         /// Gather vertical intensity statistics for specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Source image data.</param>
+        /// <param name="image">Source image.</param>
         /// 
-        private void ProcessImage( BitmapData imageData )
+        private void ProcessImage( UnmanagedImage image )
         {
             // get image dimension
-            int width  = imageData.Width;
-            int height = imageData.Height;
+            int width  = image.Width;
+            int height = image.Height;
 
             // do the job
             unsafe
             {
-                byte* p = (byte*) imageData.Scan0.ToPointer( );
+                byte* p = (byte*) image.ImageData.ToPointer( );
 
                 // check pixel format
-                if ( imageData.PixelFormat == PixelFormat.Format8bppIndexed )
+                if ( image.PixelFormat == PixelFormat.Format8bppIndexed )
                 {
-                    int offset = imageData.Stride - width;
+                    int offset = image.Stride - width;
 
                     // histogram array
                     int[] g = new int[height];
@@ -194,14 +208,11 @@ namespace AForge.Imaging
                     }
 
                     // create historgram for gray level
-                    gray  = new Histogram( g );
-                    red   = null;
-                    green = null;
-                    blue  = null;
+                    gray = new Histogram( g );
                 }
                 else
                 {
-                    int offset = imageData.Stride - width * 3;
+                    int offset = image.Stride - width * 3;
 
                     // histogram arrays
                     int[] r = new int[height];
@@ -233,7 +244,6 @@ namespace AForge.Imaging
                     red   = new Histogram( r );
                     green = new Histogram( g );
                     blue  = new Histogram( b );
-                    gray  = null;
                 }
             }
         }
