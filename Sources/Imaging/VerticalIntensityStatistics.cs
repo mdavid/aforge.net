@@ -20,7 +20,9 @@ namespace AForge.Imaging
     /// of pixel intensities, which may be used to locate objects, their centers, etc.
     /// </para>
     /// 
-    /// <para>The class accepts grayscale (8 bpp indexed) and color (24 bpp) images.</para>
+    /// <para>The class accepts grayscale (8 bpp indexed and 16 bpp) and color (24, 32, 48 and 64 bpp) images.
+    /// In the case of 32 and 64 bpp color images, the alpha channel is not processed - statistics is not
+    /// gathered for this channel.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -113,7 +115,11 @@ namespace AForge.Imaging
             // check image format
             if (
                 ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
-                ( image.PixelFormat != PixelFormat.Format24bppRgb )
+                ( image.PixelFormat != PixelFormat.Format16bppGrayScale ) &&
+                ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
+                ( image.PixelFormat != PixelFormat.Format48bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format64bppArgb )
                 )
             {
                 throw new ArgumentException( "Unsupported pixel format of the source image." );
@@ -157,7 +163,11 @@ namespace AForge.Imaging
             // check image format
             if (
                 ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
-                ( image.PixelFormat != PixelFormat.Format24bppRgb )
+                ( image.PixelFormat != PixelFormat.Format16bppGrayScale ) &&
+                ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
+                ( image.PixelFormat != PixelFormat.Format48bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format64bppArgb )
                 )
             {
                 throw new ArgumentException( "Unsupported pixel format of the source image." );
@@ -175,6 +185,7 @@ namespace AForge.Imaging
         /// 
         private void ProcessImage( UnmanagedImage image )
         {
+            PixelFormat pixelFormat = image.PixelFormat;
             // get image dimension
             int width  = image.Width;
             int height = image.Height;
@@ -182,11 +193,11 @@ namespace AForge.Imaging
             // do the job
             unsafe
             {
-                byte* p = (byte*) image.ImageData.ToPointer( );
-
                 // check pixel format
-                if ( image.PixelFormat == PixelFormat.Format8bppIndexed )
+                if ( pixelFormat == PixelFormat.Format8bppIndexed )
                 {
+                    // 8 bpp grayscale image
+                    byte* p = (byte*) image.ImageData.ToPointer( );
                     int offset = image.Stride - width;
 
                     // histogram array
@@ -210,9 +221,40 @@ namespace AForge.Imaging
                     // create historgram for gray level
                     gray = new Histogram( g );
                 }
-                else
+                else if ( pixelFormat == PixelFormat.Format16bppGrayScale )
                 {
-                    int offset = image.Stride - width * 3;
+                    // 16 bpp grayscale image
+                    int basePtr = (int) image.ImageData.ToPointer( );
+                    int stride = image.Stride;
+
+                    // histogram array
+                    int[] g = new int[height];
+
+                    // for each pixel
+                    for ( int y = 0; y < height; y++ )
+                    {
+                        ushort* p = (ushort*) ( basePtr + stride * y );
+                        int lineSum = 0;
+
+                        // for each pixel
+                        for ( int x = 0; x < width; x++, p++ )
+                        {
+                            lineSum += *p;
+                        }
+                        g[y] = lineSum;
+                    }
+
+                    // create historgram for gray level
+                    gray = new Histogram( g );
+                }
+                else if (
+                    ( pixelFormat == PixelFormat.Format24bppRgb ) ||
+                    ( pixelFormat == PixelFormat.Format32bppArgb ) )
+                {
+                    // 24/32 bpp color image
+                    byte* p = (byte*) image.ImageData.ToPointer( );
+                    int pixelSize = ( pixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
+                    int offset = image.Stride - width * pixelSize;
 
                     // histogram arrays
                     int[] r = new int[height];
@@ -227,7 +269,7 @@ namespace AForge.Imaging
                         int lineBSum = 0;
 
                         // for each pixel
-                        for ( int x = 0; x < width; x++, p += 3 )
+                        for ( int x = 0; x < width; x++, p += pixelSize )
                         {
                             lineRSum += p[RGB.R];
                             lineGSum += p[RGB.G];
@@ -238,6 +280,46 @@ namespace AForge.Imaging
                         b[y] = lineBSum;
 
                         p += offset;
+                    }
+
+                    // create histograms
+                    red   = new Histogram( r );
+                    green = new Histogram( g );
+                    blue  = new Histogram( b );
+                }
+                else if (
+                    ( pixelFormat == PixelFormat.Format48bppRgb ) ||
+                    ( pixelFormat == PixelFormat.Format64bppArgb ) )
+                {
+                    // 48/64 bpp color image
+                    int basePtr = (int) image.ImageData.ToPointer( );
+                    int stride = image.Stride;
+                    int pixelSize = ( pixelFormat == PixelFormat.Format48bppRgb ) ? 3 : 4;
+
+                    // histogram arrays
+                    int[] r = new int[height];
+                    int[] g = new int[height];
+                    int[] b = new int[height];
+
+                    // for each line
+                    for ( int y = 0; y < height; y++ )
+                    {
+                        ushort* p = (ushort*) ( basePtr + stride * y );
+
+                        int lineRSum = 0;
+                        int lineGSum = 0;
+                        int lineBSum = 0;
+
+                        // for each pixel
+                        for ( int x = 0; x < width; x++, p += pixelSize )
+                        {
+                            lineRSum += p[RGB.R];
+                            lineGSum += p[RGB.G];
+                            lineBSum += p[RGB.B];
+                        }
+                        r[y] = lineRSum;
+                        g[y] = lineGSum;
+                        b[y] = lineBSum;
                     }
 
                     // create histograms
