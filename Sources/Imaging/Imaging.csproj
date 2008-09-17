@@ -59,6 +59,7 @@
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter2.cs" />
+    <Compile Include="Filters\Base classes\BaseTransformationFilter.cs" />
     <Compile Include="Filters\Base classes\BaseUsingCopyPartialFilter.cs" />
     <Compile Include="Filters\Binarization\Threshold.cs" />
     <Compile Include="Filters\Color Filters\Grayscale.cs" />
