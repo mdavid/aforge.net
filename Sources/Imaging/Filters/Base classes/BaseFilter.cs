@@ -148,7 +148,8 @@ namespace AForge.Imaging.Filters
             // create new destination image
             UnmanagedImage dstImage = UnmanagedImage.Create( image.Width, image.Height, FormatTransalations[image.PixelFormat] );
 
-            Apply( image, dstImage );
+            // process the filter
+            ProcessFilter( image, dstImage );
 
             return dstImage;
         }
