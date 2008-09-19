@@ -1,10 +1,16 @@
-﻿using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-
+﻿// AForge Controls Library
+// AForge.NET framework
+//
+// Copyright © Frank Nagl, 2008
+// admin@franknagl.de
+//
 namespace AForge.Controls
 {
+    using System;
+    using System.Windows.Forms;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+
     /// <summary>
     /// Declares the event handler for moving sliders 
     /// </summary>

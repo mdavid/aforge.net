@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C# Express 2005
+# Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controls", "Controls.csproj", "{D08F6D8A-A5F5-49C3-B607-526D9EE0DEE3}"
 EndProject
 Global
