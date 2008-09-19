@@ -75,6 +75,7 @@
     <Compile Include="Filters\Morphology\Erosion.cs" />
     <Compile Include="Filters\Morphology\Opening.cs" />
     <Compile Include="Filters\Other\BlobsFiltering.cs" />
+    <Compile Include="Filters\Transform\Crop.cs" />
     <Compile Include="Filters\Transform\Shrink.cs" />
     <Compile Include="HorizontalIntensityStatistics.cs" />
     <Compile Include="Image.cs" />
