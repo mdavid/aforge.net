@@ -84,6 +84,7 @@
     <Compile Include="HoughCircleTransformation.cs" />
     <Compile Include="HoughLineTransformation.cs" />
     <Compile Include="Image.cs" />
+    <Compile Include="Internals\Tools.cs" />
     <Compile Include="MemoryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecursiveBlobCounter.cs" />
