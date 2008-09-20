@@ -20,7 +20,8 @@ namespace AForge.Imaging.Filters
     /// <para>The filter crops an image providing a new image, which contains only the specified
     /// rectangle of the original image.</para>
     /// 
-    /// <para>The filter accepts 8 bpp grayscale and 24 bpp color images for processing.</para>
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24, 32, 48 and 64 bpp
+    /// color images for processing.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -70,8 +71,12 @@ namespace AForge.Imaging.Filters
         {
             this.rect = rect;
 
-            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
-            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb]      = PixelFormat.Format32bppArgb;
+            formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
+            formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
+            formatTransalations[PixelFormat.Format64bppArgb]      = PixelFormat.Format64bppArgb;
         }
 
         /// <summary>
@@ -109,12 +114,46 @@ namespace AForge.Imaging.Filters
 
             int srcStride = sourceData.Stride;
             int dstStride = destinationData.Stride;
-            int pixelSize = ( sourceData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
+
+            // resolve pixel size
+            int pixelSize = 0;
+
+            switch ( sourceData.PixelFormat )
+            {
+                case PixelFormat.Format8bppIndexed: // 8 bpp grayscale
+                    pixelSize = 1;
+                    break;
+                case PixelFormat.Format16bppGrayScale:
+                    pixelSize = 2;
+                    break;
+                case PixelFormat.Format24bppRgb:
+                    pixelSize = 3;
+                    break;
+                case PixelFormat.Format32bppArgb:
+                    pixelSize = 4;
+                    break;
+                case PixelFormat.Format48bppRgb:
+                    pixelSize = 6;
+                    break;
+                case PixelFormat.Format64bppArgb:
+                    pixelSize = 8;
+                    break;
+            }
+
             int copySize = dstWidth * pixelSize;
 
             // do the job
             byte* src = (byte*) sourceData.ImageData.ToPointer( ) + ymin * srcStride + xmin * pixelSize;
             byte* dst = (byte*) destinationData.ImageData.ToPointer( );
+
+            if ( rect.Top < 0 )
+            {
+                dst -= dstStride * rect.Top;
+            }
+            if ( rect.Left < 0 )
+            {
+                dst -= pixelSize * rect.Left;
+            }
 
             // for each line
             for ( int y = ymin; y <= ymax; y++ )
