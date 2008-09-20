@@ -114,33 +114,8 @@ namespace AForge.Imaging.Filters
 
             int srcStride = sourceData.Stride;
             int dstStride = destinationData.Stride;
-
-            // resolve pixel size
-            int pixelSize = 0;
-
-            switch ( sourceData.PixelFormat )
-            {
-                case PixelFormat.Format8bppIndexed: // 8 bpp grayscale
-                    pixelSize = 1;
-                    break;
-                case PixelFormat.Format16bppGrayScale:
-                    pixelSize = 2;
-                    break;
-                case PixelFormat.Format24bppRgb:
-                    pixelSize = 3;
-                    break;
-                case PixelFormat.Format32bppArgb:
-                    pixelSize = 4;
-                    break;
-                case PixelFormat.Format48bppRgb:
-                    pixelSize = 6;
-                    break;
-                case PixelFormat.Format64bppArgb:
-                    pixelSize = 8;
-                    break;
-            }
-
-            int copySize = dstWidth * pixelSize;
+            int pixelSize = Tools.GetBytesPerPixel( sourceData.PixelFormat );
+            int copySize  = dstWidth * pixelSize;
 
             // do the job
             byte* src = (byte*) sourceData.ImageData.ToPointer( ) + ymin * srcStride + xmin * pixelSize;
