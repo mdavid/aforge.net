@@ -52,7 +52,8 @@ namespace AForge.Imaging.Filters
         /// as it is or not. If the value is set to <b>false</b>, then the new image will have
         /// new dimension according to rotation angle. If the valus is set to
         /// <b>true</b>, then the new image will have the same size, which means that some parts
-        /// of the image may be clipped because of rotation.</para></remarks>
+        /// of the image may be clipped because of rotation.</para>
+        /// </remarks>
         /// 
         public bool KeepSize
         {
@@ -78,6 +79,9 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         /// <param name="angle">Rotation angle.</param>
+        /// 
+        /// <remarks><para>This constructor sets <see cref="KeepSize"/> property to <b>false</b>.
+        /// </para></remarks>
         /// 
         public BaseRotateFilter( double angle )
         {

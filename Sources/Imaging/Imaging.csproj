@@ -52,9 +52,7 @@
     <Compile Include="Filters\2 Source filters\Difference.cs" />
     <Compile Include="Filters\2 Source filters\Intersect.cs" />
     <Compile Include="Filters\2 Source filters\Merge.cs" />
-    <Compile Include="Filters\2 Source filters\MoveTowards.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Filters\2 Source filters\MoveTowards.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
@@ -79,6 +77,8 @@
     <Compile Include="Filters\Morphology\Opening.cs" />
     <Compile Include="Filters\Other\BlobsFiltering.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
+    <Compile Include="Filters\Transform\ResizeNearestNeighbor.cs" />
+    <Compile Include="Filters\Transform\RotateNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\Shrink.cs" />
     <Compile Include="HorizontalIntensityStatistics.cs" />
     <Compile Include="HoughCircleTransformation.cs" />
