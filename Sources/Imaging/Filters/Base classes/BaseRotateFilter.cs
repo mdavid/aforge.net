@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -18,7 +18,7 @@ namespace AForge.Imaging.Filters
     /// <remarks>The abstract class is the base class for all filters,
     /// which implement rotating algorithms.</remarks>
     /// 
-    public abstract class FilterRotate : FilterAnyToAnyNew
+    public abstract class BaseRotateFilter : BaseTransformationFilter
     {
         /// <summary>
         /// Rotation angle.
@@ -36,7 +36,7 @@ namespace AForge.Imaging.Filters
         protected Color fillColor = Color.FromArgb( 0, 0, 0 );
 
         /// <summary>
-        /// Rotation angle.
+        /// Rotation angle, [0, 360].
         /// </summary>
         public double Angle
         {
@@ -48,10 +48,11 @@ namespace AForge.Imaging.Filters
         /// Keep image size or not.
         /// </summary>
         /// 
-        /// <remarks>The property determines if source image's size will be kept
-        /// or not. If the value is set to <b>false</b>, then new image will have
+        /// <remarks><para>The property determines if source image's size will be kept
+        /// as it is or not. If the value is set to <b>false</b>, then the new image will have
         /// new dimension according to rotation angle. If the valus is set to
-        /// <b>true</b>, then new image will have the same size.</remarks>
+        /// <b>true</b>, then the new image will have the same size, which means that some parts
+        /// of the image may be clipped because of rotation.</para></remarks>
         /// 
         public bool KeepSize
         {
@@ -63,8 +64,8 @@ namespace AForge.Imaging.Filters
         /// Fill color.
         /// </summary>
         /// 
-        /// <remarks>The fill color is used to fill areas of destination image,
-        /// which don't have corresponsing pixels in source image.</remarks>
+        /// <remarks><para>The fill color is used to fill areas of destination image,
+        /// which don't have corresponsing pixels in source image.</para></remarks>
         /// 
         public Color FillColor
         {
@@ -73,28 +74,28 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FilterRotate"/> class.
+        /// Initializes a new instance of the <see cref="BaseRotateFilter"/> class.
         /// </summary>
         /// 
         /// <param name="angle">Rotation angle.</param>
         /// 
-        public FilterRotate( double angle )
-		{
-			this.angle = angle;
-		}
+        public BaseRotateFilter( double angle )
+        {
+            this.angle = angle;
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FilterRotate"/> class.
+        /// Initializes a new instance of the <see cref="BaseRotateFilter"/> class.
         /// </summary>
         /// 
         /// <param name="angle">Rotation angle.</param>
         /// <param name="keepSize">Keep image size or not.</param>
         /// 
-        public FilterRotate( double angle, bool keepSize )
-		{
-			this.angle = angle;
-			this.keepSize = keepSize;
-		}
+        public BaseRotateFilter( double angle, bool keepSize )
+        {
+            this.angle    = angle;
+            this.keepSize = keepSize;
+        }
 
         /// <summary>
         /// Calculates new image size.
@@ -102,9 +103,9 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="sourceData">Source image data.</param>
         /// 
-        /// <returns>New image size.</returns>
+        /// <returns>New image size - size of the destination image.</returns>
         /// 
-        protected override System.Drawing.Size CalculateNewImageSize( BitmapData sourceData )
+        protected override System.Drawing.Size CalculateNewImageSize( UnmanagedImage sourceData )
         {
             // return same size if original image size should be kept
             if ( keepSize )
@@ -116,7 +117,7 @@ namespace AForge.Imaging.Filters
             double angleSin = Math.Sin( angleRad );
 
             // calculate half size
-            double halfWidth = (double) sourceData.Width / 2;
+            double halfWidth  = (double) sourceData.Width / 2;
             double halfHeight = (double) sourceData.Height / 2;
 
             // rotate corners
@@ -127,14 +128,14 @@ namespace AForge.Imaging.Filters
             double cy2 = halfWidth * angleSin + halfHeight * angleCos;
 
             double cx3 = -halfHeight * angleSin;
-            double cy3 = halfHeight * angleCos;
+            double cy3 =  halfHeight * angleCos;
 
             double cx4 = 0;
             double cy4 = 0;
 
             // recalculate image size
-            halfWidth   = Math.Max( Math.Max( cx1, cx2 ), Math.Max( cx3, cx4 ) ) - Math.Min( Math.Min( cx1, cx2 ), Math.Min( cx3, cx4 ) );
-            halfHeight  = Math.Max( Math.Max( cy1, cy2 ), Math.Max( cy3, cy4 ) ) - Math.Min( Math.Min( cy1, cy2 ), Math.Min( cy3, cy4 ) );
+            halfWidth  = Math.Max( Math.Max( cx1, cx2 ), Math.Max( cx3, cx4 ) ) - Math.Min( Math.Min( cx1, cx2 ), Math.Min( cx3, cx4 ) );
+            halfHeight = Math.Max( Math.Max( cy1, cy2 ), Math.Max( cy3, cy4 ) ) - Math.Min( Math.Min( cy1, cy2 ), Math.Min( cy3, cy4 ) );
 
             return new Size( (int) ( halfWidth * 2 + 0.5 ), (int) ( halfHeight * 2 + 0.5 ) );
         }
