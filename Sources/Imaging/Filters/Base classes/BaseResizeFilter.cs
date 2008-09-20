@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -15,10 +15,11 @@ namespace AForge.Imaging.Filters
     /// Base class for image resizing filters.
     /// </summary>
     /// 
-    /// <remarks>The abstract class is the base class for all filters,
-    /// which implement resizing algorithms.</remarks>
+    /// <remarks><para>The abstract class is the base class for all filters,
+    /// which implement image rotation algorithms.</para>
+    /// </remarks>
     /// 
-    public abstract class FilterResize : FilterAnyToAnyNew
+    public abstract class BaseResizeFilter : BaseTransformationFilter
     {
         /// <summary>
         /// New image width.
@@ -31,7 +32,7 @@ namespace AForge.Imaging.Filters
         protected int newHeight;
 
         /// <summary>
-        /// Width of new image.
+        /// Width of the new resized image.
         /// </summary>
         /// 
         public int NewWidth
@@ -41,7 +42,7 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Height of new image.
+        /// Height of the new resized image.
         /// </summary>
         /// 
         public int NewHeight
@@ -51,17 +52,17 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FilterResize"/> class.
+        /// Initializes a new instance of the <see cref="BaseResizeFilter"/> class.
         /// </summary>
         /// 
-        /// <param name="newWidth">Width of new image.</param>
-        /// <param name="newHeight">Height of new image.</param>
+        /// <param name="newWidth">Width of the new resized image.</param>
+        /// <param name="newHeight">Height of the new resize image.</param>
         /// 
-        protected FilterResize( int newWidth, int newHeight )
-		{
-			this.newWidth   = newWidth;
-			this.newHeight  = newHeight;
-		}
+        protected BaseResizeFilter( int newWidth, int newHeight )
+        {
+            this.newWidth  = newWidth;
+            this.newHeight = newHeight;
+        }
 
         /// <summary>
         /// Calculates new image size.
@@ -69,9 +70,9 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="sourceData">Source image data.</param>
         /// 
-        /// <returns>New image size.</returns>
+        /// <returns>New image size - size of the destination image.</returns>
         /// 
-        protected override System.Drawing.Size CalculateNewImageSize( BitmapData sourceData )
+        protected override System.Drawing.Size CalculateNewImageSize( UnmanagedImage sourceData )
         {
             return new Size( newWidth, newHeight );
         }
