@@ -22,6 +22,8 @@ namespace AForge.Imaging.Filters
     /// <para>The filter accepts 8 and 16 bpp grayscale images and 24, 32, 48 and 64 bpp
     /// color images for processing.</para>
     /// 
+    /// <para><note>Parallelism is used – the class uses <see cref="AForge.Parallel"/> class for paralleling computations on multiple CPUs/cores. </note></para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -82,39 +84,32 @@ namespace AForge.Imaging.Filters
 
             int pixelSize = Tools.GetBytesPerPixel( sourceData.PixelFormat );
             int srcStride = sourceData.Stride;
-            int dstOffset = destinationData.Stride - pixelSize * newWidth;
+            int dstStride = destinationData.Stride;
             double xFactor = (double) width / newWidth;
             double yFactor = (double) height / newHeight;
 
             // do the job
-            byte* src = (byte*) sourceData.ImageData.ToPointer( );
-            byte* dst = (byte*) destinationData.ImageData.ToPointer( );
-            byte* p;
-
-            // cooridinaes of nearest point
-            int ox, oy;
+            byte* baseSrc = (byte*) sourceData.ImageData.ToPointer( );
+            byte* baseDst = (byte*) destinationData.ImageData.ToPointer( );
 
             // for each line
-            for ( int y = 0; y < newHeight; y++ )
+            AForge.Parallel.For( 0, newHeight, delegate( int y )
             {
-                // Y coordinate of the nearest point
-                oy = (int) ( y * yFactor );
+                byte* dst = baseDst + dstStride * y;
+                byte* src = baseSrc + srcStride * ( (int) ( y * yFactor ) );
+                byte* p;
 
                 // for each pixel
                 for ( int x = 0; x < newWidth; x++ )
                 {
-                    // X coordinate of the nearest point
-                    ox = (int) ( x * xFactor );
-
-                    p = src + oy * srcStride + ox * pixelSize;
+                    p = src + pixelSize * ( (int) ( x * xFactor ) );
 
                     for ( int i = 0; i < pixelSize; i++, dst++, p++ )
                     {
                         *dst = *p;
                     }
                 }
-                dst += dstOffset;
-            }
+            } );
         }
     }
 }
