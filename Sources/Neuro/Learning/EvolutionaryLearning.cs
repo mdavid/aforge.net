@@ -2,7 +2,7 @@
 //
 // Copyright © Cezary Wagner, 2008
 // Evolutionary learning algorithm
-// Cezary Wagner
+// Cezary.Wagner@gmail.com
 //
 // Copyright © Andrew Kirillov, 2005-2006
 // andrew.kirillov@gmail.com
@@ -26,6 +26,7 @@ namespace AForge.Neuro.Learning
         Population population;
         double crossOverRate;
         double mutationRate;
+        double randomSelectionRate;
 
         /// <summary>
         /// Contructor of population of chromosomes.
@@ -36,11 +37,13 @@ namespace AForge.Neuro.Learning
         /// <param name="geneMutationGenerator">Random generator for modyfication neural network wieghts and thresholds.</param>
         /// <param name="selectionMethod">Method of selection best chromosomes for neural network.</param>
         /// <param name="crossOverRate">Rate of cross over of chromosomes (values should be high about 0.75).</param>
-        /// <param name="mutationRate">Rate od mutation of chormosomes (value should be low about 0.1).</param>
+        /// <param name="mutationRate">Rate of mutation of chormosomes (value should be low about 0.1).</param>
+        /// <param name="randomSelectionRate">Rate of injection of random chromosomes during selection (value should be low about 0.0).</param>
         EvolutionaryLearning(ActivationNetwork activationNetwork, int populationSize,
             IRandomNumberGenerator geneGenerator, IRandomNumberGenerator geneMutationGenerator,
-            ISelectionMethod selectionMethod, double crossOverRate, double mutationRate)
+            ISelectionMethod selectionMethod, double crossOverRate, double mutationRate, double randomSelectionRate)
         {
+            // Check of assumptions during debugging only
             Debug.Assert(activationNetwork != null);
             Debug.Assert(populationSize > 0);
             Debug.Assert(geneGenerator != null);
@@ -48,6 +51,7 @@ namespace AForge.Neuro.Learning
             Debug.Assert(selectionMethod != null);
             Debug.Assert(crossOverRate >= 0.0 && crossOverRate <= 1.0);
             Debug.Assert(mutationRate >= 0.0 && crossOverRate <= 1.0);
+            Debug.Assert(randomSelectionRate >= 0.0 && randomSelectionRate <= 1.0);
 
             this.network = activationNetwork;
             this.populationSize = populationSize;
@@ -56,6 +60,7 @@ namespace AForge.Neuro.Learning
             this.selectionMethod = selectionMethod;
             this.crossOverRate = crossOverRate;
             this.mutationRate = mutationRate;
+            this.randomSelectionRate = randomSelectionRate;
         }
 
         /// <summary>
@@ -66,6 +71,7 @@ namespace AForge.Neuro.Learning
         /// <param name="mutationRange">Range for weight and thresholds initial values and mutations.</param>
         EvolutionaryLearning(ActivationNetwork activationNetwork, int populationSize, double mutationRange)
         {
+            // Check of assumptions during debugging only
             Debug.Assert(activationNetwork != null);
             Debug.Assert(populationSize > 0);
             Debug.Assert(mutationRange > 0);
@@ -80,12 +86,13 @@ namespace AForge.Neuro.Learning
             this.selectionMethod = new RouletteWheelSelection();
             this.crossOverRate = 0.75;
             this.mutationRate = 0.1;
+            this.randomSelectionRate = 0.0;
         }
         public double Run(double[] input, double[] output)
         {
-            // Evalutionary algorithm is global so there is not solution for one sample
-            Debug.Assert(false);
-            return 0;
+            // Evolutionary algorithm is global so there is not solution for one sample
+            throw new NotImplementedException(
+                "Function is not implemented by design: evolutionary algorithm is global - there is not solution for one input.");
         }
 
         public double RunEpoch(double[][] input, double[][] output)
@@ -112,23 +119,23 @@ namespace AForge.Neuro.Learning
                 }
             }
 
-            DoubleArrayChromosome pdac = new DoubleArrayChromosome(
+            DoubleArrayChromosome chromosomeExample = new DoubleArrayChromosome(
                 geneGenerator, geneMutationGenerator, networkSize);
-
 
             if (population == null)
             {
-                population = new Population(populationSize, pdac,
+                population = new Population(populationSize, chromosomeExample,
                     new EvolutionaryFitness(network, input, output),
                 selectionMethod);
 
                 population.CrossoverRate = crossOverRate;
                 population.MutationRate = mutationRate;
+                population.RandomSelectionPortion = randomSelectionRate;
             }
 
             population.RunEpoch();
 
-            DoubleArrayChromosome dac = (DoubleArrayChromosome)population.BestChromosome;
+            DoubleArrayChromosome chromosome = (DoubleArrayChromosome)population.BestChromosome;
 
             int v = 0;
 
@@ -141,9 +148,9 @@ namespace AForge.Neuro.Learning
 
                     for (int k = 0, w = neuron.InputsCount; k < w; k++)
                     {
-                        neuron[k] = dac.Value[v++];
+                        neuron[k] = chromosome.Value[v++];
                     }
-                    neuron.Threshold = dac.Value[n++];
+                    neuron.Threshold = chromosome.Value[n++];
                 }
             }
 

@@ -2,7 +2,7 @@
 //
 // Copyright © Cezary Wagner, 2008
 // Evolutionary learning algorithm
-// Cezary Wagner
+// Cezary.Wagner@gmail.com
 //
 // Copyright © Andrew Kirillov, 2005-2006
 // andrew.kirillov@gmail.com
@@ -33,7 +33,7 @@ namespace AForge.Neuro.Learning
 
         public double Evaluate(IChromosome c)
         {
-            DoubleArrayChromosome dac = (DoubleArrayChromosome)c;
+            DoubleArrayChromosome chromosome = (DoubleArrayChromosome)c;
 
             int d = 0;
 
@@ -48,13 +48,13 @@ namespace AForge.Neuro.Learning
 
                     for (int k = 0, w = neuron.InputsCount; k < w; k++)
                     {
-                        neuron[k] = dac.Value[d++];
+                        neuron[k] = chromosome.Value[d++];
                     }
-                    neuron.Threshold = dac.Value[d++];
+                    neuron.Threshold = chromosome.Value[d++];
                 }
             }
             // post check if all values is processed and lenght of chromosome is equal to network size
-            Debug.Assert(d == dac.Length);
+            Debug.Assert(d == chromosome.Length);
 
             double totalError = 0;
 
@@ -79,8 +79,8 @@ namespace AForge.Neuro.Learning
         {
             // function should be romove in future from interface
             // it coulde be realise in outside code from double values
-            Debug.Assert(false);
-            return null;
+            throw new NotImplementedException(
+                "Function is not implemented by design: it is not used by evolutionary learning algorithm.");
         }
     }
 }
