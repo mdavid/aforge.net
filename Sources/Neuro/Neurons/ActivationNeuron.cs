@@ -115,7 +115,11 @@ namespace AForge.Neuro
             }
             sum += threshold;
 
-            return ( output = function.Function( sum ) );
+            // local variable to avoid mutlithread conflicts
+            double output = function.Function(sum);
+            // assign to allow run backpropagation algorithm
+            this.output = output;
+            return output;
         }
     }
 }
