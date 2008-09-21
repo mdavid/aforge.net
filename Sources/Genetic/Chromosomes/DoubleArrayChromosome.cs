@@ -44,7 +44,7 @@ namespace AForge.Genetic
         /// <summary>
         /// Random number generator for mutation point selection
         /// </summary>
-        protected static Random rand = new Random( (int) DateTime.Now.Ticks );
+        protected static Random rand = new Random();
 
         /// <summary>
         /// Chromosome's length
