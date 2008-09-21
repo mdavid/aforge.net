@@ -194,7 +194,7 @@ namespace AForge.Imaging.Filters
             Size newSize = CalculateNewImageSize( sourceImage );
 
             // ensure destination image has correct size
-            if ( ( destinationImage.Width != newSize.Width ) || ( newSize.Height != sourceImage.Height ) )
+            if ( ( destinationImage.Width != newSize.Width ) || ( destinationImage.Height != newSize.Height ) )
             {
                 throw new ArgumentException( "Destination image must have the size expected by the filter." );
             }
