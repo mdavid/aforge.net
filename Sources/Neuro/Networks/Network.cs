@@ -116,7 +116,7 @@ namespace AForge.Neuro
         /// 
         public virtual double[] Compute( double[] input )
         {
-            output = input;
+            double [] output = input;
 
             // compute each layer
             foreach ( Layer layer in layers )
@@ -124,6 +124,7 @@ namespace AForge.Neuro
                 output = layer.Compute( output );
             }
 
+            this.output = output;
             return output;
         }
 

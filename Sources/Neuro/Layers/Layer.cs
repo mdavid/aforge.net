@@ -117,10 +117,15 @@ namespace AForge.Neuro
         /// 
         public virtual double[] Compute( double[] input )
         {
+            // local variable to avoid mutlithread conflicts
+            double[] output = new double[neuronsCount];
+
             // compute each neuron
             for ( int i = 0; i < neuronsCount; i++ )
                 output[i] = neurons[i].Compute( input );
 
+            // assign to allow run backpropagation algorithm
+            this.output = output;
             return output;
         }
 
