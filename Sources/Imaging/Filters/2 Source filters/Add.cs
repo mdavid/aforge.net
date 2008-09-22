@@ -16,7 +16,34 @@ namespace AForge.Imaging.Filters
     /// Add fillter - add pixel values of two images.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The add filter takes two images (source and overlay images)
+    /// of the same size and pixel format and produces an image, where each pixel equals
+    /// to the sum value of corresponding pixels from provided images (if sum is greater
+    /// than maximum allowed value, 255 or 65535, then it is truncated to that maximum).</para>
+    /// 
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24, 32, 48 and 64 bpp
+    /// color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// Add filter = new Add( overlayImage );
+    /// // apply the filter
+    /// Bitmap resultImage = filter.Apply( sourceImage );
+    /// </code>
+    /// 
+    /// <para><b>Source image:</b></para>
+    /// <img src="img/imaging/sample6.png" width="320" height="240" />
+    /// <para><b>Overlay image:</b></para>
+    /// <img src="img/imaging/sample7.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/add.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="Merge"/>
+    /// <seealso cref="Intersect"/>
+    /// <seealso cref="Subtract"/>
+    /// <seealso cref="Difference"/>
     /// 
     public sealed class Add : BaseInPlaceFilter2
     {

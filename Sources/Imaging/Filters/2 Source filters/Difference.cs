@@ -49,6 +49,8 @@ namespace AForge.Imaging.Filters
     ///
     /// <seealso cref="Intersect"/>
     /// <seealso cref="Merge"/>
+    /// <seealso cref="Add"/>
+    /// <seealso cref="Subtract"/>
     /// 
     public sealed class Difference : BaseInPlaceFilter2
     {
