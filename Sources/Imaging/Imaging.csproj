@@ -49,10 +49,12 @@
     <Compile Include="BlobCounter.cs" />
     <Compile Include="BlobCounterBase.cs" />
     <Compile Include="ColorConverter.cs" />
+    <Compile Include="Filters\2 Source filters\Add.cs" />
     <Compile Include="Filters\2 Source filters\Difference.cs" />
     <Compile Include="Filters\2 Source filters\Intersect.cs" />
     <Compile Include="Filters\2 Source filters\Merge.cs" />
     <Compile Include="Filters\2 Source filters\MoveTowards.cs" />
+    <Compile Include="Filters\2 Source filters\Subtract.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
