@@ -116,6 +116,7 @@ namespace AForge.Neuro
         /// 
         public virtual double[] Compute( double[] input )
         {
+            // local variable to avoid mutlithread conflicts
             double [] output = input;
 
             // compute each layer
@@ -124,6 +125,7 @@ namespace AForge.Neuro
                 output = layer.Compute( output );
             }
 
+            // assign to allow run backpropagation algorithm
             this.output = output;
             return output;
         }

@@ -17,15 +17,42 @@ namespace AForge.Neuro.Learning
 {
     class EvolutionaryLearning : ISupervisedLearning
     {
-        int populationSize;
+        /// <summary>
+        /// Designed network for training which havet to matach inputs and outputs.
+        /// </summary>
         ActivationNetwork network;
+        /// <summary>
+        /// Random generator for newly generated neurons.
+        /// </summary>
         IRandomNumberGenerator geneGenerator;
+        /// <summary>
+        /// Random generator for mutation values which will be added to existing neurons.
+        /// </summary>
         IRandomNumberGenerator geneMutationGenerator;
-        ISelectionMethod selectionMethod;
 
+        /// <summary>
+        /// Population for neural network.
+        /// </summary>
         Population population;
+        /// <summary>
+        /// Selection method for chromosomes in population.
+        /// </summary>
+        ISelectionMethod selectionMethod;
+        /// <summary>
+        /// Population of networks size.
+        /// </summary>
+        int populationSize;
+        /// <summary>
+        /// Crossover probability in neural network.
+        /// </summary>
         double crossOverRate;
+        /// <summary>
+        /// Mutation probability in neural network.
+        /// </summary>
         double mutationRate;
+        /// <summary>
+        /// Probability to add newly generated chromosome to population.
+        /// </summary>
         double randomSelectionRate;
 
         /// <summary>
