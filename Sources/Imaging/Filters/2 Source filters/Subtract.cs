@@ -16,7 +16,34 @@ namespace AForge.Imaging.Filters
     /// Subtract filter - subtract pixel values of two images.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The subtract filter takes two images (source and overlay images)
+    /// of the same size and pixel format and produces an image, where each pixel equals
+    /// to the difference value of corresponding pixels from provided images (if difference is less
+    /// than minimum allowed value, 0, then it is truncated to that minimum value).</para>
+    /// 
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24, 32, 48 and 64 bpp
+    /// color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// Subtract filter = new Subtract( overlayImage );
+    /// // apply the filter
+    /// Bitmap resultImage = filter.Apply( sourceImage );
+    /// </code>
+    /// 
+    /// <para><b>Source image:</b></para>
+    /// <img src="img/imaging/sample6.png" width="320" height="240" />
+    /// <para><b>Overlay image:</b></para>
+    /// <img src="img/imaging/sample7.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/subtract.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="Merge"/>
+    /// <seealso cref="Intersect"/>
+    /// <seealso cref="Add"/>
+    /// <seealso cref="Difference"/>
     /// 
     public sealed class Subtract : BaseInPlaceFilter2
     {
