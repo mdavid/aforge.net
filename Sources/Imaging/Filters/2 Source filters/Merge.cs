@@ -122,7 +122,7 @@ namespace AForge.Imaging.Filters
                     ( pixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
                 int lineSize  = width * pixelSize;
                 int srcOffset = image.Stride - lineSize;
-                int ovrOffser = overlay.Stride - lineSize;
+                int ovrOffset = overlay.Stride - lineSize;
 
                 // do the job
                 byte * ptr = (byte*) image.ImageData.ToPointer( );
@@ -138,7 +138,7 @@ namespace AForge.Imaging.Filters
                             *ptr = *ovr;
                     }
                     ptr += srcOffset;
-                    ovr += ovrOffser;
+                    ovr += ovrOffset;
                 }
             }
             else
