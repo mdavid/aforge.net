@@ -16,10 +16,25 @@ namespace AForge.Neuro.Learning
 {
     class EvolutionaryFitness : IFitnessFunction
     {
+        /// <summary>
+        /// Neural network for which fitness will be calculated.
+        /// </summary>
         ActivationNetwork network;
+        /// <summary>
+        /// Input data samples for neural network.
+        /// </summary>
         double[][] input;
+        /// <summary>
+        /// Output data samples for neural network (desired output).
+        /// </summary>
         double[][] output;
 
+        /// <summary>
+        /// Contruction of fitness function.
+        /// </summary>
+        /// <param name="network">Neural network for which fitness will be calculated.</param>
+        /// <param name="input">Input data samples for neural network.</param>
+        /// <param name="output">Output data sampels for neural network (desired output).</param>
         public EvolutionaryFitness(ActivationNetwork network, double[][] input, double[][] output)
         {
             Debug.Assert(input.Length > 0 && output.Length > 0);
