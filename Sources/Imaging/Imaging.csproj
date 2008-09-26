@@ -68,6 +68,7 @@
     <Compile Include="Filters\Color Filters\GrayscaleBT709.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleRMY.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleY.cs" />
+    <Compile Include="Filters\Color Filters\HistogramEqualization.cs" />
     <Compile Include="Filters\Color Filters\RotateChannels.cs" />
     <Compile Include="Filters\Color Filters\Sepia.cs" />
     <Compile Include="Filters\FiltersSequence.cs" />
