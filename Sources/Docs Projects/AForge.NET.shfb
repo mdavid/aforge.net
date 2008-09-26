@@ -20,6 +20,7 @@
         <namespaceSummaryItem name="AForge.Imaging.Filters" isDocumented="True">The &lt;b&gt;AForge.Imaging.Filters&lt;/b&gt; namespace contains collection of interfaces and classes, which provide different image processing filters. Classes of this namespace allow to do different transformation of a source image, doing it directly on the source image or providing new image as a result of image processing routine.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Imaging.Formats" isDocumented="True">The &lt;b&gt;AForge.Imaging.Formats&lt;/b&gt; namespace contains interfaces and classes, which are used to handle different image file formats.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Math" isDocumented="True">The &lt;b&gt;AForge.Math&lt;/b&gt; namespace contains set of math utilities, which are used by other &lt;b&gt;AForge.NET&lt;/b&gt; namespaces or may be used individually.</namespaceSummaryItem>
+        <namespaceSummaryItem name="AForge.Math.Random" isDocumented="True">The &lt;b&gt;AForge.Math.Random&lt;/b&gt; namespace contains interfaces and classes for random numbers generation.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Robotics.Lego" isDocumented="True">The &lt;b&gt;AForge.Robotics.Lego&lt;/b&gt; namespace contains set of classes, which allow to manipulate different Lego Mindstorm robotics devices. The list of supported devices includes Lego Minstorm RCX and Lego Mindstorm NXT.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Video" isDocumented="True">The &lt;b&gt;AForge.Video&lt;/b&gt; namespace contains interfaces and classes to access different video sources.</namespaceSummaryItem>
         <namespaceSummaryItem name="AForge.Video.DirectShow" isDocumented="True">The &lt;b&gt;AForge.Video.DirectShow&lt;/b&gt; namespace contains classes, which allow to access video sources using &lt;i&gt;DirectShow&lt;/i&gt; interface.</namespaceSummaryItem>
@@ -53,6 +54,8 @@
         <contentItem sourcePath="..\Imaging\Images\sample9.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\add.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\subtract.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\salt_noise.jpg" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\additive_noise.jpg" destPath="img\imaging\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
