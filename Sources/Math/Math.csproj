@@ -42,6 +42,12 @@
   <ItemGroup>
     <Compile Include="Histogram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Random\ExponentialGenerator.cs" />
+    <Compile Include="Random\GaussianGenerator.cs" />
+    <Compile Include="Random\IRandomNumberGenerator.cs" />
+    <Compile Include="Random\StandardGenerator.cs" />
+    <Compile Include="Random\UniformGenerator.cs" />
+    <Compile Include="Random\UniformOneGenerator.cs" />
     <Compile Include="Statistics.cs" />
   </ItemGroup>
   <ItemGroup>
