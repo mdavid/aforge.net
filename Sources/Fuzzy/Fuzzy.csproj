@@ -35,14 +35,12 @@
     <DocumentationFile>AForge.Fuzzy.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Core\bin\Debug\AForge.dll</HintPath>
-    </Reference>
+    <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LinguisticVariable.cs" />
     <Compile Include="FuzzySet.cs" />
     <Compile Include="Membership Functions\IMembershipFunction.cs" />
     <Compile Include="Membership Functions\PiecewiseLinearFunction.cs" />
