@@ -148,33 +148,29 @@ namespace AForge.Fuzzy
         /// <summary>
         /// Initializes a new instance of the <see cref="TrapezoidalFunction"/> class.
         /// 
-        /// With three points and an edge this shape can be a left fuzzy number (/--) or a right fuzzy number (--\).
+        /// With two points and an edge this shape can be a left fuzzy number (/) or a right fuzzy number (\).
         /// </summary>
         /// 
         /// <param name="m1">Edge = Left: X value where the degree of membership starts to raise.
         /// Edge = Right: X value where the function starts, with maximum degree of membership. </param>
         /// <param name="m2">Edge = Left: X value where the degree of membership reaches the maximum.
-        /// Edge = Right: X value where the function starts to fall. </param>
-        /// <param name="m3">Edge = Left: X value where the function ends, with maximum degree of membership.
         /// Edge = Right: X value where the degree of membership reaches minimum value. </param>
         /// <param name="max">The maximum value that the membership will reach, [0, 1].</param>
         /// <param name="min">The minimum value that the membership will reach, [0, 1].</param>
-        /// <param name="edge">Trapezoid's edge type.</param>
+        /// <param name="edge">Trapezoid's <see cref="EdgeType"/>.</param>
         /// 
-        public TrapezoidalFunction( double m1, double m2, double m3, double max, double min, EdgeType edge )
-            : this( 3 )
+        public TrapezoidalFunction( double m1, double m2, double max, double min, EdgeType edge )
+            : this( 2 )
         {
             if ( edge == EdgeType.Left )
             {
                 points[0] = new DoublePoint( m1, min );
                 points[1] = new DoublePoint( m2, max );
-                points[2] = new DoublePoint( m3, max );
             }
             else
             {
                 points[0] = new DoublePoint( m1, max );
-                points[1] = new DoublePoint( m2, max );
-                points[2] = new DoublePoint( m3, min );
+                points[1] = new DoublePoint( m2, min );
             }
         }
 
@@ -187,17 +183,15 @@ namespace AForge.Fuzzy
         /// <param name="m1">Edge = Left: X value where the degree of membership starts to raise.
         /// Edge = Right: X value where the function starts, with maximum degree of membership. </param>
         /// <param name="m2">Edge = Left: X value where the degree of membership reaches the maximum.
-        /// Edge = Right: X value where the function starts to fall. </param>
-        /// <param name="m3">Edge = Left: X value where the function ends, with maximum degree of membership.
         /// Edge = Right: X value where the degree of membership reaches minimum value. </param>
-        /// <param name="edge">Trapezoid's edge type.</param>
+        /// <param name="edge">Trapezoid's <see cref="EdgeType"/>.</param>
         /// 
         /// <remarks>
         /// <para>Maximum membership value is set to <b>1.0</b> and the minimum is set to <b>0.0</b>.</para>
         /// </remarks>
         /// 
-        public TrapezoidalFunction( double m1, double m2, double m3, EdgeType edge )
-            : this( m1, m2, m3, 1.0, 0.0, edge )
+        public TrapezoidalFunction( double m1, double m2, EdgeType edge )
+            : this( m1, m2, 1.0, 0.0, edge )
         {
         }
     }

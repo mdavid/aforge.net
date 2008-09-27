@@ -65,6 +65,30 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
+        /// The leftmost x value of the fuzzy set's membership function.
+        /// </summary>
+        /// 
+        public double LeftLimit
+        {
+            get
+            {
+                return function.LeftLimit;
+            }
+        }
+
+        /// <summary>
+        /// The rightmost x value of the fuzzy set's membership function.
+        /// </summary>
+        /// 
+        public double RightLimit
+        {
+            get
+            {
+                return function.RightLimit;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FuzzySet"/> class.
         /// </summary>
         /// 

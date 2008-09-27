@@ -55,6 +55,34 @@ namespace AForge.Fuzzy
         protected DoublePoint[] points;
 
         /// <summary>
+        /// The leftmost x value of the membership function, given by the first (X,Y) coordinate.
+        /// </summary>
+        /// 
+        /// <exception cref="NullReferenceException">Points of the membership function are not initialized.</exception>
+        ///
+        public double LeftLimit
+        {
+            get
+            {
+                return points[0].X;
+            }
+        }
+
+        /// <summary>
+        /// The rightmost x value of the membership function, given by the last (X,Y) coordinate.
+        /// </summary>
+        /// 
+        /// <exception cref="NullReferenceException">Points of the membership function are not initialized.</exception>
+        ///
+        public double RightLimit
+        {
+            get
+            {
+                return points[points.Length-1].X;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PiecewiseLinearFunction"/> class. 
         /// </summary>
         /// 
@@ -100,7 +128,7 @@ namespace AForge.Fuzzy
         /// Calculate membership of a given value to the piecewise function.
         /// </summary>
         /// 
-        /// <param name="x">Value which membership needs to be calculated.</param>
+        /// <param name="x">Value which membership will to be calculated.</param>
         /// 
         /// <returns>Degree of membership [0..1] of the value to the fuzzy set.</returns>
         /// 
