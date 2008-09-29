@@ -63,7 +63,17 @@
     <Compile Include="Filters\Base classes\BaseRotateFilter.cs" />
     <Compile Include="Filters\Base classes\BaseTransformationFilter.cs" />
     <Compile Include="Filters\Base classes\BaseUsingCopyPartialFilter.cs" />
+    <Compile Include="Filters\Binarization\BayerDithering.cs" />
+    <Compile Include="Filters\Binarization\BurkesDithering.cs" />
+    <Compile Include="Filters\Binarization\ErrorDiffusionDithering.cs" />
+    <Compile Include="Filters\Binarization\ErrorDiffusionToAdjacentNeighbors.cs" />
+    <Compile Include="Filters\Binarization\FloydSteinbergDithering.cs" />
+    <Compile Include="Filters\Binarization\JarvisJudiceNinkeDithering.cs" />
+    <Compile Include="Filters\Binarization\OrderedDithering.cs" />
+    <Compile Include="Filters\Binarization\SierraDithering.cs" />
+    <Compile Include="Filters\Binarization\StuckiDithering.cs" />
     <Compile Include="Filters\Binarization\Threshold.cs" />
+    <Compile Include="Filters\Binarization\ThresholdWithCarry.cs" />
     <Compile Include="Filters\Color Filters\Grayscale.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleBT709.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleRMY.cs" />
