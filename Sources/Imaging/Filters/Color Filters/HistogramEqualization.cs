@@ -24,7 +24,7 @@ namespace AForge.Imaging.Filters
     /// areas of lower local contrast to gain a higher contrast without affecting the global contrast.
     /// </para>
     /// 
-    /// <para>The filter accepts 8 grayscale images and 24/32 bpp
+    /// <para>The filter accepts 8 bpp grayscale images and 24/32 bpp
     /// color images for processing.</para>
     /// 
     /// <para><note>For color images the histogram equalization is applied to each color plane separately.</note></para>

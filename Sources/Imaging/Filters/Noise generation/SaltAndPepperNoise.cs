@@ -19,7 +19,7 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>The filter adds random salt and pepper noise - sets
     /// maximum or minimum values to randomly selected pixels.</para>
     /// 
-    /// <para>The filter accepts 8 grayscale images and 24/32 bpp
+    /// <para>The filter accepts 8 bpp grayscale images and 24/32 bpp
     /// color images for processing.</para>
     /// 
     /// <para>Sample usage:</para>

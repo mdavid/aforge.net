@@ -21,7 +21,7 @@ namespace AForge.Imaging.Filters
     /// The distribution of random values can be specified by <see cref="Generator">random generator</see>.
     /// </para>
     /// 
-    /// <para>The filter accepts 8 grayscale images and 24 bpp
+    /// <para>The filter accepts 8 bpp grayscale images and 24 bpp
     /// color images for processing.</para>
     /// 
     /// <para>Sample usage:</para>
