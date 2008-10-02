@@ -26,11 +26,21 @@ namespace AForge.Fuzzy
         /// Calculate membership of a given value to the fuzzy set.
         /// </summary>
         /// 
-        /// <param name="x">Value which membership needs to be calculated.</param>
+        /// <param name="x">Value which membership will to be calculated.</param>
         /// 
         /// <returns>Degree of membership [0..1] of the value to the fuzzy set.</returns>
         /// 
         double GetMembership( double x );
+
+        /// <summary>
+        /// The leftmost x value of the membership function.
+        /// </summary>
+        double LeftLimit { get; }
+
+        /// <summary>
+        /// The rightmost x value of the membership function.
+        /// </summary>
+        double RightLimit { get; }
     }
 }
 
