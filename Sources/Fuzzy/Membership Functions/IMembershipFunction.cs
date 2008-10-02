@@ -41,8 +41,6 @@ namespace AForge.Fuzzy
         /// The rightmost x value of the membership function.
         /// </summary>
         double RightLimit { get; }
-
-        
     }
 }
 

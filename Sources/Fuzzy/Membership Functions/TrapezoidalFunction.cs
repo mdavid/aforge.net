@@ -50,8 +50,8 @@ namespace AForge.Fuzzy
             /// </summary>
             Right
         };
-        
-        
+
+
         /// <summary>
         /// A private constructor used only to reuse code inside of this default constructor.
         /// </summary>
