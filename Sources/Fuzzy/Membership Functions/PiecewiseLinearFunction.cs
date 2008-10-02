@@ -78,7 +78,7 @@ namespace AForge.Fuzzy
         {
             get
             {
-                return points[points.Length-1].X;
+                return points[points.Length - 1].X;
             }
         }
 
@@ -139,7 +139,7 @@ namespace AForge.Fuzzy
             // no values belong to the fuzzy set, if there are no points in the piecewise function
             if ( points.Length == 0 )
                 return 0.0;
-            
+
             // if X value is less than the first point, so first point's Y will be returned as membership
             if ( x < points[0].X )
                 return points[0].Y;

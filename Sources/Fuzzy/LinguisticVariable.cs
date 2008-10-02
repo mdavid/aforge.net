@@ -72,7 +72,7 @@ namespace AForge.Fuzzy
         // left limit within the lingusitic variable works
         private double end;
         // the linguistic labels of the linguistic variable
-        private List<FuzzySet> labels; 
+        private Dictionary<string, FuzzySet> labels;
 
         /// <summary>
         /// Name of the linguistic variable.
@@ -80,6 +80,22 @@ namespace AForge.Fuzzy
         public string Name
         {
             get { return name; }
+        }
+
+        /// <summary>
+        /// Left limit of the valid variable range.
+        /// </summary>
+        public double Start
+        {
+            get { return start; }
+        }
+
+        /// <summary>
+        /// Right limit of the valid variable range.
+        /// </summary>
+        public double End
+        {
+            get { return end; }
         }
 
         /// <summary>
@@ -95,9 +111,9 @@ namespace AForge.Fuzzy
             this.name  = name;
             this.start = start;
             this.end   = end;
-            
+
             // instance of the labels list - usually a linguistic variable has no more than 10 labels
-            this.labels = new List<FuzzySet>( 10 );
+            this.labels = new Dictionary<string, FuzzySet>( 10 );
         }
 
         /// <summary>
@@ -119,7 +135,7 @@ namespace AForge.Fuzzy
         public void AddLabel( FuzzySet label )
         {
             // checking for existing name
-            if ( FindLabelByName( label.Name ) != null )
+            if ( labels.ContainsKey( label.Name ) )
                 throw new ArgumentException( "The linguistic label name already exists in the linguistic variable." );
 
             // checking ranges
@@ -129,16 +145,16 @@ namespace AForge.Fuzzy
                 throw new ArgumentException( "The right limit of the fuzzy set can not be greater than the linguistic variable's ending point." );
 
             // adding label
-            this.labels.Add( label );
+            this.labels.Add( label.Name, label );
         }
 
         /// <summary>
         /// Removes all the linguistic labels of the linguistic variable. 
         /// </summary>
         /// 
-        public void ClearLabels()
+        public void ClearLabels( )
         {
-            this.labels.Clear();
+            this.labels.Clear( );
         }
 
         /// <summary>
@@ -151,36 +167,12 @@ namespace AForge.Fuzzy
         /// 
         /// <returns>Degree of membership [0..1] of the value to the label (fuzzy set).</returns>
         /// 
-        /// <exception cref="NullReferenceException">The label indicated in labelName was not found in the linguistic variable.</exception>
+        /// <exception cref="KeyNotFoundException">The label indicated in labelName was not found in the linguistic variable.</exception>
         /// 
         public double GetLabelMembership( string labelName, double value )
         {
-            FuzzySet fs = FindLabelByName( labelName );
+            FuzzySet fs = labels[labelName];
             return fs.GetMembership( value );
         }
-
-        /// <summary>
-        /// Finds a fuzzy set on the list given its name. 
-        /// </summary>
-        /// 
-        /// <param name="name">The name of the fuzzy set.</param>
-        /// 
-        /// <returns>The reference to the fuzzy set or null if no fuzzy set with the name was found.</returns>
-        /// 
-        private FuzzySet FindLabelByName( string name )
-        {
-            // about 10 elements: sequencial search should do fine
-            foreach ( FuzzySet fs in labels )
-            {
-                if ( fs.Name == name )
-                {
-                    return fs;
-                }
-            }
-            return null;
-        }
-
-
-
     }
 }

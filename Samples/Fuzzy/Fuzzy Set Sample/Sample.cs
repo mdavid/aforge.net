@@ -29,22 +29,22 @@ namespace FuzzySetSample
             InitializeComponent( );
 
             chart.RangeX = new DoubleRange( 0, 50 );
-            chart.AddDataSeries("COLD", Color.CornflowerBlue, Chart.SeriesType.Line, 3, true);
-            chart.AddDataSeries("COOL", Color.LightBlue, Chart.SeriesType.Line, 3, true);
-            chart.AddDataSeries("WARM", Color.LightCoral, Chart.SeriesType.Line, 3, true);
-            chart.AddDataSeries("HOT" , Color.Firebrick, Chart.SeriesType.Line, 3, true);
+            chart.AddDataSeries( "COLD", Color.CornflowerBlue, Chart.SeriesType.Line, 3, true );
+            chart.AddDataSeries( "COOL", Color.LightBlue, Chart.SeriesType.Line, 3, true );
+            chart.AddDataSeries( "WARM", Color.LightCoral, Chart.SeriesType.Line, 3, true );
+            chart.AddDataSeries( "HOT", Color.Firebrick, Chart.SeriesType.Line, 3, true );
         }
 
         // Testing basic funcionality of fuzzy sets
-        private void runFuzzySetTestButton_Click(object sender, EventArgs e)
+        private void runFuzzySetTestButton_Click( object sender, EventArgs e )
         {
-            ClearDataSeries();
+            ClearDataSeries( );
 
             // create 2 fuzzy sets to represent the Cool and Warm temperatures
-            TrapezoidalFunction function1 = new TrapezoidalFunction(13, 18, 23, 28);
-            FuzzySet fsCool = new FuzzySet("Cool", function1);
-            TrapezoidalFunction function2 = new TrapezoidalFunction(23, 28, 33, 38);
-            FuzzySet fsWarm = new FuzzySet("Warm", function2);
+            TrapezoidalFunction function1 = new TrapezoidalFunction( 13, 18, 23, 28 );
+            FuzzySet fsCool = new FuzzySet( "Cool", function1 );
+            TrapezoidalFunction function2 = new TrapezoidalFunction( 23, 28, 33, 38 );
+            FuzzySet fsWarm = new FuzzySet( "Warm", function2 );
 
             // get membership of some points to the cool fuzzy set
             double[,] coolValues = new double[20, 2];
@@ -69,42 +69,42 @@ namespace FuzzySetSample
 
 
         // Testing basic funcionality of linguistic variables
-        private void runLingVarTestButton_Click(object sender, EventArgs e)
+        private void runLingVarTestButton_Click( object sender, EventArgs e )
         {
-            ClearDataSeries();
+            ClearDataSeries( );
 
             // create a linguistic variable to represent temperature
-            LinguisticVariable lvTemperature = new LinguisticVariable("Temperature", 0, 80);
+            LinguisticVariable lvTemperature = new LinguisticVariable( "Temperature", 0, 80 );
 
             // create the linguistic labels (fuzzy sets) that compose the temperature 
-            TrapezoidalFunction function1 = new TrapezoidalFunction(10, 15, TrapezoidalFunction.EdgeType.Right);
-            FuzzySet fsCold = new FuzzySet("Cold", function1);
-            TrapezoidalFunction function2 = new TrapezoidalFunction(10, 15, 20, 25);
-            FuzzySet fsCool = new FuzzySet("Cool", function2);
-            TrapezoidalFunction function3 = new TrapezoidalFunction(20, 25, 30, 35);
-            FuzzySet fsWarm = new FuzzySet("Warm", function3);
-            TrapezoidalFunction function4 = new TrapezoidalFunction(30, 35, TrapezoidalFunction.EdgeType.Left);
-            FuzzySet fsHot = new FuzzySet("Hot", function4);
+            TrapezoidalFunction function1 = new TrapezoidalFunction( 10, 15, TrapezoidalFunction.EdgeType.Right );
+            FuzzySet fsCold = new FuzzySet( "Cold", function1 );
+            TrapezoidalFunction function2 = new TrapezoidalFunction( 10, 15, 20, 25 );
+            FuzzySet fsCool = new FuzzySet( "Cool", function2 );
+            TrapezoidalFunction function3 = new TrapezoidalFunction( 20, 25, 30, 35 );
+            FuzzySet fsWarm = new FuzzySet( "Warm", function3 );
+            TrapezoidalFunction function4 = new TrapezoidalFunction( 30, 35, TrapezoidalFunction.EdgeType.Left );
+            FuzzySet fsHot = new FuzzySet( "Hot", function4 );
 
             // adding labels to the variable
-            lvTemperature.AddLabel(fsCold);
-            lvTemperature.AddLabel(fsCool);
-            lvTemperature.AddLabel(fsWarm);
-            lvTemperature.AddLabel(fsHot);
+            lvTemperature.AddLabel( fsCold );
+            lvTemperature.AddLabel( fsCool );
+            lvTemperature.AddLabel( fsWarm );
+            lvTemperature.AddLabel( fsHot );
 
             // get membership of some points to the cool fuzzy set
             double[][,] chartValues = new double[4][,];
-            for (int i = 0; i < 4; i++)
+            for ( int i = 0; i < 4; i++ )
                 chartValues[i] = new double[160, 2];
 
             // showing the shape of the linguistic variable - the shape of its labels memberships from start to end
             int j = 0;
-            for (double x = 0; x < 80; x += 0.5, j++)
+            for ( double x = 0; x < 80; x += 0.5, j++ )
             {
-                double y1 = lvTemperature.GetLabelMembership("Cold", x);
-                double y2 = lvTemperature.GetLabelMembership("Cool", x);
-                double y3 = lvTemperature.GetLabelMembership("Warm", x);
-                double y4 = lvTemperature.GetLabelMembership("Hot" , x);
+                double y1 = lvTemperature.GetLabelMembership( "Cold", x );
+                double y2 = lvTemperature.GetLabelMembership( "Cool", x );
+                double y3 = lvTemperature.GetLabelMembership( "Warm", x );
+                double y4 = lvTemperature.GetLabelMembership( "Hot", x );
 
                 chartValues[0][j, 0] = x;
                 chartValues[0][j, 1] = y1;
@@ -115,21 +115,21 @@ namespace FuzzySetSample
                 chartValues[3][j, 0] = x;
                 chartValues[3][j, 1] = y4;
             }
-            
+
             // plot membership to a chart
-            chart.UpdateDataSeries("COLD", chartValues[0]);
-            chart.UpdateDataSeries("COOL", chartValues[1]);
-            chart.UpdateDataSeries("WARM", chartValues[2]);
-            chart.UpdateDataSeries("HOT" , chartValues[3]);
+            chart.UpdateDataSeries( "COLD", chartValues[0] );
+            chart.UpdateDataSeries( "COOL", chartValues[1] );
+            chart.UpdateDataSeries( "WARM", chartValues[2] );
+            chart.UpdateDataSeries( "HOT", chartValues[3] );
         }
 
         // Clear all data series data
-        private void ClearDataSeries()
+        private void ClearDataSeries( )
         {
-            chart.UpdateDataSeries("COLD", null);
-            chart.UpdateDataSeries("COOL", null);
-            chart.UpdateDataSeries("WARM", null);
-            chart.UpdateDataSeries("HOT" , null);
+            chart.UpdateDataSeries( "COLD", null );
+            chart.UpdateDataSeries( "COOL", null );
+            chart.UpdateDataSeries( "WARM", null );
+            chart.UpdateDataSeries( "HOT", null );
         }
     }
 }
