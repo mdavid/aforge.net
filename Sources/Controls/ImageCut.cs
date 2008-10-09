@@ -267,7 +267,7 @@ namespace AForge.Controls
         /// <summary>
         /// The original picture, unmodified.
         /// </summary>
-        private Bitmap OriginalPicture
+        public Bitmap OriginalPicture
         {
             get { return originalPicture; }
             //set { mOriginalPicture = value; }
@@ -729,7 +729,7 @@ namespace AForge.Controls
         /// <param name="moveY">The move Y.</param>
         /// <param name="isDirectMove">if set to <c>true</c> [is direct move].</param>
         private void movingDirectly(GraphicObject slider, int moveX, int moveY, bool isDirectMove)
-        {
+        {            
             switch (slider.AllowedCourse)
             {
                 case Course.Horicontal:
@@ -753,7 +753,7 @@ namespace AForge.Controls
                         }
                     }
                     break;
-                case Course.Vertical:
+                case Course.Vertical:                    
                     slider.Move(moveX, 0);
                     checkSlidersExceedsBorder(slider.Start.X, slider.Start.Y);
                     if (sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X <
@@ -781,7 +781,7 @@ namespace AForge.Controls
         }
 
         /// <summary>
-        /// Moves a sliderindirectly.
+        /// Moves a slider indirectly.
         /// </summary>
         /// <param name="slider">The slider.</param>
         /// <param name="moveValue">The move value.</param>
@@ -1026,33 +1026,81 @@ namespace AForge.Controls
         /// <param name="y">Y-coord of mouse</param>
         private void checkSlidersExceedsBorder(int x, int y)
         {
+            bool choosed1 = false;
+            bool choosed2 = false;
             if (x < left)
+            {
+                if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Left)
+                    choosed1 = true;
+                else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Left)
+                    choosed2 = true;
                 sliders[(byte)Sliders.Left] = (new GraphicLine(
                                     new Pen(colorRolloverSlider, lineStrength),
                                     new Point(left, distanceToImage / 2),
                                     new Point(left, Size.Height - distanceToImage / 2 - 1),
                                     Course.Vertical));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Sliders.Left];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Sliders.Left];
+            }
 
-            if (x > right)
-                sliders[(byte)Sliders.Right] = (new GraphicLine(
-                                    new Pen(colorRolloverSlider, lineStrength),
-                                    new Point(right, distanceToImage / 2),
-                                    new Point(right, Size.Height - distanceToImage / 2 - 1),
-                                    Course.Vertical));
+             choosed1 = false;
+             choosed2 = false;
+             if (x > right)
+             {
+                 if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Right)
+                     choosed1 = true;
+                 else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Right)
+                     choosed2 = true;
+                 sliders[(byte)Sliders.Right] = (new GraphicLine(
+                                     new Pen(colorRolloverSlider, lineStrength),
+                                     new Point(right, distanceToImage / 2),
+                                     new Point(right, Size.Height - distanceToImage / 2 - 1),
+                                     Course.Vertical));
+                 if (choosed1)
+                     choosedSliders[0] = sliders[(byte)Sliders.Right];
+                 else if (choosed2)
+                     choosedSliders[1] = sliders[(byte)Sliders.Right];
+             }
 
+            choosed1 = false;
+            choosed2 = false;
             if (y < up)
+             {
+                 if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Up)
+                     choosed1 = true;
+                 else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Up)
+                     choosed2 = true;
                 sliders[(byte)Sliders.Up] = (new GraphicLine(
                                     new Pen(colorRolloverSlider, lineStrength),
                                     new Point(distanceToImage / 2, up),
                                     new Point(Size.Width - distanceToImage / 2 - 1, up),
                                     Course.Horicontal));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Sliders.Up];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Sliders.Up];
+            }
 
+            choosed1 = false;
+            choosed2 = false;
             if (y > down)
+             {
+                 if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Down)
+                     choosed1 = true;
+                 else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Down)
+                     choosed2 = true;
                 sliders[(byte)Sliders.Down] = (new GraphicLine(
                                     new Pen(colorRolloverSlider, lineStrength),
                                     new Point(distanceToImage / 2, down),
                                     new Point(Size.Width - distanceToImage / 2 - 1, down),
                                     Course.Horicontal));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Sliders.Down];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Sliders.Down];
+            }
         }
 
         /// <summary>
@@ -1114,6 +1162,24 @@ namespace AForge.Controls
             //Erase choosed Sliders
             choosedSliders[0] = null;
             choosedSliders[1] = null;
+        }
+
+        /// <summary>
+        /// Determines whether [is rollovered any slider] at [the specified position].
+        /// </summary>
+        /// <param name="position">The mouse position.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is rollovered any slider] [the specified position]; otherwise, <c>false</c>.
+        /// </returns>
+        private bool isRolloveredAnySlider(Point position)
+        {
+            bool choosed = false;
+            if (!(choosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], position)))
+                if (!(choosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], position)))
+                    if (!(choosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], position)))
+                        choosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], position);
+
+            return choosed;
         }
 
         /// <summary>
@@ -1219,6 +1285,8 @@ namespace AForge.Controls
             base.OnMouseDown(e);
             isMouseDown = true;
             lastMouseLocation = e.Location;
+            if (!isRolloveredAnySlider(e.Location))
+                resetChoosedSliders();
         }
 
         /// <summary>
@@ -1241,25 +1309,26 @@ namespace AForge.Controls
                     // Wenn gerade ein Objekt verschoben werden soll, wird die Differenz zur letzten
                     // Mausposition ausgerechnet und das Objekt um diese verschoben,
                     //in Abhängigkeit seines Verlaufs (horizontale Linie, ...).
-                    int tNumber = choosedSliders[1] != null ? 2 : choosedSliders[0] != null ? 1 : 0;
-                    int tMouseX = e.X - lastMouseLocation.X;
-                    int tMouseY = e.Y - lastMouseLocation.Y;
-                    for (byte i = 0; i < tNumber; i++)
-                        movingDirectly(choosedSliders[i], tMouseX, tMouseY, true);
+                    int number = choosedSliders[1] != null ? 2 : choosedSliders[0] != null ? 1 : 0;
+                    int mouseX = e.X - lastMouseLocation.X;
+                    int mouseY = e.Y - lastMouseLocation.Y;
+                    for (byte i = 0; i < number; i++)
+                        movingDirectly(choosedSliders[i], mouseX, mouseY, true);
                 }
                 lastMouseLocation = e.Location;
             }
             else
             {
                 setMoveDisplayWindowCursor(e.X, e.Y);
-                // the flag 'mIsSliderChoosed' will set FALSE
+                // the flag 'isSliderChoosed' will set FALSE
                 isSliderChoosed = false;
                 // Check all Sliders for cursor-rollovering, if a Slider is rollovered,
                 // set the flag 'mIsSliderChoosed' TRUE
-                if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], e.Location)))
-                    if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], e.Location)))
-                        if (!(isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], e.Location)))
-                            isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], e.Location);
+                isSliderChoosed = isRolloveredAnySlider(e.Location);
+                //if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], e.Location)))
+                //    if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], e.Location)))
+                //        if (!(isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], e.Location)))
+                //            isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], e.Location);
                 this.Invalidate();
             }            
         }

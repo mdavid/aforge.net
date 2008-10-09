@@ -4,87 +4,38 @@
         <name>AForge.Controls</name>
     </assembly>
     <members>
-        <member name="T:AForge.Controls.HistogramEventArgs">
+        <member name="T:AForge.Controls.Chart">
             <summary>
-            Arguments of histogram events.
-            </summary>
-        </member>
-        <member name="M:AForge.Controls.HistogramEventArgs.#ctor(System.Int32)">
-            <summary>
-            Initializes a new instance of the <see cref="T:AForge.Controls.HistogramEventArgs"/> class.
+            Chart control.
             </summary>
             
-            <param name="pos">Histogram's index under mouse pointer.</param>
+            <remarks>The chart control allows to display multiple charts at time
+            of different types: dots, lines, connected dots.</remarks>
             
         </member>
-        <member name="M:AForge.Controls.HistogramEventArgs.#ctor(System.Int32,System.Int32)">
+        <member name="F:AForge.Controls.Chart.components">
             <summary>
-            Initializes a new instance of the <see cref="T:AForge.Controls.HistogramEventArgs"/> class.
-            </summary>
-            
-            <param name="min">Min histogram's index in selection.</param>
-            <param name="max">Max histogram's index in selection.</param>
-            
-        </member>
-        <member name="P:AForge.Controls.HistogramEventArgs.Min">
-            <summary>
-            Min histogram's index in selection.
+            Required designer variable.
             </summary>
         </member>
-        <member name="P:AForge.Controls.HistogramEventArgs.Max">
+        <member name="M:AForge.Controls.Chart.#ctor">
             <summary>
-            Max histogram's index in selection.
-            </summary>
-        </member>
-        <member name="P:AForge.Controls.HistogramEventArgs.Position">
-            <summary>
-            Histogram's index under mouse pointer.
-            </summary>
-        </member>
-        <member name="T:AForge.Controls.HistogramEventHandler">
-            <summary>
-            Delegate for histogram events handlers.
-            </summary>
-            
-            <param name="sender">Sender object.</param>
-            <param name="e">Event arguments.</param>
-            
-        </member>
-        <member name="T:AForge.Controls.Histogram">
-            <summary>
-            Histogram control.
-            </summary>
-            
-            <remarks><para>The control displays histograms represented with integer arrays,
-            where each array's element keeps occurrence number of the corresponding element.
-            </para>
-            <para>Sample usage:</para>
-            <code>
-            // create array with histogram values
-            int[] histogramValues = new int[] { 3, 8, 53, 57, 79, 69, ... };
-            // set values to histogram control
-            histogram.Values = histogramValues;
-            </code>
-            <para><b>Sample control's look:</b></para>
-            <img src="histogram.jpg" width="324" height="77" />
-            </remarks>
-            
-        </member>
-        <member name="M:AForge.Controls.Histogram.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:AForge.Controls.Histogram"/> class.
+            Initializes a new instance of the <see cref="T:AForge.Controls.Chart"/> class.
             </summary>
             
         </member>
-        <member name="M:AForge.Controls.Histogram.Dispose(System.Boolean)">
+        <member name="M:AForge.Controls.Chart.Dispose(System.Boolean)">
             <summary>
             Dispose the object.
             </summary>
-            
-            <param name="disposing">Indicates if disposing was initiated manually.</param>
-            
         </member>
-        <member name="M:AForge.Controls.Histogram.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:AForge.Controls.Chart.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.Chart.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paint the control.
             </summary>
@@ -92,72 +43,104 @@
             <param name="pe">Data for Paint event.</param>
             
         </member>
-        <member name="P:AForge.Controls.Histogram.Color">
+        <member name="M:AForge.Controls.Chart.AddDataSeries(System.String,System.Drawing.Color,AForge.Controls.Chart.SeriesType,System.Int32)">
             <summary>
-            Histogram's color.
+            Add data series to the chart.
             </summary>
             
+            <param name="name">Data series name.</param>
+            <param name="color">Data series color.</param>
+            <param name="type">Data series type.</param>
+            <param name="width">Width (depends on the data series type, see remarks).</param>
+            
+            <remarks>Adds new empty data series to the collection of data series. To update this
+            series the <see cref="M:AForge.Controls.Chart.UpdateDataSeries(System.String,System.Double[0:,0:])"/> method should be used.<br/><br/>
+            The meaning of the width parameter depends on the data series type:
+            <list type="bullet">
+            <item><b>Line</b> - width of the line;</item>
+            <item><b>Dots</b> - size of dots (rectangular dots with specified width and the same height);</item>
+            <item><b>Connected dots</b> - size of dots (dots are connected with one pixel width line).</item>
+            </list>
+            </remarks>
+            
         </member>
-        <member name="P:AForge.Controls.Histogram.AllowSelection">
+        <member name="M:AForge.Controls.Chart.AddDataSeries(System.String,System.Drawing.Color,AForge.Controls.Chart.SeriesType,System.Int32,System.Boolean)">
             <summary>
-            Allow mouse selection or not.
+            Add data series to the chart.
             </summary>
             
-            <remarks>In the case if mouse selection is allowed, the control will
-            fire <see cref="E:AForge.Controls.Histogram.SelectionChanged"/> and <see cref="E:AForge.Controls.Histogram.PositionChanged"/> events
-            and provide information about the selection.</remarks>
+            <param name="name">Data series name.</param>
+            <param name="color">Data series color.</param>
+            <param name="type">Data series type.</param>
+            <param name="width">Width (depends on the data series type, see remarks).</param>
+            <param name="updateYRange">Specifies if <see cref="P:AForge.Controls.Chart.RangeY"/> should be updated.</param>
+            
+            <remarks>Adds new empty data series to the collection of data series. The <b>updateYRange</b>
+            parameter specifies if the data series can affect displayable Y range.</remarks>
             
         </member>
-        <member name="P:AForge.Controls.Histogram.LogarithmicView">
+        <member name="M:AForge.Controls.Chart.UpdateDataSeries(System.String,System.Double[0:,0:])">
             <summary>
-            Logarithmic view or not.
+            Update data series on the chart.
             </summary>
             
-            <remarks>In the case if logarihmic view is selected, then the control
-            will display base 10 logarithm of values.</remarks>
+            <param name="name">Data series name to update.</param>
+            <param name="data">Data series values.</param>
             
         </member>
-        <member name="P:AForge.Controls.Histogram.Vertical">
+        <member name="M:AForge.Controls.Chart.RemoveDataSeries(System.String)">
+            <summary>
+            Remove data series from the chart.
+            </summary>
+            
+            <param name="name">Data series name.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.RemoveAllDataSeries">
+            <summary>
+            Remove all data series from the chart.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.Chart.UpdateYRange">
+            <summary>
+            Update Y range.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.Chart.RangeX">
+            <summary>
+            Chart's X range.
+            </summary>
+            
+            <remarks>The value sets the X's range of data to be displayed on the chart.</remarks>
+            
+        </member>
+        <member name="P:AForge.Controls.Chart.RangeY">
              <summary>
-             Vertical view or not.
+             Chart's Y range.
              </summary>
-            
-             <remarks><para>The property determines if histogram should be displayed vertical or
-             not (horizontally).</para>
-             <para>By default the property is set to <b>false</b> - horizontal view.</para></remarks>
+             
+             <remarks>The value sets the Y's range of data to be displayed on the chart.</remarks>
             
         </member>
-        <member name="P:AForge.Controls.Histogram.Values">
+        <member name="T:AForge.Controls.Chart.SeriesType">
             <summary>
-            Histogram values.
+            Chart series type enumeration.
             </summary>
-            
-            <remarks>Non-negative histogram values.</remarks>
-            
-            <exception cref="T:System.ArgumentException">Histogram has negative values.</exception>
-            
         </member>
-        <member name="E:AForge.Controls.Histogram.PositionChanged">
+        <member name="F:AForge.Controls.Chart.SeriesType.Line">
             <summary>
-            Mouse position changed event.
+            Line style.
             </summary>
-            
-            <remarks>The event is fired only if the <see cref="P:AForge.Controls.Histogram.AllowSelection"/> property is set
-            to true. The passed to event handler <see cref="T:AForge.Controls.HistogramEventArgs"/> class is initialized
-            with <see cref="P:AForge.Controls.HistogramEventArgs.Position"/> property only, which is histogram value's
-            index pointed by mouse.</remarks>
-            
         </member>
-        <member name="E:AForge.Controls.Histogram.SelectionChanged">
+        <member name="F:AForge.Controls.Chart.SeriesType.Dots">
             <summary>
-            Mouse selection changed event.
+            Dots style.
             </summary>
-            
-            <remarks>The event is fired only if the <see cref="P:AForge.Controls.Histogram.AllowSelection"/> property is set
-            to true. The passed to event handler <see cref="T:AForge.Controls.HistogramEventArgs"/> class is initialized
-            with <see cref="P:AForge.Controls.HistogramEventArgs.Min"/> and <see cref="P:AForge.Controls.HistogramEventArgs.Max"/> properties
-            only, which represent selection range - min and max indexes.</remarks>
-            
+        </member>
+        <member name="F:AForge.Controls.Chart.SeriesType.ConnectedDots">
+            <summary>
+            Connected dots style.
+            </summary>
         </member>
         <member name="T:AForge.Controls.OnSliderMovedEventHandler">
             <summary>
@@ -324,7 +307,7 @@
         </member>
         <member name="M:AForge.Controls.ImageCut.movingInDirectly(AForge.Controls.ImageCut.GraphicObject,System.Int32)">
             <summary>
-            Moves a sliderindirectly.
+            Moves a slider indirectly.
             </summary>
             <param name="slider">The slider.</param>
             <param name="moveValue">The move value.</param>
@@ -419,6 +402,15 @@
             <summary>
             Deletes the choosed sliders.
             </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.isRolloveredAnySlider(System.Drawing.Point)">
+            <summary>
+            Determines whether [is rollovered any slider] at [the specified position].
+            </summary>
+            <param name="position">The mouse position.</param>
+            <returns>
+            	<c>true</c> if [is rollovered any slider] [the specified position]; otherwise, <c>false</c>.
+            </returns>
         </member>
         <member name="M:AForge.Controls.ImageCut.isRolloveredVerticalSlider(AForge.Controls.ImageCut.GraphicObject,System.Drawing.Point)">
             <summary>
@@ -687,38 +679,87 @@
             Represents a graphic line.
             </summary>
         </member>
-        <member name="T:AForge.Controls.Chart">
+        <member name="T:AForge.Controls.HistogramEventArgs">
             <summary>
-            Chart control.
-            </summary>
-            
-            <remarks>The chart control allows to display multiple charts at time
-            of different types: dots, lines, connected dots.</remarks>
-            
-        </member>
-        <member name="F:AForge.Controls.Chart.components">
-            <summary>
-            Required designer variable.
+            Arguments of histogram events.
             </summary>
         </member>
-        <member name="M:AForge.Controls.Chart.#ctor">
+        <member name="M:AForge.Controls.HistogramEventArgs.#ctor(System.Int32)">
             <summary>
-            Initializes a new instance of the <see cref="T:AForge.Controls.Chart"/> class.
+            Initializes a new instance of the <see cref="T:AForge.Controls.HistogramEventArgs"/> class.
+            </summary>
+            
+            <param name="pos">Histogram's index under mouse pointer.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.HistogramEventArgs.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.HistogramEventArgs"/> class.
+            </summary>
+            
+            <param name="min">Min histogram's index in selection.</param>
+            <param name="max">Max histogram's index in selection.</param>
+            
+        </member>
+        <member name="P:AForge.Controls.HistogramEventArgs.Min">
+            <summary>
+            Min histogram's index in selection.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.HistogramEventArgs.Max">
+            <summary>
+            Max histogram's index in selection.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.HistogramEventArgs.Position">
+            <summary>
+            Histogram's index under mouse pointer.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.HistogramEventHandler">
+            <summary>
+            Delegate for histogram events handlers.
+            </summary>
+            
+            <param name="sender">Sender object.</param>
+            <param name="e">Event arguments.</param>
+            
+        </member>
+        <member name="T:AForge.Controls.Histogram">
+            <summary>
+            Histogram control.
+            </summary>
+            
+            <remarks><para>The control displays histograms represented with integer arrays,
+            where each array's element keeps occurrence number of the corresponding element.
+            </para>
+            <para>Sample usage:</para>
+            <code>
+            // create array with histogram values
+            int[] histogramValues = new int[] { 3, 8, 53, 57, 79, 69, ... };
+            // set values to histogram control
+            histogram.Values = histogramValues;
+            </code>
+            <para><b>Sample control's look:</b></para>
+            <img src="histogram.jpg" width="324" height="77" />
+            </remarks>
+            
+        </member>
+        <member name="M:AForge.Controls.Histogram.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.Histogram"/> class.
             </summary>
             
         </member>
-        <member name="M:AForge.Controls.Chart.Dispose(System.Boolean)">
+        <member name="M:AForge.Controls.Histogram.Dispose(System.Boolean)">
             <summary>
             Dispose the object.
             </summary>
+            
+            <param name="disposing">Indicates if disposing was initiated manually.</param>
+            
         </member>
-        <member name="M:AForge.Controls.Chart.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:AForge.Controls.Chart.OnPaint(System.Windows.Forms.PaintEventArgs)">
+        <member name="M:AForge.Controls.Histogram.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
             Paint the control.
             </summary>
@@ -726,104 +767,72 @@
             <param name="pe">Data for Paint event.</param>
             
         </member>
-        <member name="M:AForge.Controls.Chart.AddDataSeries(System.String,System.Drawing.Color,AForge.Controls.Chart.SeriesType,System.Int32)">
+        <member name="P:AForge.Controls.Histogram.Color">
             <summary>
-            Add data series to the chart.
+            Histogram's color.
             </summary>
             
-            <param name="name">Data series name.</param>
-            <param name="color">Data series color.</param>
-            <param name="type">Data series type.</param>
-            <param name="width">Width (depends on the data series type, see remarks).</param>
-            
-            <remarks>Adds new empty data series to the collection of data series. To update this
-            series the <see cref="M:AForge.Controls.Chart.UpdateDataSeries(System.String,System.Double[0:,0:])"/> method should be used.<br/><br/>
-            The meaning of the width parameter depends on the data series type:
-            <list type="bullet">
-            <item><b>Line</b> - width of the line;</item>
-            <item><b>Dots</b> - size of dots (rectangular dots with specified width and the same height);</item>
-            <item><b>Connected dots</b> - size of dots (dots are connected with one pixel width line).</item>
-            </list>
-            </remarks>
-            
         </member>
-        <member name="M:AForge.Controls.Chart.AddDataSeries(System.String,System.Drawing.Color,AForge.Controls.Chart.SeriesType,System.Int32,System.Boolean)">
+        <member name="P:AForge.Controls.Histogram.AllowSelection">
             <summary>
-            Add data series to the chart.
+            Allow mouse selection or not.
             </summary>
             
-            <param name="name">Data series name.</param>
-            <param name="color">Data series color.</param>
-            <param name="type">Data series type.</param>
-            <param name="width">Width (depends on the data series type, see remarks).</param>
-            <param name="updateYRange">Specifies if <see cref="P:AForge.Controls.Chart.RangeY"/> should be updated.</param>
-            
-            <remarks>Adds new empty data series to the collection of data series. The <b>updateYRange</b>
-            parameter specifies if the data series can affect displayable Y range.</remarks>
+            <remarks>In the case if mouse selection is allowed, the control will
+            fire <see cref="E:AForge.Controls.Histogram.SelectionChanged"/> and <see cref="E:AForge.Controls.Histogram.PositionChanged"/> events
+            and provide information about the selection.</remarks>
             
         </member>
-        <member name="M:AForge.Controls.Chart.UpdateDataSeries(System.String,System.Double[0:,0:])">
+        <member name="P:AForge.Controls.Histogram.LogarithmicView">
             <summary>
-            Update data series on the chart.
+            Logarithmic view or not.
             </summary>
             
-            <param name="name">Data series name to update.</param>
-            <param name="data">Data series values.</param>
+            <remarks>In the case if logarihmic view is selected, then the control
+            will display base 10 logarithm of values.</remarks>
             
         </member>
-        <member name="M:AForge.Controls.Chart.RemoveDataSeries(System.String)">
-            <summary>
-            Remove data series from the chart.
-            </summary>
-            
-            <param name="name">Data series name.</param>
-            
-        </member>
-        <member name="M:AForge.Controls.Chart.RemoveAllDataSeries">
-            <summary>
-            Remove all data series from the chart.
-            </summary>
-        </member>
-        <member name="M:AForge.Controls.Chart.UpdateYRange">
-            <summary>
-            Update Y range.
-            </summary>
-        </member>
-        <member name="P:AForge.Controls.Chart.RangeX">
-            <summary>
-            Chart's X range.
-            </summary>
-            
-            <remarks>The value sets the X's range of data to be displayed on the chart.</remarks>
-            
-        </member>
-        <member name="P:AForge.Controls.Chart.RangeY">
+        <member name="P:AForge.Controls.Histogram.Vertical">
              <summary>
-             Chart's Y range.
+             Vertical view or not.
              </summary>
-             
-             <remarks>The value sets the Y's range of data to be displayed on the chart.</remarks>
+            
+             <remarks><para>The property determines if histogram should be displayed vertical or
+             not (horizontally).</para>
+             <para>By default the property is set to <b>false</b> - horizontal view.</para></remarks>
             
         </member>
-        <member name="T:AForge.Controls.Chart.SeriesType">
+        <member name="P:AForge.Controls.Histogram.Values">
             <summary>
-            Chart series type enumeration.
+            Histogram values.
             </summary>
+            
+            <remarks>Non-negative histogram values.</remarks>
+            
+            <exception cref="T:System.ArgumentException">Histogram has negative values.</exception>
+            
         </member>
-        <member name="F:AForge.Controls.Chart.SeriesType.Line">
+        <member name="E:AForge.Controls.Histogram.PositionChanged">
             <summary>
-            Line style.
+            Mouse position changed event.
             </summary>
+            
+            <remarks>The event is fired only if the <see cref="P:AForge.Controls.Histogram.AllowSelection"/> property is set
+            to true. The passed to event handler <see cref="T:AForge.Controls.HistogramEventArgs"/> class is initialized
+            with <see cref="P:AForge.Controls.HistogramEventArgs.Position"/> property only, which is histogram value's
+            index pointed by mouse.</remarks>
+            
         </member>
-        <member name="F:AForge.Controls.Chart.SeriesType.Dots">
+        <member name="E:AForge.Controls.Histogram.SelectionChanged">
             <summary>
-            Dots style.
+            Mouse selection changed event.
             </summary>
-        </member>
-        <member name="F:AForge.Controls.Chart.SeriesType.ConnectedDots">
-            <summary>
-            Connected dots style.
-            </summary>
+            
+            <remarks>The event is fired only if the <see cref="P:AForge.Controls.Histogram.AllowSelection"/> property is set
+            to true. The passed to event handler <see cref="T:AForge.Controls.HistogramEventArgs"/> class is initialized
+            with <see cref="P:AForge.Controls.HistogramEventArgs.Min"/> and <see cref="P:AForge.Controls.HistogramEventArgs.Max"/> properties
+            only, which represent selection range - min and max indexes.</remarks>
+            
         </member>
     </members>
 </doc>
