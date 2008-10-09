@@ -74,7 +74,7 @@
   <ItemGroup>
     <Reference Include="AForge, Version=1.5.0.0, Culture=neutral, PublicKeyToken=75f8e82c5042a70f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\AForge.dll</HintPath>
+      <HintPath>.\AForge.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
