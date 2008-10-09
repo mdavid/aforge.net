@@ -35,10 +35,21 @@ namespace AForge.Neuro
         /// 
         /// <param name="input">Input vector.</param>
         /// 
-        /// <returns>The output value of distance neuron is equal to the distance
+        /// <returns>Returns neuron's output value.</returns>
+        /// 
+        /// <remarks><para>The output value of distance neuron is equal to the distance
         /// between its weights and inputs - sum of absolute differences.
         /// The output value is also stored in <see cref="Neuron.Output">Output</see>
-        /// property.</returns>
+        /// property.</para>
+        /// 
+        /// <para><note>The method may be called safely from multiple threads to compute neuron's
+        /// output value for the specified input values. However, the value of
+        /// <see cref="Neuron.Output"/> property in multi-threaded environment is not predictable,
+        /// since it may hold neuron's output computed from any of the caller threads. Multi-threaded
+        /// access to the method is useful in those cases when it is required to improve performance
+        /// by utilizing several threads and the computation is based on the immediate return value
+        /// of the method, but not on neuron's output property.</note></para>
+        /// </remarks>
         /// 
         /// <exception cref="ArgumentException">Wrong length of the input vector, which is not
         /// equal to the <see cref="Neuron.InputsCount">expected value</see>.</exception>
@@ -49,15 +60,19 @@ namespace AForge.Neuro
             if ( input.Length != inputsCount )
                 throw new ArgumentException( "Wrong length of the input vector." );
 
-            output = 0.0;
+            // difference value
+            double dif = 0.0;
 
             // compute distance between inputs and weights
             for ( int i = 0; i < inputsCount; i++ )
             {
-                output += Math.Abs( weights[i] - input[i] );
+                dif += Math.Abs( weights[i] - input[i] );
             }
 
-            return output;
+            // assign output property as well (works correctly for single threaded usage)
+            this.output = dif;
+
+            return dif;
         }
     }
 }
