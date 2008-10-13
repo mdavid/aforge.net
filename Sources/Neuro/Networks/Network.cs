@@ -94,13 +94,15 @@ namespace AForge.Neuro
         /// <param name="inputsCount">Network's inputs count.</param>
         /// <param name="layersCount">Network's layers count.</param>
         /// 
-        /// <remarks>Protected constructor, which initializes <see cref="inputsCount"/> and
-        /// <see cref="layersCount"/> members.</remarks>
+        /// <remarks>Protected constructor, which initializes <see cref="inputsCount"/>,
+        /// <see cref="layersCount"/> and <see cref="layers"/> members.</remarks>
         /// 
         protected Network( int inputsCount, int layersCount )
         {
             this.inputsCount = Math.Max( 1, inputsCount );
             this.layersCount = Math.Max( 1, layersCount );
+            // create collection of layers
+            this.layers = new Layer[this.layersCount];
         }
 
         /// <summary>

@@ -46,8 +46,10 @@
     <Compile Include="Layers\ActivationLayer.cs" />
     <Compile Include="Layers\DistanceLayer.cs" />
     <Compile Include="Layers\Layer.cs" />
+    <Compile Include="Learning\ElasticNetworkLearning.cs" />
     <Compile Include="Learning\ISupervisedLearning.cs" />
     <Compile Include="Learning\IUnsupervisedLearning.cs" />
+    <Compile Include="Learning\SOMLearning.cs" />
     <Compile Include="Networks\ActivationNetwork.cs" />
     <Compile Include="Networks\DistanceNetwork.cs" />
     <Compile Include="Networks\Network.cs" />
