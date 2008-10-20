@@ -46,6 +46,7 @@
     <Compile Include="Layers\ActivationLayer.cs" />
     <Compile Include="Layers\DistanceLayer.cs" />
     <Compile Include="Layers\Layer.cs" />
+    <Compile Include="Learning\BackPropagationLearning.cs" />
     <Compile Include="Learning\DeltaRuleLearning.cs" />
     <Compile Include="Learning\ElasticNetworkLearning.cs" />
     <Compile Include="Learning\ISupervisedLearning.cs" />
