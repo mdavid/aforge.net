@@ -46,6 +46,7 @@
     <Compile Include="DoubleRange.cs" />
     <Compile Include="IntRange.cs" />
     <Compile Include="Parallel.cs" />
+    <Compile Include="PolishExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemTools.cs">
       <SubType>Code</SubType>
