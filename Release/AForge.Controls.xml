@@ -1,0 +1,838 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AForge.Controls</name>
+    </assembly>
+    <members>
+        <member name="T:AForge.Controls.Chart">
+            <summary>
+            Chart control.
+            </summary>
+            
+            <remarks>The chart control allows to display multiple charts at time
+            of different types: dots, lines, connected dots.</remarks>
+            
+        </member>
+        <member name="F:AForge.Controls.Chart.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.Chart.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.Chart"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.Dispose(System.Boolean)">
+            <summary>
+            Dispose the object.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.Chart.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.Chart.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paint the control.
+            </summary>
+            
+            <param name="pe">Data for Paint event.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.AddDataSeries(System.String,System.Drawing.Color,AForge.Controls.Chart.SeriesType,System.Int32)">
+            <summary>
+            Add data series to the chart.
+            </summary>
+            
+            <param name="name">Data series name.</param>
+            <param name="color">Data series color.</param>
+            <param name="type">Data series type.</param>
+            <param name="width">Width (depends on the data series type, see remarks).</param>
+            
+            <remarks>Adds new empty data series to the collection of data series. To update this
+            series the <see cref="M:AForge.Controls.Chart.UpdateDataSeries(System.String,System.Double[0:,0:])"/> method should be used.<br/><br/>
+            The meaning of the width parameter depends on the data series type:
+            <list type="bullet">
+            <item><b>Line</b> - width of the line;</item>
+            <item><b>Dots</b> - size of dots (rectangular dots with specified width and the same height);</item>
+            <item><b>Connected dots</b> - size of dots (dots are connected with one pixel width line).</item>
+            </list>
+            </remarks>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.AddDataSeries(System.String,System.Drawing.Color,AForge.Controls.Chart.SeriesType,System.Int32,System.Boolean)">
+            <summary>
+            Add data series to the chart.
+            </summary>
+            
+            <param name="name">Data series name.</param>
+            <param name="color">Data series color.</param>
+            <param name="type">Data series type.</param>
+            <param name="width">Width (depends on the data series type, see remarks).</param>
+            <param name="updateYRange">Specifies if <see cref="P:AForge.Controls.Chart.RangeY"/> should be updated.</param>
+            
+            <remarks>Adds new empty data series to the collection of data series. The <b>updateYRange</b>
+            parameter specifies if the data series can affect displayable Y range.</remarks>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.UpdateDataSeries(System.String,System.Double[0:,0:])">
+            <summary>
+            Update data series on the chart.
+            </summary>
+            
+            <param name="name">Data series name to update.</param>
+            <param name="data">Data series values.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.RemoveDataSeries(System.String)">
+            <summary>
+            Remove data series from the chart.
+            </summary>
+            
+            <param name="name">Data series name.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.Chart.RemoveAllDataSeries">
+            <summary>
+            Remove all data series from the chart.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.Chart.UpdateYRange">
+            <summary>
+            Update Y range.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.Chart.RangeX">
+            <summary>
+            Chart's X range.
+            </summary>
+            
+            <remarks>The value sets the X's range of data to be displayed on the chart.</remarks>
+            
+        </member>
+        <member name="P:AForge.Controls.Chart.RangeY">
+             <summary>
+             Chart's Y range.
+             </summary>
+             
+             <remarks>The value sets the Y's range of data to be displayed on the chart.</remarks>
+            
+        </member>
+        <member name="T:AForge.Controls.Chart.SeriesType">
+            <summary>
+            Chart series type enumeration.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Chart.SeriesType.Line">
+            <summary>
+            Line style.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Chart.SeriesType.Dots">
+            <summary>
+            Dots style.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Chart.SeriesType.ConnectedDots">
+            <summary>
+            Connected dots style.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.OnSliderMovedEventHandler">
+            <summary>
+            Declares the event handler for moving sliders 
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.Sliders">
+            <summary>
+            The enum values represent the position of a slider as an id.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Sliders.Left">
+            <summary>
+            The id for the left slider.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Sliders.Right">
+            <summary>
+            The id for the right slider.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Sliders.Up">
+            <summary>
+            The id for the up slider.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.Sliders.Down">
+            <summary>
+            The id for the down slider.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.ImageCut">
+            <summary>
+            The ImageCut control.
+            </summary>
+            <remarks>
+            <para>
+            The ImageCut control allows to trim and cut a picture by moving
+            sliders per mouse dragging. 
+            Furthermore it provides interfaces to move a rollovered slider
+            or a specified slider for a defined 
+            value (e.g. moving the right slider for 3 pixel).
+            </para>
+            <para>Sample usage:</para>
+            <code>
+            //the picture, which will be trimmed and cut
+            Bitmap myPicture = (Bitmap) Bitmap.FromFile("Path of picture");
+            
+            //Maximal allowed width of the picture
+            int maxWidth = 200;
+            
+            //Maximal allowed height of the picture
+            int maxHeight = 100;
+            
+            //Initializes the ImageCut control
+            ImageCut myImageCut = new ImageCut(myPicture, maxWidth, maxHeight);
+            
+            //Optional: Only necessary, if you need to process a slider movement
+            myImageCut.OnSliderMovedEvent += new OnSliderMovedHandler(OnSliderMoved);
+            
+            //Optional: Setting some properties, otherwise it will be used the default values
+            myImageCut.Location = new Point(5, 5);
+            myImageCut.Transparence = 220;
+            myImageCut.LineStrength = 3;            
+            myImageCut.ColorSliders = Color.Green;
+            myImageCut.ColorRolloverSlider = Color.Red;
+            myImageCut.MinSizeOfImage = 100;
+            
+            //Completes the initialization, need to be called after setting properties
+            myImageCut.init();
+            
+            //Adds the ImageCut control to the form
+            myForm.Controls.Add(myImageCut);
+            </code>
+            <para><b>Sample control's look:</b></para>
+            <img src="ImageCut.jpg" width="358" height="289" />
+            </remarks>
+        </member>
+        <member name="F:AForge.Controls.ImageCut.OnSliderMovedEvent">
+            <summary>
+            This variable handles the OnSliderMoved-event at the client.        
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.#ctor(System.Drawing.Bitmap,System.Single,System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.ImageCut"/> class.
+            </summary>
+            <remarks>The picture seen on the <see cref="T:AForge.Controls.ImageCut"/> control will not
+            be bigger than the given <paramref name="maxWidth"/> and 
+            <paramref name="maxHeight"/> </remarks>
+            <param name="originalPicture">The original picture.</param>
+            <param name="maxWidth">Maximum Width.</param>
+            <param name="maxHeight">Maximum Height.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.#ctor(System.Drawing.Bitmap)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.ImageCut"/> class,
+            already with the correct-sized picture.
+            </summary>
+            <param name="originalPicture">The original picture.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.defaultValues">
+            <summary>
+            Defaults the values.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.init">
+            <summary>      
+            Finalizes the initialization of this control.
+            </summary>
+            <remarks>After initialization per constructor
+            and setting the properties, it is necessary to call this function.</remarks>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.moveSlider(System.Int32,AForge.Controls.Sliders)">
+            <summary>
+            Moves the slider.
+            </summary>
+            <param name="moveValue">The move value.</param>
+            <param name="id">The id, which represents the
+            slider, <seealso cref="T:AForge.Controls.Sliders"/>.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.moveSelectedVerticalSlider(System.Int32)">
+            <summary>
+            Moves a choosed vertical slider outside of this control.
+            </summary>
+            <remarks>
+            <para>A negative value moves the slider left, a positive right</para>
+            <para>Note: This method has to be used, when a vertical slider was 
+            choosed/rollovered by mouse and it should be moved (without mouse navigation). 
+            If you know sure, if you want to move the right
+            (or left) slider, you have to use  the <see cref="M:AForge.Controls.ImageCut.moveSlider(System.Int32,AForge.Controls.Sliders)"/> method.
+            </para>
+            </remarks>
+            <param name="moveValue">The move value.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.moveSelectedHorizontalSlider(System.Int32)">
+            <summary>
+            Moves a choosed horizontal slider outside of this control.
+            </summary>
+            <remarks>
+            <para>A negative value moves the slider up, a positive down</para>
+            <para>Note: This method has to be used, when a horizontal slider was 
+            choosed/rollovered by mouse and it should be moved (without mouse navigation). 
+            If you know sure, if you want to move the right
+            (or left) slider, you have to use  the <see cref="M:AForge.Controls.ImageCut.moveSlider(System.Int32,AForge.Controls.Sliders)"/> method.
+            </para>
+            </remarks>
+            <param name="moveValue">The move value.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.getCuttedImage">
+            <summary>
+            Gets the cutted picture in <seealso cref="T:System.Drawing.Image"/> format.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.movingDirectly(AForge.Controls.ImageCut.GraphicObject,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Moves a slider directly.
+            </summary>
+            <param name="slider">The slider.</param>
+            <param name="moveX">The move X.</param>
+            <param name="moveY">The move Y.</param>
+            <param name="isDirectMove">if set to <c>true</c> [is direct move].</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.movingInDirectly(AForge.Controls.ImageCut.GraphicObject,System.Int32)">
+            <summary>
+            Moves a slider indirectly.
+            </summary>
+            <param name="slider">The slider.</param>
+            <param name="moveValue">The move value.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.fireSliderMovedEvent">
+            <summary>
+            Fires the slider moved event.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.ImageCut_MouseMove(System.Object,System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the MouseMove event of the ImageCut control.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The <see cref="T:System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.checkValues">
+            <summary>
+            Checks the values of the pictures sizes.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.checkRatio">
+            <summary>
+            Checks, if there is a ratio constraint. If yes the sliders will be 
+            set on the correct positions to conform the ratio constraint.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.adaptPicture(System.Single,System.Single)">
+            <summary>
+            Creates an adapted image, which is not bigger than the given maximum values. 
+            </summary>
+            <remarks>
+            <para>It sets the <see cref="P:AForge.Controls.ImageCut.AdaptedPicture"/> and the <see cref="P:AForge.Controls.ImageCut.ScaleFactor"/>.</para>
+            <para>Note: It also sets the original image, it is not necessary to set it manual.</para>
+            <para>Note: If the original image is smaller than the given values, the adapted
+            image is just a clone of the original image.</para>
+            </remarks>
+            <param name="maxWidth">The biggest allowed width of the image</param>
+            <param name="maxHeight">The biggest allowed height of the image</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.initBorderValues">
+            <summary>
+            Inits the border values.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.setSlidersSpace">
+            <summary>
+            Sets the transparent area behind a slider.
+            These areas represent the cut offed image areas.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.initSliders">
+            <summary>
+            Inits the sliders with its original positions and the slider color.
+            Is called only one time in the init()-fct.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.checkSlidersExceedsBorder(System.Int32,System.Int32)">
+            <summary>
+            Checks after a Slider- or window display - moving, if a slider
+            exceeds a limit (border).
+            </summary>
+            <remarks>
+            <para>The mouse cursor moves a slider, so the cursor location is important for 
+            the check.</para>
+            </remarks>
+            <param name="x">X-coord of mouse</param>
+            <param name="y">Y-coord of mouse</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.setMoveDisplayWindowCursor(System.Int32,System.Int32)">
+            <summary>
+            Checks, if the mouse cursor is over the image. 
+            If yes, set the cursor for moving the display window over the image.
+            Otherwise, set the default cursor icon.
+            </summary>
+            <param name="x">X-coord of mouse</param>
+            <param name="y">Y-coord of mouse</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.setRollOverCursor">
+            <summary>
+            Sets the cursor icon which represents a cursor, that rollover a slider.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.moveDisplayWindow(System.Int32,System.Int32)">
+            <summary>
+            Moves the display window, which is located over the image.
+            </summary>
+            <param name="x">X-coord of mouse</param>
+            <param name="y">Y-coord of mouse</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.resetChoosedSliders">
+            <summary>
+            Deletes the choosed sliders.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.isRolloveredAnySlider(System.Drawing.Point)">
+            <summary>
+            Determines whether [is rollovered any slider] at [the specified position].
+            </summary>
+            <param name="position">The mouse position.</param>
+            <returns>
+            	<c>true</c> if [is rollovered any slider] [the specified position]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.isRolloveredVerticalSlider(AForge.Controls.ImageCut.GraphicObject,System.Drawing.Point)">
+            <summary>
+            Checks, if the given <see cref="T:AForge.Controls.ImageCut.GraphicObject"/>is a
+            rollovered vertical slider.
+            </summary>
+            <param name="verticalSlider">The vertical slider.</param>
+            <param name="location">The location.</param>
+            <returns>true - if it is a rollovered vertical slider.</returns>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.isRolloveredHoricontalSlider(AForge.Controls.ImageCut.GraphicObject,System.Drawing.Point)">
+            <summary>
+            Checks, if the given <see cref="T:AForge.Controls.ImageCut.GraphicObject"/>is a
+            rollovered horizontal slider.
+            </summary>
+            <param name="horizontalSlider">The horizontal slider.</param>
+            <param name="location">The location.</param>
+            <returns>true - if it is a rollovered horizontal slider.</returns>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Fires the <see cref="E:System.Windows.Forms.Control.Paint"/>-Event.
+            </summary>
+            <param name="e">An instance of <see cref="T:System.Windows.Forms.PaintEventArgs"/>.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Fires the <see cref="E:System.Windows.Forms.Control.MouseDown"/>-Event.
+            </summary>
+            <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Fires the <see cref="E:System.Windows.Forms.Control.MouseMove"/>-Event.
+            </summary>
+            <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Fires the <see cref="E:System.Windows.Forms.Control.MouseUp"/>-Event.
+            </summary>
+            <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.OnSizeChanged(System.EventArgs)">
+            <summary>
+            Fires the <see cref="E:System.Windows.Forms.Control.SizeChanged"/>-Event.
+            </summary>
+            <param name="e">An instance of <see cref="T:System.EventArgs"/>.</param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.getSliderIndex(AForge.Controls.ImageCut.GraphicObject,AForge.Controls.ImageCut.GraphicObject[])">
+            <summary>
+            Static function, gets the id of the given slider.
+            </summary>
+            <param name="choosedSlider">The choosed slider.</param>
+            <param name="allSliders">All sliders.</param>
+            <returns></returns>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.DistanceToImage">
+            <summary>
+            The distance between image- and control border.
+            </summary>
+            <remarks>
+            <para>The value should be bigger than <value>0</value>.</para>
+            <para>Otherwise it is difficult to use the mouse cursor for moving a slider exactly
+            to the image border</para>
+            <para>NOTE: The distance value is the sum of a site pair, 
+            e.g. <code>mDistanceToImage = 50</code> means 25 pixel distance between 
+            left site of control- and image border, and 25 pixel distance between 
+            right site of control- and image border, equivalent for up and down.</para>
+            <para>Default value: <code>50</code> pixel</para>
+            </remarks>        
+        </member>
+        <member name="P:AForge.Controls.ImageCut.AdaptedPicture">
+            <summary>
+            The size-adapted picture, which will be seen.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.OriginalPicture">
+            <summary>
+            The original picture, unmodified.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ScaleFactor">
+            <summary>
+            The factor, which is used to scale and adapt the <see cref="P:AForge.Controls.ImageCut.OriginalPicture"/>
+            to the <see>AdaptedPicture</see>.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.LineStrength">
+            <summary>
+            The line strength of the sliders
+            </summary>
+            <remarks>
+            <para>Default value: <code>3</code> pixel</para>
+            </remarks>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ColorSliders">
+            <summary>
+            The general color of the sliders.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ColorRolloverSlider">
+            <summary>
+            Th color of the slider, when the mouse cursor is rollovered.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.Transparence">
+            <summary>
+            The transparence value of the graphic rectangles (also called Slider space), 
+            which represents the cutted areas of the picture.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ColorSliderSpace">
+            <summary>
+            The color of the graphic rectangles (also called Slider space), 
+            which represents the cutted areas of the picture.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.MinSizeOfImage">
+            <summary>
+            Represents the minimum width and height of the picture.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.NeighbourTolerance">
+            <summary>
+            Represents the tolerance value (in pixel), how far away a horicontal and a
+            vertical slider could be to be selected together as an edge.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.CursorMoveDisplayWindow">
+            <summary>
+            The cursor, which is displayed, when the mouse cursor is inside the 
+            cutted picture without touching any slider.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.CursorDefault">
+            <summary>
+            The cursor, which is displayed, when the mouse cursor neither selects
+            a slider nor moves the display window.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.CursorRolloverSlider">
+            <summary>
+            The cursor, which is displayed, when the mouse cursor rollover a slider.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.LeftPositionInternal">
+            <summary>
+            Gets the left-slider's position internal (of the adapted picture).
+            </summary>
+            <value>The left-slider's position internal.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.LeftPosition">
+            <summary>
+            Gets the left-slider's position.
+            </summary>
+            <value>The left-slider's position.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.RightPosition">
+            <summary>
+            Gets the right-slider's position.
+            </summary>
+            <value>The right-slider's position.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.UpPositionInternal">
+            <summary>
+            Gets up-slider's position internal (of the adapted picture).
+            </summary>
+            <value>Up-slider's position internal.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.UpPosition">
+            <summary>
+            Gets up-slider's position.
+            </summary>
+            <value>Up-slider's position.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.DownPosition">
+            <summary>
+            Gets down-slider's position.
+            </summary>
+            <value>Down-slider's position.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ActualWidthInternal">
+            <summary>
+            Actual temporar width of the <see cref="P:AForge.Controls.ImageCut.AdaptedPicture"/> after using vertical sliders.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ActualWidth">
+            <summary>
+            Actual temporar width of the <see cref="P:AForge.Controls.ImageCut.OriginalPicture"/> after using vertical sliders.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ActualHeightInternal">
+            <summary>
+            Actual temporar height of the <see cref="P:AForge.Controls.ImageCut.AdaptedPicture"/> after using horicontal sliders.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.ActualHeight">
+            <summary>
+            Actual temporar height of the <see cref="P:AForge.Controls.ImageCut.OriginalPicture"/> after using horicontal sliders.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.OriginalHeight">
+            <summary>
+            Gets the height of the original picture.
+            </summary>
+            <value>The height of the original picture.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.OriginalWidth">
+            <summary>
+            Gets the width of the original picture.
+            </summary>
+            <value>The width of the original picture.</value>
+        </member>
+        <member name="P:AForge.Controls.ImageCut.Ratio">
+            <summary>
+            Gets or sets the ratio.
+            </summary>
+            <value>The ratio.</value>
+        </member>
+        <member name="T:AForge.Controls.ImageCut.Course">
+            <summary>
+            Represents the course of a slider.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.ImageCut.GraphicObject">
+            <summary>
+            Represents the framework for a graphic object.
+            </summary>
+        </member>
+        <member name="F:AForge.Controls.ImageCut.GraphicObject.HitTestPen">
+            <summary>
+            This Pen-Objekt is used to check, if a point is located over the line of an object. 
+            The color is irrelevant. As width the value <code>4</code> makes a good job.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.GraphicObject.Hit(System.Drawing.Point)">
+            <summary>
+            Checks, if the given point is on the contour of the object.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.GraphicObject.Contains(System.Drawing.Point)">
+            <summary>
+            Checks, if the given point is inside the object.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.GraphicObject.Draw(System.Drawing.Graphics)">
+            <summary>
+            Draws the graphic object.
+            </summary>
+            <param name="g"></param>
+        </member>
+        <member name="M:AForge.Controls.ImageCut.GraphicObject.Move(System.Int32,System.Int32)">
+            <summary>
+            Moves the graphic object <para>deltaX</para> pixel in x-direction (horizontal)
+            and <para>deltaY</para> pixel in y-direction (vertical)
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.ImageCut.GraphicRectangle">
+            <summary>
+            Represents a graphic rectangle.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.ImageCut.GraphicLine">
+            <summary>
+            Represents a graphic line.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.HistogramEventArgs">
+            <summary>
+            Arguments of histogram events.
+            </summary>
+        </member>
+        <member name="M:AForge.Controls.HistogramEventArgs.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.HistogramEventArgs"/> class.
+            </summary>
+            
+            <param name="pos">Histogram's index under mouse pointer.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.HistogramEventArgs.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.HistogramEventArgs"/> class.
+            </summary>
+            
+            <param name="min">Min histogram's index in selection.</param>
+            <param name="max">Max histogram's index in selection.</param>
+            
+        </member>
+        <member name="P:AForge.Controls.HistogramEventArgs.Min">
+            <summary>
+            Min histogram's index in selection.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.HistogramEventArgs.Max">
+            <summary>
+            Max histogram's index in selection.
+            </summary>
+        </member>
+        <member name="P:AForge.Controls.HistogramEventArgs.Position">
+            <summary>
+            Histogram's index under mouse pointer.
+            </summary>
+        </member>
+        <member name="T:AForge.Controls.HistogramEventHandler">
+            <summary>
+            Delegate for histogram events handlers.
+            </summary>
+            
+            <param name="sender">Sender object.</param>
+            <param name="e">Event arguments.</param>
+            
+        </member>
+        <member name="T:AForge.Controls.Histogram">
+            <summary>
+            Histogram control.
+            </summary>
+            
+            <remarks><para>The control displays histograms represented with integer arrays,
+            where each array's element keeps occurrence number of the corresponding element.
+            </para>
+            <para>Sample usage:</para>
+            <code>
+            // create array with histogram values
+            int[] histogramValues = new int[] { 3, 8, 53, 57, 79, 69, ... };
+            // set values to histogram control
+            histogram.Values = histogramValues;
+            </code>
+            <para><b>Sample control's look:</b></para>
+            <img src="histogram.jpg" width="324" height="77" />
+            </remarks>
+            
+        </member>
+        <member name="M:AForge.Controls.Histogram.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AForge.Controls.Histogram"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:AForge.Controls.Histogram.Dispose(System.Boolean)">
+            <summary>
+            Dispose the object.
+            </summary>
+            
+            <param name="disposing">Indicates if disposing was initiated manually.</param>
+            
+        </member>
+        <member name="M:AForge.Controls.Histogram.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paint the control.
+            </summary>
+            
+            <param name="pe">Data for Paint event.</param>
+            
+        </member>
+        <member name="P:AForge.Controls.Histogram.Color">
+            <summary>
+            Histogram's color.
+            </summary>
+            
+        </member>
+        <member name="P:AForge.Controls.Histogram.AllowSelection">
+            <summary>
+            Allow mouse selection or not.
+            </summary>
+            
+            <remarks>In the case if mouse selection is allowed, the control will
+            fire <see cref="E:AForge.Controls.Histogram.SelectionChanged"/> and <see cref="E:AForge.Controls.Histogram.PositionChanged"/> events
+            and provide information about the selection.</remarks>
+            
+        </member>
+        <member name="P:AForge.Controls.Histogram.LogarithmicView">
+            <summary>
+            Logarithmic view or not.
+            </summary>
+            
+            <remarks>In the case if logarihmic view is selected, then the control
+            will display base 10 logarithm of values.</remarks>
+            
+        </member>
+        <member name="P:AForge.Controls.Histogram.Vertical">
+             <summary>
+             Vertical view or not.
+             </summary>
+            
+             <remarks><para>The property determines if histogram should be displayed vertical or
+             not (horizontally).</para>
+             <para>By default the property is set to <b>false</b> - horizontal view.</para></remarks>
+            
+        </member>
+        <member name="P:AForge.Controls.Histogram.Values">
+            <summary>
+            Histogram values.
+            </summary>
+            
+            <remarks>Non-negative histogram values.</remarks>
+            
+            <exception cref="T:System.ArgumentException">Histogram has negative values.</exception>
+            
+        </member>
+        <member name="E:AForge.Controls.Histogram.PositionChanged">
+            <summary>
+            Mouse position changed event.
+            </summary>
+            
+            <remarks>The event is fired only if the <see cref="P:AForge.Controls.Histogram.AllowSelection"/> property is set
+            to true. The passed to event handler <see cref="T:AForge.Controls.HistogramEventArgs"/> class is initialized
+            with <see cref="P:AForge.Controls.HistogramEventArgs.Position"/> property only, which is histogram value's
+            index pointed by mouse.</remarks>
+            
+        </member>
+        <member name="E:AForge.Controls.Histogram.SelectionChanged">
+            <summary>
+            Mouse selection changed event.
+            </summary>
+            
+            <remarks>The event is fired only if the <see cref="P:AForge.Controls.Histogram.AllowSelection"/> property is set
+            to true. The passed to event handler <see cref="T:AForge.Controls.HistogramEventArgs"/> class is initialized
+            with <see cref="P:AForge.Controls.HistogramEventArgs.Min"/> and <see cref="P:AForge.Controls.HistogramEventArgs.Max"/> properties
+            only, which represent selection range - min and max indexes.</remarks>
+            
+        </member>
+    </members>
+</doc>
