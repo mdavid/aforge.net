@@ -746,6 +746,10 @@ namespace AForge.Controls
                         if (isDirectMove)
                         {
                             actualHeight = (int)((float)ActualHeightInternal * scaleFactor);
+                            //Check, if there is a rounding error
+                            if (ActualHeight > OriginalHeight)
+                                moveSelectedHorizontalSlider(-(ActualHeight - OriginalHeight));
+
                             upPosition = (int)((float)UpPositionInternal * scaleFactor);
                             spaces[(int)Sliders.Up] = 0.0f;
                             spaces[(int)Sliders.Down] = 0.0f;
@@ -767,6 +771,10 @@ namespace AForge.Controls
                         if (isDirectMove)
                         {
                             actualWidth = (int)((float)ActualWidthInternal * scaleFactor);
+                            //Check, if there is a rounding error
+                            if (ActualWidth > OriginalWidth)
+                                moveSelectedVerticalSlider(-(ActualWidth - OriginalWidth));                               
+
                             leftPosition = (int)((float)LeftPositionInternal * scaleFactor);
                             spaces[(int)Sliders.Left] = 0.0f;
                             spaces[(int)Sliders.Right] = 0.0f;
