@@ -254,6 +254,18 @@
             <remarks>After initialization per constructor
             and setting the properties, it is necessary to call this function.</remarks>
         </member>
+        <member name="M:AForge.Controls.ImageCut.Refresh">
+            <summary>
+            Forces the ImageCut-control to invalidate its client area and 
+            immediately redraw itself and any child controls.
+            </summary>
+            <PermissionSet>
+            	<IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
+            	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
+            	<IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence"/>
+            	<IPermission class="System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
+            </PermissionSet>
+        </member>
         <member name="M:AForge.Controls.ImageCut.moveSlider(System.Int32,AForge.Controls.Sliders)">
             <summary>
             Moves the slider.
@@ -292,9 +304,9 @@
         </member>
         <member name="M:AForge.Controls.ImageCut.getCuttedImage">
             <summary>
-            Gets the cutted picture in <seealso cref="T:System.Drawing.Image"/> format.
+            Gets the cutted picture in <seealso cref="T:System.Drawing.Bitmap"/> format.
             </summary>
-            <returns></returns>
+            <returns>The cutted Image (in <seealso cref="T:System.Drawing.Bitmap"/> format)</returns>
         </member>
         <member name="M:AForge.Controls.ImageCut.movingDirectly(AForge.Controls.ImageCut.GraphicObject,System.Int32,System.Int32,System.Boolean)">
             <summary>
