@@ -577,7 +577,7 @@ namespace AForge.Controls
 
             //properties: default values
             ratio = 0.0f;
-            distanceToImage = 50;
+            distanceToImage = 10;
             lineStrength = 3;
             minSizeOfImage = 50;
             neighbourTolerance = 50;
@@ -606,6 +606,30 @@ namespace AForge.Controls
             setSlidersSpace();
 
             this.DoubleBuffered = true;
+        }
+
+        /// <summary>
+        /// Forces the ImageCut-control to invalidate its client area and 
+        /// immediately redraw itself and any child controls.
+        /// </summary>
+        /// <PermissionSet>
+        /// 	<IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
+        /// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
+        /// 	<IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence"/>
+        /// 	<IPermission class="System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
+        /// </PermissionSet>
+        public override void Refresh()
+        {
+            //resetting of the properties of the ImgaCut-components (sliders, slider-space,..)
+            actualWidth = originalPicture.Width;
+            actualHeight = originalPicture.Height;
+            leftPosition = 0;
+            upPosition = 0;
+            init();
+            fireSliderMovedEvent();
+
+            base.Refresh();
+            
         }
 
         /// <summary>
@@ -697,15 +721,22 @@ namespace AForge.Controls
         }
 
         /// <summary>
-        /// Gets the cutted picture in <seealso cref="Image"/> format.
+        /// Gets the cutted picture in <seealso cref="Bitmap"/> format.
         /// </summary>
-        /// <returns></returns>
-        public Image getCuttedImage()
+        /// <returns>The cutted Image (in <seealso cref="Bitmap"/> format)</returns>
+        public Bitmap getCuttedImage()
         {
+            int w = ActualWidthInternal;
+            if ((LeftPositionInternal + ActualWidthInternal) > AdaptedPicture.Width)
+                w -= (LeftPositionInternal + ActualWidthInternal) - AdaptedPicture.Width;
+            int h = ActualHeightInternal;
+            if ((UpPositionInternal + ActualHeightInternal) > AdaptedPicture.Height)
+                h -= (UpPositionInternal + ActualHeightInternal) - AdaptedPicture.Height;            
+
             Rectangle tempSize = new Rectangle(LeftPositionInternal,
                                             UpPositionInternal,
-                                            ActualWidthInternal,
-                                            ActualHeightInternal);
+                                            w,
+                                            h);
             AdaptedPicture = AdaptedPicture.Clone(tempSize, AdaptedPicture.PixelFormat);
             init();
 
@@ -747,10 +778,15 @@ namespace AForge.Controls
                         {
                             actualHeight = (int)((float)ActualHeightInternal * scaleFactor);
                             //Check, if there is a rounding error
-                            if (ActualHeight > OriginalHeight)
-                                moveSelectedHorizontalSlider(-(ActualHeight - OriginalHeight));
+                            //if (ActualHeight > OriginalHeight)
+                            //    moveSelectedHorizontalSlider(-(ActualHeight - OriginalHeight));
 
                             upPosition = (int)((float)UpPositionInternal * scaleFactor);
+
+                            //Check, if there is a rounding error
+                            if (upPosition + ActualHeight > OriginalHeight)
+                                actualHeight = OriginalHeight - upPosition;
+
                             spaces[(int)Sliders.Up] = 0.0f;
                             spaces[(int)Sliders.Down] = 0.0f;
                             fireSliderMovedEvent();
@@ -772,10 +808,15 @@ namespace AForge.Controls
                         {
                             actualWidth = (int)((float)ActualWidthInternal * scaleFactor);
                             //Check, if there is a rounding error
-                            if (ActualWidth > OriginalWidth)
-                                moveSelectedVerticalSlider(-(ActualWidth - OriginalWidth));                               
+                            //if (ActualWidth > OriginalWidth)
+                            //    moveSelectedVerticalSlider(-(ActualWidth - OriginalWidth));                               
 
                             leftPosition = (int)((float)LeftPositionInternal * scaleFactor);
+
+                            //Check, if there is a rounding error
+                            if (leftPosition + ActualWidth > OriginalWidth)
+                                actualWidth = OriginalWidth - leftPosition;
+
                             spaces[(int)Sliders.Left] = 0.0f;
                             spaces[(int)Sliders.Right] = 0.0f;
                             fireSliderMovedEvent();
@@ -824,9 +865,21 @@ namespace AForge.Controls
                     actualHeight += moveValue;
             }
 
+            if (DownPosition > OriginalHeight)
+            {
+                Console.Out.WriteLine("Hier:" + DownPosition);
+            }
             checkValues();
+            if (DownPosition > OriginalHeight)
+            {
+                Console.Out.WriteLine("Hier:" + DownPosition);
+            }
             if (isCheckNecessary)
                 checkRatio();
+            if (DownPosition > OriginalHeight)
+            {
+                Console.Out.WriteLine("Hier:" + DownPosition);
+            }
             fireSliderMovedEvent();
         }
 
@@ -1268,8 +1321,7 @@ namespace AForge.Controls
             }
             base.OnPaint(e);
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            // Der Bereich, der neugezeichnet werden soll, wird auf die Zeichenfläche
-            // beschränkt, damit Objekte, die darüber hinausschauen abgeschnitten werden.
+            // Only draw new the area of clip, objects outside of clip will be cutted.
             Region clip = new Region(canvasRect);
             clip.Intersect(e.Graphics.Clip);
             e.Graphics.Clip = clip;
