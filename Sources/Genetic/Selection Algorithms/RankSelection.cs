@@ -23,7 +23,8 @@ namespace AForge.Genetic
     /// Selection</see> algorithm, but the difference is in "wheel" and its sectors' size
     /// calculation method. The size of the wheel equals to <b>size * ( size + 1 ) / 2</b>,
     /// where <b>size</b> is the current size of population. The worst chromosome has its sector's
-    /// size equal to 1, the next chromosome has its sector's size equal to 2, etc.</remarks>
+    /// size equal to 1, the next chromosome has its sector's size equal to 2, etc.</para>
+    /// </remarks>
 	/// 
 	public class RankSelection : ISelectionMethod
 	{

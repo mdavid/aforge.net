@@ -67,6 +67,8 @@ namespace AForge.Genetic
         /// Crossover operator.
         /// </summary>
         /// 
+        /// <param name="pair">Pair chromosome to crossover with.</param>
+        /// 
         /// <remarks><para>The method performs crossover between two chromosomes – interchanging some parts of chromosomes.</para></remarks>
         /// 
         void Crossover( IChromosome pair );
@@ -74,6 +76,8 @@ namespace AForge.Genetic
         /// <summary>
         /// Evaluate chromosome with specified fitness function.
         /// </summary>
+        /// 
+        /// <param name="function">Fitness function to use for evaluation of the chromosome.</param>
         /// 
         /// <remarks><para>Calculates chromosome's fitness using the specifed fitness function.</para></remarks>
         /// 

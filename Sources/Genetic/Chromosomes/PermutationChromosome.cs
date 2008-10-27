@@ -1,6 +1,7 @@
 // AForge Genetic Library
+// AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2006
+// Copyright © Andrew Kirillov, 2006-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -10,29 +11,43 @@ namespace AForge.Genetic
 	using System.Text;
 
 	/// <summary>
-	/// Permutation Chromosome is a Short Array Chromosome, but with two
-	/// restrictions:
-	/// 1) all genes are unique, i.e. there are no two genes in such
-	///    chromosome with the same value;
-	/// 2) maximum value of each gene is equal to chromosome length - 1.
-	/// 
-	/// With these two restrictions the chromosome represents permutation.
-	/// </summary>
+	/// Permutation chromosome.
+    /// </summary>
+    /// 
+    /// <remarks><para>Permutation chromosome is based on short array chromosome,
+    /// but has two features:</para>
+    /// <list type="bullet">
+    /// <item>all genes are unique within chromosome, i.e. there are no two genes
+    /// with the same value;</item>
+    /// <item>maximum value of each gene is equal to chromosome length minus 1.</item>
+    /// </list>
+    /// </remarks>
+    /// 
 	public class PermutationChromosome : ShortArrayChromosome
 	{
 		/// <summary>
-		/// Constructor
-		/// </summary>
+        /// Initializes a new instance of the <see cref="PermutationChromosome"/> class.
+        /// </summary>
 		public PermutationChromosome( int length ) : base( length, length - 1 ) { }
 
 		/// <summary>
-		/// Copy Constructor
-		/// </summary>
-		protected PermutationChromosome( PermutationChromosome source ) : base( source ) { }
+        /// Initializes a new instance of the <see cref="PermutationChromosome"/> class.
+        /// </summary>
+        /// 
+        /// <param name="source">Source chromosome to copy.</param>
+        /// 
+        /// <remarks><para>This is a copy constructor, which creates the exact copy
+        /// of specified chromosome.</para></remarks>
+        /// 
+        protected PermutationChromosome( PermutationChromosome source ) : base( source ) { }
 
-		/// <summary>
-		/// Generate random chromosome value
-		/// </summary>
+        /// <summary>
+        /// Generate random chromosome value.
+        /// </summary>
+        /// 
+        /// <remarks><para>Regenerates chromosome's value using random number generator.</para>
+        /// </remarks>
+        ///
 		public override void Generate( )
 		{
 			// create ascending permutation initially
@@ -55,25 +70,38 @@ namespace AForge.Genetic
 			}
 		}
 
-		/// <summary>
-		/// Create new random chromosome (factory method)
-		/// </summary>
+        /// <summary>
+        /// Create new random chromosome with same parameters (factory method).
+        /// </summary>
+        /// 
+        /// <remarks><para>The method creates new chromosome of the same type, but randomly
+        /// initialized. The method is useful as factory method for those classes, which work
+        /// with chromosome's interface, but not with particular chromosome type.</para></remarks>
+        ///
 		public override IChromosome CreateOffspring( )
 		{
 			return new PermutationChromosome( length );
 		}
 
-		/// <summary>
-		/// Clone the chromosome
-		/// </summary>
+        /// <summary>
+        /// Clone the chromosome.
+        /// </summary>
+        /// 
+        /// <remarks><para>The method clones the chromosome return the exact copy of it.</para>
+        /// </remarks>
+        ///
 		public override IChromosome Clone( )
 		{
 			return new PermutationChromosome( this );
 		}
-		
-		/// <summary>
-		/// Mutation operator
-		/// </summary>
+
+        /// <summary>
+        /// Mutation operator.
+        /// </summary>
+        /// 
+        /// <remarks><para>The method performs chromosome's mutation, swapping two randomly
+        /// chosen genes (array elements).</para></remarks>
+        ///
 		public override void Mutate( )
 		{
 			ushort t;
@@ -86,9 +114,15 @@ namespace AForge.Genetic
 			val[j2]	= t;
 		}
 
-		/// <summary>
-		/// Crossover operator
-		/// </summary>
+        /// <summary>
+        /// Crossover operator.
+        /// </summary>
+        /// 
+        /// <param name="pair">Pair chromosome to crossover with.</param>
+        /// 
+        /// <remarks><para>The method performs crossover between two chromosomes – interchanging
+        /// some parts between these chromosomes.</para></remarks>
+        ///
 		public override void Crossover( IChromosome pair )
 		{
 			PermutationChromosome p = (PermutationChromosome) pair;
@@ -104,8 +138,8 @@ namespace AForge.Genetic
 				CreateChildUsingCrossover( p.val, this.val, child2 );
 
 				// replace parents with children
-				this.val	= child1;
-				p.val		= child2;
+				this.val = child1;
+				p.val    = child2;
 			}
 		}
 
