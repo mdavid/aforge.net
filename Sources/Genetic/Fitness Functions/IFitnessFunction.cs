@@ -33,20 +33,5 @@ namespace AForge.Genetic
         /// chromosome.</remarks>
         ///
         double Evaluate( IChromosome chromosome );
-
-        /// <summary>
-        /// Translates genotype to phenotype.
-        /// </summary>
-        /// 
-        /// <param name="chromosome">Chromosome, which genoteype should be
-        /// translated to phenotype.</param>
-        ///
-        /// <returns>Returns chromosome's fenotype - the actual solution
-        /// encoded by the chromosome.</returns> 
-        /// 
-        /// <remarks>The return value may be a string, a number or any other
-        /// object, which is supposed to represent the problem's solution.</remarks>
-        ///
-        object Translate( IChromosome chromosome );
     }
 }
