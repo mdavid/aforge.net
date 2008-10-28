@@ -54,18 +54,21 @@ namespace AForge.Genetic
         public const int MaxLength = 65536;
 
         /// <summary>
-        /// Chromosome's length
+        /// Chromosome's length.
         /// </summary>
+        /// 
+        /// <remarks><para>Length of the chromosome in array elements.</para></remarks>
+        ///
         public int Length
         {
             get { return length; }
         }
 
         /// <summary>
-        /// Chromosome's length.
+        /// Chromosome's value.
         /// </summary>
         /// 
-        /// <remarks><para>Length of the chromosome in array elements.</para></remarks>
+        /// <remarks><para>Current value of the chromosome.</para></remarks>
         ///
         public ushort[] Value
         {
@@ -101,7 +104,7 @@ namespace AForge.Genetic
         /// Initializes a new instance of the <see cref="ShortArrayChromosome"/> class.
         /// </summary>
         /// 
-        /// <param name="length">Chromosome's length in array elements.</param>
+        /// <param name="length">Chromosome's length in array elements, [2, <see cref="MaxLength"/>].</param>
         /// 
         /// <remarks>This constructor initializes chromosome setting genes' maximum value to
         /// maximum posible value of <see langword="ushort"/> type.</remarks>
@@ -112,7 +115,7 @@ namespace AForge.Genetic
         /// Initializes a new instance of the <see cref="ShortArrayChromosome"/> class.
         /// </summary>
         /// 
-        /// <param name="length">Chromosome's length in array elements.</param>
+        /// <param name="length">Chromosome's length in array elements, [2, <see cref="MaxLength"/>].</param>
         /// <param name="maxValue">Maximum value of chromosome's gene (array element).</param>
         /// 
         public ShortArrayChromosome( int length, int maxValue )

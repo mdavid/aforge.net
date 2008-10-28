@@ -94,7 +94,7 @@ namespace AForge.Genetic
         /// Initializes a new instance of the <see cref="BinaryChromosome"/> class.
         /// </summary>
         /// 
-        /// <param name="length">Chromosome's length in bits.</param>
+        /// <param name="length">Chromosome's length in bits, [2, <see cref="MaxLength"/>].</param>
         /// 
         public BinaryChromosome( int length )
         {
