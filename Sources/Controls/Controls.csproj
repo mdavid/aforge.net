@@ -52,6 +52,9 @@
     <Compile Include="Chart.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Histogram.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -69,6 +72,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Chart.resx">
       <DependentUpon>Chart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Histogram.resx">
+      <DependentUpon>Histogram.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VideoSourcePlayer.resx">
       <DependentUpon>VideoSourcePlayer.cs</DependentUpon>
