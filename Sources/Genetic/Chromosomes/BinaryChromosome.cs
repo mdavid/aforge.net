@@ -181,7 +181,7 @@ namespace AForge.Genetic
         /// initialized. The method is useful as factory method for those classes, which work
         /// with chromosome's interface, but not with particular chromosome type.</para></remarks>
         /// 
-        public virtual IChromosome CreateOffspring( )
+        public virtual IChromosome CreateNew( )
         {
             return new BinaryChromosome( length );
         }
@@ -190,7 +190,7 @@ namespace AForge.Genetic
         /// Clone the chromosome.
         /// </summary>
         /// 
-        /// <remarks><para>The method clones the chromosome return the exact copy of it.</para>
+        /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
         ///
         public virtual IChromosome Clone( )
