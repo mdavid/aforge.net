@@ -248,7 +248,7 @@ namespace AForge.Genetic
             for ( int i = 1; i < size; i++ )
             {
                 // create new chromosome
-                IChromosome c = ancestor.CreateOffspring( );
+                IChromosome c = ancestor.CreateNew( );
                 // calculate it's fitness
                 c.Evaluate( fitnessFunction );
                 // add it to population
@@ -272,7 +272,7 @@ namespace AForge.Genetic
             for ( int i = 0; i < size; i++ )
             {
                 // create new chromosome
-                IChromosome c = ancestor.CreateOffspring( );
+                IChromosome c = ancestor.CreateNew( );
                 // calculate it's fitness
                 c.Evaluate( fitnessFunction );
                 // add it to population
@@ -368,7 +368,7 @@ namespace AForge.Genetic
                 for ( int i = 0; i < randomAmount; i++ )
                 {
                     // create new chromosome
-                    IChromosome c = ancestor.CreateOffspring( );
+                    IChromosome c = ancestor.CreateNew( );
                     // calculate it's fitness
                     c.Evaluate( fitnessFunction );
                     // add it to population

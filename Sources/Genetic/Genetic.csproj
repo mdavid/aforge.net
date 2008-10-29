@@ -43,6 +43,9 @@
   <ItemGroup>
     <Compile Include="Chromosomes\BinaryChromosome.cs" />
     <Compile Include="Chromosomes\DoubleArrayChromosome.cs" />
+    <Compile Include="Chromosomes\GP\ExtendedGeneFunction.cs" />
+    <Compile Include="Chromosomes\GP\IGPGene.cs" />
+    <Compile Include="Chromosomes\GP\SimpleGeneFunction.cs" />
     <Compile Include="Chromosomes\IChromosome.cs" />
     <Compile Include="Chromosomes\PermutationChromosome.cs" />
     <Compile Include="Chromosomes\ShortArrayChromosome.cs" />

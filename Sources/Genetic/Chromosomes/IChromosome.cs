@@ -42,15 +42,15 @@ namespace AForge.Genetic
         /// 
         /// <remarks><para>The method creates new chromosome of the same type, but randomly
         /// initialized. The method is useful as factory method for those classes, which work
-        /// with chromosome's interface, but not with particular chromosome type.</para></remarks>
+        /// with chromosome's interface, but not with particular chromosome class.</para></remarks>
         /// 
-        IChromosome CreateOffspring( );
+        IChromosome CreateNew( );
 
         /// <summary>
         /// Clone the chromosome.
         /// </summary>
         /// 
-        /// <remarks><para>The method clones the chromosome return the exact copy of it.</para>
+        /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
         /// 
         IChromosome Clone( );
