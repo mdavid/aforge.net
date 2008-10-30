@@ -45,6 +45,14 @@
     <Compile Include="Membership Functions\IMembershipFunction.cs" />
     <Compile Include="Membership Functions\PiecewiseLinearFunction.cs" />
     <Compile Include="Membership Functions\TrapezoidalFunction.cs" />
+    <Compile Include="Operators\ProductNorm.cs" />
+    <Compile Include="Operators\IOperator.cs" />
+    <Compile Include="Operators\IUnaryOperator.cs" />
+    <Compile Include="Operators\IHedge.cs" />
+    <Compile Include="Operators\IBinaryOperator.cs" />
+    <Compile Include="Operators\ICoNorm.cs" />
+    <Compile Include="Operators\INorm.cs" />
+    <Compile Include="Operators\MinimumNorm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
