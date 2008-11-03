@@ -343,7 +343,7 @@ namespace AForge.Imaging
         }
 
         /// <summary>
-        /// Ñonvert Hough map to bitmap. 
+        /// Convert Hough map to bitmap. 
         /// </summary>
         /// 
         /// <returns>Returns 8 bppp grayscale bitmap, which shows Hough map.</returns>
