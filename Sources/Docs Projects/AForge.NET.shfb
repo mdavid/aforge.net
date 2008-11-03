@@ -81,6 +81,7 @@
         <contentItem sourcePath="..\Neuro\Images\sigmoid_bipolar.bmp" destPath="img\neuro\" excludeItems="False" />
         <contentItem sourcePath="..\Neuro\Images\threshold.bmp" destPath="img\neuro\" excludeItems="False" />
         <contentItem sourcePath="..\Controls\Images\histogram.jpg" destPath="img\controls\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\invert.jpg" destPath="img\imaging\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
