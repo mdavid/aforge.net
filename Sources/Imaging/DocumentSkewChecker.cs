@@ -122,7 +122,7 @@ namespace AForge.Imaging
         /// </summary>
         public DocumentSkewChecker( )
         {
-            StepsPerDegree = 5;
+            StepsPerDegree = 10;
             MinBeta = -30;
             MaxBeta =  30;
         }
@@ -219,11 +219,11 @@ namespace AForge.Imaging
                 for ( int y = -halfHeight; y < toHeight; y++ )
                 {
                     // for each pixel
-                    for ( int x = -halfWidth; x < toWidth; x++, src++ )
+                    for ( int x = -halfWidth; x < toWidth; x++, src++, srcBelow++ )
                     {
                         // if current pixel is more black
                         // and pixel below is more white
-                        if ( ( *src < 100 ) && ( ( *src < (byte) ( *srcBelow * 0.5 ) ) ) )
+                        if ( ( *src < 128 ) && ( *srcBelow >= 128 ) )
                         {
                             // for each Theta value
                             for ( int theta = 0; theta < houghHeight; theta++ )
@@ -258,16 +258,18 @@ namespace AForge.Imaging
             CollectLines( (short) ( width / 10 ) );
 
             // get skew angle
-            HoughLine[] hls = this.GetMostIntensiveLines( 10 );
+            HoughLine[] hls = this.GetMostIntensiveLines( 5 );
 
             double skewAngle = 0;
+            double sumIntensity = 0;
             if ( hls != null )
             {
                 foreach ( HoughLine hl in hls )
                 {
-                    skewAngle += hl.Theta;
+                    skewAngle += ( hl.Theta * hl.RelativeIntensity );
+                    sumIntensity += hl.RelativeIntensity;
                 }
-                if ( hls.Length > 0 ) skewAngle = skewAngle / hls.Length;
+                if ( hls.Length > 0 ) skewAngle = skewAngle / sumIntensity;
             }
 
             return skewAngle - 90.0;
