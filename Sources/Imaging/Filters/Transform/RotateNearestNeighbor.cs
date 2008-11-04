@@ -19,6 +19,11 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>The class implements image rotation filter using nearest
     /// neighbor algorithm, which does not assume any interpolation.</para>
     /// 
+    /// <para><note>Rotation is performed in counterclockwise direction.</note></para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images and 24 bpp
+    /// color images for processing.</para>
+    ///
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter - rotate for 30 degrees keeping original image size
@@ -32,6 +37,9 @@ namespace AForge.Imaging.Filters
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/rotate_nearest.png" width="320" height="240" />
     /// </remarks>
+    /// 
+    /// <seealso cref="RotateBilinear"/>
+    /// <seealso cref="RotateBicubic"/>
     /// 
     public class RotateNearestNeighbor : BaseRotateFilter
     {
@@ -52,7 +60,8 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="angle">Rotation angle.</param>
         /// 
-        /// <remarks><para>This constructor sets <see cref="BaseRotateFilter.KeepSize"/> property to <b>false</b>.
+        /// <remarks><para>This constructor sets <see cref="BaseRotateFilter.KeepSize"/> property to
+        /// <see langword="false"/>.
         /// </para></remarks>
         /// 
         public RotateNearestNeighbor( double angle ) :
@@ -61,17 +70,17 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class
+        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class.
         /// </summary>
         /// 
-        /// <param name="angle">Rotation angle</param>
-        /// <param name="keepSize">Keep image size or not</param>
+        /// <param name="angle">Rotation angle.</param>
+        /// <param name="keepSize">Keep image size or not.</param>
         /// 
         public RotateNearestNeighbor( double angle, bool keepSize ) :
             base( angle, keepSize )
         {
             formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
-            formatTransalations[PixelFormat.Format24bppRgb] = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
         }
 
         /// <summary>
