@@ -13,13 +13,13 @@ namespace AForge.Imaging.Filters
     using System.Drawing.Imaging;
 
     /// <summary>
-    /// Rotate image using nearest neighbor algorithm.
+    /// Rotate image using bilinear interpolation.
     /// </summary>
     /// 
-    /// <remarks><para>The class implements image rotation filter using nearest
-    /// neighbor algorithm, which does not assume any interpolation.</para>
-    /// 
     /// <para><note>Rotation is performed in counterclockwise direction.</note></para>
+    /// 
+    /// <remarks><para>The class implements image rotation filter using bilinear
+    /// interpolation algorithm.</para>
     /// 
     /// <para>The filter accepts 8 bpp grayscale images and 24 bpp
     /// color images for processing.</para>
@@ -27,7 +27,7 @@ namespace AForge.Imaging.Filters
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter - rotate for 30 degrees keeping original image size
-    /// RotateNearestNeighbor filter = new RotateNearestNeighbor( 30, true );
+    /// RotateBilinear filter = new RotateBilinear( 30, true );
     /// // apply the filter
     /// Bitmap newImage = filter.Apply( image );
     /// </code>
@@ -35,13 +35,13 @@ namespace AForge.Imaging.Filters
     /// <para><b>Initial image:</b></para>
     /// <img src="img/imaging/sample9.png" width="320" height="240" />
     /// <para><b>Result image:</b></para>
-    /// <img src="img/imaging/rotate_nearest.png" width="320" height="240" />
+    /// <img src="img/imaging/rotate_bilinear.png" width="320" height="240" />
     /// </remarks>
     /// 
-    /// <seealso cref="RotateBilinear"/>
+    /// <seealso cref="RotateNearestNeighbor"/>
     /// <seealso cref="RotateBicubic"/>
     /// 
-    public class RotateNearestNeighbor : BaseRotateFilter
+    public class RotateBilinear : BaseRotateFilter
     {
         // format translation dictionary
         private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
@@ -53,32 +53,32 @@ namespace AForge.Imaging.Filters
         {
             get { return formatTransalations; }
         }
-
+        
         /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class.
+        /// Initializes a new instance of the <see cref="RotateBilinear"/> class.
         /// </summary>
         /// 
         /// <param name="angle">Rotation angle.</param>
         /// 
-        /// <remarks><para>This constructor sets <see cref="BaseRotateFilter.KeepSize"/> property to
-        /// <see langword="false"/>.
-        /// </para></remarks>
+        /// <remarks><para>This constructor sets <see cref="BaseRotateFilter.KeepSize"/> property
+        /// to <see langword="false"/>.</para>
+        /// </remarks>
         /// 
-        public RotateNearestNeighbor( double angle ) :
-            this( angle, false )
-        {
-        }
+		public RotateBilinear( double  angle ) :
+            base( angle )
+		{
+		}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class.
+        /// Initializes a new instance of the <see cref="RotateBilinear"/> class.
         /// </summary>
         /// 
         /// <param name="angle">Rotation angle.</param>
         /// <param name="keepSize">Keep image size or not.</param>
         /// 
-        public RotateNearestNeighbor( double angle, bool keepSize ) :
+        public RotateBilinear( double angle, bool keepSize ) :
             base( angle, keepSize )
-        {
+		{
             formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
         }
@@ -89,7 +89,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="sourceData">Source image data.</param>
         /// <param name="destinationData">Destination image data.</param>
-        /// 
+        ///
         protected override unsafe void ProcessFilter( UnmanagedImage sourceData, UnmanagedImage destinationData )
         {
             // get source image size
@@ -106,8 +106,8 @@ namespace AForge.Imaging.Filters
 
             // angle's sine and cosine
             double angleRad = -angle * Math.PI / 180;
-            double angleCos = Math.Cos( angleRad );
-            double angleSin = Math.Sin( angleRad );
+			double angleCos = Math.Cos( angleRad );
+			double angleSin = Math.Sin( angleRad );
 
             int srcStride = sourceData.Stride;
             int dstOffset = destinationData.Stride -
@@ -124,10 +124,14 @@ namespace AForge.Imaging.Filters
 
             // destination pixel's coordinate relative to image center
             double cx, cy;
-            // source pixel's coordinates
-            int ox, oy;
-            // temporary pointer
-            byte* p;
+            // coordinates of source points
+            double  ox, oy, dx1, dy1, dx2, dy2;
+            int     ox1, oy1, ox2, oy2;
+            // width and height decreased by 1
+            int ymax = height - 1;
+            int xmax = width - 1;
+            // temporary pointers
+            byte* p1, p2, p3, p4;
 
             // check pixel format
             if ( destinationData.PixelFormat == PixelFormat.Format8bppIndexed )
@@ -139,20 +143,41 @@ namespace AForge.Imaging.Filters
                     cx = -halfNewWidth;
                     for ( int x = 0; x < newWidth; x++, dst++ )
                     {
-                        // coordinate of the nearest point
-                        ox = (int) (  angleCos * cx + angleSin * cy + halfWidth );
-                        oy = (int) ( -angleSin * cx + angleCos * cy + halfHeight );
+                        // coordinates of source point
+                        ox =  angleCos * cx + angleSin * cy + halfWidth;
+                        oy = -angleSin * cx + angleCos * cy + halfHeight;
+
+                        // top-left coordinate
+                        ox1 = (int) ox;
+                        oy1 = (int) oy;
 
                         // validate source pixel's coordinates
-                        if ( ( ox < 0 ) || ( oy < 0 ) || ( ox >= width ) || ( oy >= height ) )
+                        if ( ( ox1 < 0 ) || ( oy1 < 0 ) || ( ox1 >= width ) || ( oy1 >= height ) )
                         {
                             // fill destination image with filler
                             *dst = fillG;
                         }
                         else
                         {
-                            // fill destination image with pixel from source image
-                            *dst = src[oy * srcStride + ox];
+                            // bottom-right coordinate
+                            ox2 = ( ox1 == xmax ) ? ox1 : ox1 + 1;
+                            oy2 = ( oy1 == ymax ) ? oy1 : oy1 + 1;
+
+                            if ( ( dx1 = ox - (double) ox1 ) < 0 )
+                                dx1 = 0;
+                            dx2 = 1.0 - dx1;
+
+                            if ( ( dy1 = oy - (double) oy1 ) < 0 )
+                                dy1 = 0;
+                            dy2 = 1.0 - dy1;
+
+                            p1 = src + oy1 * srcStride;
+                            p2 = src + oy2 * srcStride;
+
+                            // interpolate using 4 points
+                            *dst = (byte) (
+                                dy2 * ( dx2 * p1[ox1] + dx1 * p1[ox2] ) +
+                                dy1 * ( dx2 * p2[ox1] + dx1 * p2[ox2] ) );
                         }
                         cx++;
                     }
@@ -169,12 +194,16 @@ namespace AForge.Imaging.Filters
                     cx = -halfNewWidth;
                     for ( int x = 0; x < newWidth; x++, dst += 3 )
                     {
-                        // coordinate of the nearest point
-                        ox = (int) (  angleCos * cx + angleSin * cy + halfWidth );
-                        oy = (int) ( -angleSin * cx + angleCos * cy + halfHeight );
+                        // coordinates of source point
+                        ox =  angleCos * cx + angleSin * cy + halfWidth;
+                        oy = -angleSin * cx + angleCos * cy + halfHeight;
+
+                        // top-left coordinate
+                        ox1 = (int) ox;
+                        oy1 = (int) oy;
 
                         // validate source pixel's coordinates
-                        if ( ( ox < 0 ) || ( oy < 0 ) || ( ox >= width ) || ( oy >= height ) )
+                        if ( ( ox1 < 0 ) || ( oy1 < 0 ) || ( ox1 >= width ) || ( oy1 >= height ) )
                         {
                             // fill destination image with filler
                             dst[RGB.R] = fillR;
@@ -183,12 +212,43 @@ namespace AForge.Imaging.Filters
                         }
                         else
                         {
-                            // fill destination image with pixel from source image
-                            p = src + oy * srcStride + ox * 3;
+                            // bottom-right coordinate
+                            ox2 = ( ox1 == xmax ) ? ox1 : ox1 + 1;
+                            oy2 = ( oy1 == ymax ) ? oy1 : oy1 + 1;
 
-                            dst[RGB.R] = p[RGB.R];
-                            dst[RGB.G] = p[RGB.G];
-                            dst[RGB.B] = p[RGB.B];
+                            if ( ( dx1 = ox - (float) ox1 ) < 0 )
+                                dx1 = 0;
+                            dx2 = 1.0f - dx1;
+
+                            if ( ( dy1 = oy - (float) oy1 ) < 0 )
+                                dy1 = 0;
+                            dy2 = 1.0f - dy1;
+
+                            // get four points
+                            p1 = p2 = src + oy1 * srcStride;
+                            p1 += ox1 * 3;
+                            p2 += ox2 * 3;
+
+                            p3 = p4 = src + oy2 * srcStride;
+                            p3 += ox1 * 3;
+                            p4 += ox2 * 3;
+
+                            // interpolate using 4 points
+
+                            // red
+                            dst[RGB.R] = (byte) (
+                                dy2 * ( dx2 * p1[RGB.R] + dx1 * p2[RGB.R] ) +
+                                dy1 * ( dx2 * p3[RGB.R] + dx1 * p4[RGB.R] ) );
+
+                            // green
+                            dst[RGB.G] = (byte) (
+                                dy2 * ( dx2 * p1[RGB.G] + dx1 * p2[RGB.G] ) +
+                                dy1 * ( dx2 * p3[RGB.G] + dx1 * p4[RGB.G] ) );
+
+                            // blue
+                            dst[RGB.B] = (byte) (
+                                dy2 * ( dx2 * p1[RGB.B] + dx1 * p2[RGB.B] ) +
+                                dy1 * ( dx2 * p3[RGB.B] + dx1 * p4[RGB.B] ) );
                         }
                         cx++;
                     }
