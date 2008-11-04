@@ -65,7 +65,7 @@ namespace AForge.Imaging.Filters
         /// </remarks>
         /// 
 		public RotateBilinear( double  angle ) :
-            base( angle )
+            this( angle, false )
 		{
 		}
 
