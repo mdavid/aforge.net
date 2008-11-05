@@ -266,8 +266,11 @@ namespace AForge.Imaging
             {
                 foreach ( HoughLine hl in hls )
                 {
-                    skewAngle += ( hl.Theta * hl.RelativeIntensity );
-                    sumIntensity += hl.RelativeIntensity;
+                    if ( hl.RelativeIntensity > 0.5 )
+                    {
+                        skewAngle += ( hl.Theta * hl.RelativeIntensity );
+                        sumIntensity += hl.RelativeIntensity;
+                    }
                 }
                 if ( hls.Length > 0 ) skewAngle = skewAngle / sumIntensity;
             }
