@@ -12,6 +12,7 @@ namespace AForge.Imaging.Formats
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Text;
+    using System.ComponentModel;
 
     /// <summary>
     /// Information about PNM image's frame.
@@ -26,6 +27,7 @@ namespace AForge.Imaging.Formats
         /// <summary>
         /// PNM file version (format), [1, 6].
         /// </summary>
+        [Category( "PNM Info" )]
         public int Version
         {
             get { return version; }
@@ -40,6 +42,7 @@ namespace AForge.Imaging.Formats
         /// from original data range to the range of
         /// <see cref="ImageInfo.BitsPerPixel">supported bits per pixel</see> format.</para></remarks>
         /// 
+        [Category( "PNM Info" )]
         public int MaxDataValue
         {
             get { return maxDataValue; }
