@@ -39,7 +39,12 @@ namespace ImageViewer
             {
                 try
                 {
-                    pictureBox.Image = ImageDecoder.DecodeFromFile( openFileDialog.FileName );
+                    ImageInfo imageInfo = null;
+
+                    pictureBox.Image = ImageDecoder.DecodeFromFile( openFileDialog.FileName, out imageInfo );
+
+                    propertyGrid.SelectedObject = imageInfo;
+                    propertyGrid.ExpandAllGridItems( );
                 }
                 catch ( NotSupportedException ex )
                 {
