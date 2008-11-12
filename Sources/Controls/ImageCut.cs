@@ -234,6 +234,19 @@ namespace AForge.Controls
         }
 
         #region public properties
+        /// <summary>
+        /// The distance between image- and control border.
+        /// </summary>
+        /// <remarks>
+        /// <para>The value should be bigger than <value>0</value>.</para>
+        /// <para>Otherwise it is difficult to use the mouse cursor for moving a slider exactly
+        /// to the image border</para>
+        /// <para>NOTE: The distance value is the sum of a site pair, 
+        /// e.g. <code>mDistanceToImage = 10</code> means 5 pixel distance between 
+        /// left site of control- and image border, and 5 pixel distance between 
+        /// right site of control- and image border, equivalent for up and down.</para>
+        /// <para>Default value: <code>10</code> pixel</para>
+        /// </remarks>        
         private byte distanceToImage;
         /// <summary>
         /// The distance between image- and control border.
@@ -243,10 +256,10 @@ namespace AForge.Controls
         /// <para>Otherwise it is difficult to use the mouse cursor for moving a slider exactly
         /// to the image border</para>
         /// <para>NOTE: The distance value is the sum of a site pair, 
-        /// e.g. <code>mDistanceToImage = 50</code> means 25 pixel distance between 
-        /// left site of control- and image border, and 25 pixel distance between 
+        /// e.g. <code>mDistanceToImage = 10</code> means 5 pixel distance between 
+        /// left site of control- and image border, and 5 pixel distance between 
         /// right site of control- and image border, equivalent for up and down.</para>
-        /// <para>Default value: <code>50</code> pixel</para>
+        /// <para>Default value: <code>10</code> pixel</para>
         /// </remarks>        
         public byte DistanceToImage
         {
@@ -263,6 +276,9 @@ namespace AForge.Controls
             set { this.BackgroundImage = value; }
         }
 
+        /// <summary>
+        /// The original picture, unmodified.
+        /// </summary>
         private Bitmap originalPicture;
         /// <summary>
         /// The original picture, unmodified.
@@ -273,6 +289,10 @@ namespace AForge.Controls
             //set { mOriginalPicture = value; }
         }
 
+        /// <summary>
+        /// The factor, which is used to scale and adapt the <see cref="OriginalPicture"/>
+        /// to the <see>AdaptedPicture</see>.
+        /// </summary>
         private float scaleFactor;
         /// <summary>
         /// The factor, which is used to scale and adapt the <see cref="OriginalPicture"/>
@@ -283,6 +303,12 @@ namespace AForge.Controls
             get { return scaleFactor; }
         }
 
+        /// <summary>
+        /// The line strength of the sliders
+        /// </summary>
+        /// <remarks>
+        /// <para>Default value: <code>3</code> pixel</para>
+        /// </remarks>
         private byte lineStrength;
         /// <summary>
         /// The line strength of the sliders
@@ -296,6 +322,9 @@ namespace AForge.Controls
             set { lineStrength = value; }
         }
 
+        /// <summary>
+        /// The general color of the sliders.
+        /// </summary>
         private Color colorSliders;
         /// <summary>
         /// The general color of the sliders.
@@ -306,9 +335,12 @@ namespace AForge.Controls
             set { colorSliders = value; }
         }
 
+        /// <summary>
+        /// The color of the slider, when the mouse cursor is rollovered.
+        /// </summary>
         private Color colorRolloverSlider;
         /// <summary>
-        /// Th color of the slider, when the mouse cursor is rollovered.
+        /// The color of the slider, when the mouse cursor is rollovered.
         /// </summary>
         public Color ColorRolloverSlider
         {
@@ -316,17 +348,25 @@ namespace AForge.Controls
             set { colorRolloverSlider = value; }
         }
 
-        private byte transparence;
         /// <summary>
-        /// The transparence value of the graphic rectangles (also called Slider space), 
+        /// The transparency value of the graphic rectangles (also called Slider space), 
         /// which represents the cutted areas of the picture.
         /// </summary>
-        public byte Transparence
+        private byte transparency;
+        /// <summary>
+        /// The transparency value of the graphic rectangles (also called Slider space), 
+        /// which represents the cutted areas of the picture.
+        /// </summary>
+        public byte Transparency
         {
-            get { return transparence; }
-            set { transparence = value; }
+            get { return transparency; }
+            set { transparency = value; }
         }
 
+        /// <summary>
+        /// The color of the graphic rectangles (also called Slider space), 
+        /// which represents the cutted areas of the picture.
+        /// </summary>
         private Color colorSliderSpace;
         /// <summary>
         /// The color of the graphic rectangles (also called Slider space), 
@@ -581,8 +621,8 @@ namespace AForge.Controls
             lineStrength = 3;
             minSizeOfImage = 50;
             neighbourTolerance = 50;
-            transparence = 220;
-            colorSliders = Color.FromArgb(0);
+            transparency = 220;
+            colorSliders = Color.Green;//Color.FromArgb(0);
             colorRolloverSlider = Color.FromArgb(255, 20, 20);
             colorSliderSpace = Color.FromArgb(220, 220, 255);
             cursorMoveDisplayWindow = Cursors.Hand;
@@ -620,13 +660,25 @@ namespace AForge.Controls
         /// </PermissionSet>
         public override void Refresh()
         {
-            //resetting of the properties of the ImgaCut-components (sliders, slider-space,..)
+            //Saves the old positions
+            int leftPos = LeftPosition;
+            int rightPos = RightPosition;//ActualWidth + LeftPosition;
+            int upPos = UpPosition;
+            int downPos = DownPosition;
+
+            //Resetting of the properties of the ImgaCut-components (sliders, slider-space,..)
             actualWidth = originalPicture.Width;
             actualHeight = originalPicture.Height;
             leftPosition = 0;
             upPosition = 0;
             init();
-            fireSliderMovedEvent();
+            //fireSliderMovedEvent();
+
+            //Puts back the sliders in its old position
+            movingInDirectly(sliders[(byte)Sliders.Left], leftPos);
+            movingInDirectly(sliders[(byte)Sliders.Right], -(originalPicture.Width - rightPos));
+            movingInDirectly(sliders[(byte)Sliders.Up], upPos);
+            movingInDirectly(sliders[(byte)Sliders.Down], -(originalPicture.Height - downPos));
 
             base.Refresh();
             
@@ -865,21 +917,9 @@ namespace AForge.Controls
                     actualHeight += moveValue;
             }
 
-            if (DownPosition > OriginalHeight)
-            {
-                Console.Out.WriteLine("Hier:" + DownPosition);
-            }
             checkValues();
-            if (DownPosition > OriginalHeight)
-            {
-                Console.Out.WriteLine("Hier:" + DownPosition);
-            }
             if (isCheckNecessary)
                 checkRatio();
-            if (DownPosition > OriginalHeight)
-            {
-                Console.Out.WriteLine("Hier:" + DownPosition);
-            }
             fireSliderMovedEvent();
         }
 
@@ -1016,28 +1056,28 @@ namespace AForge.Controls
         private void setSlidersSpace()
         {
             slidersWaste[(byte)Sliders.Left] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparence, colorSliderSpace), lineStrength),
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
                                 new Rectangle(  left,
                                                 up,
                                                 sliders[(byte)Sliders.Left].Start.X - left - (lineStrength-1),
                                                 down - up)));
 
             slidersWaste[(byte)Sliders.Right] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparence, colorSliderSpace), lineStrength),
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
                                 new Rectangle(  sliders[(byte)Sliders.Right].Start.X + (lineStrength - 1),
                                                 up,
                                                 right - sliders[(byte)Sliders.Right].Start.X,
                                                 down - up)));
 
             slidersWaste[(byte)Sliders.Up] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparence, colorSliderSpace), lineStrength),
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
                                 new Rectangle(  sliders[(byte)Sliders.Left].Start.X,
                                                 up,
                                                 sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X + (lineStrength - 1),
                                                 sliders[(byte)Sliders.Up].Start.Y - up - (lineStrength - 1) )));
 
             slidersWaste[(byte)Sliders.Down] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparence, colorSliderSpace), lineStrength),
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
                                 new Rectangle(  sliders[(byte)Sliders.Left].Start.X,
                                                 sliders[(byte)Sliders.Down].Start.Y + (lineStrength - 1),
                                                 sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X + (lineStrength - 1),
