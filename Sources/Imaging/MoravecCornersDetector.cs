@@ -174,7 +174,7 @@ namespace AForge.Imaging
         /// Process image looking for corners.
         /// </summary>
         /// 
-        /// <param name="image">Source unmanaged image to process.</param>
+        /// <param name="image">Unmanaged source image to process.</param>
         /// 
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         ///
