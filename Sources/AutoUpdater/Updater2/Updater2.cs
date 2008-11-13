@@ -12,17 +12,15 @@ namespace AForge.AutoUpdater
     public static class Updater2
     {
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
+        /// The main entry of the program.
         /// </summary>
+        /// <param name="args">The passed arguments.</param>
         [STAThread]
         static void Main(string []args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             new UpdateForm(args[0], args[1], args[2]);
-            Console.WriteLine("0:" + args[0]);
-            Console.WriteLine("1:" + args[1]);
-            Console.WriteLine("2:" + args[2]);
         }
 
         private class UpdateForm : Form
@@ -63,7 +61,7 @@ namespace AForge.AutoUpdater
                 bar.Value = copyFiles.Count;
                 bar.Maximum = 2 * copyFiles.Count;
 
-                //Deletes all deprecated files
+                //deletes all deprecated files
                 for (int i = 0; i < deleteFiles.Count; i++)
                 {
                     File.Delete(deleteFiles[i]);
@@ -91,8 +89,6 @@ namespace AForge.AutoUpdater
                     System.Diagnostics.Process process =
                         System.Diagnostics.Process.Start(startInfo);
                 }
-                Console.WriteLine("ende: starte " + programExe);
-                System.Threading.Thread.Sleep(5000);
             }
 
             private static ProgressBar InitFormAndProgressBar()
@@ -128,13 +124,13 @@ namespace AForge.AutoUpdater
             }
 
             /// <summary>
-            /// Schreibt den übergebenen Text in eine definierte Zeile.
+            /// Writes the passed text in the passed line of the file.
             /// </summary>
-            /// <param name="filename">Pfad zur Datei</param>
-            /// <param name="line">Zeilennummer</param>
-            /// <param name="lines">Text für die übergebene Zeile</param>
-            /// <param name="replace">Text in dieser Zeile überschreiben (t) oder einfügen (f)</param>
-            private static void WriteLine(String filename, int line, string lines, bool replace)
+            /// <param name="filename">The filename.</param>
+            /// <param name="line">The line number.</param>
+            /// <param name="text">The text.</param>
+            /// <param name="replace">Replace text (t) or paste (f)</param>
+            private static void WriteLine(String filename, int line, string text, bool replace)
             {
                 string content = "";
                 string[] delimiter = { "\r\n" };
@@ -151,9 +147,9 @@ namespace AForge.AutoUpdater
                 if (cols.Length >= line)
                 {
                     if (!replace)
-                        cols[line - 1] = lines + "\r\n" + cols[line - 1];
+                        cols[line - 1] = text + "\r\n" + cols[line - 1];
                     else
-                        cols[line - 1] = lines;
+                        cols[line - 1] = text;
 
                     content = "";
                     for (int x = 0; x < cols.Length - 1; x++)
@@ -168,7 +164,7 @@ namespace AForge.AutoUpdater
                     for (int x = 0; x < line - cols.Length; x++)
                         content += "\r\n";
 
-                    content += lines;
+                    content += text;
                 }
 
 

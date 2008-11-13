@@ -154,6 +154,7 @@ namespace AForge.AutoUpdater
                 System.Windows.Forms.MessageBox.Show("Update failed.", "Error",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);
+                System.Windows.Forms.Application.OpenForms[0].Close();
                 return false;
             }
 
