@@ -1,0 +1,8 @@
+Version;1.0
+ReleaseDate;2008-10-26
+The rest of this file can be used for other things. It is not reserved by the AutoUpdater.
+The rest of this file can be used for other things. It is not reserved by the AutoUpdater.
+The rest of this file can be used for other things. It is not reserved by the AutoUpdater.
+The rest of this file can be used for other things. It is not reserved by the AutoUpdater.
+The rest of this file can be used for other things. It is not reserved by the AutoUpdater.
+...
