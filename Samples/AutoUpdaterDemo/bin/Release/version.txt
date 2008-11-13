@@ -1,0 +1,2 @@
+Version;1.24
+ReleaseDate;2008-10-26

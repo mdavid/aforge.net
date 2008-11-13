@@ -1,0 +1,1 @@
+I Will Be Deleted After Update. (just to demonstrate the delete-handling of the AutoUpdater)
