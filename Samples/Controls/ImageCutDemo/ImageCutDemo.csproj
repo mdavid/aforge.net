@@ -34,7 +34,7 @@
   <ItemGroup>
     <Reference Include="AForge.Controls, Version=1.6.0.0, Culture=neutral, PublicKeyToken=19d43f345531bafb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Controls\bin\Debug\AForge.Controls.dll</HintPath>
+      <HintPath>..\..\..\Release\AForge.Controls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -51,7 +51,6 @@
     <Compile Include="sources\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="sources\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="sources\MainForm.resx">
       <SubType>Designer</SubType>

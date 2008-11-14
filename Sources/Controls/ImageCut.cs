@@ -3,6 +3,7 @@
 //
 // Copyright © Frank Nagl, 2008
 // admin@franknagl.de
+// www.franknagl.de
 //
 namespace AForge.Controls
 {

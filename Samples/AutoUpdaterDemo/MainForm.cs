@@ -1,33 +1,53 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using AForge.AutoUpdater;
-using System.IO;
+// AForge AutoUpdater demo
+// AForge.NET framework
+//
+// Copyright © Frank Nagl, 2008
+// admin@franknagl.de
+// www.franknagl.de
+//
 
 namespace AutoUpdaterDemo
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Data;
+    using System.Drawing;
+    using System.Text;
+    using System.Windows.Forms;
+    using AForge.AutoUpdater;
+    using System.IO;
+
+    /// <summary>
+    /// Small program to demonstrate the function and the handling of the AutoUpdater.
+    /// </summary>
     public partial class MainForm : Form
     {
         Updater updater;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainForm"/> class.
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
-            testUpdate();
-        }
 
-        private void testUpdate()
-        {
             updater = new Updater("version.txt",
                 "http://franknagl.de/updates/AutoUpdaterDemo/newVersion.txt",
                 "AutoUpdaterDemo.exe");
+            //Second possibility to initialize the updater (here with same properties)
+            //updater = new Updater("version.txt",
+            //    "http://franknagl.de/updates/AutoUpdaterDemo/newVersion.txt",
+            //    "AutoUpdaterDemo.exe", 
+            //     1000 * 5,            //first check for update
+            //     1000 * (2 * 3600));  //periodic check for update
             updater.OnCheckUpdateEvent += new OnCheckUpdateEventHandler(updateAvailable);
         }
 
+        /// <summary>
+        /// Called by the <see cref="OnCheckUpdateEventHandler"/>.
+        /// Checks if there is an update available.
+        /// </summary>
         private void updateAvailable()
         {
             notifyIcon.ShowBalloonTip(0, "Update", "Update available", ToolTipIcon.Info);
@@ -117,6 +137,17 @@ namespace AutoUpdaterDemo
             StreamWriter writer = new StreamWriter(filename);
             writer.Write(content);
             writer.Close();
+        }
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
         }
     }
 }

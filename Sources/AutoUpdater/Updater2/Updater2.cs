@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.IO;
+﻿// AForge AutoUpdater
+// AForge.NET framework
+//
+// Copyright © Frank Nagl, 2008
+// admin@franknagl.de
+// www.franknagl.de
+//
 
 namespace AForge.AutoUpdater
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Forms;
+    using System.IO;
 
     /// <summary>
-    /// Finishs the update processes of the <code>Updater</code> class.
+    /// Finishs the update processes of the Updater.
     /// </summary>
     public static class Updater2
     {
@@ -106,6 +113,12 @@ namespace AForge.AutoUpdater
                 updateForm.BackColor = System.Drawing.Color.Lavender;
                 updateForm.StartPosition =
                     System.Windows.Forms.FormStartPosition.CenterScreen;
+
+                //init the icon
+                System.Resources.ResourceManager resource =
+                    new System.Resources.ResourceManager("AForge.AutoUpdater.Properties.Resources",
+                    System.Reflection.Assembly.GetExecutingAssembly());
+                updateForm.Icon = (System.Drawing.Icon)resource.GetObject("AutoUpdaterIcon");
 
                 //init the label
                 label.Text = "Updating...";

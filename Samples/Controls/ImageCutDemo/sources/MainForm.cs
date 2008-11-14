@@ -1,10 +1,18 @@
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using AForge.Controls;
+// AForge ImageCut demo
+// AForge.NET framework
+//
+// Copyright © Frank Nagl, 2008
+// admin@franknagl.de
+// www.franknagl.de
+//
 
 namespace ImageCutDemo
 {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+    using AForge.Controls;
+
     /// <summary>
     /// An example application for using the ImageCut control.
     /// </summary>
@@ -442,5 +450,16 @@ namespace ImageCutDemo
             }
         }
         #endregion Change properties
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        public static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
+        }
     }
 }

@@ -26,6 +26,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\AutoUpdaterDemo.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -36,7 +37,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Updater, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Sources\AutoUpdater\Updater\bin\Debug\Updater.dll</HintPath>
+      <HintPath>..\..\Sources\AutoUpdater\Updater\bin\Release\Updater.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +47,6 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
