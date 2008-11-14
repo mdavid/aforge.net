@@ -1,12 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Net;
-using System.Windows.Forms;
+// AForge AutoUpdater Library
+// AForge.NET framework
+//
+// Copyright © Frank Nagl, 2008
+// admin@franknagl.de
+// www.franknagl.de
+//
 
 namespace AForge.AutoUpdater
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.IO;
+    using System.Net;
+    using System.Windows.Forms;
+
     /// <summary>
     /// Declares the event handler for available updates 
     /// </summary>
@@ -14,8 +22,8 @@ namespace AForge.AutoUpdater
 
 
     /// <summary>
-    /// Checks a program for an update, simply 
-    /// by reading out an textfile with update informations.
+    /// Checks a program for an update, simply by reading out
+    /// a textfile with two informations (version number, release date).
     /// </summary>
     public class Updater
     {
@@ -31,8 +39,8 @@ namespace AForge.AutoUpdater
         private string programExe;
 
         /// <summary>
-        /// Checks a program for an update, simply 
-        /// by reading out an textfile with update informations.
+        /// Checks a program for an update, simply by reading out
+        /// a textfile with two informations (version number, release date).
         /// </summary>
         /// <remarks>
         /// <para>The first check is done after 5 seconds, 
@@ -59,15 +67,18 @@ namespace AForge.AutoUpdater
         }
 
         /// <summary>
-        /// Overloaded. Checks a program for an update, simply 
-        /// by reading out an textfile with update informations.
+        /// Overloaded. Checks a program for an update, simply by reading out
+        /// a textfile with two informations (version number, release date).
         /// </summary>
         /// <remarks>
-        /// <para>The textfile consists of:</para>
+        /// <para>The textfile <seealso cref="newPath"/> is located in general
+        /// on a server and consists of:</para>
         ///<para>In first line the version number, e.g.
         /// <code>Version;1.0</code></para> 
+        ///<para>In second line the release date, e.g.
+        /// <code>ReleaseDate;2008-11-13</code></para> 
         /// <para>In all other lines two markers:</para>
-        /// <para><code>Copy</code>, for files to update (e.g. Copy;newFile.exe)</para>
+        /// <para><see>Copy</see>, for files to update (e.g. Copy;newFile.exe)</para>
         /// <para><code>Delete</code>, for files to delete (e.g. Delete;oldFile.exe)</para>
         /// <para>All <code>copy</code>-files will be updates by copy and paste, 
         /// existing files will be override.</para>
@@ -265,6 +276,12 @@ namespace AForge.AutoUpdater
             updateForm.BackColor = System.Drawing.Color.Lavender;
             updateForm.StartPosition =
                 System.Windows.Forms.FormStartPosition.CenterScreen;
+
+            //init the icon
+            System.Resources.ResourceManager resource =
+                new System.Resources.ResourceManager("AForge.AutoUpdater.Properties.Resources",
+                System.Reflection.Assembly.GetExecutingAssembly());
+            updateForm.Icon = (System.Drawing.Icon)resource.GetObject("AutoUpdaterIcon");
 
             //init the label
             label.Text = "Updating...";

@@ -7,7 +7,7 @@
     <ProjectGuid>{1833319B-0B06-4933-A1D7-54BDCF861130}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Updater2</RootNamespace>
+    <RootNamespace>AForge.AutoUpdater</RootNamespace>
     <AssemblyName>update</AssemblyName>
     <StartupObject>
     </StartupObject>
@@ -49,6 +49,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

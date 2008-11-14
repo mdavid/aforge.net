@@ -72,6 +72,7 @@
             this.ClientSize = new System.Drawing.Size(316, 266);
             this.Controls.Add(this.checkUpdateButton);
             this.Controls.Add(this.updateButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AutoUpdaterDemo";
