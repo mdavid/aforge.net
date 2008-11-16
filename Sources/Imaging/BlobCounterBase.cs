@@ -193,6 +193,12 @@ namespace AForge.Imaging
         /// Minimum allowed width of blob.
         /// </summary>
         /// 
+        /// <remarks><para>The property specifies minimum object's width acceptable by blob counting
+        /// routine.</para>
+        /// 
+        /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
+        /// </remarks>
+        /// 
         public int MinWidth
         {
             get { return minWidth; }
@@ -202,6 +208,12 @@ namespace AForge.Imaging
         /// <summary>
         /// Minimum allowed height of blob.
         /// </summary>
+        /// 
+        /// <remarks><para>The property specifies minimum object's height acceptable by blob counting
+        /// routine.</para>
+        /// 
+        /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
+        /// </remarks>
         /// 
         public int MinHeight
         {
@@ -213,6 +225,12 @@ namespace AForge.Imaging
         /// Maximum allowed width of blob.
         /// </summary>
         /// 
+        /// <remarks><para>The property specifies maximum object's width acceptable by blob counting
+        /// routine.</para>
+        /// 
+        /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
+        /// </remarks>
+        /// 
         public int MaxWidth
         {
             get { return maxWidth; }
@@ -222,6 +240,12 @@ namespace AForge.Imaging
         /// <summary>
         /// Maximum allowed height of blob.
         /// </summary>
+        /// 
+        /// <remarks><para>The property specifies maximum object's height acceptable by blob counting
+        /// routine.</para>
+        /// 
+        /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
+        /// </remarks>
         /// 
         public int MaxHeight
         {
