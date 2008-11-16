@@ -191,9 +191,13 @@ namespace AForge.Controls
         /// </summary>
         /// 
         /// <remarks><para>The event is fired on each new frame received from video source. The
-        /// event is fired right after receiving and before displaying, what gives a chance to
-        /// user to perform some image processing on the new frame and/or update it.
-        /// </para></remarks>
+        /// event is fired right after receiving and before displaying, what gives user a chance to
+        /// perform some image processing on the new frame and/or update it.</para>
+        /// 
+        /// <para><note>Users should not keep references of the passed to the event handler image.
+        /// If user needs to keep the image, it should be cloned, since the original image will be disposed
+        /// by the control when it is required.</note></para>
+        /// </remarks>
         /// 
         public event NewFrameHandler NewFrame;
 
