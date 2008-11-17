@@ -161,7 +161,8 @@ namespace AForge.Imaging
         /// blobs filtering is done right after image processing routine. Blobs are filtered according
         /// to dimensions specified in <see cref="MinWidth"/>, <see cref="MinHeight"/>, <see cref="MaxWidth"/>
         /// and <see cref="MaxHeight"/> properties.</para>
-        /// <para>Default value is <b>false</b>.</para></remarks>
+        /// 
+        /// <para>Default value is set to <see langword="false"/>.</para></remarks>
         /// 
         public bool FilterBlobs
         {
@@ -180,7 +181,7 @@ namespace AForge.Imaging
         /// smaller than <see cref="MinHeight"/>. In both modes the idea with filtering by objects'
         /// maximum size is the same as filtering by objects' minimum size.</para>
         /// 
-        /// <para>Default value is set to <b>false</b>, what means uncoupled filtering by size.</para>
+        /// <para>Default value is set to <see langword="false"/>, what means uncoupled filtering by size.</para>
         /// </remarks>
         /// 
         public bool CoupledSizeFiltering
@@ -194,7 +195,8 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The property specifies minimum object's width acceptable by blob counting
-        /// routine.</para>
+        /// routine and has power only when <see cref="FilterBlobs"/> property is set to
+        /// <see langword="true"/>.</para>
         /// 
         /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
         /// </remarks>
@@ -210,7 +212,8 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The property specifies minimum object's height acceptable by blob counting
-        /// routine.</para>
+        /// routine and has power only when <see cref="FilterBlobs"/> property is set to
+        /// <see langword="true"/>.</para>
         /// 
         /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
         /// </remarks>
@@ -226,7 +229,8 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The property specifies maximum object's width acceptable by blob counting
-        /// routine.</para>
+        /// routine and has power only when <see cref="FilterBlobs"/> property is set to
+        /// <see langword="true"/>.</para>
         /// 
         /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
         /// </remarks>
@@ -242,7 +246,8 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The property specifies maximum object's height acceptable by blob counting
-        /// routine.</para>
+        /// routine and has power only when <see cref="FilterBlobs"/> property is set to
+        /// <see langword="true"/>.</para>
         /// 
         /// <para>See documentation to <see cref="CoupledSizeFiltering"/> for additional information.</para>
         /// </remarks>
