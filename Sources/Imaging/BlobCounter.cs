@@ -83,7 +83,7 @@ namespace AForge.Imaging
         /// 
         /// <remarks>The method supports only 8 bpp indexed grayscale image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the source image.</exception>
         /// 
         protected override void BuildObjectsMap( UnmanagedImage image )
         {
@@ -93,12 +93,12 @@ namespace AForge.Imaging
             // check pixel format
             if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
             }
 
             // we don't want one pixel width images
             if ( imageWidth == 1 )
-                throw new ArgumentException( "Too small image." );
+                throw new InvalidImageProperties( "Too small image." );
 
             // allocate labels array
             objectLabels = new int[imageWidth * imageHeight];

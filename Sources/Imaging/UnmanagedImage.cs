@@ -185,8 +185,8 @@ namespace AForge.Imaging
         /// </note></para>
         /// </remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format was specified.</exception>
-        /// <exception cref="ArgumentException">Invalid image size was specified.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format was specified.</exception>
+        /// <exception cref="InvalidImageProperties">Invalid image size was specified.</exception>
         /// 
         public static UnmanagedImage Create( int width, int height, PixelFormat pixelFormat )
         {
@@ -214,13 +214,13 @@ namespace AForge.Imaging
                     bytesPerPixel = 8;
                     break;
                 default:
-                    throw new ArgumentException( "Can not create image with specified pixel format." );
+                    throw new UnsupportedImageFormat( "Can not create image with specified pixel format." );
             }
 
             // check image size
             if ( ( width <= 0 ) || ( height <= 0 ) )
             {
-                throw new ArgumentException( "Invalid image size specified." );
+                throw new InvalidImageProperties( "Invalid image size specified." );
             }
 
             // calculate stride
@@ -295,7 +295,7 @@ namespace AForge.Imaging
         /// <remarks><para>The method creates an exact copy of specified managed image, but allocated
         /// in unmanaged memory.</para></remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of source image.</exception>
         /// 
         public static UnmanagedImage FromManagedImage( Bitmap image )
         {
@@ -327,7 +327,7 @@ namespace AForge.Imaging
         /// <remarks><para>The method creates an exact copy of specified managed image, but allocated
         /// in unmanaged memory.</para></remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of source image.</exception>
         /// 
         public static UnmanagedImage FromManagedImage( BitmapData imageData )
         {
@@ -342,7 +342,7 @@ namespace AForge.Imaging
                 ( pixelFormat != PixelFormat.Format48bppRgb ) &&
                 ( pixelFormat != PixelFormat.Format64bppArgb ) )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
             }
 
             // allocate memory for the image

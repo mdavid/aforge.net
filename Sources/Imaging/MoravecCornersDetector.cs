@@ -128,7 +128,7 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormat">The source image has incorrect pixel format.</exception>
         /// 
         public Point[] ProcessImage( Bitmap image )
         {
@@ -138,7 +138,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format24bppRgb )
                 )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
             }
 
             // lock source image
@@ -163,7 +163,7 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormat">The source image has incorrect pixel format.</exception>
         /// 
         public Point[] ProcessImage( BitmapData imageData )
         {
@@ -178,7 +178,7 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         ///
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormat">The source image has incorrect pixel format.</exception>
         /// 
         public Point[] ProcessImage( UnmanagedImage image )
         {
@@ -188,7 +188,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format24bppRgb )
                 )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
             }
 
             // get source image size

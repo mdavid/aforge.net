@@ -98,7 +98,7 @@ namespace AForge.Imaging.Filters
 
             // check structuring element size
             if ( ( s != se.GetLength( 1 ) ) || ( s < 3 ) || ( s > 25 ) || ( s % 2 == 0 ) )
-                throw new ArgumentException( );
+                throw new ArgumentException( "Invalid size of structuring element." );
 
             this.se = se;
             this.size = s;

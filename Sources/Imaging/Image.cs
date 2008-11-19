@@ -96,13 +96,13 @@ namespace AForge.Imaging
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format8bppIndexed</see>
         /// image with 256 gradients of gray color.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Provided image is not 8 bpp indexed image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Provided image is not 8 bpp indexed image.</exception>
         /// 
         public static void SetGrayscalePalette( Bitmap image )
         {
             // check pixel format
             if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
-                throw new ArgumentException( "Source image is not 8 bpp image" );
+                throw new UnsupportedImageFormat( "Source image is not 8 bpp image." );
 
             // get palette
             ColorPalette cp = image.Palette;

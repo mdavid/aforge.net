@@ -88,7 +88,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <returns>Returns image of the biggest blob.</returns>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the source image.</exception>
         ///
         public Bitmap Apply( Bitmap image )
         {
@@ -121,15 +121,15 @@ namespace AForge.Imaging.Filters
         /// 
         /// <returns>Returns image of the biggest blob.</returns>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
-        /// <exception cref="ArgumentException">Unsupported pixel format of the original image.</exception>
-        /// <exception cref="ArgumentException">Source and original images must have the same size.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the original image.</exception>
+        /// <exception cref="InvalidImageProperties">Source and original images must have the same size.</exception>
         ///
         public Bitmap Apply( BitmapData imageData )
         {
             // check pixel format of the source image
             if ( !FormatTransalations.ContainsKey( imageData.PixelFormat ) )
-                throw new ArgumentException( "Source pixel format is not supported by the filter." );
+                throw new UnsupportedImageFormat( "Source pixel format is not supported by the filter." );
 
             // locate blobs in the source image
             BlobCounter blobCounter = new BlobCounter( imageData );
@@ -163,13 +163,13 @@ namespace AForge.Imaging.Filters
                     ( originalImage.PixelFormat != PixelFormat.Format8bppIndexed )
                     )
                 {
-                    throw new ArgumentException( "Original image may be grayscale (8bpp indexed) or color (24bpp) image only." );
+                    throw new UnsupportedImageFormat( "Original image may be grayscale (8bpp indexed) or color (24bpp) image only." );
                 }
 
                 // check its size
                 if ( ( originalImage.Width != imageData.Width ) || ( originalImage.Height != imageData.Height ) )
                 {
-                    throw new ArgumentException( "Original image must have the same size as passed source image." );
+                    throw new InvalidImageProperties( "Original image must have the same size as passed source image." );
                 }
 
                 blobCounter.ExtractBlobsImage( originalImage, biggestBlob );
@@ -191,7 +191,7 @@ namespace AForge.Imaging.Filters
         /// 
         public UnmanagedImage Apply( UnmanagedImage image )
         {
-            throw new NotImplementedException( "The method is not implemented." );
+            throw new NotImplementedException( "The method is not implemented for the filter." );
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace AForge.Imaging.Filters
         /// 
         public void Apply( UnmanagedImage sourceImage, UnmanagedImage destinationImage )
         {
-            throw new NotImplementedException( "The method is not implemented." );
+            throw new NotImplementedException( "The method is not implemented filter." );
         }
     }
 }

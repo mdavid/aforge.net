@@ -141,12 +141,11 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Image to gather statistics about.</param>
         /// 
-        /// <exception cref="ArgumentException">Source pixel format is not supported.</exception>
+        /// <exception cref="UnsupportedImageFormat">Source pixel format is not supported.</exception>
         /// 
         public ImageStatisticsYCbCr( Bitmap image )
         {
-            if ( image.PixelFormat != PixelFormat.Format24bppRgb )
-                throw new ArgumentException( );
+            CheckSourceFormat( image.PixelFormat );
 
             // lock bitmap data
             BitmapData imageData = image.LockBits(
@@ -166,7 +165,7 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Image data to gather statistics about.</param>
         /// 
-        /// <exception cref="ArgumentException">Source pixel format is not supported.</exception>
+        /// <exception cref="UnsupportedImageFormat">Source pixel format is not supported.</exception>
         /// 
         public ImageStatisticsYCbCr( BitmapData imageData )
         {
@@ -179,7 +178,7 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Unmanaged image to gather statistics about.</param>
         /// 
-        /// <exception cref="ArgumentException">Source pixel format is not supported.</exception>
+        /// <exception cref="UnsupportedImageFormat">Source pixel format is not supported.</exception>
         /// 
         public ImageStatisticsYCbCr( UnmanagedImage image )
         {
@@ -270,7 +269,7 @@ namespace AForge.Imaging
                 ( pixelFormat != PixelFormat.Format24bppRgb ) &&
                 ( pixelFormat != PixelFormat.Format32bppArgb ) )
             {
-                throw new ArgumentException( "Source pixel format is not supported." );
+                throw new UnsupportedImageFormat( "Source pixel format is not supported." );
             }
         }
     }
