@@ -108,7 +108,7 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source image.</param>
         ///
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the source image.</exception>
         /// 
         public VerticalIntensityStatistics( Bitmap image )
         {
@@ -122,7 +122,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format64bppArgb )
                 )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
             }
 
             // lock bitmap data
@@ -143,7 +143,7 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Source image data.</param>
         ///
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the source image.</exception>
         /// 
         public VerticalIntensityStatistics( BitmapData imageData )
             : this( new UnmanagedImage( imageData ) )
@@ -156,7 +156,7 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source unmanaged image.</param>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">Unsupported pixel format of the source image.</exception>
         /// 
         public VerticalIntensityStatistics( UnmanagedImage image )
         {
@@ -170,7 +170,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format64bppArgb )
                 )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
             }
 
             // gather statistics

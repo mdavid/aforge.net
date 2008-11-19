@@ -105,8 +105,8 @@ namespace AForge.Imaging
         /// <returns>Returns array of found template matches. The array is sorted by similarity
         /// of found matches in descending order.</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
-        /// <exception cref="ArgumentException">Template image is bigger than source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImageProperties">Template image is bigger than source image.</exception>
         /// 
         public TemplateMatch[] ProcessImage( Bitmap image, Bitmap template )
         {
@@ -116,13 +116,13 @@ namespace AForge.Imaging
                   ( image.PixelFormat != PixelFormat.Format24bppRgb ) ) ||
                 ( image.PixelFormat != template.PixelFormat ) )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source or template image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source or template image." );
             }
 
             // check template's size
             if ( ( template.Width > image.Width ) || ( template.Height > image.Height ) )
             {
-                throw new ArgumentException( "Template's size should be smaller or equal to source image's size." );
+                throw new InvalidImageProperties( "Template's size should be smaller or equal to source image's size." );
             }
 
             // lock source and template images
@@ -155,8 +155,8 @@ namespace AForge.Imaging
         /// <returns>Returns array of found template matches. The array is sorted by similarity
         /// of found matches in descending order.</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
-        /// <exception cref="ArgumentException">Template image is bigger than source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImageProperties">Template image is bigger than source image.</exception>
         /// 
         public TemplateMatch[] ProcessImage( BitmapData imageData, BitmapData templateData )
         {
@@ -173,8 +173,8 @@ namespace AForge.Imaging
         /// <returns>Returns array of found template matches. The array is sorted by similarity
         /// of found matches in descending order.</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
-        /// <exception cref="ArgumentException">Template image is bigger than source image.</exception>
+        /// <exception cref="UnsupportedImageFormat">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImageProperties">Template image is bigger than source image.</exception>
         /// 
         public TemplateMatch[] ProcessImage( UnmanagedImage image, UnmanagedImage template )
         {
@@ -184,7 +184,7 @@ namespace AForge.Imaging
                   ( image.PixelFormat != PixelFormat.Format24bppRgb ) ) ||
                 ( image.PixelFormat != template.PixelFormat ) )
             {
-                throw new ArgumentException( "Unsupported pixel format of the source or template image." );
+                throw new UnsupportedImageFormat( "Unsupported pixel format of the source or template image." );
             }
 
             // get source and template image size
@@ -196,7 +196,7 @@ namespace AForge.Imaging
             // check template's size
             if ( ( templateWidth > sourceWidth ) || ( templateHeight > sourceHeight ) )
             {
-                throw new ArgumentException( "Template's size should be smaller or equal to source image's size." );
+                throw new InvalidImageProperties( "Template's size should be smaller or equal to source image's size." );
             }
 
             int pixelSize = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;

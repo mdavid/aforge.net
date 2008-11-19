@@ -38,6 +38,9 @@ namespace AForge.Imaging.Filters
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/blobs_filtering.jpg" width="320" height="240" />
     /// </remarks>
+    /// 
+    /// <seealso cref="BlobCounter"/>
+    /// <seealso cref="BlobCounterBase"/>
     ///
     public class BlobsFiltering : BaseInPlaceFilter
     {
@@ -163,9 +166,6 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         /// <param name="image">Source image data.</param>
-        ///
-        /// <exception cref="ArgumentException">Source and overlay images have different pixel formats and/or size.</exception>
-        /// <exception cref="NullReferenceException">Overlay image is not set.</exception>
         ///
         protected override unsafe void ProcessFilter( UnmanagedImage image )
         {
