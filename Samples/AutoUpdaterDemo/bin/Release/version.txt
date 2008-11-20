@@ -1,2 +1,0 @@
-Version;1.0
-ReleaseDate;2008-11-13
