@@ -75,10 +75,13 @@ namespace AForge.Controls
         /// </summary>
         /// 
         /// <remarks><para>The property specifies if the control should be autosized or not.
-        /// If the property is set to <b>true</b>, then the control will change its size according to
+        /// If the property is set to <see langword="true"/>, then the control will change its size according to
         /// video size and control will change its position automatically to be in the center
-        /// of parent's control.
-        /// </para></remarks>
+        /// of parent's control.</para>
+        /// 
+        /// <para><note>Setting the property to <see langword="true"/> has no effect if
+        /// <see cref="Control.Dock"/> property is set to <see cref="DockStyle.Fill"/>.</note></para>
+        /// </remarks>
         /// 
         [DefaultValue( false )]
         public bool AutoSizeControl
@@ -353,7 +356,7 @@ namespace AForge.Controls
         {
             lock ( this )
             {
-                if ( ( autosize ) && ( this.Parent != null ) )
+                if ( ( autosize ) && ( this.Dock != DockStyle.Fill ) && ( this.Parent != null ) )
                 {
                     Rectangle rc = this.Parent.ClientRectangle;
                     int width = 320;
