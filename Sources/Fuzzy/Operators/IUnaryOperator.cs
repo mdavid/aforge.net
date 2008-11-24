@@ -20,16 +20,16 @@ namespace AForge.Fuzzy
     /// 
     public interface IUnaryOperator : IOperator
     {
-
         /// <summary>
-        /// Calculates the numerical result of the application of an unary operator to a fuzzy membership value.
+        /// Calculates the numerical result of the application of an unary operator
+        /// to a fuzzy membership value.
         /// </summary>
         /// 
-        /// <param name="membership">A fuzzy membership value [0..1].</param>
+        /// <param name="membership">A fuzzy membership value, [0..1].</param>
         /// 
-        /// <returns>The numerical result of the application of an unary operator to a fuzzy membership value.</returns>
+        /// <returns>The numerical result of the application of an unary operator
+        /// to a fuzzy membership value.</returns>
         /// 
         double Evaluate( double membership );
-
     }
 }

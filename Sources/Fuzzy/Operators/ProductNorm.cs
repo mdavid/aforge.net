@@ -16,7 +16,7 @@ namespace AForge.Fuzzy
     /// Product Norm, used to calculate the linguistic value of a AND operation. 
     /// </summary>
     /// 
-    /// <remarks><para>The product norm uses a multiplication operator to compute the AND among two fuzzy memberships. </para>
+    /// <remarks><para>The product norm uses a multiplication operator to compute the AND among two fuzzy memberships.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -31,7 +31,7 @@ namespace AForge.Fuzzy
     /// double m2 = fsNear.GetMembership( 35 );
     /// 
     /// // computing the membership of "Cool AND Near"
-    /// Product AND = new Product( );
+    /// ProductNorm AND = new ProductNorm( );
     /// double result = AND.Evaluate( m1, m2 );
     ///              
     /// // show result
@@ -41,15 +41,16 @@ namespace AForge.Fuzzy
     /// </remarks>
     public class ProductNorm : INorm
     {
-
         /// <summary>
-        /// Calculates the numerical result of the binary operation applied to membershipA and membershipB.
+        /// Calculates the numerical result of the binary operation applied to
+        /// two fuzzy membership values.
         /// </summary>
         /// 
-        /// <param name="membershipA">A fuzzy membership value [0..1].</param>
-        /// <param name="membershipB">A fuzzy membership value [0..1].</param>
+        /// <param name="membershipA">A fuzzy membership value, [0..1].</param>
+        /// <param name="membershipB">A fuzzy membership value, [0..1].</param>
         /// 
-        /// <returns>The numerical result of the binary operation applied to membershipA and membershipB.</returns>
+        /// <returns>The numerical result of the binary operation applied to <paramref name="membershipA"/>
+        /// and <paramref name="membershipB"/>.</returns>
         /// 
         public double Evaluate( double membershipA, double membershipB )
         {
