@@ -39,6 +39,9 @@ namespace AForge.Fuzzy
     /// 
     /// </code>
     /// </remarks>
+    /// 
+    /// <seealso cref="MinimumNorm"/>
+    /// 
     public class ProductNorm : INorm
     {
         /// <summary>
