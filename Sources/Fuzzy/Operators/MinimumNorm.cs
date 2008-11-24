@@ -31,25 +31,26 @@ namespace AForge.Fuzzy
     /// double m2 = fsNear.GetMembership( 35 );
     /// 
     /// // computing the membership of "Cool AND Near"
-    /// Minimum AND = new Minimum( );
+    /// MinimumNorm AND = new MinimumNorm( );
     /// double result = AND.Evaluate( m1, m2 );
     ///              
     /// // show result
     /// Console.WriteLine( result );
-    /// 
     /// </code>
     /// </remarks>
+    /// 
     public class MinimumNorm : INorm
     {
-
         /// <summary>
-        /// Calculates the numerical result of the binary operation applied to membershipA and membershipB.
+        /// Calculates the numerical result of the binary operation applied to
+        /// two fuzzy membership values.
         /// </summary>
         /// 
-        /// <param name="membershipA">A fuzzy membership value [0..1].</param>
-        /// <param name="membershipB">A fuzzy membership value [0..1].</param>
+        /// <param name="membershipA">A fuzzy membership value, [0..1].</param>
+        /// <param name="membershipB">A fuzzy membership value, [0..1].</param>
         /// 
-        /// <returns>The numerical result of the binary operation applied to membershipA and membershipB.</returns>
+        /// <returns>The numerical result of the binary operation applied to <paramref name="membershipA"/>
+        /// and <paramref name="membershipB"/>.</returns>
         /// 
         public double Evaluate( double membershipA, double membershipB )
         {

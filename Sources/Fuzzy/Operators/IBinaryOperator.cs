@@ -20,17 +20,17 @@ namespace AForge.Fuzzy
     /// 
     public interface IBinaryOperator : IOperator
     {
-
         /// <summary>
-        /// Calculates the numerical result of the binary operation applied to membershipA and membershipB.
+        /// Calculates the numerical result of the binary operation applied to
+        /// two fuzzy membership values.
         /// </summary>
         /// 
-        /// <param name="membershipA">A fuzzy membership value [0..1].</param>
-        /// <param name="membershipB">A fuzzy membership value [0..1].</param>
+        /// <param name="membershipA">A fuzzy membership value, [0..1].</param>
+        /// <param name="membershipB">A fuzzy membership value, [0..1].</param>
         /// 
-        /// <returns>The numerical result of the binary operation applied to membershipA and membershipB.</returns>
+        /// <returns>The numerical result of the binary operation applied to <paramref name="membershipA"/>
+        /// and <paramref name="membershipB"/>.</returns>
         /// 
         double Evaluate( double membershipA, double membershipB );
-
     }
 }
