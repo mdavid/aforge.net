@@ -9,6 +9,7 @@ namespace AForge.Genetic
 {
 	using System;
 	using System.Collections;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// Rank selection method.
@@ -46,10 +47,10 @@ namespace AForge.Genetic
         /// <remarks>Filters specified population keeping only those chromosomes, which
         /// won "roulette" game.</remarks>
 		/// 
-		public void ApplySelection( ArrayList chromosomes, int size )
+        public void ApplySelection( List<IChromosome> chromosomes, int size )
 		{
 			// new population, initially empty
-			ArrayList newPopulation = new ArrayList( );
+            List<IChromosome> newPopulation = new List<IChromosome>( );
 			// size of current population
 			int currentSize = chromosomes.Count;
 
@@ -90,11 +91,9 @@ namespace AForge.Genetic
 			chromosomes.Clear( );
 
 			// move elements from new to current population
-			// !!! moving is done to reduce objects cloning
 			for ( int i = 0; i < size; i++ )
 			{
-				chromosomes.Add( newPopulation[0] );
-				newPopulation.RemoveAt( 0 );
+				chromosomes.Add( newPopulation[i] );
 			}
 		}
 	}
