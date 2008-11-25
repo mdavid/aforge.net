@@ -92,10 +92,7 @@ namespace AForge.Genetic
 			chromosomes.Clear( );
 
 			// move elements from new to current population
-			for ( int i = 0; i < size; i++ )
-			{
-				chromosomes.Add( newPopulation[0] );
-			}
+            chromosomes.AddRange( newPopulation );
 		}
 	}
 }
