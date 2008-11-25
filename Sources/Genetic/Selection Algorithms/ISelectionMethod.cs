@@ -9,6 +9,7 @@ namespace AForge.Genetic
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Genetic selection method interface.
@@ -32,6 +33,6 @@ namespace AForge.Genetic
         /// <remarks>Filters specified population according to the implemented
         /// selection algorithm.</remarks>
         /// 
-        void ApplySelection( ArrayList chromosomes, int size );
+        void ApplySelection( List<IChromosome> chromosomes, int size );
     }
 }

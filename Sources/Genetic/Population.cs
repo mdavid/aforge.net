@@ -9,6 +9,7 @@ namespace AForge.Genetic
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Population of chromosomes.
@@ -27,16 +28,17 @@ namespace AForge.Genetic
     {
         private IFitnessFunction fitnessFunction;
         private ISelectionMethod selectionMethod;
-        private ArrayList	population = new ArrayList( );
+        private List<IChromosome> population = new List<IChromosome>( );
         private int			size;
         private double		randomSelectionPortion = 0.0;
+        private bool        autoShuffling = false;
 
         // population parameters
         private double		crossoverRate	= 0.75;
         private double		mutationRate	= 0.10;
 
         // random number generator
-        private static Random rand = new Random( (int) DateTime.Now.Ticks );
+        private static Random rand = new Random( );
 
         //
         private double		fitnessMax = 0;
@@ -51,7 +53,7 @@ namespace AForge.Genetic
         /// <remarks><para>The value determines the amount of chromosomes which participate
         /// in crossover.</para>
         /// 
-        /// <para>Default value is <b>0.75</b>.</para>
+        /// <para>Default value is set to <b>0.75</b>.</para>
         /// </remarks>
         /// 
         public double CrossoverRate
@@ -70,7 +72,7 @@ namespace AForge.Genetic
         /// <remarks><para>The value determines the amount of chromosomes which participate
         /// in mutation.</para>
         /// 
-        /// <para>Defaul value is 0.1</para>.</remarks>
+        /// <para>Defaul value is set to <b>0.1</b>.</para></remarks>
         /// 
         public double MutationRate
         {
@@ -91,7 +93,7 @@ namespace AForge.Genetic
         /// <see cref="SelectionMethod">selection operator</see>, and amount of random
         /// chromosomes added to the new population.</para>
         /// 
-        /// <para>Default value is <b>0</b>.</para></remarks>
+        /// <para>Default value is set to <b>0</b>.</para></remarks>
         /// 
         public double RandomSelectionPortion
         {
@@ -100,6 +102,22 @@ namespace AForge.Genetic
             {
                 randomSelectionPortion = Math.Max( 0, Math.Min( 0.9, value ) );
             }
+        }
+
+        /// <summary>
+        /// Determines of auto shuffling is on or off.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property specifies if automatic shuffling needs to be done
+        /// on each <see cref="RunEpoch">epoch</see> by calling <see cref="Shuffle"/>
+        /// method.</para>
+        /// 
+        /// <para>Default value is set to <see langword="false"/>.</para></remarks>
+        /// 
+        public bool AutoShuffling
+        {
+            get { return autoShuffling; }
+            set { autoShuffling = value; }
         }
 
         /// <summary>
@@ -178,7 +196,8 @@ namespace AForge.Genetic
         /// Best chromosome of the population.
         /// </summary>
         /// 
-        /// <remarks><para>The property keeps the best chromosome existing in the population.</para>
+        /// <remarks><para>The property keeps the best chromosome existing in the population
+        /// or see langword="null"/> if all chromosomes have 0 fitness.</para>
         /// 
         /// <para><note>The property is recalculate only after selection operator was applied
         /// by calling <see cref="Selection"/> method.</note></para>
@@ -363,7 +382,7 @@ namespace AForge.Genetic
             // add random chromosomes
             if ( randomAmount > 0 )
             {
-                IChromosome ancestor = (IChromosome) population[0];
+                IChromosome ancestor = population[0];
 
                 for ( int i = 0; i < randomAmount; i++ )
                 {
@@ -410,6 +429,37 @@ namespace AForge.Genetic
             Crossover( );
             Mutate( );
             Selection( );
+
+            if ( autoShuffling )
+                Shuffle( );
+        }
+
+        /// <summary>
+        /// Shuffle randomly current population.
+        /// </summary>
+        /// 
+        /// <remarks><para>Population shuffling may be useful in cases when selection
+        /// operator results in not random order of chromosomes (for example, after elite
+        /// selection population may ordered in ascending/descending order).</para></remarks>
+        /// 
+        public void Shuffle( )
+        {
+            // current population size
+            int size = population.Count;
+            // create temporary copy of the population
+            List<IChromosome> tempPopulation = population.GetRange( 0, size );
+            // clear current population and refill it randomly
+            population.Clear( );
+
+            while ( size > 0 )
+            {
+                int i = rand.Next( size );
+
+                population.Add( tempPopulation[i] );
+                tempPopulation.RemoveAt( i );
+
+                size--;
+            }
         }
     }
 }
