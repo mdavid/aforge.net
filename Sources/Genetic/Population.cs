@@ -153,7 +153,11 @@ namespace AForge.Genetic
         /// </summary>
         /// 
         /// <remarks><para>The property keeps maximum fitness of chromosomes currently existing
-        /// in the population.</para></remarks>
+        /// in the population.</para>
+        /// 
+        /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
+        /// or <see cref="Migrate">migration</see> was done.
+        /// </remarks>
         /// 
         public double FitnessMax
         {
@@ -167,8 +171,8 @@ namespace AForge.Genetic
         /// <remarks><para>The property keeps summary fitness of all chromosome existing in the
         /// population.</para>
         /// 
-        /// <para><note>The property is recalculate only after selection operator was applied
-        /// by calling <see cref="Selection"/> method.</note></para>
+        /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
+        /// or <see cref="Migrate">migration</see> was done.
         /// </remarks>
         ///
         public double FitnessSum
@@ -183,8 +187,8 @@ namespace AForge.Genetic
         /// <remarks><para>The property keeps average fitness of all chromosome existing in the
         /// population.</para>
         /// 
-        /// <para><note>The property is recalculate only after selection operator was applied
-        /// by calling <see cref="Selection"/> method.</note></para>
+        /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
+        /// or <see cref="Migrate">migration</see> was done.
         /// </remarks>
         ///
         public double FitnessAvg
@@ -199,8 +203,8 @@ namespace AForge.Genetic
         /// <remarks><para>The property keeps the best chromosome existing in the population
         /// or see langword="null"/> if all chromosomes have 0 fitness.</para>
         /// 
-        /// <para><note>The property is recalculate only after selection operator was applied
-        /// by calling <see cref="Selection"/> method.</note></para>
+        /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
+        /// or <see cref="Migrate">migration</see> was done.
         /// </remarks>
         /// 
         public IChromosome BestChromosome
@@ -232,7 +236,7 @@ namespace AForge.Genetic
         /// 
         public IChromosome this[int index]
         {
-            get { return (IChromosome) population[index]; }
+            get { return population[index]; }
         }
 
 
@@ -283,7 +287,7 @@ namespace AForge.Genetic
         /// 
         public void Regenerate( )
         {
-            IChromosome ancestor = (IChromosome) population[0];
+            IChromosome ancestor = population[0];
 
             // clear population
             population.Clear( );
@@ -317,8 +321,8 @@ namespace AForge.Genetic
                 if ( rand.NextDouble( ) <= crossoverRate )
                 {
                     // clone both ancestors
-                    IChromosome c1 = ( (IChromosome) population[i - 1] ).Clone( );
-                    IChromosome c2 = ( (IChromosome) population[i] ).Clone( );
+                    IChromosome c1 = population[i - 1].Clone( );
+                    IChromosome c2 = population[i].Clone( );
 
                     // do crossover
                     c1.Crossover( c2 );
@@ -351,7 +355,7 @@ namespace AForge.Genetic
                 if ( rand.NextDouble( ) <= mutationRate )
                 {
                     // clone the chromosome
-                    IChromosome c = ( (IChromosome) population[i] ).Clone( );
+                    IChromosome c = population[i].Clone( );
                     // mutate it
                     c.Mutate( );
                     // calculate fitness of the mutant
@@ -395,25 +399,7 @@ namespace AForge.Genetic
                 }
             }
 
-            // find best chromosome
-            fitnessMax = 0;
-            fitnessSum = 0;
-
-            foreach ( IChromosome c in population )
-            {
-                double fitness = c.Fitness;
-
-                // accumulate summary value
-                fitnessSum += fitness;
-
-                // check for max
-                if ( fitness > fitnessMax )
-                {
-                    fitnessMax = fitness;
-                    bestChromosome = c;
-                }
-            }
-            fitnessAvg = fitnessSum / size;
+            FindBestChromosome( );
         }
 
         /// <summary>
@@ -460,6 +446,106 @@ namespace AForge.Genetic
 
                 size--;
             }
+        }
+
+        /// <summary>
+        /// Add chromosome to the population.
+        /// </summary>
+        /// 
+        /// <param name="chromosome">Chromosome to add to the population.</param>
+        /// 
+        /// <remarks><para>The method adds specified chromosome to the current population.
+        /// Manual adding of chromosome maybe useful, when it is required to add some initialized
+        /// chromosomes instead of random.</para>
+        /// 
+        /// <para><note>Adding chromosome manually should be done very carefully, since it
+        /// may break the population. The manually added chromosome must have the same type
+        /// and initialization parameters as the ancestor passed to constructor.</note></para>
+        /// </remarks>
+        /// 
+        public void AddChromosome( IChromosome chromosome )
+        {
+            chromosome.Evaluate( fitnessFunction );
+            population.Add( chromosome );
+        }
+
+        /// <summary>
+        /// Perform migration between two populations.
+        /// </summary>
+        /// 
+        /// <param name="anotherPopulation">Population to do migration with.</param>
+        /// <param name="numberOfMigrants">Number of chromosomes from each population to migrate.</param>
+        /// <param name="migrantsSelector">Selection algorithm used to select chromosomes to migrate.</param>
+        /// 
+        /// <remarks><para>The method performs migration between two populations - current and the
+        /// <paramref name="anotherPopulation">specified one</paramref>. During migration
+        /// <paramref name="numberOfMigrants">specified number</paramref> of chromosomes is choosen from
+        /// each population using <paramref name="migrantsSelector">specified selection algorithms</paramref>
+        /// and put into another population replacing worst members there.</para></remarks>
+        /// 
+        public void Migrate( Population anotherPopulation, int numberOfMigrants, ISelectionMethod migrantsSelector )
+        {
+            int currentSize = this.size;
+            int anotherSize = anotherPopulation.Size;
+
+            // create copy of current population
+            List<IChromosome> currentCopy = new List<IChromosome>( );
+
+            for ( int i = 0; i < currentSize; i++ )
+            {
+                currentCopy.Add( population[i].Clone( ) );
+            }
+
+            // create copy of another population
+            List<IChromosome> anotherCopy = new List<IChromosome>( );
+
+            for ( int i = 0; i < anotherSize; i++ )
+            {
+                anotherCopy.Add( anotherPopulation.population[i].Clone( ) );
+            }
+
+            // apply selection to both populations' copies - select members to migrate
+            migrantsSelector.ApplySelection( currentCopy, numberOfMigrants );
+            migrantsSelector.ApplySelection( anotherCopy, numberOfMigrants );
+
+            // sort original populations, so the best chromosomes are in the beginning
+            population.Sort( );
+            anotherPopulation.population.Sort( );
+
+            // remove worst chromosomes from both populations to free space for new members
+            population.RemoveRange( currentSize - numberOfMigrants, numberOfMigrants );
+            anotherPopulation.population.RemoveRange( anotherSize - numberOfMigrants, numberOfMigrants );
+
+            // put migrants to corresponding populations
+            population.AddRange( anotherCopy );
+            anotherPopulation.population.AddRange( currentCopy );
+
+            // find best chromosomes in each population
+            FindBestChromosome( );
+            anotherPopulation.FindBestChromosome( );
+        }
+
+        // Find best chromosome in the population so far
+        private void FindBestChromosome( )
+        {
+            fitnessMax = 0;
+            fitnessSum = 0;
+
+            foreach ( IChromosome c in population )
+            {
+                double fitness = c.Fitness;
+
+                // accumulate summary value
+                fitnessSum += fitness;
+
+                // check for max
+                if ( fitness > fitnessMax )
+                {
+                    fitnessMax = fitness;
+                    bestChromosome = c;
+                }
+            }
+            fitnessAvg = fitnessSum / size;
         }
     }
 }
