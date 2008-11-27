@@ -5,7 +5,6 @@
 // andrew.kirillov@gmail.com
 //
 
-
 namespace AForge.Genetic
 {
     using System;
@@ -32,13 +31,22 @@ namespace AForge.Genetic
         protected IRandomNumberGenerator chromosomeGenerator;
 
         /// <summary>
-        /// Mutation generator.
+        /// Mutation multiplier generator.
         /// </summary>
         /// 
-        /// <remarks><para>This random number generator is used to generate random values,
-        /// which are added to chromosome's genes during mutation.</para></remarks>
+        /// <remarks><para>This random number generator is used to generate random multiplier values,
+        /// which are used to multiply chromosome's genes during mutation.</para></remarks>
         /// 
-        protected IRandomNumberGenerator mutationGenerator;
+        protected IRandomNumberGenerator mutationMultiplierGenerator;
+
+        /// <summary>
+        /// Mutation addition generator.
+        /// </summary>
+        /// 
+        /// <remarks><para>This random number generator is used to generate random addition values,
+        /// which are used to add to chromosome's genes during mutation.</para></remarks>
+        /// 
+        protected IRandomNumberGenerator mutationAdditionGenerator;
 
         /// <summary>
         /// Random number generator for crossover and mutation points selection.
@@ -114,18 +122,28 @@ namespace AForge.Genetic
         /// <param name="chromosomeGenerator">Chromosome generator - random number generator, which is 
         /// used to initialize chromosome's genes, which is done by calling <see cref="Generate"/> method
         /// or in class constructor.</param>
-        /// <param name="mutationGenerator">Mutation generator - random number generator, which is
-        /// used to generate random values, which are added to chromosome's genes during mutation.</param>
+        /// <param name="mutationMultiplierGenerator">Mutation multiplier generator - random number
+        /// generator, which is used to generate random multiplier values, which are used to
+        /// multiply chromosome's genes during mutation.</param>
+        /// <param name="mutationAdditionGenerator">Mutation addition generator - random number
+        /// generator, which is used to generate random addition values, which are used to
+        /// add to chromosome's genes during mutation.</param>
         /// <param name="length">Chromosome's length in array elements, [2, <see cref="MaxLength"/>].</param>
+        /// 
+        /// <remarks><para>The constructor initializes the new chromosome randomly by calling
+        /// <see cref="Generate"/> method.</para></remarks>
         /// 
         public DoubleArrayChromosome(
             IRandomNumberGenerator chromosomeGenerator,
-            IRandomNumberGenerator mutationGenerator,
+            IRandomNumberGenerator mutationMultiplierGenerator,
+            IRandomNumberGenerator mutationAdditionGenerator,
             int length )
         {
+
             // save parameters
             this.chromosomeGenerator = chromosomeGenerator;
-            this.mutationGenerator   = mutationGenerator;
+            this.mutationMultiplierGenerator = mutationMultiplierGenerator;
+            this.mutationAdditionGenerator = mutationAdditionGenerator;
             this.length = Math.Max( 2, Math.Min( MaxLength, length ) ); ;
 
             // allocate array
@@ -133,6 +151,45 @@ namespace AForge.Genetic
 
             // generate random chromosome
             Generate( );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DoubleArrayChromosome"/> class.
+        /// </summary>
+        /// 
+        /// <param name="chromosomeGenerator">Chromosome generator - random number generator, which is 
+        /// used to initialize chromosome's genes, which is done by calling <see cref="Generate"/> method
+        /// or in class constructor.</param>
+        /// <param name="mutationMultiplierGenerator">Mutation multiplier generator - random number
+        /// generator, which is used to generate random multiplier values, which are used to
+        /// multiply chromosome's genes during mutation.</param>
+        /// <param name="mutationAdditionGenerator">Mutation addition generator - random number
+        /// generator, which is used to generate random addition values, which are used to
+        /// add to chromosome's genes during mutation.</param>
+        /// <param name="values">Values used to initialize the chromosome.</param>
+        /// 
+        /// <remarks><para>The constructor initializes the new chromosome with specified <paramref name="values">values</paramref>.
+        /// </para></remarks>
+        /// 
+        /// <exception cref="ArgumentOutOfRangeException">Invalid length of values array.</exception>
+        /// 
+        public DoubleArrayChromosome(
+            IRandomNumberGenerator chromosomeGenerator,
+            IRandomNumberGenerator mutationMultiplierGenerator,
+            IRandomNumberGenerator mutationAdditionGenerator,
+            double[] values )
+        {
+            if ( ( values.Length < 2 ) || ( values.Length > MaxLength ) )
+                throw new ArgumentOutOfRangeException( "Invalid length of values array." );
+
+          // save parameters
+            this.chromosomeGenerator = chromosomeGenerator;
+            this.mutationMultiplierGenerator = mutationMultiplierGenerator;
+            this.mutationAdditionGenerator = mutationAdditionGenerator;
+            this.length = values.Length;
+
+            // copy specified values
+            val = (double[]) values.Clone( );
         }
 
         /// <summary>
@@ -147,7 +204,8 @@ namespace AForge.Genetic
         public DoubleArrayChromosome( DoubleArrayChromosome source )
         {
             this.chromosomeGenerator = source.chromosomeGenerator;
-            this.mutationGenerator   = source.mutationGenerator;
+            this.mutationMultiplierGenerator = source.mutationMultiplierGenerator;
+            this.mutationAdditionGenerator = source.mutationAdditionGenerator;
             this.length  = source.length;
             this.fitness = source.fitness;
 
@@ -220,7 +278,7 @@ namespace AForge.Genetic
         ///
         public virtual IChromosome CreateNew( )
         {
-            return new DoubleArrayChromosome( chromosomeGenerator, mutationGenerator, length );
+            return new DoubleArrayChromosome( chromosomeGenerator, mutationMultiplierGenerator, mutationAdditionGenerator, length );
         }
 
         /// <summary>
@@ -239,16 +297,24 @@ namespace AForge.Genetic
         /// Mutation operator.
         /// </summary>
         /// 
-        /// <remarks><para>The method performs chromosome's mutation, adding random numbers
-        /// to each chromosome's gene. These random numbers are generated with help of
-        /// <see cref="mutationGenerator">mutation generator</see>.</para></remarks>
+        /// <remarks><para>The method performs chromosome's mutation, adding random number
+        /// to chromosome's gene or multiplying the gene by random number. These random
+        /// numbers are generated with help of <see cref="mutationMultiplierGenerator">mutation
+        /// multiplier</see> and <see cref="mutationAdditionGenerator">mutation
+        /// addition</see> generators. The type of mutation applied to the particular gene
+        /// is selected randomly each time.</para></remarks>
         /// 
         public virtual void Mutate( )
         {
-            for ( int i = 0; i < length; i++ )
+            int mutationGene = rand.Next( length );
+
+            if ( rand.Next( 2 ) == 0 )
             {
-                // generate next value
-                val[i] += mutationGenerator.Next( );
+                val[mutationGene] *= mutationMultiplierGenerator.Next( );
+            }
+            else
+            {
+                val[mutationGene] += mutationAdditionGenerator.Next( );
             }
         }
 
