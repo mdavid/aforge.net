@@ -156,7 +156,7 @@ namespace AForge.Genetic
         /// in the population.</para>
         /// 
         /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
-        /// or <see cref="Migrate">migration</see> was done.
+        /// or <see cref="Migrate">migration</see> was done.</note></para>
         /// </remarks>
         /// 
         public double FitnessMax
@@ -172,7 +172,7 @@ namespace AForge.Genetic
         /// population.</para>
         /// 
         /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
-        /// or <see cref="Migrate">migration</see> was done.
+        /// or <see cref="Migrate">migration</see> was done.</note></para>
         /// </remarks>
         ///
         public double FitnessSum
@@ -188,7 +188,7 @@ namespace AForge.Genetic
         /// population.</para>
         /// 
         /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
-        /// or <see cref="Migrate">migration</see> was done.
+        /// or <see cref="Migrate">migration</see> was done.</note></para>
         /// </remarks>
         ///
         public double FitnessAvg
@@ -204,7 +204,7 @@ namespace AForge.Genetic
         /// or see langword="null"/> if all chromosomes have 0 fitness.</para>
         /// 
         /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
-        /// or <see cref="Migrate">migration</see> was done.
+        /// or <see cref="Migrate">migration</see> was done.</note></para>
         /// </remarks>
         /// 
         public IChromosome BestChromosome
