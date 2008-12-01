@@ -17,7 +17,11 @@ namespace AForge.Genetic
     /// 
     /// <remarks><para>Double array chromosome represents array of double values.
     /// Array length is in the range of [2, 65536].
-    /// </para></remarks>
+    /// </para>
+    /// 
+    /// <para>See documentation to <see cref="Mutate"/> and <see cref="Crossover"/> methods
+    /// for information regarding implemented mutation and crossover operators.</para>
+    /// </remarks>
     /// 
     public class DoubleArrayChromosome : IChromosome
     {
@@ -80,6 +84,10 @@ namespace AForge.Genetic
         /// </summary>
         protected double fitness = 0;
 
+        // balancers to control type of mutation and crossover
+        private double mutationBalancer = 0.5;
+        private double crossoverBalancer = 0.5;
+
         /// <summary>
         /// Chromosome's length.
         /// </summary>
@@ -113,6 +121,44 @@ namespace AForge.Genetic
         public double Fitness
         {
             get { return fitness; }
+        }
+
+        /// <summary>
+        /// Mutation balancer to control mutation type, [0, 1].
+        /// </summary>
+        /// 
+        /// <remarks><para>The property controls type of mutation, which is used more
+        /// frequently. A radnom number is generated each time before doing mutation -
+        /// if the random number is smaller than the specified balance value, then one
+        /// mutation type is used, otherwse another. See <see cref="Mutate"/> method
+        /// for more information.</para>
+        /// 
+        /// <para>Default value is set to <b>0.5</b>.</para>
+        /// </remarks>
+        /// 
+        public double MutationBalancer
+        {
+            get { return mutationBalancer; }
+            set { mutationBalancer = Math.Max( 0.0, Math.Min( 1.0, value ) ); }
+        }
+
+        /// <summary>
+        /// Crossover balancer to control crossover type, [0, 1].
+        /// </summary>
+        /// 
+        /// <remarks><para>The property controls type of crossover, which is used more
+        /// frequently. A radnom number is generated each time before doing crossover -
+        /// if the random number is smaller than the specified balance value, then one
+        /// crossover type is used, otherwse another. See <see cref="Crossover"/> method
+        /// for more information.</para>
+        /// 
+        /// <para>Default value is set to <b>0.5</b>.</para>
+        /// </remarks>
+        /// 
+        public double CrossoverBalancer
+        {
+            get { return crossoverBalancer; }
+            set { crossoverBalancer = Math.Max( 0.0, Math.Min( 1.0, value ) ); }
         }
 
         /// <summary>
@@ -208,6 +254,8 @@ namespace AForge.Genetic
             this.mutationAdditionGenerator = source.mutationAdditionGenerator;
             this.length  = source.length;
             this.fitness = source.fitness;
+            this.mutationBalancer = source.mutationBalancer;
+            this.crossoverBalancer = source.crossoverBalancer;
 
             // copy genes
             val = (double[]) source.val.Clone( );
@@ -301,14 +349,20 @@ namespace AForge.Genetic
         /// to chromosome's gene or multiplying the gene by random number. These random
         /// numbers are generated with help of <see cref="mutationMultiplierGenerator">mutation
         /// multiplier</see> and <see cref="mutationAdditionGenerator">mutation
-        /// addition</see> generators. The type of mutation applied to the particular gene
-        /// is selected randomly each time.</para></remarks>
+        /// addition</see> generators.</para>
+        /// 
+        /// <para>The exact type of mutation applied to the particular gene
+        /// is selected randomly each time and depends on <see cref="MutationBalancer"/>.
+        /// Before mutation is done a random number is generated in [0, 1] range - if the
+        /// random number is smaller than <see cref="MutationBalancer"/>, then multiplication
+        /// mutation is done, otherwise addition mutation.
+        /// </para></remarks>
         /// 
         public virtual void Mutate( )
         {
             int mutationGene = rand.Next( length );
 
-            if ( rand.Next( 2 ) == 0 )
+            if ( rand.NextDouble( ) < mutationBalancer )
             {
                 val[mutationGene] *= mutationMultiplierGenerator.Next( );
             }
@@ -324,8 +378,30 @@ namespace AForge.Genetic
         /// 
         /// <param name="pair">Pair chromosome to crossover with.</param>
         /// 
-        /// <remarks><para>The method performs crossover between two chromosomes – interchanging
-        /// range of genes (array elements) between these chromosomes.</para></remarks>
+        /// <remarks><para>The method performs crossover between two chromosomes, selecting
+        /// randomly the exact type of crossover to perform, which depends on <see cref="CrossoverBalancer"/>.
+        /// Before crossover is done a random number is generated in [0, 1] range - if the
+        /// random number is smaller than <see cref="CrossoverBalancer"/>, then the first crossover
+        /// type is used, otherwise second type is used.</para>
+        /// 
+        /// <para>The <b>first crossover type</b> is based on interchanging
+        /// range of genes (array elements) between these chromosomes and is known
+        /// as one point crossover. A crossover point is selected randomly and chromosomes
+        /// interchange genes, which start from the selected point.</para>
+        /// 
+        /// <para>The <b>second crossover type</b> is aimed to produce one child, which genes'
+        /// values are between corresponding genes of parents, and another child, which genes'
+        /// values are outside of the range formed by corresponding genes of parents. 
+        /// Let take, for example, two genes with 1.0 and 3.0 valueû (of course chromosomes have
+        /// more genes, but for simplicity lets think about one). First of all we randomly choose
+        /// a factor in the [0, 1] range, let's take 0.4. Then, for each pair of genes (we have
+        /// one pair) we calculate difference value, which is 2.0 in our case. In the result we’ll
+        /// have two children – one between and one outside of the range formed by parents genes' values.
+        /// We may have 1.8 and 3.8 children, or we may have 0.2 and 2.2 children. As we can see
+        /// we add/subtract (chosen randomly) <i>difference * factor</i>. So, this gives us exploration
+        /// in between and in near outside. The randomly chosen factor is applied to all genes
+        /// of the chromosomes participating in crossover.</para>
+        /// </remarks>
         ///
         public virtual void Crossover( IChromosome pair )
         {
@@ -334,19 +410,38 @@ namespace AForge.Genetic
             // check for correct pair
             if ( ( p != null ) && ( p.length == length ) )
             {
-                // crossover point
-                int crossOverPoint = rand.Next( length - 1 ) + 1;
-                // length of chromosome to be crossed
-                int crossOverLength = length - crossOverPoint;
-                // temporary array
-                double[] temp = new double[crossOverLength];
+                if ( rand.NextDouble( ) < crossoverBalancer )
+                {
+                    // crossover point
+                    int crossOverPoint = rand.Next( length - 1 ) + 1;
+                    // length of chromosome to be crossed
+                    int crossOverLength = length - crossOverPoint;
+                    // temporary array
+                    double[] temp = new double[crossOverLength];
 
-                // copy part of first (this) chromosome to temp
-                Array.Copy( val, crossOverPoint, temp, 0, crossOverLength );
-                // copy part of second (pair) chromosome to the first
-                Array.Copy( p.val, crossOverPoint, val, crossOverPoint, crossOverLength );
-                // copy temp to the second
-                Array.Copy( temp, 0, p.val, crossOverPoint, crossOverLength );
+                    // copy part of first (this) chromosome to temp
+                    Array.Copy( val, crossOverPoint, temp, 0, crossOverLength );
+                    // copy part of second (pair) chromosome to the first
+                    Array.Copy( p.val, crossOverPoint, val, crossOverPoint, crossOverLength );
+                    // copy temp to the second
+                    Array.Copy( temp, 0, p.val, crossOverPoint, crossOverLength );
+                }
+                else
+                {
+                    double[] pairVal = p.val;
+
+                    double factor = rand.NextDouble( );
+                    if ( rand.Next( 2 ) == 0 )
+                        factor = -factor;
+
+                    for ( int i = 0; i < length; i++ )
+                    {
+                        double portion = ( val[i] - pairVal[i] ) * factor;
+
+                        val[i] -= portion;
+                        pairVal[i] += portion;
+                    }
+                }
             }
         }
 
