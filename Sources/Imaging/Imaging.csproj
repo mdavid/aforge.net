@@ -37,8 +37,14 @@
     <DocumentationFile>AForge.Imaging.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL" />
-    <Reference Include="AForge.Math, Version=2.0.0.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL" />
+    <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Release\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Math, Version=2.0.0.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Release\AForge.Math.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -59,6 +65,7 @@
     <Compile Include="Filters\2 Source filters\Merge.cs" />
     <Compile Include="Filters\2 Source filters\MoveTowards.cs" />
     <Compile Include="Filters\2 Source filters\Subtract.cs" />
+    <Compile Include="Filters\Adaptive Binarization\OtsuThreshold.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
