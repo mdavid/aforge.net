@@ -43,6 +43,18 @@ namespace AForge.Imaging.Filters
         /// filters implement <see cref="IFilter"/> interface, the information provided by this property
         /// (if filter also implements <see cref="IFilterInformation"/> interface) may be useful to
         /// user to resolve filter's capabilities.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // get filter's IFilterInformation interface
+        /// IFilterInformation info = (IFilterInformation) filter;
+        /// // check if the filter supports our image's format
+        /// if ( info.FormatTransalations.ContainsKey( image.PixelFormat )
+        /// {
+        ///     // format is supported, check what will be result of image processing
+        ///     PixelFormat resultingFormat = info.FormatTransalations[image.PixelFormat];
+        /// }
+        /// /// </code>
         /// </remarks>
         /// 
         Dictionary<PixelFormat, PixelFormat> FormatTransalations { get; }
