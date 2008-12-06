@@ -113,6 +113,7 @@
     <Compile Include="Filters\Other\BlobsFiltering.cs" />
     <Compile Include="Filters\Other\ExtractBiggestBlob.cs" />
     <Compile Include="Filters\Other\Mirror.cs" />
+    <Compile Include="Filters\Other\Pixellate.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
     <Compile Include="Filters\Transform\ResizeNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\RotateBicubic.cs" />
