@@ -97,6 +97,7 @@
     <Compile Include="Filters\Color Filters\RotateChannels.cs" />
     <Compile Include="Filters\Color Filters\Sepia.cs" />
     <Compile Include="Filters\FiltersSequence.cs" />
+    <Compile Include="Filters\Flood Fillers\PointedMeanFloodFill.cs" />
     <Compile Include="Filters\HSL Filters\HSLFiltering.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\IFilterInformation.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Filters\Other\ExtractBiggestBlob.cs" />
     <Compile Include="Filters\Other\Mirror.cs" />
     <Compile Include="Filters\Other\Pixellate.cs" />
+    <Compile Include="Filters\Flood Fillers\PointedColorFloodFill.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
     <Compile Include="Filters\Transform\ResizeNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\RotateBicubic.cs" />
