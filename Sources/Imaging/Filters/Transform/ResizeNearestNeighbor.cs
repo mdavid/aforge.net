@@ -39,6 +39,9 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/resize_nearest.png" width="400" height="300" />
     /// </remarks>
     /// 
+    /// <seealso cref="ResizeBilinear"/>
+    /// <seealso cref="ResizeBicubic"/>
+    /// 
     public class ResizeNearestNeighbor : BaseResizeFilter
     {
         private bool useParallelism = false;
