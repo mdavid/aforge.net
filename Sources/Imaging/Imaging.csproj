@@ -108,15 +108,15 @@
     <Compile Include="Filters\Morphology\Erosion.cs" />
     <Compile Include="Filters\Morphology\Opening.cs" />
     <Compile Include="Filters\Noise generation\AdditiveNoise.cs" />
-    <Compile Include="Filters\Noise generation\SaltAndPepperNoise.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Filters\Noise generation\SaltAndPepperNoise.cs" />
     <Compile Include="Filters\Other\BlobsFiltering.cs" />
     <Compile Include="Filters\Other\ExtractBiggestBlob.cs" />
     <Compile Include="Filters\Other\Mirror.cs" />
     <Compile Include="Filters\Other\Pixellate.cs" />
     <Compile Include="Filters\Flood Fillers\PointedColorFloodFill.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
+    <Compile Include="Filters\Transform\ResizeBicubic.cs" />
+    <Compile Include="Filters\Transform\ResizeBilinear.cs" />
     <Compile Include="Filters\Transform\ResizeNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\RotateBicubic.cs" />
     <Compile Include="Filters\Transform\RotateBilinear.cs" />
