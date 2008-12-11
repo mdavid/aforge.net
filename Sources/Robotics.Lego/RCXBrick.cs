@@ -113,6 +113,9 @@ namespace AForge.Robotics.Lego
         /// <summary>
         /// Enumeration of RCX brick sensor types.
         /// </summary>
+        /// 
+        /// <remarks><para>Use <see cref="SetSensorType"/> method to set RCX sensor's type.</para></remarks>
+        /// 
         public enum SensorType
         {
             /// <summary>
@@ -140,6 +143,9 @@ namespace AForge.Robotics.Lego
         /// <summary>
         /// Enumeration of RCX brick sensor modes.
         /// </summary>
+        /// 
+        /// <remarks><para>Use <see cref="SetSensorMode"/> method to set RCX sensor's mode.</para></remarks>
+        /// 
         public enum SensorMode
         {
             /// <summary>
@@ -452,7 +458,7 @@ namespace AForge.Robotics.Lego
         /// 
         /// <param name="sensor">Sensor to get value of.</param>
         /// <param name="value">Retrieved sensor's value (units depend on current
-        /// sensor's type and mode).</param>
+        /// <see cref="SensorType">sensor's type</see> and <see cref="SensorMode">mode</see>).</param>
         /// 
         /// <returns>Returns <b>true</b> if command was executed successfully or <b>false</b> otherwise.</returns>
         /// 
