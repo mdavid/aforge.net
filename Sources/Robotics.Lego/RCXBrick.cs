@@ -61,6 +61,21 @@ namespace AForge.Robotics.Lego
         #region Embedded types
 
         /// <summary>
+        /// Type of IR tower used for communication with RCX.
+        /// </summary>
+        public enum IRTowerType
+        {
+            /// <summary>
+            /// USB IR tower.
+            /// </summary>
+            USB,
+            /// <summary>
+            /// RS232 IR tower.
+            /// </summary>
+            Serial
+        }
+
+        /// <summary>
         /// Enumeration of sound type playable by Lego RCX brick.
         /// </summary>
         public enum SoundType
@@ -263,6 +278,8 @@ namespace AForge.Robotics.Lego
         /// Connect to Lego RCX brick.
         /// </summary>
         /// 
+        /// <param name="towerType">Type of IR tower to use for communication with RCX brick.</param>
+        /// 
         /// <returns>Returns <b>true</b> on successful connection or <b>false</b>
         /// otherwise.</returns>
         /// 
@@ -270,7 +287,7 @@ namespace AForge.Robotics.Lego
         /// If it is required to force reconnection, then <see cref="Disconnect"/> method should be called before.
         /// </remarks>
         /// 
-        public bool Connect( )
+        public bool Connect( IRTowerType towerType )
         {
             lock ( this )
             {
@@ -282,7 +299,7 @@ namespace AForge.Robotics.Lego
 
                 // create stack
                 status = GhostAPI.GhCreateStack(
-                    "LEGO.Pbk.CommStack.Port.USB",
+                    ( towerType == IRTowerType.USB ) ? "LEGO.Pbk.CommStack.Port.USB" : "LEGO.Pbk.CommStack.Port.RS232",
                     "LEGO.Pbk.CommStack.Protocol.IR",
                     "LEGO.Pbk.CommStack.Session",
                     out stack );
