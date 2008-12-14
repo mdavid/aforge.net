@@ -21,7 +21,10 @@ namespace AForge.Imaging
     /// 
     /// <para><note>Since this algorithm is based on recursion, it is
     /// required to be careful with its application to big images with big blobs,
-    /// because in this case recursion will require big stack size.</note></para>
+    /// because in this case recursion will require big stack size and may lead
+    /// to stack overflow. The recursive version may be applied (and may be even
+    /// faster than <see cref="BlobCounter"/>) to an image with small blobs -
+    /// "star sky" image (or small cells, for example, etc).</note></para>
     /// 
     /// <para>For blobs' searching the class supports only 8 bpp indexed grayscale images. 
     /// See documentation about <see cref="BlobCounterBase"/> for information about which
