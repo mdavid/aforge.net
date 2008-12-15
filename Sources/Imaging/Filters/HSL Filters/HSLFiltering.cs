@@ -40,6 +40,21 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/hsl_filtering.jpg" width="480" height="361" />
+    /// 
+    /// <para>Sample usage with saturation update only:</para>
+    /// <code>
+    /// // create filter
+    /// HSLFiltering filter = new HSLFiltering( );
+    /// // configure the filter
+    /// filter.Hue = new IntRange( 340, 20 );
+    /// filter.UpdateLuminance = false;
+    /// filter.UpdateHue = false;
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/hsl_filtering2.jpg" width="480" height="361" />
     /// </remarks>
     /// 
     /// <seealso cref="ColorFiltering"/>
@@ -132,7 +147,10 @@ namespace AForge.Imaging.Filters
         /// Determines, if hue value of filtered pixels should be updated.
         /// </summary>
         /// 
-        /// <remarks>Default value is set to <see langword="true"/>.</remarks>
+        /// <remarks><para>The property specifies if hue of filtered pixels should be
+        /// updated with value from <see cref="FillColor">fill color</see> or not.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para></remarks>
         /// 
         public bool UpdateHue
         {
@@ -144,7 +162,10 @@ namespace AForge.Imaging.Filters
         /// Determines, if saturation value of filtered pixels should be updated.
         /// </summary>
         /// 
-        /// <remarks>Default value is set to <see langword="true"/>.</remarks>
+        /// <remarks><para>The property specifies if saturation of filtered pixels should be
+        /// updated with value from <see cref="FillColor">fill color</see> or not.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para></remarks>
         /// 
         public bool UpdateSaturation
         {
@@ -156,7 +177,10 @@ namespace AForge.Imaging.Filters
         /// Determines, if luminance value of filtered pixels should be updated.
         /// </summary>
         /// 
-        /// <remarks>Default value is set to <see langword="true"/>.</remarks>
+        /// <remarks><para>The property specifies if luminance of filtered pixels should be
+        /// updated with value from <see cref="FillColor">fill color</see> or not.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para></remarks>
         /// 
         public bool UpdateLuminance
         {
