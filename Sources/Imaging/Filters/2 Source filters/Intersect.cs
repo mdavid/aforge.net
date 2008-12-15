@@ -94,6 +94,7 @@ namespace AForge.Imaging.Filters
         {
             formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]       = PixelFormat.Format32bppRgb;
             formatTransalations[PixelFormat.Format32bppArgb]      = PixelFormat.Format32bppArgb;
             formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
             formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
@@ -117,6 +118,7 @@ namespace AForge.Imaging.Filters
             if (
                 ( pixelFormat == PixelFormat.Format8bppIndexed ) ||
                 ( pixelFormat == PixelFormat.Format24bppRgb ) ||
+                ( pixelFormat == PixelFormat.Format32bppRgb ) ||
                 ( pixelFormat == PixelFormat.Format32bppArgb ) )
             {
                 // initialize other variables

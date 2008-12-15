@@ -117,6 +117,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
                 ( image.PixelFormat != PixelFormat.Format16bppGrayScale ) &&
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
                 ( image.PixelFormat != PixelFormat.Format48bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format64bppArgb )
@@ -165,6 +166,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
                 ( image.PixelFormat != PixelFormat.Format16bppGrayScale ) &&
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
                 ( image.PixelFormat != PixelFormat.Format48bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format64bppArgb )
@@ -249,6 +251,7 @@ namespace AForge.Imaging
                 }
                 else if (
                     ( pixelFormat == PixelFormat.Format24bppRgb ) ||
+                    ( pixelFormat == PixelFormat.Format32bppRgb ) ||
                     ( pixelFormat == PixelFormat.Format32bppArgb ) )
                 {
                     // 24/32 bpp color image

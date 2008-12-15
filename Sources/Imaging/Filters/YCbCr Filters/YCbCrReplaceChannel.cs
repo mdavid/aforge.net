@@ -154,6 +154,7 @@ namespace AForge.Imaging.Filters
         {
             // initialize format translation dictionary
             formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
             formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
         }
 

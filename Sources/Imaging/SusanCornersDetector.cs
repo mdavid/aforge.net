@@ -148,7 +148,8 @@ namespace AForge.Imaging
             if (
                 ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
-                ( image.PixelFormat != PixelFormat.Format32bppRgb )
+                ( image.PixelFormat != PixelFormat.Format32bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppArgb )
                 )
             {
                 throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );
@@ -199,7 +200,8 @@ namespace AForge.Imaging
             if (
                 ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
-                ( image.PixelFormat != PixelFormat.Format32bppRgb )
+                ( image.PixelFormat != PixelFormat.Format32bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppArgb )
                 )
             {
                 throw new UnsupportedImageFormat( "Unsupported pixel format of the source image." );

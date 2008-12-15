@@ -239,6 +239,7 @@ namespace AForge.Imaging
         /// by the <b>AForge.Imaging</b> library. The image is left untouched in the
         /// case if it is already of
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format24bppRgb</see> or
+        /// <see cref="System.Drawing.Imaging.PixelFormat">Format32bppRgb</see> or
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format32bppArgb</see> or
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format48bppRgb</see> or
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format64bppArgb</see>
@@ -250,6 +251,7 @@ namespace AForge.Imaging
         {
             if (
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
                 ( image.PixelFormat != PixelFormat.Format48bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format64bppArgb ) &&

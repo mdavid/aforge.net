@@ -73,6 +73,7 @@ namespace AForge.Imaging.Filters
         {
             formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format32bppRgb;
             formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format32bppArgb;
         }
 
@@ -133,7 +134,7 @@ namespace AForge.Imaging.Filters
                     int y = startY + rand.Next( height );
                     int colorPlane = rand.Next( 3 );
 
-                    ptr[y * stride + x * 4 + colorPlane] = values[rand.Next( 2 )];
+                    ptr[y * stride + x * pixelSize + colorPlane] = values[rand.Next( 2 )];
                 }
             }
         }

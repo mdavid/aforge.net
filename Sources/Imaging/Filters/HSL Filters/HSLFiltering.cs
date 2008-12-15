@@ -2,7 +2,7 @@
 // AForge.NET framework
 //
 // Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -196,8 +196,9 @@ namespace AForge.Imaging.Filters
         /// </summary>
         public HSLFiltering( )
         {
-            formatTransalations[PixelFormat.Format24bppRgb] = PixelFormat.Format24bppRgb;
-            formatTransalations[PixelFormat.Format32bppRgb] = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
         }
 
         /// <summary>

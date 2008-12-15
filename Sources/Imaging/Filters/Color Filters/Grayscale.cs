@@ -76,6 +76,7 @@ namespace AForge.Imaging.Filters
 
             // initialize format translation dictionary
             formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format48bppRgb]  = PixelFormat.Format16bppGrayScale;
             formatTransalations[PixelFormat.Format64bppArgb] = PixelFormat.Format16bppGrayScale;
@@ -95,7 +96,10 @@ namespace AForge.Imaging.Filters
             int height = sourceData.Height;
             PixelFormat srcPixelFormat = sourceData.PixelFormat;
 
-            if ( ( srcPixelFormat == PixelFormat.Format24bppRgb ) || ( srcPixelFormat == PixelFormat.Format32bppArgb ) )
+            if (
+                ( srcPixelFormat == PixelFormat.Format24bppRgb ) ||
+                ( srcPixelFormat == PixelFormat.Format32bppRgb ) ||
+                ( srcPixelFormat == PixelFormat.Format32bppArgb ) )
             {
                 int pixelSize = ( srcPixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
                 int srcOffset = sourceData.Stride - width * pixelSize;
