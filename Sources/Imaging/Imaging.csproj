@@ -99,6 +99,7 @@
     <Compile Include="Filters\FiltersSequence.cs" />
     <Compile Include="Filters\Flood Fillers\PointedMeanFloodFill.cs" />
     <Compile Include="Filters\HSL Filters\HSLFiltering.cs" />
+    <Compile Include="Filters\HSL Filters\HueModifier.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\IFilterInformation.cs" />
     <Compile Include="Filters\IInPlaceFilter.cs" />
