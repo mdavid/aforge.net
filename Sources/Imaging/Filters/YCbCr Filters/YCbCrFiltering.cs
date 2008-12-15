@@ -130,7 +130,10 @@ namespace AForge.Imaging.Filters
         /// Determines, if Y value of filtered pixels should be updated.
         /// </summary>
         /// 
-        /// <remarks>Default value is set to <see langword="true"/>.</remarks>
+        /// <remarks><para>The property specifies if Y channel of filtered pixels should be
+        /// updated with value from <see cref="FillColor">fill color</see> or not.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para></remarks>
         /// 
         public bool UpdateY
         {
@@ -142,7 +145,10 @@ namespace AForge.Imaging.Filters
         /// Determines, if Cb value of filtered pixels should be updated.
         /// </summary>
         /// 
-        /// <remarks>Default value is set to <see langword="true"/>.</remarks>
+        /// <remarks><para>The property specifies if Cb channel of filtered pixels should be
+        /// updated with value from <see cref="FillColor">fill color</see> or not.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para></remarks>
         /// 
         public bool UpdateCb
         {
@@ -154,7 +160,10 @@ namespace AForge.Imaging.Filters
         /// Determines, if Cr value of filtered pixels should be updated.
         /// </summary>
         /// 
-        /// <remarks>Default value is set to <see langword="true"/>.</remarks>
+        /// <remarks><para>The property specifies if Cr channel of filtered pixels should be
+        /// updated with value from <see cref="FillColor">fill color</see> or not.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para></remarks>
         /// 
         public bool UpdateCr
         {
