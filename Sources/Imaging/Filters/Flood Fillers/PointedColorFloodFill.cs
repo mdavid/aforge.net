@@ -30,7 +30,7 @@ namespace AForge.Imaging.Filters
     /// <code>
     /// // create filter
     /// PointedColorFloodFill filter = new PointedColorFloodFill( );
-    /// // configre the filter
+    /// // configure the filter
     /// filter.Tolerance = Color.FromArgb( 150, 92, 92 );
     /// filter.FillColor = Color.FromArgb( 255, 255, 255 );
     /// filter.StartingPoint = new Point( 150, 100 );
