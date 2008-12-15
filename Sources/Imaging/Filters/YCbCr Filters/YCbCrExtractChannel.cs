@@ -81,6 +81,7 @@ namespace AForge.Imaging.Filters
         {
             // initialize format translation dictionary
             formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format8bppIndexed;
         }
 

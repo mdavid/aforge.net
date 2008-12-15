@@ -172,10 +172,11 @@ namespace AForge.Imaging
         /// 
         /// <remarks><para>Allocate new image with specified attributes in unmanaged memory.</para>
         /// 
-        /// <para><note>The method support only
+        /// <para><note>The method supports only
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format8bppIndexed</see>,
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format16bppGrayScale</see>,
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format24bppRgb</see>,
+        /// <see cref="System.Drawing.Imaging.PixelFormat">Format32bppRgb</see>,
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format32bppArgb</see>,
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format48bppRgb</see> and
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format64bppArgb</see> pixel formats.
@@ -204,6 +205,7 @@ namespace AForge.Imaging
                 case PixelFormat.Format24bppRgb:
                     bytesPerPixel = 3;
                     break;
+                case PixelFormat.Format32bppRgb:
                 case PixelFormat.Format32bppArgb:
                     bytesPerPixel = 4;
                     break;
@@ -338,6 +340,7 @@ namespace AForge.Imaging
                 ( pixelFormat != PixelFormat.Format8bppIndexed ) &&
                 ( pixelFormat != PixelFormat.Format16bppGrayScale ) &&
                 ( pixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( pixelFormat != PixelFormat.Format32bppRgb ) &&
                 ( pixelFormat != PixelFormat.Format32bppArgb ) &&
                 ( pixelFormat != PixelFormat.Format48bppRgb ) &&
                 ( pixelFormat != PixelFormat.Format64bppArgb ) )
