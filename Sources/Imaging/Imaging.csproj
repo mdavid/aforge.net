@@ -122,7 +122,10 @@
     <Compile Include="Filters\Transform\RotateBilinear.cs" />
     <Compile Include="Filters\Transform\RotateNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\Shrink.cs" />
+    <Compile Include="Filters\YCbCr Filters\YCbCrExtractChannel.cs" />
     <Compile Include="Filters\YCbCr Filters\YCbCrFiltering.cs" />
+    <Compile Include="Filters\YCbCr Filters\YCbCrLinear.cs" />
+    <Compile Include="Filters\YCbCr Filters\YCbCrReplaceChannel.cs" />
     <Compile Include="HorizontalIntensityStatistics.cs" />
     <Compile Include="HoughCircleTransformation.cs" />
     <Compile Include="HoughLineTransformation.cs" />
