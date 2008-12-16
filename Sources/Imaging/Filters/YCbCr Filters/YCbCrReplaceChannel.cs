@@ -24,7 +24,7 @@ namespace AForge.Imaging.Filters
     /// it is possible to extract one of YCbCr channels, perform some image processing with it and then
     /// put it back into the original color image.</para>
     /// 
-    /// <para>The filter accepts 24/32 bpp color images for processing.</para>
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
