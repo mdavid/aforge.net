@@ -2,7 +2,7 @@
 // AForge.NET framework
 //
 // Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -18,6 +18,10 @@ namespace AForge.Imaging
     /// <remarks><para>The class counts and extracts stand alone objects in
     /// binary images using recursive version of connected components labeling
     /// algorithm.</para>
+    /// 
+    /// <para><note>The algorithm treats all black pixels as background, but not an object.
+    /// This means that all objects, which could be located be the algorithm, should have other
+    /// than black color.</note></para>
     /// 
     /// <para><note>Since this algorithm is based on recursion, it is
     /// required to be careful with its application to big images with big blobs,

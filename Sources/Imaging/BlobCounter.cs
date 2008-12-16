@@ -2,7 +2,7 @@
 // AForge.NET framework
 //
 // Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -17,6 +17,10 @@ namespace AForge.Imaging
     /// 
     /// <remarks><para>The class counts and extracts stand alone objects in
     /// binary images using connected components labeling algorithm.</para>
+    /// 
+    /// <para><note>The algorithm treats all black pixels as background, but not an object.
+    /// This means that all objects, which could be located be the algorithm, should have other
+    /// than black color.</note></para>
     /// 
     /// <para>For blobs' searching the class supports only 8 bpp indexed grayscale images. 
     /// See documentation about <see cref="BlobCounterBase"/> for information about which
