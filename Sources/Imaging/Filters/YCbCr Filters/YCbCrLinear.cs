@@ -21,7 +21,7 @@ namespace AForge.Imaging.Filters
     /// with the facility of linear correction of its channels - mapping specified channels'
     /// input ranges to specified output ranges.</para>
     /// 
-    /// <para>The filter and 24 and 32 bpp color images for processing.</para>
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
