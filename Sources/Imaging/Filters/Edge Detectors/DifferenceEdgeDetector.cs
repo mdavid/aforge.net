@@ -22,13 +22,13 @@ namespace AForge.Imaging.Filters
     /// <para>Suppose 3x3 square element of the source image (x - is currently processed
     /// pixel):
     /// <code lang="none">
-    /// 1 2 3
-    /// 8 x 4
-    /// 7 6 5
+    /// P1 P2 P3
+    /// P8  x P4
+    /// P7 P6 P5
     /// </code>
     /// The corresponding pixel of the result image equals to:
     /// <code lang="none">
-    /// max( |1-5|, |2-6|, |3-7|, |4-8| )
+    /// max( |P1-P5|, |P2-P6|, |P3-P7|, |P4-P8| )
     /// </code>
     /// </para>
     /// 
@@ -49,6 +49,7 @@ namespace AForge.Imaging.Filters
     /// </remarks>
     /// 
     /// <seealso cref="HomogenityEdgeDetector"/>
+    /// <seealso cref="SobelEdgeDetector"/>
     /// 
     public class DifferenceEdgeDetector : BaseUsingCopyPartialFilter
     {
