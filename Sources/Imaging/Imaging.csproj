@@ -96,6 +96,8 @@
     <Compile Include="Filters\Color Filters\Invert.cs" />
     <Compile Include="Filters\Color Filters\RotateChannels.cs" />
     <Compile Include="Filters\Color Filters\Sepia.cs" />
+    <Compile Include="Filters\Edge Detectors\DifferenceEdgeDetector.cs" />
+    <Compile Include="Filters\Edge Detectors\HomogenityEdgeDetector.cs" />
     <Compile Include="Filters\FiltersSequence.cs" />
     <Compile Include="Filters\Flood Fillers\PointedMeanFloodFill.cs" />
     <Compile Include="Filters\HSL Filters\HSLFiltering.cs" />
