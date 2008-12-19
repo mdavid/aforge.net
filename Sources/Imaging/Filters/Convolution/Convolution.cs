@@ -144,8 +144,10 @@ namespace AForge.Imaging.Filters
             set { dynamicDivisorForEdges = value; }
         }
 
-        // Private constructor
-        private Convolution( )
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Convolution"/> class.
+        /// </summary>
+        protected Convolution( )
         {
             formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
