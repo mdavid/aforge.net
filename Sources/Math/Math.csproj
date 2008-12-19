@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C0FAF524-72E4-46F7-8C1B-A6B74DEC5EBE}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Complex.cs" />
     <Compile Include="ContinuousHistogram.cs" />
+    <Compile Include="Gaussian.cs" />
     <Compile Include="Histogram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Random\ExponentialGenerator.cs" />
