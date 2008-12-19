@@ -99,12 +99,11 @@
     <Compile Include="Filters\Convolution\Blur.cs" />
     <Compile Include="Filters\Convolution\Convolution.cs" />
     <Compile Include="Filters\Convolution\Edges.cs" />
-    <Compile Include="Filters\Convolution\GaussianBlur.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Filters\Convolution\GaussianBlur.cs" />
     <Compile Include="Filters\Convolution\Mean.cs" />
     <Compile Include="Filters\Convolution\Sharpen.cs" />
     <Compile Include="Filters\Convolution\SharpenEx.cs" />
+    <Compile Include="Filters\Edge Detectors\CannyEdgeDetector.cs" />
     <Compile Include="Filters\Edge Detectors\DifferenceEdgeDetector.cs" />
     <Compile Include="Filters\Edge Detectors\HomogenityEdgeDetector.cs" />
     <Compile Include="Filters\Edge Detectors\SobelEdgeDetector.cs" />

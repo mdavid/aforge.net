@@ -63,20 +63,6 @@ namespace AForge.Imaging.Filters
     /// 
     public class SobelEdgeDetector : BaseUsingCopyPartialFilter
     {
-        // Sobel kernels
-        private static int[,] xKernel = new int[,]
-		{
-			{ -1,  0,  1 },
-			{ -2,  0,  2 },
-			{ -1,  0,  1 }
-		};
-        private static int[,] yKernel = new int[,]
-		{
-			{  1,  2,  1 },
-			{  0,  0,  0 },
-			{ -1, -2, -1 }
-		};
-
         private bool scaleIntensity = true;
 
         // private format translation dictionary
