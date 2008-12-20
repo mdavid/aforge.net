@@ -324,7 +324,13 @@ namespace AForge.Video
         /// Stop video source.
         /// </summary>
         /// 
-        /// <remarks>Stops video source aborting its thread.</remarks>
+        /// <remarks><para>Stops video source aborting its thread.</para>
+        /// 
+        /// <para><note>Since the method aborts background thread, its usage is highly not preferred
+        /// and should be done only if there are no other options. The correct way of stopping camera
+        /// is <see cref="SignalToStop">signaling it stop</see> and then
+        /// <see cref="WaitForStop">waiting</see> for background thread's completion.</note></para>
+        /// </remarks>
         /// 
         public void Stop( )
 		{
