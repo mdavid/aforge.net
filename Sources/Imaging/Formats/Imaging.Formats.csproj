@@ -43,14 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BMPCodec.cs" />
+    <Compile Include="EMFCodec.cs" />
     <Compile Include="FITSCodec.cs" />
+    <Compile Include="GIFCodec.cs" />
     <Compile Include="IImageDecoder.cs" />
+    <Compile Include="IImageEncoder.cs" />
     <Compile Include="ImageConverter.cs" />
     <Compile Include="ImageDecoder.cs" />
     <Compile Include="JPGCodec.cs" />
+    <Compile Include="PNGCodec.cs" />
     <Compile Include="PNMCodec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TIFFCodec.cs" />
     <Compile Include="Tools.cs" />
+    <Compile Include="WMFCodec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AForge.Imaging.Formats.snk" />

@@ -17,28 +17,201 @@ namespace AForge.Imaging.Formats
     /// special image format.
     /// </summary>
     /// <remarks>
-    /// <para>Supported formats:</para>
-    /// <list type="enumeration">BMP</list>
-    /// <list type="enumeration">EMF</list>
-    /// <list type="enumeration">GIF</list>
-    /// <list type="enumeration">JPG</list>
-    /// <list type="enumeration">PNG</list>
-    /// <list type="enumeration">TIFF</list>
-    /// <list type="enumeration">WMF</list>
+    /// <para>
+    /// Supported formats are all default dotnet codecs (BMP, EMF, GIF, JPG, PNG, TIFF, WMF)
+    /// and all custom codecs, which implements the <seealso cref="IImageEncoder"/> interface.
+    /// </para>
     /// </remarks>
     public static class ImageConverter
     {
+        #region Converting one image
         /// <summary>
-        /// Converts to.
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
         /// </summary>
         /// <param name="newFormat">The new image format.</param>
         /// <param name="imageFile">The image file to convert.</param>
-        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
-        /// <returns>True if the converting process was successful, otherwise false.</returns>
-        public static bool ConvertTo(IImageDecoder newFormat, string imageFile, bool overwrite)
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        public static void ConvertTo(IImageEncoder newFormat, string imageFile, bool overwrite)
         {
-            return Core(imageFile, imageFile, newFormat, overwrite, 0, 0, 100);
+            Convert(imageFile, imageFile, newFormat, overwrite, 0, 0);
         }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="imageFile">The image file to convert.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        /// <param name="biggerSideLength">Length of the bigger side of the image.</param>
+        public static void ConvertTo(IImageEncoder newFormat, string imageFile, 
+            bool overwrite, int biggerSideLength)
+        {
+            float w, h;
+            CalcBiggerSideLength(imageFile, biggerSideLength, out w, out h);
+            Convert(imageFile, imageFile, newFormat, overwrite, (int)w, (int)h);            
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="imageFile">The image file to convert.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        /// <param name="width">The desired width of the image.</param>
+        /// <param name="height">The desired height of the image.</param>
+        public static void ConvertTo(IImageEncoder newFormat, string imageFile,
+            bool overwrite, int width, int height)
+        {
+            Convert(imageFile, imageFile, newFormat, overwrite, width, height);
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="originalFile">The original file.</param>
+        /// <param name="newFile">The new file.</param>
+        public static void ConvertTo(IImageEncoder newFormat, string originalFile, string newFile)
+        {
+            Convert(originalFile, newFile, newFormat, false, 0, 0);
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="originalFile">The original file.</param>
+        /// <param name="newFile">The new file.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        /// <param name="biggerSideLength">Length of the bigger side of the image.</param>
+        public static void ConvertTo(IImageEncoder newFormat, string originalFile, string newFile,
+            bool overwrite, int biggerSideLength)
+        {
+            float w, h;
+            CalcBiggerSideLength(originalFile, biggerSideLength, out w, out h);
+            Convert(originalFile, newFile, newFormat, overwrite, (int)w, (int)h);
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="originalFile">The original file.</param>
+        /// <param name="newFile">The new file.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        /// <param name="width">The desired width of the image.</param>
+        /// <param name="height">The desired height of the image.</param>
+        public static void ConvertTo(IImageEncoder newFormat, string originalFile, string newFile,
+            bool overwrite, int width, int height)
+        {
+            Convert(originalFile, newFile, newFormat, overwrite, width, height);
+        }
+        #endregion Converting one image
+
+        #region List of images
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="imageFiles">The image files to convert.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        public static void ConvertAll(IImageEncoder newFormat, string[] imageFiles, bool overwrite)
+        {
+            foreach (string image in imageFiles)
+                Convert(image, image, newFormat, overwrite, 0, 0);
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="imageFiles">The image files to convert.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        /// <param name="biggerSideLength">Length of the bigger side of the image.</param>
+        public static void ConvertAll(IImageEncoder newFormat, string[] imageFiles,
+            bool overwrite, int biggerSideLength)
+        {
+            float w, h;
+            foreach (string image in imageFiles)
+            {
+                CalcBiggerSideLength(image, biggerSideLength, out w, out h);
+                Convert(image, image, newFormat, overwrite, (int)w, (int)h);
+            }
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="imageFiles">The image files to convert.</param>
+        /// <param name="overwrite"><c>True</c> if overwrites/deletes orginal file, otherwise <c>false</c>.</param>
+        /// <param name="width">The desired width of the image.</param>
+        /// <param name="height">The desired height of the image.</param>
+        public static void ConvertAll(IImageEncoder newFormat, string[] imageFiles,
+            bool overwrite, int width, int height)
+        {
+            foreach (string image in imageFiles)
+                Convert(image, image, newFormat, overwrite, width, height);
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="originalFiles">The original files.</param>
+        /// <param name="newFiles">The new files.</param>
+        public static void ConvertAll(IImageEncoder newFormat, string[] originalFiles, 
+            string[] newFiles)
+        {
+            if (originalFiles.Length != newFiles.Length)
+                throw new ArgumentOutOfRangeException
+                    ("newFiles must have same length like originalFiles.");
+
+            for (int i = 0; i < originalFiles.Length; i++)
+                Convert(originalFiles[i], newFiles[i], newFormat, false, 0, 0);
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="originalFiles">The original files.</param>
+        /// <param name="newFiles">The new files.</param>
+        /// <param name="biggerSideLength">Length of the bigger side of the image.</param>
+        public static void ConvertAll(IImageEncoder newFormat, string[] originalFiles, 
+            string[] newFiles, int biggerSideLength)
+        {
+            if (originalFiles.Length != newFiles.Length)
+                throw new ArgumentOutOfRangeException
+                    ("newFiles must have same length like originalFiles.");
+
+            float w, h;
+            for (int i = 0; i < originalFiles.Length; i++)
+            {
+                CalcBiggerSideLength(originalFiles[i], biggerSideLength, out w, out h);
+                Convert(originalFiles[i], newFiles[i], newFormat, false, (int)w, (int)h);
+            }
+        }
+
+        /// <summary>
+        /// Converts an image to the passed <seealso cref="IImageDecoder"/> format.
+        /// </summary>
+        /// <param name="newFormat">The new image format.</param>
+        /// <param name="originalFiles">The original files.</param>
+        /// <param name="newFiles">The new files.</param>
+        /// <param name="width">The desired width of the image.</param>
+        /// <param name="height">The desired height of the image.</param>
+        public static void ConvertAll(IImageEncoder newFormat, string[] originalFiles, 
+            string[] newFiles, int width, int height)
+        {
+            if (originalFiles.Length != newFiles.Length)
+                throw new ArgumentOutOfRangeException
+                    ("newFiles must have same length like originalFiles.");
+            
+            for (int i = 0; i < originalFiles.Length; i++)
+                Convert(originalFiles[i], newFiles[i], newFormat, false, width, height);
+        }
+        #endregion List of images
 
         #region Private helper functions
         /// <summary>
@@ -54,53 +227,45 @@ namespace AForge.Imaging.Formats
                                                  out float h)
         {
             w = h = 0;
-            try
+
+            Bitmap pic = new Bitmap(imageFile);
+            w = (float)pic.Width;
+            h = (float)pic.Height;
+            float ratio = w / h;
+            if (w > h)
             {
-                Bitmap pic = new Bitmap(imageFile);
-                w = (float)pic.Width;
-                h = (float)pic.Height;
-                float ratio = w / h;
-                if (w > h)
-                {
-                    w = biggerSideLength;
-                    h = w / ratio;
-                }
-                else
-                {
-                    h = biggerSideLength;
-                    w = h * ratio;
-                }
-                pic.Dispose();
+                w = biggerSideLength;
+                h = w / ratio;
             }
-            catch (Exception)
+            else
             {
+                h = biggerSideLength;
+                w = h * ratio;
             }
+            pic.Dispose();
         }
 
         /// <summary>
-        /// Transforms an image with the passed variables adn saves it.
+        /// Transforms an image with the passed variables and saves it.
         /// </summary>
         /// <param name="originalFile">The original file.</param>
         /// <param name="newFile">The new file.</param>
-        /// <param name="newFormat">The new format.</param>
+        /// <param name="newFormat">The new encoding format.</param>
         /// <param name="overwrite">If <c>true</c> the
         /// original file will be overwritten or deleted.</param>
-        /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        /// <param name="jpgQuality">The JPG quality.</param>
-        /// <returns></returns>
-        private static bool Core
+        /// <param name="width">The width of the converted image.</param>
+        /// <param name="height">The height of the converted image.</param>
+        private static void Convert
             (String originalFile, 
              String newFile, 
-             IImageDecoder newFormat,
+             IImageEncoder newFormat,
              bool overwrite,
              int width, 
-             int height, 
-             byte jpgQuality
+             int height
              )
         {
             Bitmap pic = ImageDecoder.DecodeFromFile(originalFile);
-            if (width == 0 /*|| height == 0*/)
+            if (width == 0 || height == 0)
             {
                 width = pic.Width;
                 height = pic.Height;
@@ -112,7 +277,6 @@ namespace AForge.Imaging.Formats
             float yStart = 0f;
             float wCorrect = w;
             float hCorrect = h;
-            bool result;
 
             if (w / h > ratio)
             {
@@ -133,29 +297,42 @@ namespace AForge.Imaging.Formats
             MemoryStream ms = new MemoryStream();
             croppedPic.Save(ms, ImageFormat.Bmp);
             croppedPic.Dispose();
-            //MemoryReducer.ReduceMemoryUsage();
 
-            newFormat.Open(ms);
+            newFormat.Initialize(ms);
             
-            //Create destination directory, if it doesn't exist already
-            int index = newFile.LastIndexOf('\\');
+            //Create destination directory, if it doesn't exist already            
+            newFile = newFile.Replace('\\', '/');
+            int index = newFile.LastIndexOf('/');
             if (index != -1 && !Directory.Exists(newFile.Substring(0, index)))
                 Directory.CreateDirectory(newFile.Substring(0, index));
 
+            #region Check for right extension
+            string oldExt = newFile.Substring(newFile.LastIndexOf('.') + 1);
+            bool correctExt = true;            
+            foreach (string ext in newFormat.Extensions)
+                if (ext.ToLower() == oldExt.ToLower())
+                {
+                    correctExt = false;
+                    break;
+                }
+
+            if (correctExt)
+                newFile = newFile.Replace(oldExt, newFormat.Extensions[0]);
+
+            #endregion Check for right extension
+
             //Check, if same destination file name, but no overwriting allowed
-            if (newFile == originalFile.ToLower() && !overwrite)
+            if (newFile.ToLower() == originalFile.ToLower() && !overwrite)
                 newFile = newFile.Insert(newFile.LastIndexOf('.'), "_1");
 
-            result = newFormat.Save(null, ref newFile);
+            newFormat.Save(newFile);
 
             //Check, if different destination file names,
             //..but overwriting needed --> then delete original file
-            if (newFile != originalFile.ToLower() && overwrite)
+            if (newFile.ToLower() != originalFile.ToLower() && overwrite)
                 File.Delete(originalFile);
 
             newFormat.Close(); 
-                                  
-            return result;
         }
         #endregion Private helper functions
     }

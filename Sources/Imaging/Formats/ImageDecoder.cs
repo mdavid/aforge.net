@@ -60,12 +60,6 @@ namespace AForge.Imaging.Formats
 
             RegisterDecoder( "fit",  decoder );
             RegisterDecoder( "fits", decoder );
-
-            // register JPG file format
-            decoder = new JPGCodec(80);
-
-            RegisterDecoder( "jpg",  decoder );
-            RegisterDecoder( "jpeg", decoder );
         }
 
         /// <summary>
