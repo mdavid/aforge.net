@@ -20,7 +20,7 @@ namespace AForge.Imaging.Formats
     /// <remarks><para>The interface specifies set of methods, which are sutable not
     /// only for simple one-frame image formats. The interface also defines methods
     /// to work with image formats designed to store multiple frames and image formats
-    /// which provide different type of image description (like aquasion paramters, etc).
+    /// which provide different type of image description (like aquasion parameters, etc).
     /// </para></remarks>
     /// 
     public interface IImageDecoder
@@ -84,25 +84,6 @@ namespace AForge.Imaging.Formats
         /// </remarks>
         /// 
         Bitmap DecodeFrame( int frameIndex, out ImageInfo imageInfo );
-
-        /// <summary>
-        /// Saves an bitmap as an image with the implemented Image decoder.
-        /// </summary>
-        /// <param name="bitmap">The original bitmap.</param>
-        /// <param name="path">Path to which the image would be saved.</param>
-        /// <returns>True, if the saving process was successful, otherwise false.</returns>
-        bool Save(Bitmap bitmap, ref string path);
-
-        /// <summary>
-        /// Saves an image as a jpeg image.
-        /// </summary>
-        /// <param name="bitmap">The original bitmap.</param>
-        /// <param name="path">Path to which the image would be saved.</param>
-        /// <param name="extension">The extension of the image format.</param>
-        /// <returns>
-        /// True, if the saving process was successful, otherwise false.
-        /// </returns>
-        bool Save(Bitmap bitmap, ref string path, string extension);
 
         /// <summary>
         /// Close decoding of previously opened stream.

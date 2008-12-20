@@ -12,6 +12,7 @@ namespace AForge.Imaging.Formats
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.ComponentModel;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Information about JPG image's frame.
@@ -69,17 +70,18 @@ namespace AForge.Imaging.Formats
     }
 
     /// <summary>
-    /// JPG image format decoder.
+    /// JPG image format encoder.
     /// </summary>
-    public class JPGCodec : IImageDecoder
+    public class JPGCodec : IImageEncoder
     {
         // stream with JPG encoded data
         private Stream stream = null;
-        // information about images retrieved from header
-        private JPGImageInfo imageInfo = null;
-        // stream position pointing to beginning of data - right after header
-        private long dataPosition = 0;
+        // bitmap with JPG encoded data
+        private Bitmap bitmap = null;
+        //The quality value of the jpeg codec
         private byte quality;
+        private List<string> extensions = new List<string>(2);
+        JPGImageInfo imageInfo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JPGCodec"/> class.
@@ -90,140 +92,91 @@ namespace AForge.Imaging.Formats
             this.quality = quality;
         }
 
-        /// <summary>
-        /// Decode first frame of JPG image.
-        /// </summary>
-        /// 
-        /// <param name="stream">Source stream, which contains encoded image.</param>
-        /// 
-        /// <returns>Returns decoded image frame.</returns>
-        /// 
-        /// <exception cref="FormatException">Not a JPG image format.</exception>
-        /// <exception cref="NotSupportedException">Format of the JPG image is not supported.</exception>
-        /// <exception cref="ArgumentException">The stream contains invalid (broken) JPG image.</exception>
-        /// 
-        public Bitmap DecodeSingleFrame(Stream stream)
+        #region IImageEncoder Member
+
+
+        List<string> IImageEncoder.Extensions 
         {
-            return new Bitmap(stream);
+            get { return extensions; } 
+            //set { extensions = value; }
         }
 
         /// <summary>
-        /// Open specified stream.
+        /// Gets the image info.
         /// </summary>
-        /// 
-        /// <param name="stream">Stream to open.</param>
-        /// 
-        /// <returns>Returns number of images found in the specified stream.</returns>
-        /// 
-        /// <exception cref="FormatException">Not a JPG image format.</exception>
-        /// <exception cref="NotSupportedException">Format of the JPG image is not supported.</exception>
-        /// <exception cref="ArgumentException">The stream contains invalid (broken) JPG image.</exception>
-        ///
-        public int Open(Stream stream)
+        /// <value>The image info.</value>
+        public ImageInfo ImageInfo
         {
-            // close previous decoding
-            Close();
+            get { return imageInfo; }
+        }
 
-            this.imageInfo = ReadHeader(stream);
-            this.imageInfo.Quality = quality;
+        /// <summary>
+        /// Initializes the jpeg encoder.
+        /// </summary>
+        /// <param name="stream">The image stream, which should be encoded with the jpeg encoder.</param>
+        public void Initialize(Stream stream)
+        {
             this.stream = stream;
-            this.dataPosition = stream.Seek(0, SeekOrigin.Current);
-
-            return imageInfo.TotalFrames;
+            bitmap = (Bitmap)Bitmap.FromStream(stream);
+            imageInfo = new JPGImageInfo(bitmap.Width, bitmap.Height, 24, 0, 1);
+            imageInfo.Quality = quality;
+            extensions.Add("jpg");
+            extensions.Add("jpeg");
         }
 
         /// <summary>
-        /// Decode specified frame.
+        /// Encodes the image steam.
         /// </summary>
-        /// 
-        /// <param name="frameIndex">Image frame to decode.</param>
-        /// <param name="imageInfo">Receives information about decoded frame.</param>
-        /// 
-        /// <returns>Returns decoded frame.</returns>
-        /// 
-        /// <exception cref="NullReferenceException">No image stream was opened previously.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Stream does not contain frame with specified index.</exception>
-        /// <exception cref="ArgumentException">The stream contains invalid (broken) JPG image.</exception>
-        /// 
-        public Bitmap DecodeFrame(int frameIndex, out ImageInfo imageInfo)
+        /// <remarks>This method throws
+        /// <see cref="System.NotSupportedException"/> exception, because the encoder is a
+        /// default dotnet encoder. No custom encoding necessary.
+        /// </remarks>
+        public void Encode()
         {
-            // check requested frame index
-            if (frameIndex != 0)
-            {
-                throw new ArgumentOutOfRangeException("Currently opened stream does not contain frame with specified index.");
-            }
-
-            // seek to the required frame
-            stream.Seek(dataPosition, SeekOrigin.Begin);
-
-            //// read required frame
-            Bitmap image = new Bitmap(stream);
-
-            // provide also frame information
-            imageInfo = (JPGImageInfo)this.imageInfo.Clone();
-
-            return image;
+            throw new NotSupportedException("Not necessary for dotNet default jpeg encoder.");
         }
 
         /// <summary>
-        /// Saves an image as a jpeg image.
+        /// Gets the image of the image stream.
         /// </summary>
-        /// <param name="bitmap">The original bitmap.</param>
-        /// <param name="path">Path to which the image would be saved.</param>
-        /// <returns>True, if the saving process was successful, otherwise false.</returns>
-        public bool Save(Bitmap bitmap, ref string path)
+        /// <returns>The image of the image stream.</returns>
+        public Bitmap[] ToBitmaps()
         {
-            return Save(bitmap, ref path, "jpg");
+            Bitmap[] bitmaps = new Bitmap[1];
+            bitmaps[0] = (Bitmap)Bitmap.FromStream(stream);
+            return bitmaps;
         }
 
         /// <summary>
-        /// Saves an image as a jpeg image.
+        /// Saves as a jpeg image.
         /// </summary>
-        /// <param name="bitmap">The original bitmap.</param>
         /// <param name="path">Path to which the image would be saved.</param>
-        /// <param name="extension">The extension of the jpeg format.</param>
         /// <returns>
         /// True, if the saving process was successful, otherwise false.
         /// </returns>
-        public bool Save(Bitmap bitmap, ref string path, string extension)
+        public void Save(string path)
         {
             if (imageInfo.Quality < 0 || imageInfo.Quality > 100)
                 throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
 
-            path = path.Substring(0, path.LastIndexOf('.') + 1) + extension;
-            try
-            { SaveJpeg(path, Bitmap.FromStream(stream), imageInfo.Quality); }
-            catch (Exception)
-            { return false; }
-
-            return true;
+            SaveJpeg(path, Bitmap.FromStream(stream), imageInfo.Quality);          
         }
 
         /// <summary>
         /// Close decoding of previously opened stream.
         /// </summary>
-        /// 
-        /// <remarks><para>The method does not close stream itself, but just closes
-        /// decoding cleaning all associated data with it.</para></remarks>
-        /// 
+        /// <remarks>
+        /// Implementations of this method don't close stream itself, but just close
+        /// decoding cleaning all associated data with it.
+        /// </remarks>
         public void Close()
         {
             stream = null;
+            bitmap = null;
             imageInfo = null;
         }
 
-        // Read and process JPG header. After the header is read stream pointer will
-        // point to data.
-        private JPGImageInfo ReadHeader(Stream stream)
-        {
-            Bitmap image = new Bitmap(stream);
-
-            // prepare image information
-            JPGImageInfo imageInfo = new JPGImageInfo(image.Width, image.Height, 24, 0, 1);
-            image.Dispose();
-
-            return imageInfo;
-        }
+        #endregion Implementations of IImageEncoder
 
         /// <summary>
         /// Saves an image as a jpeg image, with the passed quality.
@@ -234,10 +187,6 @@ namespace AForge.Imaging.Formats
         /// highest quality</param>
         private static void SaveJpeg(string path, Image img, int quality)
         {
-            if (quality < 0 || quality > 100)
-                throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
-
-
             // Encoder parameter for image quality
             EncoderParameter qualityParam =
                 new EncoderParameter(Encoder.Quality, quality);

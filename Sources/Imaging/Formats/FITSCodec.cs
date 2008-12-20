@@ -266,32 +266,6 @@ namespace AForge.Imaging.Formats
         }
 
         /// <summary>
-        /// Saves an image as a FITS image.
-        /// </summary>
-        /// <param name="bitmap">The original bitmap.</param>
-        /// <param name="path">Path to which the image would be saved.</param>
-        /// <returns>True, if the saving process was successful, otherwise false.</returns>
-        public bool Save(Bitmap bitmap, ref string path)
-        {
-            return Save(bitmap, ref path, "fit");
-        }
-
-        /// <summary>
-        /// Saves an image as a FITS image.
-        /// </summary>
-        /// <param name="bitmap">The original bitmap.</param>
-        /// <param name="path">Path to which the image would be saved.</param>
-        /// <param name="extension">The extension of the FITS format.</param>
-        /// <returns>
-        /// True, if the saving process was successful, otherwise false.
-        /// </returns>
-        public bool Save(Bitmap bitmap, ref string path, string extension)
-        {
-            //TODO: implementation needed.
-            return true;
-        }
-
-        /// <summary>
         /// Close decoding of previously opened stream.
         /// </summary>
         /// 
