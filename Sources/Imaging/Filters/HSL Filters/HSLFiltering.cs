@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
 //
 
@@ -93,7 +93,7 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         /// <remarks><note>Because of hue values are cycled, the minimum value of the hue
-        /// range may have bigger integer value then the maximum value.</note></remarks>
+        /// range may have bigger integer value than the maximum value, for example [330, 30].</note></remarks>
         /// 
         public IntRange Hue
         {
