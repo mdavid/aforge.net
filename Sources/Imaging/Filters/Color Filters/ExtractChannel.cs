@@ -37,6 +37,8 @@ namespace AForge.Imaging.Filters
     /// 
     /// </remarks>
     /// 
+    /// <seealso cref="ReplaceChannel"/>
+    /// 
     public class ExtractChannel : BaseFilter
     {
         private short channel = RGB.R;

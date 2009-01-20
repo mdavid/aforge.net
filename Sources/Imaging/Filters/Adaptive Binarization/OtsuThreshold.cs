@@ -43,6 +43,9 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/otsu_threshold.png" width="256" height="256" />
     /// </remarks>
     /// 
+    /// <seealso cref="IterativeThreshold"/>
+    /// <seealso cref="SISThreshold"/>
+    /// 
     public class OtsuThreshold : BaseInPlacePartialFilter
     {
         private int threshold;

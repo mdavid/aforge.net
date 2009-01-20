@@ -55,6 +55,9 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/iterative_threshold.png" width="256" height="256" />
     /// </remarks>
     /// 
+    /// <seealso cref="OtsuThreshold"/>
+    /// <seealso cref="SISThreshold"/>
+    /// 
     public class IterativeThreshold : Threshold
     {
         private int minError = 0;
