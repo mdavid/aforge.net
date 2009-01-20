@@ -21,7 +21,7 @@ namespace AForge.Imaging.Filters
     /// 
     /// <para>The filter is quite useful in conjunction with <see cref="YCbCrExtractChannel"/> filter
     /// (however may be used alone in some cases). Using the <see cref="YCbCrExtractChannel"/> filter
-    /// it is possible to extract one of YCbCr channels, perform some image processing with it and then
+    /// it is possible to extract one of YCbCr channel, perform some image processing with it and then
     /// put it back into the original color image.</para>
     /// 
     /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>

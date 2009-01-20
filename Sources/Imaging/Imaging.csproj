@@ -65,7 +65,9 @@
     <Compile Include="Filters\2 Source filters\Merge.cs" />
     <Compile Include="Filters\2 Source filters\MoveTowards.cs" />
     <Compile Include="Filters\2 Source filters\Subtract.cs" />
+    <Compile Include="Filters\Adaptive Binarization\IterativeThreshold.cs" />
     <Compile Include="Filters\Adaptive Binarization\OtsuThreshold.cs" />
+    <Compile Include="Filters\Adaptive Binarization\SISThreshold.cs" />
     <Compile Include="Filters\Base classes\BaseFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
@@ -88,12 +90,14 @@
     <Compile Include="Filters\Color Filters\ChannelFiltering.cs" />
     <Compile Include="Filters\Color Filters\ColorFiltering.cs" />
     <Compile Include="Filters\Color Filters\EuclideanColorFiltering.cs" />
+    <Compile Include="Filters\Color Filters\ExtractChannel.cs" />
     <Compile Include="Filters\Color Filters\Grayscale.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleBT709.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleRMY.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleY.cs" />
     <Compile Include="Filters\Color Filters\HistogramEqualization.cs" />
     <Compile Include="Filters\Color Filters\Invert.cs" />
+    <Compile Include="Filters\Color Filters\ReplaceChannel.cs" />
     <Compile Include="Filters\Color Filters\RotateChannels.cs" />
     <Compile Include="Filters\Color Filters\Sepia.cs" />
     <Compile Include="Filters\Convolution\Blur.cs" />

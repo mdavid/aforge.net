@@ -36,6 +36,11 @@ namespace AForge.Imaging.Filters
     /// byte t = filter.ThresholdValue;
     /// // ...
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample11.png" width="256" height="256" />
+    /// <para><b>Result image (calculated threshold is 97):</b></para>
+    /// <img src="img/imaging/otsu_threshold.png" width="256" height="256" />
     /// </remarks>
     /// 
     public class OtsuThreshold : BaseInPlacePartialFilter

@@ -114,6 +114,12 @@
         <contentItem sourcePath="..\Controls\Images\slider_inner_gradient.png" destPath="img\controls\" excludeItems="False" />
         <contentItem sourcePath="..\Controls\Images\slider_outer_gradient.png" destPath="img\controls\" excludeItems="False" />
         <contentItem sourcePath="..\Controls\Images\slider_threshold.png" destPath="img\controls\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\extract_channel.jpg" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\iterative_threshold.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\otsu_threshold.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\sample11.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\sis_threshold.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\replace_channel.jpg" destPath="img\imaging\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
@@ -141,7 +147,7 @@
     <FeedbackEMailAddress>documentation@aforgenet.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText>Feedback Contact</FeedbackEMailLinkText>
     <HeaderText />
-    <FooterText>&lt;a href="http://www.aforgenet.com/" target="_blank"&gt;AForge.NET&lt;/a&gt; © 2008</FooterText>
+    <FooterText>&lt;a href="http://www.aforgenet.com/" target="_blank"&gt;AForge.NET&lt;/a&gt; © 2006-2009</FooterText>
     <ProjectLinkType>Local</ProjectLinkType>
     <SdkLinkType>Msdn</SdkLinkType>
     <SdkLinkTarget>Blank</SdkLinkTarget>

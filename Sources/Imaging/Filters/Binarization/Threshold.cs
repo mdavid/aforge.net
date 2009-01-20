@@ -1,8 +1,8 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -63,7 +63,7 @@ namespace AForge.Imaging.Filters
         /// Threshold value.
         /// </summary>
         /// 
-        /// <remarks>Default value is 128.</remarks>
+        /// <remarks>Default value is set to <b>128</b>.</remarks>
         /// 
         public int ThresholdValue
         {
