@@ -89,6 +89,7 @@
     <Compile Include="Filters\Binarization\ThresholdWithCarry.cs" />
     <Compile Include="Filters\Color Filters\ChannelFiltering.cs" />
     <Compile Include="Filters\Color Filters\ColorFiltering.cs" />
+    <Compile Include="Filters\Color Filters\ColorRemapping.cs" />
     <Compile Include="Filters\Color Filters\EuclideanColorFiltering.cs" />
     <Compile Include="Filters\Color Filters\ExtractChannel.cs" />
     <Compile Include="Filters\Color Filters\Grayscale.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Filters\Color Filters\GrayscaleY.cs" />
     <Compile Include="Filters\Color Filters\HistogramEqualization.cs" />
     <Compile Include="Filters\Color Filters\Invert.cs" />
+    <Compile Include="Filters\Color Filters\LevelsLinear.cs" />
     <Compile Include="Filters\Color Filters\ReplaceChannel.cs" />
     <Compile Include="Filters\Color Filters\RotateChannels.cs" />
     <Compile Include="Filters\Color Filters\Sepia.cs" />
