@@ -93,9 +93,11 @@
     <Compile Include="Filters\Color Filters\ContrastStretch.cs" />
     <Compile Include="Filters\Color Filters\EuclideanColorFiltering.cs" />
     <Compile Include="Filters\Color Filters\ExtractChannel.cs" />
+    <Compile Include="Filters\Color Filters\GammaCorrection.cs" />
     <Compile Include="Filters\Color Filters\Grayscale.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleBT709.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleRMY.cs" />
+    <Compile Include="Filters\Color Filters\GrayscaleToRGB.cs" />
     <Compile Include="Filters\Color Filters\GrayscaleY.cs" />
     <Compile Include="Filters\Color Filters\HistogramEqualization.cs" />
     <Compile Include="Filters\Color Filters\Invert.cs" />
