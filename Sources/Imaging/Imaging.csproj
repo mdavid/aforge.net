@@ -118,8 +118,12 @@
     <Compile Include="Filters\Edge Detectors\SobelEdgeDetector.cs" />
     <Compile Include="Filters\FiltersSequence.cs" />
     <Compile Include="Filters\Flood Fillers\PointedMeanFloodFill.cs" />
+    <Compile Include="Filters\HSL Filters\BrightnessCorrection.cs" />
+    <Compile Include="Filters\HSL Filters\ContrastCorrection.cs" />
     <Compile Include="Filters\HSL Filters\HSLFiltering.cs" />
+    <Compile Include="Filters\HSL Filters\HSLLinear.cs" />
     <Compile Include="Filters\HSL Filters\HueModifier.cs" />
+    <Compile Include="Filters\HSL Filters\SaturationCorrection.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\IFilterInformation.cs" />
     <Compile Include="Filters\IInPlaceFilter.cs" />

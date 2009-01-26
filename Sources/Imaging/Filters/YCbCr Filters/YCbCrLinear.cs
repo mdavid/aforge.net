@@ -40,6 +40,9 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/ycbcr_linear.jpg" width="480" height="361" />
     /// </remarks>
     /// 
+    /// <seealso cref="HSLLinear"/>
+    /// <seealso cref="YCbCrLinear"/>
+    /// 
     public class YCbCrLinear : BaseInPlacePartialFilter
     {
         private DoubleRange inY  = new DoubleRange(  0.0, 1.0 );
