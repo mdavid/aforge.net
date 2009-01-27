@@ -63,6 +63,7 @@
     <Compile Include="Filters\2 Source filters\Difference.cs" />
     <Compile Include="Filters\2 Source filters\Intersect.cs" />
     <Compile Include="Filters\2 Source filters\Merge.cs" />
+    <Compile Include="Filters\2 Source filters\Morph.cs" />
     <Compile Include="Filters\2 Source filters\MoveTowards.cs" />
     <Compile Include="Filters\2 Source filters\Subtract.cs" />
     <Compile Include="Filters\Adaptive Binarization\IterativeThreshold.cs" />
