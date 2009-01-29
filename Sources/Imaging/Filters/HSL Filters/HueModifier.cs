@@ -17,7 +17,7 @@ namespace AForge.Imaging.Filters
     /// </summary>
     /// 
     /// <remarks><para>The filter operates in <b>HSL</b> color space and updates
-    /// pixels hue values setting it to the specified value (luminance and
+    /// pixels' hue values setting it to the specified value (luminance and
     /// saturation are kept unchanged). The result of the filter looks like the image
     /// is observed through a glass of the given color.</para>
     ///

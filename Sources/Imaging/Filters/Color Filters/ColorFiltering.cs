@@ -17,7 +17,7 @@ namespace AForge.Imaging.Filters
     /// Color filtering.
     /// </summary>
     /// 
-    /// <remarks><para>The filter filters pixels inside/outside of specified color range -
+    /// <remarks><para>The filter filters pixels inside/outside of specified RGB color range -
     /// it keeps pixels with colors inside/outside of specified range and fills the rest with
     /// <see cref="FillColor">specified color</see>.</para>
     /// 
