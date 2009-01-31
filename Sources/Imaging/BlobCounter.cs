@@ -1,10 +1,12 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@gmail.com
 //
-
+// Copyright © Frank Nagl, 2009
+// admin@franknagl.de
+//
 namespace AForge.Imaging
 {
     using System;
@@ -21,13 +23,27 @@ namespace AForge.Imaging
     /// <code>
     /// // create an instance of blob counter algorithm
     /// BlobCounter bc = new BlobCounter( );
+    /// // set filtering options
+    /// bc.FilterBlobs = true;
+    /// bc.MinWidth  = 5;
+    /// bc.MinHeight = 5;
     /// // process binary image
     /// bc.ProcessImage( image );
     /// Rectangle[] rects = bc.GetObjectRectangles( );
-    /// // process blobs
+    /// // process blob's rectangles
     /// foreach ( Rectangle rect in rects )
     /// {
     ///     // ...
+    /// }
+    /// 
+    /// Blob[] blobs = bc.GetObjects( image );
+    /// // process blobs
+    /// foreach ( Blob blob in blobs )
+    /// {
+    ///     // ...
+    ///     // blob.Rectangle - blob's rectangle
+    ///     // blob.Image - blob's image
+    ///     // blob.OrigImage - blob in original image
     /// }
     /// </code>
     /// </remarks>
