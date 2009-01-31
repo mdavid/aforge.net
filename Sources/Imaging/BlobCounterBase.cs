@@ -1,10 +1,12 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@gmail.com
 //
-
+// Copyright © Frank Nagl, 2009
+// admin@franknagl.de
+//
 namespace AForge.Imaging
 {
     using System;
@@ -44,7 +46,7 @@ namespace AForge.Imaging
     }
 
     /// <summary>
-    /// Base class for differnt blob counting algorithms.
+    /// Base class for different blob counting algorithms.
     /// </summary>
     /// 
     /// <remarks><para>The class is abstract and serves as a base for different blob counting algorithms.
@@ -67,6 +69,7 @@ namespace AForge.Imaging
     ///     // ...
     ///     // blob.Rectangle - blob's rectangle
     ///     // blob.Image - blob's image
+    ///     // blob.OrigImage - blob in original image
     /// }
     /// </code>
     /// </remarks>
@@ -618,17 +621,28 @@ namespace AForge.Imaging
                 Bitmap dstImg = ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ?
                     AForge.Imaging.Image.CreateGrayscaleImage( objectWidth, objectHeight ) :
                     new Bitmap( objectWidth, objectHeight, PixelFormat.Format24bppRgb );
+                //create second new image for blob image in original image's size
+                Bitmap origBlobImg = (imageData.PixelFormat == PixelFormat.Format8bppIndexed) ?
+                    AForge.Imaging.Image.CreateGrayscaleImage(width, height) :
+                    new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
                 // lock destination bitmap data
                 BitmapData dstData = dstImg.LockBits(
                     new Rectangle( 0, 0, objectWidth, objectHeight ),
                     ImageLockMode.ReadWrite, imageData.PixelFormat );
 
+                // lock destination bitmap data
+                BitmapData origBlobData = origBlobImg.LockBits(
+                    new Rectangle(0, 0, width, height),
+                    ImageLockMode.ReadWrite, imageData.PixelFormat);
+
                 // copy image
                 unsafe
                 {
                     byte* src = (byte*) imageData.Scan0.ToPointer( ) + ymin * srcStride + xmin * pixelSize;
                     byte* dst = (byte*) dstData.Scan0.ToPointer( );
+                    byte* dstOrig = (byte*)origBlobData.Scan0.ToPointer() + ymin * srcStride + xmin * pixelSize;
+
                     int p = ymin * width + xmin;
 
                     int srcOffset = srcStride - objectWidth * pixelSize;
@@ -639,29 +653,35 @@ namespace AForge.Imaging
                     for ( int y = ymin; y <= ymax; y++ )
                     {
                         // copy each pixel
-                        for ( int x = xmin; x <= xmax; x++, p++, dst += pixelSize, src += pixelSize )
+                        for (int x = xmin; x <= xmax; x++, p++, dst += pixelSize, dstOrig += pixelSize, src += pixelSize)
                         {
                             if ( objectLabels[p] == label )
                             {
                                 // copy pixel
                                 *dst = *src;
+                                *dstOrig = *src;
 
                                 if ( pixelSize > 1 )
                                 {
                                     dst[1] = src[1];
                                     dst[2] = src[2];
+
+                                    dstOrig[1] = src[1];
+                                    dstOrig[2] = src[2];
                                 }
                             }
                         }
                         src += srcOffset;
                         dst += dstOffset;
+                        dstOrig += srcOffset;
                         p += labelsOffset;
                     }
                 }
                 // unlock destination image
                 dstImg.UnlockBits( dstData );
+                origBlobImg.UnlockBits(origBlobData);
 
-                objects[k] = new Blob( label, new Rectangle( xmin, ymin, objectWidth, objectHeight ), dstImg );
+                objects[k] = new Blob( label, new Rectangle( xmin, ymin, objectWidth, objectHeight ), dstImg, origBlobImg );
             }
 
             // sort blobs
@@ -705,7 +725,7 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <param name="imageData">Source image data to extract blob's image from.</param>
-        /// <param name="blob">Blob which is required to extracå image of.</param>
+        /// <param name="blob">Blob which is required to extract image of.</param>
         /// 
         /// <remarks><para>The method is used to extract image of partially initialized blob, which
         /// was provided by <see cref="GetObjectInformation"/> method.</para></remarks>
@@ -743,16 +763,27 @@ namespace AForge.Imaging
                 AForge.Imaging.Image.CreateGrayscaleImage( objectWidth, objectHeight ) :
                 new Bitmap( objectWidth, objectHeight, PixelFormat.Format24bppRgb );
 
+            // create new image in original size
+            blob.OrigImage = (imageData.PixelFormat == PixelFormat.Format8bppIndexed) ?
+                AForge.Imaging.Image.CreateGrayscaleImage(width, height) :
+                new Bitmap(width, height, PixelFormat.Format24bppRgb);
+
             // lock destination bitmap data
             BitmapData dstData = blob.Image.LockBits(
                 new Rectangle( 0, 0, objectWidth, objectHeight ),
                 ImageLockMode.ReadWrite, imageData.PixelFormat );
+
+            // lock destination bitmap data
+            BitmapData origBlobData = blob.OrigImage.LockBits(
+                new Rectangle(0, 0, width, height),
+                ImageLockMode.ReadWrite, imageData.PixelFormat);
 
             // copy image
             unsafe
             {
                 byte* src = (byte*) imageData.Scan0.ToPointer( ) + ymin * srcStride + xmin * pixelSize;
                 byte* dst = (byte*) dstData.Scan0.ToPointer( );
+                byte* dstOrig = (byte*) origBlobData.Scan0.ToPointer() + ymin * srcStride + xmin * pixelSize;
                 int p = ymin * width + xmin;
 
                 int srcOffset = srcStride - objectWidth * pixelSize;
@@ -763,27 +794,33 @@ namespace AForge.Imaging
                 for ( int y = ymin; y <= ymax; y++ )
                 {
                     // copy each pixel
-                    for ( int x = xmin; x <= xmax; x++, p++, dst += pixelSize, src += pixelSize )
+                    for (int x = xmin; x <= xmax; x++, p++, dst += pixelSize, dstOrig += pixelSize, src += pixelSize)
                     {
                         if ( objectLabels[p] == label )
                         {
                             // copy pixel
                             *dst = *src;
+                            *dstOrig = *src;
 
                             if ( pixelSize > 1 )
                             {
                                 dst[1] = src[1];
                                 dst[2] = src[2];
+
+                                dstOrig[1] = src[1];
+                                dstOrig[2] = src[2];
                             }
                         }
                     }
                     src += srcOffset;
                     dst += dstOffset;
+                    dstOrig += srcOffset;
                     p += labelsOffset;
                 }
             }
             // unlock destination image
             blob.Image.UnlockBits( dstData );
+            blob.OrigImage.UnlockBits(origBlobData);
         }
 
         /// <summary>

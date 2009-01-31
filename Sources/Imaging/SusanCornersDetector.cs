@@ -4,7 +4,7 @@
 // Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
-// Copyright © Frank Nagl, 2007
+// Copyright © Frank Nagl, 2008
 // admin@franknagl.de
 //
 namespace AForge.Imaging

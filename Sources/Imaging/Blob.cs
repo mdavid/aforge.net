@@ -1,10 +1,12 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@gmail.com
 //
-
+// Copyright © Frank Nagl, 2009
+// admin@franknagl.de
+//
 namespace AForge.Imaging
 {
     using System;
@@ -19,7 +21,8 @@ namespace AForge.Imaging
     /// class encapsulates the blob itself and information about its position
     /// in parent image.</para>
     /// 
-    /// <para><note>The class is not responsible for blob's image disposing, so it should be
+    /// <para><note>The class is not responsible for blob's image disposing (also 
+    /// not for blob in original image), so it should be
     /// done manually when it is required.</note></para>
     /// </remarks>
     /// 
@@ -27,6 +30,8 @@ namespace AForge.Imaging
     {
         // blob's image
         private Bitmap image;
+        // blob in original image
+        private Bitmap origImage;
         // blob's rectangle on the original image
         private Rectangle rect;
         // blob's ID in the original image
@@ -44,6 +49,18 @@ namespace AForge.Imaging
         {
             get { return image; }
             internal set { image = value; }
+        }
+
+        /// <summary>
+        /// Blob in original image.
+        /// </summary>
+        ///
+        /// <remarks><para>The property keeps blob in original image.</para></remarks>
+        ///
+        public Bitmap OrigImage
+        {
+            get { return origImage; }
+            internal set { origImage = value; }
         }
 
         /// <summary>
@@ -70,7 +87,7 @@ namespace AForge.Imaging
         /// <param name="rect">Blob's rectangle on the original image.</param>
         /// 
         /// <remarks><para>This constructor leaves <see cref="Image"/> property not initialized. The blob's
-        /// image may be extracted later using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob )"/>
+        /// image and the blob in original image may be extracted later using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob )"/>
         /// or <see cref="BlobCounterBase.ExtractBlobsImage( BitmapData, Blob )"/> method.</para></remarks>
         /// 
         public Blob( int id, Rectangle rect )
@@ -82,16 +99,16 @@ namespace AForge.Imaging
         /// <summary>
         /// Initializes a new instance of the <see cref="Blob"/> class.
         /// </summary>
-        /// 
         /// <param name="id">Blob's ID in the original image.</param>
         /// <param name="rect">Blob's rectangle on the original image.</param>
         /// <param name="image">Blob's image.</param>
-        /// 
-        public Blob( int id, Rectangle rect, Bitmap image )
+        /// <param name="origImage">Blob in original image.</param>
+        public Blob(int id, Rectangle rect, Bitmap image, Bitmap origImage)
         {
             this.id = id;
             this.rect = rect;
             this.image = image;
+            this.origImage = origImage;
         }
     }
 }
