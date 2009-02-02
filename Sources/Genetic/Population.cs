@@ -139,13 +139,24 @@ namespace AForge.Genetic
         /// </summary>
         /// 
         /// <remarks><para>The property sets fitness function, which is used to evaluate
-        /// usefulness of population's chromosomes.</para>
+        /// usefulness of population's chromosomes. Setting new fitness function causes recalculation
+        /// of fitness values for all population's members and new best member will be found.</para>
         /// </remarks>
         /// 
         public IFitnessFunction FitnessFunction
         {
             get { return fitnessFunction; }
-            set { fitnessFunction = value; }
+            set
+            {
+                fitnessFunction = value;
+
+                foreach ( IChromosome member in population )
+                {
+                    member.Evaluate( fitnessFunction );
+                }
+
+                FindBestChromosome( );
+            }
         }
 
         /// <summary>
