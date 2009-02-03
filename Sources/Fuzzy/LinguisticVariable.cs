@@ -135,7 +135,7 @@ namespace AForge.Fuzzy
         public void AddLabel( FuzzySet label )
         {
             // checking for existing name
-            if ( labels.ContainsKey( label.Name ) )
+            if ( this.labels.ContainsKey( label.Name ) )
                 throw new ArgumentException( "The linguistic label name already exists in the linguistic variable." );
 
             // checking ranges
@@ -158,20 +158,35 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
+        /// Returns an existing label from the linguistic variable.
+        /// </summary>
+        /// 
+        /// <param name="VariableName">Name of the label to retrieve.</param>
+        /// 
+        /// <returns>Reference to named label (<see cref="FuzzySet"/>).</returns>
+        /// 
+        /// <exception cref="KeyNotFoundException">The label indicated in LabelName was not found in the linguistic variable.</exception>
+        /// 
+        public FuzzySet GetLabel( string LabelName )
+        {
+            return labels [LabelName];
+        }
+
+        /// <summary>
         /// Calculate the membership of a given value to a given label. Used to evaluate linguistics clauses like 
         /// "X IS A", where X is a value and A is a linguistic label.
         /// </summary>
         /// 
-        /// <param name="labelName">Label (fuzzy set) to evaluate value's membership.</param>
+        /// <param name="LabelName">Label (fuzzy set) to evaluate value's membership.</param>
         /// <param name="value">Value which label's membership will to be calculated.</param>
         /// 
         /// <returns>Degree of membership [0..1] of the value to the label (fuzzy set).</returns>
         /// 
         /// <exception cref="KeyNotFoundException">The label indicated in labelName was not found in the linguistic variable.</exception>
         /// 
-        public double GetLabelMembership( string labelName, double value )
+        public double GetLabelMembership( string LabelName, double value )
         {
-            FuzzySet fs = labels[labelName];
+            FuzzySet fs = labels [LabelName];
             return fs.GetMembership( value );
         }
     }
