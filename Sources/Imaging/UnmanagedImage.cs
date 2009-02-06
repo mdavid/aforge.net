@@ -161,6 +161,27 @@ namespace AForge.Imaging
         }
 
         /// <summary>
+        /// Clone the unmanaged images.
+        /// </summary>
+        /// 
+        /// <returns>Returns clone of the unmanaged image.</returns>
+        /// 
+        /// <remarks><para>The method does complete cloning of the object.</para></remarks>
+        /// 
+        public UnmanagedImage Clone( )
+        {
+            // allocate memory for the image
+            IntPtr newImageData = System.Runtime.InteropServices.Marshal.AllocHGlobal( stride * height );
+
+            UnmanagedImage newImage = new UnmanagedImage( newImageData, width, height, stride, pixelFormat );
+            newImage.mustBeDisposed = true;
+
+            AForge.SystemTools.CopyUnmanagedMemory( newImageData, imageData, stride * height );
+
+            return newImage;
+        }
+
+        /// <summary>
         /// Allocate new image in unmanaged memory.
         /// </summary>
         /// 

@@ -45,8 +45,6 @@
         <contentItem sourcePath="..\Imaging\Images\move_towards.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\sample6.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\sample7.png" destPath="img\imaging\" excludeItems="False" />
-        <contentItem sourcePath="..\Imaging\Images\erosion.jpg" destPath="img\imaging\" excludeItems="False" />
-        <contentItem sourcePath="..\Imaging\Images\dilatation.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\blobs_filtering.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\sample2.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\hor_histogram.jpg" destPath="img\imaging\" excludeItems="False" />
@@ -129,6 +127,13 @@
         <contentItem sourcePath="..\Imaging\Images\hsl_linear.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\saturation_correction.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\morph.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\bottomhat.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\closing.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\dilatation.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\erosion.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\opening.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\sample12.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\tophat.png" destPath="img\imaging\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
