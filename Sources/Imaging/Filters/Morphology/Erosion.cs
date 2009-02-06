@@ -38,9 +38,9 @@ namespace AForge.Imaging.Filters
     /// </code>
     /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
     /// <para><b>Result image:</b></para>
-    /// <img src="img/imaging/erosion.jpg" width="480" height="361" />
+    /// <img src="img/imaging/erosion.png" width="320" height="240" />
     /// </remarks>
     /// 
     /// <seealso cref="Dilatation"/>

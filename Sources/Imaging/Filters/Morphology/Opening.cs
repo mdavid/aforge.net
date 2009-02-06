@@ -19,6 +19,10 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>Opening morphology operator equals to <see cref="Erosion">erosion</see> followed
     /// by <see cref="Dilatation">dilatation</see>.</para>
     /// 
+    /// <para>Applied to binary image, the filter may be used for removing small object keeping big objects
+    /// unchanged. Since erosion is used first, it removes all small objects. Then dilatation restores big
+    /// objects, which were not removed by erosion.</para>
+    /// 
     /// <para>See documentation to <see cref="Erosion"/> and <see cref="Dilatation"/> classes for more
     /// information and list of supported pixel formats.</para>
     /// 
@@ -29,8 +33,13 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.Apply( image );
     /// </code>
-    /// </remarks>
     /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/opening.png" width="320" height="240" />
+    /// </remarks>
+    ///
     /// <seealso cref="Erosion"/>
     /// <seealso cref="Dilatation"/>
     /// <seealso cref="Closing"/>

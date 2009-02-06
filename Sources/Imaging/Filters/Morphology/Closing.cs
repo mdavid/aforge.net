@@ -19,6 +19,10 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>Closing morphology operator equals to <see cref="Dilatation">dilatation</see> followed
     /// by <see cref="Erosion">erosion</see>.</para>
     /// 
+    /// <para>Applied to binary image, the filter may be used connect or fill objects. Since dilatation is used
+    /// first, it may connect/fill object areas. Then erosion restores objects. But since dilatation may connect
+    /// something before, erosion may not remove after that because of the formed connection.</para>
+    /// 
     /// <para>See documentation to <see cref="Erosion"/> and <see cref="Dilatation"/> classes for more
     /// information and list of supported pixel formats.</para>
     /// 
@@ -29,6 +33,11 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.Apply( image );
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/closing.png" width="320" height="240" />
     /// </remarks>
     /// 
     /// <seealso cref="Erosion"/>
