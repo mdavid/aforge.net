@@ -17,8 +17,9 @@ namespace AForge.Imaging.Filters
     /// Linear correction of RGB channels.
     /// </summary>
     /// 
-    /// <remarks><para>The filter performs linear correction of RGB channels. It is similar
-    /// to the <see cref="ColorRemapping"/>, but the remapping is linear.</para>
+    /// <remarks><para>The filter performs linear correction of RGB channels by mapping specified
+    /// channels' input ranges to output ranges. It is similar to the
+    /// <see cref="ColorRemapping"/>, but the remapping is linear.</para>
     /// 
     /// <para>The filter accepts 8 bpp grayscale and 24/32 bpp color images for processing.</para>
     /// 

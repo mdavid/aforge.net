@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
 //
 
@@ -17,7 +17,7 @@ namespace AForge.Imaging.Filters
 	/// </summary>
 	/// 
 	/// <remarks><para>The filter extracts specified YCbCr channel of color image and returns
-    /// it the form of grayscale image.</para>
+    /// it in the form of grayscale image.</para>
     /// 
     /// <para>The filter accepts 24 and 32 bpp color images and produces
     /// 8 bpp grayscale images.</para>
