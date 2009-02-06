@@ -17,10 +17,15 @@ namespace AForge.Imaging.Filters
     /// Channels filters.
     /// </summary>
     /// 
-    /// <remarks><para>The filter does color channels' filtering clearing (filling with
-    /// specified values) values, which are not inside/outside of the specified value's
+    /// <remarks><para>The filter does color channels' filtering by clearing (filling with
+    /// specified values) values, which are inside/outside of the specified value's
     /// range. The filter allows to fill certain ranges of RGB color channels with specified
     /// value.</para>
+    /// 
+    /// <para>The filter is similar to <see cref="ColorFiltering"/>, but operates with not
+    /// entire pixels, but with their RGB values individually. This means that pixel itself may
+    /// not be filtered (will be kept), but one of its RGB values may be filtered if they are
+    /// inside/outside of specified range.</para>
     /// 
     /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
     /// 

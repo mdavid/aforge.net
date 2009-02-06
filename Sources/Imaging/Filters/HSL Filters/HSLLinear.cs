@@ -26,7 +26,7 @@ namespace AForge.Imaging.Filters
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
-    /// HSLLinear filter = new YCbCrLinear( );
+    /// HSLLinear filter = new HSLLinear( );
     /// // configure the filter
     /// filter.InLuminance   = new DoubleRange( 0, 0.85 );
     /// filter.OutSaturation = new DoubleRange( 0.25, 1 );
