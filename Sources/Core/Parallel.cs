@@ -170,6 +170,7 @@ namespace AForge
                 threadIdle[i]   = new ManualResetEvent( true );
 
                 threads[i] = new Thread( new ParameterizedThreadStart( WorkerThread ) );
+                threads[i].Name = "AForge.Parallel";
                 threads[i].IsBackground = true;
                 threads[i].Start( i );
             }
