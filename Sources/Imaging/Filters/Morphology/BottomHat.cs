@@ -41,6 +41,8 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/bottomhat.png" width="320" height="240" />
     /// </remarks>
     /// 
+    /// <seealso cref="TopHat"/>
+    /// 
     public class BottomHat : BaseInPlaceFilter
     {
         private Closing closing = new Closing( );
