@@ -40,6 +40,8 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/tophat.png" width="320" height="240" />
     /// </remarks>
     /// 
+    /// <see cref="BottomHat"/>
+    /// 
     public class TopHat : BaseInPlaceFilter
     {
         private Opening opening = new Opening( );
