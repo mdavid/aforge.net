@@ -1,8 +1,11 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
+//
+// Copyright © Frank Nagl, 2009
+// admin@franknagl.de
 //
 
 namespace AForge.Imaging
@@ -143,7 +146,7 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The property specifies objects' sort order, which are provided
-        /// by <see cref="GetObjectRectangles"/>, <see cref="GetObjectInformation"/>, etc.
+        /// by <see cref="GetObjectsRectangles"/>, <see cref="GetObjectsInformation"/>, etc.
         /// </para></remarks>
         /// 
         public ObjectsOrder ObjectsOrder
@@ -508,7 +511,7 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so objects' rectangles
         /// can not be collected.</exception>
         /// 
-        public Rectangle[] GetObjectRectangles( )
+        public Rectangle[] GetObjectsRectangles( )
         {
             // check if objects map was collected
             if ( objectLabels == null )
@@ -535,7 +538,7 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns array of partially initialized blobs (without <see cref="Blob.Image"/> property initialized).</returns>
         /// 
-        /// <remarks><para>By the amount of provided information, the method is between <see cref="GetObjectRectangles"/> and
+        /// <remarks><para>By the amount of provided information, the method is between <see cref="GetObjectsRectangles"/> and
         /// <see cref="GetObjects( BitmapData )"/> methods. The method provides array of blobs without initialized their image.
         /// Blob's image may be extracted later using <see cref="ExtractBlobsImage( Bitmap, Blob )"/>,
         /// <see cref="ExtractBlobsImage( BitmapData, Blob )"/> or <see cref="ExtractBlobsImage( UnmanagedImage, Blob )"/> method.
@@ -565,7 +568,7 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so objects' rectangles
         /// can not be collected.</exception>
         /// 
-        public Blob[] GetObjectInformation( )
+        public Blob[] GetObjectsInformation( )
         {
             // check if objects map was collected
             if ( objectLabels == null )
@@ -599,7 +602,11 @@ namespace AForge.Imaging
         /// <param name="image">Source image to extract objects from.</param>
         /// 
         /// <returns>Returns array of blobs.</returns>
-        /// 
+        /// <param name="extractInOriginalSize">Specifies size of blobs' image to extract.
+        /// If set to <see langword="true"/> each blobs' image will have the same size as
+        /// the specified image. If set to <see langword="false"/> each blobs' image will
+        /// have the size of its blob.</param>
+        ///
         /// <remarks><para>The method returns array of blobs. Before calling the
         /// method, the <see cref="ProcessImage(Bitmap)"/>, <see cref="ProcessImage(BitmapData)"/>
         /// or <see cref="ProcessImage(UnmanagedImage)"/> method should be called, which will build
@@ -612,7 +619,7 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so objects
         /// can not be collected.</exception>
         /// 
-        public Blob[] GetObjects( Bitmap image )
+        public Blob[] GetObjects( Bitmap image, bool extractInOriginalSize )
         {
             Blob[] blobs = null;
             // lock source bitmap data
@@ -623,7 +630,7 @@ namespace AForge.Imaging
             try
             {
                 // process image
-                blobs = GetObjects( imageData );
+                blobs = GetObjects( imageData, extractInOriginalSize );
             }
             finally
             {
@@ -638,7 +645,11 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <param name="imageData">Source image data to extract objects from.</param>
-        /// 
+        /// <param name="extractInOriginalSize">Specifies size of blobs' image to extract.
+        /// If set to <see langword="true"/> each blobs' image will have the same size as
+        /// the specified image. If set to <see langword="false"/> each blobs' image will
+        /// have the size of its blob.</param>
+        ///
         /// <returns>Returns array of blobs.</returns>
         /// 
         /// <remarks><para>The method returns array of blobs. Before calling the
@@ -653,9 +664,9 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so objects
         /// can not be collected.</exception>
         /// 
-        public Blob[] GetObjects( BitmapData imageData )
+        public Blob[] GetObjects( BitmapData imageData, bool extractInOriginalSize )
         {
-            return GetObjects( new UnmanagedImage( imageData ) );
+            return GetObjects( new UnmanagedImage( imageData ), extractInOriginalSize );
         }
 
         /// <summary>
@@ -663,6 +674,10 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <param name="image">Source unmanaged image to extract objects from.</param>
+        /// <param name="extractInOriginalSize">Specifies size of blobs' image to extract.
+        /// If set to <see langword="true"/> each blobs' image will have the same size as
+        /// the specified image. If set to <see langword="false"/> each blobs' image will
+        /// have the size of its blob.</param>
         /// 
         /// <returns>Returns array of blobs.</returns>
         /// 
@@ -678,7 +693,7 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so objects
         /// can not be collected.</exception>
         /// 
-        public Blob[] GetObjects( UnmanagedImage image )
+        public Blob[] GetObjects( UnmanagedImage image, bool extractInOriginalSize )
         {
             // check if objects map was collected
             if ( objectLabels == null )
@@ -708,6 +723,9 @@ namespace AForge.Imaging
                 int objectWidth  = blobsRectangles[k].Width;
                 int objectHeight = blobsRectangles[k].Height;
 
+                int blobImageWidth  = ( extractInOriginalSize ) ? width : objectWidth;
+                int blobImageHeight = ( extractInOriginalSize ) ? height : objectHeight;
+
                 int xmin = blobsRectangles[k].X;
                 int xmax = xmin + objectWidth - 1;
                 int ymin = blobsRectangles[k].Y;
@@ -717,12 +735,12 @@ namespace AForge.Imaging
 
                 // create new image
                 Bitmap dstImg = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ?
-                    AForge.Imaging.Image.CreateGrayscaleImage( objectWidth, objectHeight ) :
-                    new Bitmap( objectWidth, objectHeight, PixelFormat.Format24bppRgb );
+                    AForge.Imaging.Image.CreateGrayscaleImage( blobImageWidth, blobImageHeight ) :
+                    new Bitmap( blobImageWidth, blobImageHeight, PixelFormat.Format24bppRgb );
 
                 // lock destination bitmap data
                 BitmapData dstData = dstImg.LockBits(
-                    new Rectangle( 0, 0, objectWidth, objectHeight ),
+                    new Rectangle( 0, 0, blobImageWidth, blobImageHeight ),
                     ImageLockMode.ReadWrite, image.PixelFormat );
 
                 // copy image
@@ -731,6 +749,12 @@ namespace AForge.Imaging
                     byte* src = (byte*) image.ImageData.ToPointer( ) + ymin * srcStride + xmin * pixelSize;
                     byte* dst = (byte*) dstData.Scan0.ToPointer( );
                     int p = ymin * width + xmin;
+
+                    if ( extractInOriginalSize )
+                    {
+                        // allign destination pointer also
+                        dst += ymin * dstData.Stride + xmin * pixelSize;
+                    }
 
                     int srcOffset = srcStride - objectWidth * pixelSize;
                     int dstOffset = dstData.Stride - objectWidth * pixelSize;
@@ -762,7 +786,7 @@ namespace AForge.Imaging
                 // unlock destination image
                 dstImg.UnlockBits( dstData );
 
-                objects[k] = new Blob( label, new Rectangle( xmin, ymin, objectWidth, objectHeight ), dstImg );
+                objects[k] = new Blob( label, new Rectangle( xmin, ymin, objectWidth, objectHeight ), dstImg, extractInOriginalSize );
             }
 
             // sort blobs
@@ -780,9 +804,13 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source image to extract blob's image from.</param>
         /// <param name="blob">Blob which is required to be extracted.</param>
-        /// 
+        /// <param name="extractInOriginalSize">Specifies size of blobs' image to extract.
+        /// If set to <see langword="true"/> each blobs' image will have the same size as
+        /// the specified image. If set to <see langword="false"/> each blobs' image will
+        /// have the size of its blob.</param>
+        ///
         /// <remarks><para>The method is used to extract image of partially initialized blob, which
-        /// was provided by <see cref="GetObjectInformation"/> method. Before calling the
+        /// was provided by <see cref="GetObjectsInformation"/> method. Before calling the
         /// method, the <see cref="ProcessImage(Bitmap)"/>, <see cref="ProcessImage(BitmapData)"/>
         /// or <see cref="ProcessImage(UnmanagedImage)"/> method should be called, which will build
         /// objects map.</para>
@@ -794,7 +822,7 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public void ExtractBlobsImage( Bitmap image, Blob blob )
+        public void ExtractBlobsImage( Bitmap image, Blob blob, bool extractInOriginalSize )
         {
             // lock source bitmap data
             BitmapData imageData = image.LockBits(
@@ -802,7 +830,7 @@ namespace AForge.Imaging
                 ImageLockMode.ReadOnly, image.PixelFormat );
 
             // process image
-            ExtractBlobsImage( imageData, blob );
+            ExtractBlobsImage( imageData, blob, extractInOriginalSize );
 
             // unlock source images
             image.UnlockBits( imageData );
@@ -814,9 +842,13 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Source image data to extract blob's image from.</param>
         /// <param name="blob">Blob which is required to be extracted.</param>
-        /// 
+        /// <param name="extractInOriginalSize">Specifies size of blobs' image to extract.
+        /// If set to <see langword="true"/> each blobs' image will have the same size as
+        /// the specified image. If set to <see langword="false"/> each blobs' image will
+        /// have the size of its blob.</param>
+        ///
         /// <remarks><para>The method is used to extract image of partially initialized blob, which
-        /// was provided by <see cref="GetObjectInformation"/> method. Before calling the
+        /// was provided by <see cref="GetObjectsInformation"/> method. Before calling the
         /// method, the <see cref="ProcessImage(Bitmap)"/>, <see cref="ProcessImage(BitmapData)"/>
         /// or <see cref="ProcessImage(UnmanagedImage)"/> method should be called, which will build
         /// objects map.</para>
@@ -828,9 +860,9 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public void ExtractBlobsImage( BitmapData imageData, Blob blob )
+        public void ExtractBlobsImage( BitmapData imageData, Blob blob, bool extractInOriginalSize )
         {
-            ExtractBlobsImage( new UnmanagedImage( imageData ), blob );
+            ExtractBlobsImage( new UnmanagedImage( imageData ), blob, extractInOriginalSize );
         }
 
         /// <summary>
@@ -839,9 +871,13 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source unmanaged image to extract blob's image from.</param>
         /// <param name="blob">Blob which is required to be extracted.</param>
-        /// 
+        /// <param name="extractInOriginalSize">Specifies size of blobs' image to extract.
+        /// If set to <see langword="true"/> each blobs' image will have the same size as
+        /// the specified image. If set to <see langword="false"/> each blobs' image will
+        /// have the size of its blob.</param>
+        ///
         /// <remarks><para>The method is used to extract image of partially initialized blob, which
-        /// was provided by <see cref="GetObjectInformation"/> method. Before calling the
+        /// was provided by <see cref="GetObjectsInformation"/> method. Before calling the
         /// method, the <see cref="ProcessImage(Bitmap)"/>, <see cref="ProcessImage(BitmapData)"/>
         /// or <see cref="ProcessImage(UnmanagedImage)"/> method should be called, which will build
         /// objects map.</para>
@@ -853,7 +889,7 @@ namespace AForge.Imaging
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public void ExtractBlobsImage( UnmanagedImage image, Blob blob )
+        public void ExtractBlobsImage( UnmanagedImage image, Blob blob, bool extractInOriginalSize )
         {
             // check if objects map was collected
             if ( objectLabels == null )
@@ -874,6 +910,9 @@ namespace AForge.Imaging
             int objectWidth  = blob.Rectangle.Width;
             int objectHeight = blob.Rectangle.Height;
 
+            int blobImageWidth  = ( extractInOriginalSize ) ? width : objectWidth;
+            int blobImageHeight = ( extractInOriginalSize ) ? height : objectHeight;
+
             int xmin = blob.Rectangle.Left;
             int xmax = xmin + objectWidth - 1;
             int ymin = blob.Rectangle.Top;
@@ -883,12 +922,13 @@ namespace AForge.Imaging
 
             // create new image
             blob.Image = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ?
-                AForge.Imaging.Image.CreateGrayscaleImage( objectWidth, objectHeight ) :
-                new Bitmap( objectWidth, objectHeight, PixelFormat.Format24bppRgb );
+                AForge.Imaging.Image.CreateGrayscaleImage( blobImageWidth, blobImageHeight ) :
+                new Bitmap( blobImageWidth, blobImageHeight, PixelFormat.Format24bppRgb );
+            blob.OriginalSize = extractInOriginalSize;
 
             // lock destination bitmap data
             BitmapData dstData = blob.Image.LockBits(
-                new Rectangle( 0, 0, objectWidth, objectHeight ),
+                new Rectangle( 0, 0, blobImageWidth, blobImageHeight ),
                 ImageLockMode.ReadWrite, image.PixelFormat );
 
             // copy image
@@ -897,6 +937,12 @@ namespace AForge.Imaging
                 byte* src = (byte*) image.ImageData.ToPointer( ) + ymin * srcStride + xmin * pixelSize;
                 byte* dst = (byte*) dstData.Scan0.ToPointer( );
                 int p = ymin * width + xmin;
+
+                if ( extractInOriginalSize )
+                {
+                    // allign destination pointer also
+                    dst += ymin * dstData.Stride + xmin * pixelSize;
+                }
 
                 int srcOffset = srcStride - objectWidth * pixelSize;
                 int dstOffset = dstData.Stride - objectWidth * pixelSize;

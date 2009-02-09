@@ -1,8 +1,8 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -27,7 +27,10 @@ namespace AForge.Imaging
     {
         // blob's image
         private Bitmap image;
-        // blob's rectangle on the original image
+        // blob's size - as original image or not
+        private bool originalSize = false;
+
+        // blob's rectangle in the original image
         private Rectangle rect;
         // blob's ID in the original image
         private int id;
@@ -44,6 +47,21 @@ namespace AForge.Imaging
         {
             get { return image; }
             internal set { image = value; }
+        }
+
+        /// <summary>
+        /// Blob's image size.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property specifies size of the <see cref="Image">blob's image</see>.
+        /// If the property is set to <see langword="true"/>, the blob's image size equals to the
+        /// size of original image. If the property is set to <see langword="false"/>, the blob's
+        /// image size equals to size of actual blob.</para></remarks>
+        /// 
+        public bool OriginalSize
+        {
+            get { return originalSize; }
+            internal set { originalSize = value; }
         }
 
         /// <summary>
@@ -86,12 +104,16 @@ namespace AForge.Imaging
         /// <param name="id">Blob's ID in the original image.</param>
         /// <param name="rect">Blob's rectangle on the original image.</param>
         /// <param name="image">Blob's image.</param>
+        /// <param name="originalSize">Specifies blob's <paramref name="image"/> size:
+        /// <see langword="true"/> size of original image, <see cref="false"/> size of
+        /// blob only.</param>
         /// 
-        public Blob( int id, Rectangle rect, Bitmap image )
+        public Blob( int id, Rectangle rect, Bitmap image, bool originalSize )
         {
             this.id    = id;
             this.rect  = rect;
             this.image = image;
+            this.originalSize = originalSize;
         }
     }
 }

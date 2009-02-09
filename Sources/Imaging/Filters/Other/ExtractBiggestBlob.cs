@@ -134,7 +134,7 @@ namespace AForge.Imaging.Filters
             // locate blobs in the source image
             BlobCounter blobCounter = new BlobCounter( imageData );
             // get information about blobs
-            Blob[] blobs = blobCounter.GetObjectInformation( );
+            Blob[] blobs = blobCounter.GetObjectsInformation( );
             // find the biggest blob
             int  maxSize = 0;
             Blob biggestBlob = null;
@@ -153,7 +153,7 @@ namespace AForge.Imaging.Filters
             // extract biggest blob's image
             if ( originalImage == null )
             {
-                blobCounter.ExtractBlobsImage( imageData, biggestBlob );
+                blobCounter.ExtractBlobsImage( imageData, biggestBlob, false );
             }
             else
             {
@@ -172,7 +172,7 @@ namespace AForge.Imaging.Filters
                     throw new InvalidImageProperties( "Original image must have the same size as passed source image." );
                 }
 
-                blobCounter.ExtractBlobsImage( originalImage, biggestBlob );
+                blobCounter.ExtractBlobsImage( originalImage, biggestBlob, false );
             }
 
             return biggestBlob.Image;
