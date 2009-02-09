@@ -51,7 +51,17 @@ namespace AForge.Imaging.Filters
 		};
 
         // blob counter
-        private BlobCounter blobCounter = new BlobCounter( );
+        private BlobCounter blobCounter = new BlobCounter();
+
+        /// <summary>
+        /// Gets or sets the BLOB counter.
+        /// </summary>
+        /// <value>The BLOB counter.</value>
+        public BlobCounter BlobCounter
+        {
+            get { return blobCounter; }
+            set { blobCounter = value; }
+        }
 
         /// <summary>
         /// Colors used to color the binary image.
