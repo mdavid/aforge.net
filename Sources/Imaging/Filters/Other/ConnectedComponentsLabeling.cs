@@ -51,13 +51,18 @@ namespace AForge.Imaging.Filters
 		};
 
         // blob counter
-        private BlobCounter blobCounter = new BlobCounter();
+        private BlobCounterBase blobCounter = new BlobCounter( );
 
         /// <summary>
-        /// Gets or sets the BLOB counter.
+        /// Blob counter used to locate separate blobs.
         /// </summary>
-        /// <value>The BLOB counter.</value>
-        public BlobCounter BlobCounter
+        /// 
+        /// <remarks><para>The property allows to set blob counter to use for blobs' localization.</para>
+        /// 
+        /// <para>Default value is set to <see cref="BlobCounter"/>.</para>
+        /// </remarks>
+        /// 
+        public BlobCounterBase BlobCounter
         {
             get { return blobCounter; }
             set { blobCounter = value; }
