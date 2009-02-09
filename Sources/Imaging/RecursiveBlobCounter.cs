@@ -40,7 +40,7 @@ namespace AForge.Imaging
     /// RecursiveBlobCounter bc = new RecursiveBlobCounter( );
     /// // process binary image
     /// bc.ProcessImage( image );
-    /// Rectangle[] rects = bc.GetObjectRectangles( );
+    /// Rectangle[] rects = bc.GetObjectsRectangles( );
     /// // process blobs
     /// foreach ( Rectangle rect in rects )
     /// {
