@@ -139,6 +139,7 @@
     <Compile Include="Filters\Noise generation\AdditiveNoise.cs" />
     <Compile Include="Filters\Noise generation\SaltAndPepperNoise.cs" />
     <Compile Include="Filters\Other\BlobsFiltering.cs" />
+    <Compile Include="Filters\Other\ConnectedComponentsLabeling.cs" />
     <Compile Include="Filters\Other\ExtractBiggestBlob.cs" />
     <Compile Include="Filters\Other\Mirror.cs" />
     <Compile Include="Filters\Other\Pixellate.cs" />
