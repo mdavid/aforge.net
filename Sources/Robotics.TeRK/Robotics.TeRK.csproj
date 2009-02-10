@@ -42,6 +42,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
     <Reference Include="TeRK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=47ffe317d194a143, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Externals\TeRK\TeRK.dll</HintPath>
@@ -53,6 +54,7 @@
     <Compile Include="Qwerk.cs" />
     <Compile Include="Qwerk.DigitalOut.cs" />
     <Compile Include="Qwerk.Leds.cs" />
+    <Compile Include="Qwerk.Motors.cs" />
     <Compile Include="Qwerk.Video.cs" />
   </ItemGroup>
   <ItemGroup>
