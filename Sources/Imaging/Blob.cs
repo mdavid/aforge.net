@@ -40,8 +40,8 @@ namespace AForge.Imaging
         /// </summary>
         ///
         /// <remarks><para>The property keeps blob's image. In the case if it equals to <b>null</b>,
-        /// the image may be extracted using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob )"/>
-        /// or <see cref="BlobCounterBase.ExtractBlobsImage( BitmapData, Blob )"/> method.</para></remarks>
+        /// the image may be extracted using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob, bool )"/>
+        /// or <see cref="BlobCounterBase.ExtractBlobsImage( BitmapData, Blob, bool )"/> method.</para></remarks>
         ///
         public Bitmap Image
         {
@@ -88,8 +88,8 @@ namespace AForge.Imaging
         /// <param name="rect">Blob's rectangle in the original image.</param>
         /// 
         /// <remarks><para>This constructor leaves <see cref="Image"/> property not initialized. The blob's
-        /// image may be extracted later using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob )"/>
-        /// or <see cref="BlobCounterBase.ExtractBlobsImage( BitmapData, Blob )"/> method.</para></remarks>
+        /// image may be extracted later using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob, bool )"/>
+        /// or <see cref="BlobCounterBase.ExtractBlobsImage( BitmapData, Blob, bool )"/> method.</para></remarks>
         /// 
         public Blob( int id, Rectangle rect )
         {
@@ -105,7 +105,7 @@ namespace AForge.Imaging
         /// <param name="rect">Blob's rectangle on the original image.</param>
         /// <param name="image">Blob's image.</param>
         /// <param name="originalSize">Specifies blob's <paramref name="image"/> size:
-        /// <see langword="true"/> size of original image, <see cref="false"/> size of
+        /// <see langword="true"/> size of original image, <see langword="false"/> size of
         /// blob only.</param>
         /// 
         public Blob( int id, Rectangle rect, Bitmap image, bool originalSize )

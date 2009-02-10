@@ -47,7 +47,7 @@ namespace AForge.Imaging
     }
 
     /// <summary>
-    /// Base class for differnt blob counting algorithms.
+    /// Base class for different blob counting algorithms.
     /// </summary>
     /// 
     /// <remarks><para>The class is abstract and serves as a base for different blob counting algorithms.
@@ -539,9 +539,9 @@ namespace AForge.Imaging
         /// <returns>Returns array of partially initialized blobs (without <see cref="Blob.Image"/> property initialized).</returns>
         /// 
         /// <remarks><para>By the amount of provided information, the method is between <see cref="GetObjectsRectangles"/> and
-        /// <see cref="GetObjects( BitmapData )"/> methods. The method provides array of blobs without initialized their image.
-        /// Blob's image may be extracted later using <see cref="ExtractBlobsImage( Bitmap, Blob )"/>,
-        /// <see cref="ExtractBlobsImage( BitmapData, Blob )"/> or <see cref="ExtractBlobsImage( UnmanagedImage, Blob )"/> method.
+        /// <see cref="GetObjects( BitmapData, bool )"/> methods. The method provides array of blobs without initialized their image.
+        /// Blob's image may be extracted later using <see cref="ExtractBlobsImage( Bitmap, Blob, bool )"/>,
+        /// <see cref="ExtractBlobsImage( BitmapData, Blob, bool )"/> or <see cref="ExtractBlobsImage( UnmanagedImage, Blob, bool )"/> method.
         /// </para></remarks>
         /// 
         /// <example>
