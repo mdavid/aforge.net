@@ -115,7 +115,7 @@ namespace AForge.Video.DirectShow.Internals
         /// Retrieves the pin with the specified identifier.
         /// </summary>
         /// 
-        /// <param name="id">Pointer to a constant wide-character string that identifies the pinþ</param>
+        /// <param name="id">Pointer to a constant wide-character string that identifies the pin.</param>
         /// <param name="pin">Address of a variable that receives a pointer to the pin's IPin interface.</param>
         /// 
         /// <returns>Return's <b>HRESULT</b> error code.</returns>
