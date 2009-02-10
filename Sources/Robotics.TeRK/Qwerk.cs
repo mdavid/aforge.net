@@ -153,6 +153,7 @@ namespace AForge.Robotics.TeRK
             leds = null;
             digitalOuts = null;
             video = null;
+            motors = null;
 
             // destroy ICE communicator
             if ( iceCommunicator != null )
@@ -221,6 +222,27 @@ namespace AForge.Robotics.TeRK
             }
             return video;
         }
+
+        private Qwerk.Motors motors;
+
+        /// <summary>
+        /// Get Qwerk's motors service.
+        /// </summary>
+        /// 
+        /// <returns>Returns Qwerk's motors service.</returns>
+        /// 
+        /// <remarks>For the list of possible exceptions, see documentation to
+        /// <see cref="Qwerk.Motors(Qwerk)"/>.</remarks>
+        /// 
+        public Qwerk.Motors GetMotorsService( )
+        {
+            if ( motors == null )
+            {
+                motors = new Motors( this );
+            }
+            return motors;
+        }
+
 
         /// <summary>
         /// Get Qwerk's power level.

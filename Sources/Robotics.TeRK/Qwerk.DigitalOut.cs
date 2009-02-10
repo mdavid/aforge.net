@@ -17,7 +17,8 @@ namespace AForge.Robotics.TeRK
         /// Provides access to Qwerk's digital outputs.
         /// </summary>
         /// 
-        /// <remarks><para>The class allows to manipulate 4 Qwerk's digital outputs.</para>
+        /// <remarks><para>The class allows to manipulate Qwerk's digital outputs. The total number
+        /// of available digital outputs equals to <see cref="DigitalOut.Count"/>.</para>
         /// 
         /// <para>Sample usage:</para>
         /// <code>
@@ -38,6 +39,11 @@ namespace AForge.Robotics.TeRK
         {
             // Qwerk's digital out controller
             private TeRKIceLib.DigitalOutControllerPrx digitalOutController = null;
+
+            /// <summary>
+            /// Number of available digital outputs, 4.
+            /// </summary>
+            public const int Count = 4;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="Qwerk.DigitalOut"/> class.
@@ -87,7 +93,7 @@ namespace AForge.Robotics.TeRK
             /// Set state of specified digital output.
             /// </summary>
             /// 
-            /// <param name="output">Digital output to state for, [0, 3].</param>
+            /// <param name="output">Digital output to state for, [0, <see cref="DigitalOut.Count"/>).</param>
             /// <param name="state">Digital output's state to set.</param>
             /// 
             /// <remarks><para>The method sets state of one of Qwerk's digital outputs, which index is
@@ -100,13 +106,13 @@ namespace AForge.Robotics.TeRK
             /// 
             public void SetOutput( int output, bool state )
             {
-                if ( ( output < 0 ) || ( output > 3 ) )
+                if ( ( output < 0 ) || ( output >= Count ) )
                 {
                     throw new ArgumentOutOfRangeException( "Invalid output is specified." );
                 }
 
-                bool[] outputsMask = new bool[4];
-                bool[] states = new bool[4];
+                bool[] outputsMask = new bool[Count];
+                bool[] states = new bool[Count];
 
                 outputsMask[output] = true;
                 states[output] = state;
@@ -127,10 +133,10 @@ namespace AForge.Robotics.TeRK
             /// 
             public void SetOutputs( bool state )
             {
-                bool[] outputsMask = new bool[4];
-                bool[] states = new bool[4];
+                bool[] outputsMask = new bool[Count];
+                bool[] states = new bool[Count];
 
-                for ( int i = 0; i < 4; i++ )
+                for ( int i = 0; i < Count; i++ )
                 {
                     outputsMask[i] = true;
                     states[i] = state;
@@ -158,7 +164,7 @@ namespace AForge.Robotics.TeRK
             /// 
             public void SetOutputs( bool[] outpusMask, bool[] states )
             {
-                if ( ( outpusMask.Length != 4 ) || ( states.Length != 4 ) )
+                if ( ( outpusMask.Length != Count ) || ( states.Length != Count ) )
                 {
                     throw new ArgumentException( "Incorrect length of output' masks or states array." );
                 }

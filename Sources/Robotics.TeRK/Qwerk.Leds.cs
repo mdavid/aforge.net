@@ -36,7 +36,8 @@ namespace AForge.Robotics.TeRK
         /// Provides access to Qwerk's on-board LEDs.
         /// </summary>
         /// 
-        /// <remarks><para>The class allows to manipulate 10 Qwerk's on-boar LED's.</para>
+        /// <remarks><para>The class allows to manipulate Qwerk's on-boar LED's. The total number
+        /// of available on-board LEDs equals to <see cref="Leds.Count"/>.</para>
         /// 
         /// <para>Sample usage:</para>
         /// <code>
@@ -66,6 +67,11 @@ namespace AForge.Robotics.TeRK
             // mapping array to map LedState enumeration to TeRKIceLib.LEDMode enumeration
             private TeRKIceLib.LEDMode[] modesMapping = new TeRKIceLib.LEDMode[]
                 { TeRKIceLib.LEDMode.LEDOff, TeRKIceLib.LEDMode.LEDOn, TeRKIceLib.LEDMode.LEDBlinking };
+
+            /// <summary>
+            /// Number of available on-board LEDs, 10.
+            /// </summary>
+            public const int Count = 10;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="Qwerk.Leds"/> class.
@@ -115,7 +121,7 @@ namespace AForge.Robotics.TeRK
             /// Set state of specified LED.
             /// </summary>
             /// 
-            /// <param name="led">LED to set state for, [0, 9].</param>
+            /// <param name="led">LED to set state for, [0, <see cref="Leds.Count"/>).</param>
             /// <param name="state">LED's state to set.</param>
             /// 
             /// <remarks><para>The method sets state of one of Qwerk's LEDs, which index is specified.</para></remarks>
@@ -126,13 +132,13 @@ namespace AForge.Robotics.TeRK
             /// 
             public void SetLedState( int led, LedState state )
             {
-                if ( ( led < 0 ) || ( led > 9 ) )
+                if ( ( led < 0 ) || ( led >= Count ) )
                 {
                     throw new ArgumentOutOfRangeException( "Invalid LED is specified." );
                 }
 
-                bool[] ledsMask = new bool[10];
-                LedState[] states = new LedState[10];
+                bool[] ledsMask = new bool[Count];
+                LedState[] states = new LedState[Count];
 
                 ledsMask[led] = true;
                 states[led] = state;
@@ -153,10 +159,10 @@ namespace AForge.Robotics.TeRK
             /// 
             public void SetLedsState( LedState state )
             {
-                bool[] ledsMask = new bool[10];
-                LedState[] states = new LedState[10];
+                bool[] ledsMask = new bool[Count];
+                LedState[] states = new LedState[Count];
 
-                for ( int i = 0; i < 10; i++ )
+                for ( int i = 0; i < Count; i++ )
                 {
                     ledsMask[i] = true;
                     states[i] = state;
@@ -184,14 +190,14 @@ namespace AForge.Robotics.TeRK
             /// 
             public void SetLedsState( bool[] ledsMask, LedState[] states )
             {
-                if ( ( ledsMask.Length != 10 ) || ( states.Length != 10 ) )
+                if ( ( ledsMask.Length != Count ) || ( states.Length != Count ) )
                 {
                     throw new ArgumentException( "Incorrect length of leds' masks or states array." );
                 }
 
-                TeRKIceLib.LEDMode[] modes = new TeRKIceLib.LEDMode[10];
+                TeRKIceLib.LEDMode[] modes = new TeRKIceLib.LEDMode[Count];
 
-                for ( int i = 0; i < 10; i++ )
+                for ( int i = 0; i < Count; i++ )
                 {
                     modes[i] = modesMapping[(int) states[i]];
                 }
