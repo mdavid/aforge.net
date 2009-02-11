@@ -265,6 +265,9 @@ namespace AForge.Imaging.Formats
              )
         {
             Bitmap pic = ImageDecoder.DecodeFromFile(originalFile);
+            //Store the original EXIF infos
+            PropertyItem[] items = pic.PropertyItems;
+
             if (width == 0 || height == 0)
             {
                 width = pic.Width;
@@ -293,7 +296,11 @@ namespace AForge.Imaging.Formats
             Bitmap croppedPic = pic.Clone(rec, pic.PixelFormat);
             pic.Dispose();
             croppedPic = new Bitmap(croppedPic, width, height);
-            
+
+            //Before saving, set the original EXIF infos                
+            foreach (PropertyItem item in items)
+                croppedPic.SetPropertyItem(item);
+
             MemoryStream ms = new MemoryStream();
             croppedPic.Save(ms, ImageFormat.Bmp);
             croppedPic.Dispose();
