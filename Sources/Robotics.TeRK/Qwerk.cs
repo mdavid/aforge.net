@@ -1,7 +1,8 @@
 ﻿// AForge TeRK Robotics Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
+// Copyright © Andrew Kirillov, 2007-2009
 // andrew.kirillov@aforgenet.com
 //
 
@@ -150,10 +151,11 @@ namespace AForge.Robotics.TeRK
                 }
             }
 
-            leds = null;
+            leds        = null;
             digitalOuts = null;
-            video = null;
-            motors = null;
+            analogIns   = null;
+            video       = null;
+            motors      = null;
 
             // destroy ICE communicator
             if ( iceCommunicator != null )
@@ -201,6 +203,26 @@ namespace AForge.Robotics.TeRK
                 digitalOuts = new DigitalOut( this );
             }
             return digitalOuts;
+        }
+
+        private Qwerk.AnalogIn analogIns;
+
+        /// <summary>
+        /// Get Qwerk's analog inputs service.
+        /// </summary>
+        /// 
+        /// <returns>Returns Qwerk's analog inputs service.</returns>
+        /// 
+        /// <remarks>For the list of possible exceptions, see documentation to
+        /// <see cref="Qwerk.AnalogIn(Qwerk)"/>.</remarks>
+        /// 
+        public Qwerk.AnalogIn GetAnalogInService( )
+        {
+            if ( analogIns == null )
+            {
+                analogIns = new AnalogIn( this );
+            }
+            return analogIns;
         }
 
         private Qwerk.Video video;

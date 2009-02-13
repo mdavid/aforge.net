@@ -1,7 +1,8 @@
 ﻿// AForge TeRK Robotics Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
+// Copyright © Andrew Kirillov, 2007-2009
 // andrew.kirillov@aforgenet.com
 //
 
