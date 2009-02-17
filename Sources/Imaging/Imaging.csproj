@@ -109,6 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ARGB.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -409,6 +410,7 @@
     <Compile Include="MemoryManager.cs" />
     <Compile Include="MoravecCornersDetector.cs" />
     <Compile Include="RecursiveBlobCounter.cs" />
+    <Compile Include="RegionbasedColorSegmentation.cs" />
     <Compile Include="SusanCornersDetector.cs" />
     <Compile Include="TemplateMatch.cs" />
     <Compile Include="Textures\CloudsTexture.cs" />
