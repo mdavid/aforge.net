@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -27,10 +28,11 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source image to process.</param>
         /// <param name="template">Template image to search for.</param>
+        /// <param name="searchZone">Rectangle in source image to search template for.</param>
         /// 
         /// <returns>Returns array of found matchings.</returns>
         /// 
-        TemplateMatch[] ProcessImage( Bitmap image, Bitmap template );
+        TemplateMatch[] ProcessImage( Bitmap image, Bitmap template, Rectangle searchZone );
 
         /// <summary>
         /// Process image looking for matchings with specified template.
@@ -38,10 +40,11 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Source image data to process.</param>
         /// <param name="templateData">Template image to search for.</param>
+        /// <param name="searchZone">Rectangle in source image to search template for.</param>
         /// 
         /// <returns>Returns array of found matchings.</returns>
         /// 
-        TemplateMatch[] ProcessImage( BitmapData imageData, BitmapData templateData );
+        TemplateMatch[] ProcessImage( BitmapData imageData, BitmapData templateData, Rectangle searchZone );
 
         /// <summary>
         /// Process image looking for matchings with specified template.
@@ -49,9 +52,10 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Unmanaged source image to process.</param>
         /// <param name="template">Unmanaged template image to search for.</param>
+        /// <param name="searchZone">Rectangle in source image to search template for.</param>
         /// 
         /// <returns>Returns array of found matchings.</returns>
         /// 
-        TemplateMatch[] ProcessImage( UnmanagedImage image, UnmanagedImage template );
+        TemplateMatch[] ProcessImage( UnmanagedImage image, UnmanagedImage template, Rectangle searchZone );
     }
 }
