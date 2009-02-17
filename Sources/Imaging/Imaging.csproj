@@ -54,10 +54,12 @@
     <Compile Include="Blob.cs" />
     <Compile Include="BlobCounter.cs" />
     <Compile Include="BlobCounterBase.cs" />
+    <Compile Include="BlockMatch.cs" />
     <Compile Include="ColorConverter.cs" />
     <Compile Include="DocumentSkewChecker.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="ExhaustiveBlockMatching.cs" />
     <Compile Include="ExhaustiveTemplateMatching.cs" />
     <Compile Include="Filters\2 Source filters\Add.cs" />
     <Compile Include="Filters\2 Source filters\Difference.cs" />
@@ -160,6 +162,7 @@
     <Compile Include="HorizontalIntensityStatistics.cs" />
     <Compile Include="HoughCircleTransformation.cs" />
     <Compile Include="HoughLineTransformation.cs" />
+    <Compile Include="IBlockMatching.cs" />
     <Compile Include="ICornersDetector.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="ImageStatistics.cs" />
