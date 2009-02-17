@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -101,7 +102,7 @@ namespace AForge.Imaging
     /// 
     /// <para>Sample usage:</para>
     /// <code>
-    /// HoughCircleTransformation circleTransform = new HoughCircleTransformation( );
+    /// HoughCircleTransformation circleTransform = new HoughCircleTransformation( 35 );
     /// // apply Hough circle transform
     /// circleTransform.ProcessImage( sourceImage );
     /// Bitmap houghCirlceImage = circleTransform.ToBitmap( );

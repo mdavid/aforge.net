@@ -18,7 +18,7 @@ namespace AForge.Imaging.Filters
     /// 
     /// <remarks><para>The filter assigns maximum value of surrounding pixels to each pixel of
     /// the result image. Surrounding pixels, which should be processed, are specified by
-    /// structuring element: 1 - to process the neighbor, 0 - to skip it.</para>
+    /// structuring element: 1 - to process the neighbor, -1 - to skip it.</para>
     /// 
     /// <para>The filter especially useful for binary image processing, where it allows to grow
     /// separate objects or join objects.</para>

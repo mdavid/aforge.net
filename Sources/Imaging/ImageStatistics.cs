@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -17,7 +18,8 @@ namespace AForge.Imaging
     /// </summary>
     /// 
     /// <remarks><para>The class is used to accumulate statistical values about images,
-    /// like histogram, mean, standard deviation, etc. for each color channel.</para>
+    /// like histogram, mean, standard deviation, etc. for each color channel in RGB color
+    /// space.</para>
     /// 
     /// <para>The class accepts 8 bpp grayscale and 24/32 bpp color images for processing.</para>
     /// 
