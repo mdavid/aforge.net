@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Qwerk.AnalogIn.cs" />
     <Compile Include="Qwerk.cs" />
+    <Compile Include="Qwerk.DigitalIn.cs" />
     <Compile Include="Qwerk.DigitalOut.cs" />
     <Compile Include="Qwerk.Leds.cs" />
     <Compile Include="Qwerk.Motors.cs" />

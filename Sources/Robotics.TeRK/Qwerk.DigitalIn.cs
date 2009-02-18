@@ -15,35 +15,35 @@ namespace AForge.Robotics.TeRK
     public partial class Qwerk
     {
         /// <summary>
-        /// Provides access to Qwerk's analog inputs.
+        /// Provides access to Qwerk's digital inputs.
         /// </summary>
         /// 
-        /// <remarks><para>The class allows to retrieve state of Qwerk's analog inputs. The total
-        /// number of available analog inputs equals to <see cref="AnalogIn.Count"/>.</para>
+        /// <remarks><para>The class allows to retrieve state of Qwerk's digital inputs. The total
+        /// number of available digital inputs equals to <see cref="DigitalIn.Count"/>.</para>
         /// 
         /// <para>Sample usage:</para>
         /// <code>
-        /// // get Qwerk's analog inputs service
-        /// Qwerk.AnalogIn analogIns = qwerk.GetAnalogInService( );
+        /// // get Qwerk's digital inputs service
+        /// Qwerk.DigitalIn digitalIns = qwerk.GetDigitalInService( );
         /// // get state of 0th input
-        /// short input0 = analogIns.GetInput( 0 );
+        /// bool input0 = digitalIns.GetInput( 0 );
         /// // get state of all inputs
-        /// short[] inputs = analogIns.GetInputs( );
+        /// bool[] inputs = digitalIns.GetInputs( );
         /// </code>
         /// </remarks>
         /// 
-        public class AnalogIn
+        public class DigitalIn
         {
-            // Qwerk's analog in controller
-            private TeRKIceLib.AnalogInControllerPrx analogInController = null;
+            // Qwerk's digital in controller
+            private TeRKIceLib.DigitalInControllerPrx digitalInController = null;
 
             /// <summary>
-            /// Number of available analog inputs, 8.
+            /// Number of available digital inputs, 4.
             /// </summary>
-            public const int Count = 8;
+            public const int Count = 4;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="Qwerk.AnalogIn"/> class.
+            /// Initializes a new instance of the <see cref="Qwerk.DigitalIn"/> class.
             /// </summary>
             /// 
             /// <param name="qwerk">Reference to <see cref="Qwerk"/> object, which is connected to Qwerk board.</param>
@@ -53,7 +53,7 @@ namespace AForge.Robotics.TeRK
             /// <exception cref="ConnectFailedException">Failed connecting to the requested service.</exception>
             /// <exception cref="ServiceAccessFailedException">Failed accessing to the requested service.</exception>
             /// 
-            public AnalogIn( Qwerk qwerk )
+            public DigitalIn( Qwerk qwerk )
             {
                 string hostAddress = qwerk.HostAddress;
 
@@ -62,8 +62,8 @@ namespace AForge.Robotics.TeRK
                 {
                     try
                     {
-                        Ice.ObjectPrx obj = qwerk.iceCommunicator.stringToProxy( "'::TeRK::AnalogInController':tcp -h " + hostAddress + " -p 10101" );
-                        analogInController = TeRKIceLib.AnalogInControllerPrxHelper.checkedCast( obj );
+                        Ice.ObjectPrx obj = qwerk.iceCommunicator.stringToProxy( "'::TeRK::DigitalInController':tcp -h " + hostAddress + " -p 10101" );
+                        digitalInController = TeRKIceLib.DigitalInControllerPrxHelper.checkedCast( obj );
                     }
                     catch ( Ice.ObjectNotExistException )
                     {
@@ -75,7 +75,7 @@ namespace AForge.Robotics.TeRK
                         throw new ConnectFailedException( "Failed connecting to the requested service." );
                     }
 
-                    if ( analogInController == null )
+                    if ( digitalInController == null )
                     {
                         throw new ServiceAccessFailedException( "Failed accessing to the requested cervice." );
                     }
@@ -87,12 +87,12 @@ namespace AForge.Robotics.TeRK
             }
 
             /// <summary>
-            /// Get state of the specified analog input.
+            /// Get state of the specified digital input.
             /// </summary>
             /// 
-            /// <param name="input">Analog input to get state of, [0, <see cref="AnalogIn.Count"/>).</param>
+            /// <param name="input">Digital input to get state of, [0, <see cref="DigitalIn.Count"/>).</param>
             /// 
-            /// <returns>Returns state of the requested input measured in milli volts.</returns>
+            /// <returns>Returns state of the requested input as boolean values - active/inactive.</returns>
             /// 
             /// <remarks><para>In the case if multiply inputs should be queried, it is much
             /// preferred to use <see cref="GetInputs"/> method, which retrieves state of all
@@ -101,7 +101,7 @@ namespace AForge.Robotics.TeRK
             /// <exception cref="ArgumentOutOfRangeException">Invalid input is specified.</exception>
             /// <exception cref="ConnectionLostException">Connestion to Qwerk is lost.</exception>
             /// 
-            public short GetInput( int input )
+            public bool GetInput( int input )
             {
                 if ( ( input < 0 ) || ( input >= Count ) )
                 {
@@ -112,19 +112,19 @@ namespace AForge.Robotics.TeRK
             }
 
             /// <summary>
-            /// Get state of all available analog inputs.
+            /// Get state of all available digital inputs.
             /// </summary>
             /// 
-            /// <returns>Returns state of all analog inputs measured in milli volts.</returns>
+            /// <returns>Returns state of all digital inputs as boolean values - active/inactive.</returns>
             /// 
             /// <exception cref="ConnectionLostException">Connestion to Qwerk is lost.</exception>
             /// 
-            public short[] GetInputs( )
+            public bool[] GetInputs( )
             {
                 try
                 {
-                    TeRKIceLib.AnalogInState state = analogInController.getState( );
-                    return state.analogInValues;
+                    TeRKIceLib.DigitalInState state = digitalInController.getState( );
+                    return state.digitalInStates;
                 }
                 catch
                 {
