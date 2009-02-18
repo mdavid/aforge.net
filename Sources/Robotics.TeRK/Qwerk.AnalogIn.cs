@@ -18,7 +18,7 @@ namespace AForge.Robotics.TeRK
         /// Provides access to Qwerk's analog inputs.
         /// </summary>
         /// 
-        /// <remarks><para>The class allows to retrieve state pf Qwerk's analog inputs. The total
+        /// <remarks><para>The class allows to retrieve state of Qwerk's analog inputs. The total
         /// number of available analog inputs equals to <see cref="AnalogIn.Count"/>.</para>
         /// 
         /// <para>Sample usage:</para>
@@ -34,7 +34,7 @@ namespace AForge.Robotics.TeRK
         /// 
         public class AnalogIn
         {
-            // Qwerk's digital out controller
+            // Qwerk's analog in controller
             private TeRKIceLib.AnalogInControllerPrx analogInController = null;
 
             /// <summary>

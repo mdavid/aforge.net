@@ -153,6 +153,7 @@ namespace AForge.Robotics.TeRK
 
             leds        = null;
             digitalOuts = null;
+            digitalIns  = null;
             analogIns   = null;
             video       = null;
             motors      = null;
@@ -203,6 +204,26 @@ namespace AForge.Robotics.TeRK
                 digitalOuts = new DigitalOut( this );
             }
             return digitalOuts;
+        }
+
+        private Qwerk.DigitalIn digitalIns;
+
+        /// <summary>
+        /// Get Qwerk's digital inputs service.
+        /// </summary>
+        /// 
+        /// <returns>Returns Qwerk's digital inputs service.</returns>
+        /// 
+        /// <remarks>For the list of possible exceptions, see documentation to
+        /// <see cref="Qwerk.DigitalIn(Qwerk)"/>.</remarks>
+        /// 
+        public Qwerk.DigitalIn GetDigitalInService( )
+        {
+            if ( digitalIns == null )
+            {
+                digitalIns = new DigitalIn( this );
+            }
+            return digitalIns;
         }
 
         private Qwerk.AnalogIn analogIns;
