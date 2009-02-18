@@ -1,7 +1,8 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
 //
 
@@ -11,8 +12,8 @@ namespace AForge.Imaging.Filters
 	/// Mean filter.
 	/// </summary>
 	/// 
-    /// <remarks><para>The filter performs <see cref="Convolution">convolution filter</see> using
-    /// the mean kernel:</para>
+    /// <remarks><para>The filter performs each pixel value's averaging with its 8 neighbors, which is 
+    /// <see cref="Convolution">convolution filter</see> using the mean kernel:</para>
     /// 
     /// <code lang="none">
     /// 1  1  1
@@ -33,6 +34,11 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.ApplyInPlace( image );
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample13.png" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/mean.png" width="480" height="361" />
     /// </remarks>
     /// 
     /// <seealso cref="Convolution"/>

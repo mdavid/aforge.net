@@ -81,7 +81,7 @@ namespace AForge.Imaging.Filters
         /// Initializes a new instance of the <see cref="SaltAndPepperNoise"/> class.
         /// </summary>
         /// 
-        /// <param name="noiseAmount">Amount of noise to generate in percents.</param>
+        /// <param name="noiseAmount">Amount of noise to generate in percents, [0, 100].</param>
         /// 
         public SaltAndPepperNoise( double noiseAmount )
             : this( )
