@@ -147,6 +147,9 @@
     <Compile Include="Filters\Other\Mirror.cs" />
     <Compile Include="Filters\Other\Pixellate.cs" />
     <Compile Include="Filters\Flood Fillers\PointedColorFloodFill.cs" />
+    <Compile Include="Filters\Smooting\AdaptiveSmooth.cs" />
+    <Compile Include="Filters\Smooting\ConservativeSmoothing.cs" />
+    <Compile Include="Filters\Smooting\Median.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
     <Compile Include="Filters\Transform\ResizeBicubic.cs" />
     <Compile Include="Filters\Transform\ResizeBilinear.cs" />
