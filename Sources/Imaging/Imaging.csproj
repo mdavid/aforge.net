@@ -179,6 +179,13 @@
     <Compile Include="RecursiveBlobCounter.cs" />
     <Compile Include="SusanCornersDetector.cs" />
     <Compile Include="TemplateMatch.cs" />
+    <Compile Include="Textures\CloudsTexture.cs" />
+    <Compile Include="Textures\ITextureGenerator.cs" />
+    <Compile Include="Textures\LabyrinthTexture.cs" />
+    <Compile Include="Textures\MarbleTexture.cs" />
+    <Compile Include="Textures\TextileTexture.cs" />
+    <Compile Include="Textures\Texture.cs" />
+    <Compile Include="Textures\WoodTexture.cs" />
     <Compile Include="UnmanagedImage.cs" />
     <Compile Include="VerticalIntensityStatistics.cs" />
   </ItemGroup>
