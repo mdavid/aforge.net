@@ -43,7 +43,7 @@ namespace AForge.Imaging
     /// <summary>
     /// Describes a connected region in an image.
     /// </summary>
-    public class Segment
+    public class Region
     {
         /// <summary>Gets or sets the id of the region.</summary>
         public int Id { get; set; }
@@ -59,7 +59,7 @@ namespace AForge.Imaging
         /// Initializes a new instance of the <see cref="Segment"/> class.
         /// </summary>
         /// <param name="id">The id of the region.</param>
-        public Segment(int id)
+        public Region(int id)
         {
             this.Id = id;
         }
@@ -117,7 +117,7 @@ namespace AForge.Imaging
         /// <summary>Gets or sets the segmented bitmap.</summary>
         public Bitmap SegmentBitmap { get; set; }
         /// <summary>Gets or sets the colored segments.</summary>
-        public Dictionary<int, Segment> Segments { get; set; }
+        public Dictionary<int, Region> Regions { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegionbasedColorSegmentation"/> class.
@@ -144,12 +144,11 @@ namespace AForge.Imaging
                 if (origBitmap.PixelFormat == PixelFormat.Format24bppRgb ||
                     origBitmap.PixelFormat == PixelFormat.Format32bppRgb)
                     origBitmap = AForge.Imaging.Image.Clone(origBitmap, PixelFormat.Format32bppArgb);
-                    //origBitmap = AForge.Imaging.Image.Clone(origBitmap, PixelFormat.Format32bppArgb);
                 else
                     throw new ArgumentException("Source image can be 32 bpp or 24 bpp color image only");
             }
 
-            Segments = new Dictionary<int, Segment>();
+            Regions = new Dictionary<int, Region>();
             AllPixels = new Dictionary<int, Pixel>();
             // create new image
             SegmentBitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -169,24 +168,24 @@ namespace AForge.Imaging
             int pixelSize = 4;//ARGB
             int offset = stride - width * pixelSize;
 
-            // copy image
+            // process image
             unsafe
             {
                 byte* src = (byte*)imageData.Scan0.ToPointer();
-                //FF byte* dst = (byte*)dstData.Scan0.ToPointer();
                 int pos = 0;               
                 Pixel p;
-                Segment s1;
-                Segment s2;
+                Region s1;
+                Region s2;
 
-                src += stride + pixelSize;
-                pos = stride + pixelSize;
+                src += stride + pixelSize;//start pointer position -> 2.line, 2.pixel 
+                pos = stride + pixelSize;//start pixel position -> 2.line, 2.pixel 
                 // for each line
                 for (int y = 1; y < height - 1; y++)
                 {
                     // for each pixel in line
                     for (int x = 1; x < width - 1; x++, src += pixelSize, pos += pixelSize)
                     {
+                        //neighbour pixel positions
                         int leftup = pos - stride - pixelSize;
                         int up = pos - stride;
                         int rightup = pos - stride + pixelSize;
@@ -195,7 +194,7 @@ namespace AForge.Imaging
                         int leftdown = pos + stride - pixelSize;
                         int down = pos + stride;
                         int rightdown = pos + stride + pixelSize;
-
+                        //neighbour pointer positions
                         int lu = - stride - pixelSize;
                         int u = - stride;
                         int ru = - stride + pixelSize;
@@ -204,9 +203,12 @@ namespace AForge.Imaging
                         int ld = + stride - pixelSize;
                         int d = + stride;
                         int rd = + stride + pixelSize;
-
+                        //neighbours with similar color == friends; 
+                        //key = pixel position of neighbour
+                        //value = TRUE,if a neighbour is already a member of a region
                         Dictionary<int, bool> friends = new Dictionary<int, bool>(8);
                         
+                        #region CHECK ALL 8 NEIGHBOURS OF A PIXEL
                         //leftup
                         if (Math.Abs(src[ARGB.R] - src[lu + ARGB.R]) < threshold &&
                             Math.Abs(src[ARGB.G] - src[lu + ARGB.G]) < threshold &&
@@ -294,9 +296,10 @@ namespace AForge.Imaging
                             else
                                 friends.Add(rightdown, false);
                         }
-
+                        #endregion CHECK ALL 8 NEIGHBOURS OF A PIXEL
 
                         int tempPos = 0;
+                        //Check, if a neighbour is already member of a region
                         if (friends.ContainsValue(true))
                         {
                             // first loop looks for the first neighbour with a region
@@ -311,11 +314,11 @@ namespace AForge.Imaging
 
                             //Get first neighbour and its region
                             AllPixels.TryGetValue(tempPos, out p);
-                            Segments.TryGetValue(p.RegionId, out s1);
+                            Regions.TryGetValue(p.RegionId, out s1);
                             //Remove first neighbour from friends
                             friends.Remove(tempPos);
 
-                            //Add the original pixel tof riends
+                            //Add the original pixel to friends
                             if (AllPixels.TryGetValue(pos, out p))
                                 friends.Add(pos, true);
                             else
@@ -329,7 +332,7 @@ namespace AForge.Imaging
                                     AllPixels.TryGetValue(friend2.Key, out p);
                                     if (p.RegionId != s1.Id)
                                     {
-                                        Segments.TryGetValue(p.RegionId, out s2);
+                                        Regions.TryGetValue(p.RegionId, out s2);
                                         //for (int i = 0; i < s2.Pixels.Count; i++)
                                         foreach (KeyValuePair<int, Pixel> px2 in s2.Pixels)
                                         {
@@ -339,7 +342,7 @@ namespace AForge.Imaging
                                             s1.Pixels.Add(tempPx.Index, tempPx);
 
                                         }
-                                        Segments.Remove(s2.Id);
+                                        Regions.Remove(s2.Id);
                                     }
                                 }
                                 else
@@ -350,8 +353,8 @@ namespace AForge.Imaging
                                 }
                             }
 
-                            Segments.Remove(s1.Id);
-                            Segments.Add(s1.Id, s1);
+                            Regions.Remove(s1.Id);
+                            Regions.Add(s1.Id, s1);
 
                         }
                         else // no neighbour is already member of a region
@@ -359,7 +362,7 @@ namespace AForge.Imaging
                             p = new Pixel(pos, pos, Color.FromArgb(src[ARGB.A], src[ARGB.R], src[ARGB.G], src[ARGB.B]));
                             AllPixels.Add(pos, p);
 
-                            s1 = new Segment(pos);
+                            s1 = new Region(pos);
                             s1.Pixels.Add(pos, p);
 
                             foreach (KeyValuePair<int, bool> px in friends)
@@ -370,7 +373,7 @@ namespace AForge.Imaging
                                 s1.Pixels.Add(px.Key/*pos*/, p);
                             }
 
-                            Segments.Add(pos, s1);
+                            Regions.Add(pos, s1);
                         }
 
                     }
@@ -404,7 +407,7 @@ namespace AForge.Imaging
             {                
                 byte* dst = (byte*)dstData.Scan0.ToPointer();
 
-                foreach (KeyValuePair<int, Segment>iter in Segments)
+                foreach (KeyValuePair<int, Region>iter in Regions)
                 {
                     //colNumber = (colNumber == 32) ? 0 : colNumber;
                     if (colNumber == 32)
