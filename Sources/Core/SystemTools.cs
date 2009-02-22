@@ -157,7 +157,7 @@ namespace AForge
             int count );
         // Win32 memory set function
         [DllImport( "ntdll.dll" )]
-        public static unsafe extern byte* memset(
+        private static unsafe extern byte* memset(
             byte* dst,
             int filler,
             int count );
