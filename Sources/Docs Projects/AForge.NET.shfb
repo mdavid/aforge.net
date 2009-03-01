@@ -156,6 +156,8 @@
         <contentItem sourcePath="..\Imaging\Images\textured_merge2.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\textured_filter1.jpg" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\textured_filter2.jpg" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\jitter.jpg" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\oil_painting.jpg" destPath="img\imaging\" excludeItems="False" />
     </additionalContent>
     <ProjectSummary>&lt;b&gt;AForge.NET&lt;/b&gt; is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, computer vision, neural networks, genetic algorithms, machine learning, etc. </ProjectSummary>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
