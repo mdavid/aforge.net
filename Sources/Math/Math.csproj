@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Complex.cs" />
     <Compile Include="ContinuousHistogram.cs" />
+    <Compile Include="FourierTransform.cs" />
     <Compile Include="Gaussian.cs" />
     <Compile Include="Histogram.cs" />
     <Compile Include="PerlinNoise.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Random\UniformGenerator.cs" />
     <Compile Include="Random\UniformOneGenerator.cs" />
     <Compile Include="Statistics.cs" />
+    <Compile Include="Tools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AForge.Math.snk" />
