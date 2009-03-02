@@ -179,6 +179,7 @@
     <Compile Include="ImageStatistics.cs" />
     <Compile Include="ImageStatisticsHSL.cs" />
     <Compile Include="ImageStatisticsYCbCr.cs" />
+    <Compile Include="IntegralImage.cs" />
     <Compile Include="Interpolation.cs" />
     <Compile Include="ITemplateMatching.cs" />
     <Compile Include="MemoryManager.cs" />
