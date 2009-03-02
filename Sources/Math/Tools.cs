@@ -16,13 +16,13 @@ namespace AForge.Math
     /// 
     /// <remarks>The class contains different utility functions.</remarks>
     /// 
-    internal class Tools
+    public class Tools
     {
         /// <summary>
         /// Calculates power of 2.
         /// </summary>
         /// 
-        /// <param name="power">Power.</param>
+        /// <param name="power">Power to raise in.</param>
         /// 
         /// <returns>Returns specified power of 2 in the case if power is in the range of
         /// [0, 30]. Otherwise returns 0.</returns>
