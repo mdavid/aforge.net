@@ -61,7 +61,7 @@ namespace AForge.Imaging.Filters
     /// <img src="img/imaging/textured_filter2.jpg" width="480" height="361" />
     /// </remarks>
     /// 
-    public class TexturedFilter : ExtractChannel
+    public class TexturedFilter : BaseFilter
     {
         // texture generator
         private ITextureGenerator textureGenerator;
