@@ -148,7 +148,7 @@ namespace AForge.Imaging
         /// Construct integral image from source grayscale image.
         /// </summary>
         /// 
-        /// <param name="UnmanagedImage">Source unmanaged image.</param>
+        /// <param name="image">Source unmanaged image.</param>
         /// 
         /// <returns>Returns integral image.</returns>
         /// 
