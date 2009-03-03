@@ -122,6 +122,7 @@
     <Compile Include="Filters\Edge Detectors\DifferenceEdgeDetector.cs" />
     <Compile Include="Filters\Edge Detectors\HomogenityEdgeDetector.cs" />
     <Compile Include="Filters\Edge Detectors\SobelEdgeDetector.cs" />
+    <Compile Include="Filters\FilterIterator.cs" />
     <Compile Include="Filters\FiltersSequence.cs" />
     <Compile Include="Filters\Flood Fillers\PointedMeanFloodFill.cs" />
     <Compile Include="Filters\HSL Filters\BrightnessCorrection.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Filters\Other\OilPainting.cs" />
     <Compile Include="Filters\Other\Pixellate.cs" />
     <Compile Include="Filters\Flood Fillers\PointedColorFloodFill.cs" />
+    <Compile Include="Filters\Other\SimpleSkeletonization.cs" />
     <Compile Include="Filters\Other\TexturedFilter.cs" />
     <Compile Include="Filters\Other\TexturedMerge.cs" />
     <Compile Include="Filters\Other\Texturer.cs" />
