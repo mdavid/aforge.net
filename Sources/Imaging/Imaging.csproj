@@ -134,6 +134,7 @@
     <Compile Include="Filters\IFilterInformation.cs" />
     <Compile Include="Filters\IInPlaceFilter.cs" />
     <Compile Include="Filters\IInPlacePartialFilter.cs" />
+    <Compile Include="Filters\IlluminationCorrection\FlatFieldCorrection.cs" />
     <Compile Include="Filters\Morphology\BottomHat.cs" />
     <Compile Include="Filters\Morphology\Closing.cs" />
     <Compile Include="Filters\Morphology\Dilatation.cs" />
