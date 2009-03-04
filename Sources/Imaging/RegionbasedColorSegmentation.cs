@@ -56,7 +56,7 @@ namespace AForge.Imaging
         public Dictionary<int, Pixel> Pixels = new Dictionary<int, Pixel>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Segment"/> class.
+        /// Initializes a new instance of the <see cref="Region"/> class.
         /// </summary>
         /// <param name="id">The id of the region.</param>
         public Region(int id)
@@ -97,8 +97,8 @@ namespace AForge.Imaging
 			Color.Red,		Color.Green,	Color.Blue,			Color.Yellow,
 			Color.Violet,	Color.Brown,	Color.Olive,		Color.Cyan,
 
-			Color.Magenta,	Color.Gold,		Color.Indigo,		Color.Ivory,
-			Color.HotPink,	Color.DarkRed,	Color.DarkGreen,	Color.DarkBlue,
+			Color.Aquamarine,	Color.Gold,		Color.Indigo,		Color.Ivory,
+			Color.Azure,	Color.DarkRed,	Color.DarkGreen,	Color.DarkBlue,
 
 			Color.DarkSeaGreen,	Color.Gray,	Color.DarkKhaki,	Color.DarkGray,
 			Color.LimeGreen, Color.Tomato,	Color.SteelBlue,	Color.SkyBlue,
@@ -112,7 +112,7 @@ namespace AForge.Imaging
         int width;
         int height;
         byte threshold;
-        private Dictionary<int, Pixel> AllPixels;
+        public Dictionary<int, Pixel> AllPixels;
 
         /// <summary>Gets or sets the segmented bitmap.</summary>
         public Bitmap SegmentBitmap { get; set; }
@@ -337,7 +337,7 @@ namespace AForge.Imaging
                                         foreach (KeyValuePair<int, Pixel> px2 in s2.Pixels)
                                         {
                                             AllPixels.Remove(px2.Key);
-                                            Pixel tempPx = new Pixel(px2.Value.Index, s1.Id, px2.Value.Color);
+                                            Pixel tempPx = new Pixel(px2.Key/*px2.Value.Index*/, s1.Id, px2.Value.Color);
                                             AllPixels.Add(tempPx.Index, tempPx);
                                             s1.Pixels.Add(tempPx.Index, tempPx);
 
