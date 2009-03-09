@@ -17,6 +17,9 @@ namespace AForge.Neuro.Learning
     /// network of <see cref="ActivationNeuron">Activation Neurons</see>
     /// with the <see cref="ThresholdFunction">Threshold</see>
     /// activation function.</para>
+    /// 
+    /// <para>See information about <a href="http://en.wikipedia.org/wiki/Perceptron">Perceptron</a>
+    /// and its learning algorithm.</para>
     /// </remarks>
     /// 
     public class PerceptronLearning : ISupervisedLearning

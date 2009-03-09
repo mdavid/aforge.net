@@ -13,10 +13,14 @@ namespace AForge.Neuro.Learning
     /// Delta rule learning algorithm.
     /// </summary>
     /// 
-    /// <remarks>This learning algorithm is used to train one layer neural
+    /// <remarks><para>This learning algorithm is used to train one layer neural
     /// network of <see cref="ActivationNeuron">Activation Neurons</see>
     /// with continuous activation function, see <see cref="SigmoidFunction"/>
-    /// for example.</remarks>
+    /// for example.</para>
+    /// 
+    /// <para>See information about <a href="http://en.wikipedia.org/wiki/Delta_rule">delta rule</a>
+    /// learning algorithm.</para>
+    /// </remarks>
     /// 
     public class DeltaRuleLearning : ISupervisedLearning
     {
