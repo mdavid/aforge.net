@@ -38,7 +38,7 @@ namespace AForge.Imaging
         public static System.Drawing.Point GetPoint(int index, int stride, int channel)
         {
             int y = (index - channel) / stride;
-            int x = index - channel - y * stride;
+            int x = (index - channel - y * stride) / 4;//4 channels
             return new System.Drawing.Point(x, y);
         }
 
@@ -52,7 +52,7 @@ namespace AForge.Imaging
         /// <returns></returns>
         public static int GetIndex(int x, int y, int stride, int channel)
         {
-            int index = y * stride + x + channel;
+            int index = y * stride + x * 4 + channel;//4 channels
             return index;
         }
 
