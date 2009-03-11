@@ -155,10 +155,17 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
 
-            ComplexImage complexImage = FromBitmap( imageData );
+            ComplexImage complexImage;
 
-            // unlock source images
-            image.UnlockBits( imageData );
+            try
+            {
+                complexImage = FromBitmap( imageData );
+            }
+            finally
+            {
+                // unlock source images
+                image.UnlockBits( imageData );
+            }
 
             return complexImage;
         }

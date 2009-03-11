@@ -212,11 +212,16 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, image.PixelFormat );
 
-            // gather statistics
-            ProcessImage( new UnmanagedImage( imageData ) );
-
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // gather statistics
+                ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
         }
 
         /// <summary>

@@ -147,11 +147,18 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, image.PixelFormat );
 
-            // process the image
-            Point[] corners = ProcessImage( new UnmanagedImage( imageData ) );
+            Point[] corners;
 
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // process the image
+                corners = ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
 
             return corners;
         }

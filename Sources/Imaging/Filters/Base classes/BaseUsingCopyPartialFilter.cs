@@ -1,8 +1,9 @@
 ﻿// AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -120,11 +121,16 @@ namespace AForge.Imaging.Filters
                 new Rectangle( 0, 0, width, height ),
                 ImageLockMode.ReadWrite, dstPixelFormat );
 
-            // process the filter
-            ProcessFilter( new UnmanagedImage( imageData ), new UnmanagedImage( dstData ), new Rectangle( 0, 0, width, height ) );
-
-            // unlock destination images
-            dstImage.UnlockBits( dstData );
+            try
+            {
+                // process the filter
+                ProcessFilter( new UnmanagedImage( imageData ), new UnmanagedImage( dstData ), new Rectangle( 0, 0, width, height ) );
+            }
+            finally
+            {
+                // unlock destination images
+                dstImage.UnlockBits( dstData );
+            }
 
             return dstImage;
         }
