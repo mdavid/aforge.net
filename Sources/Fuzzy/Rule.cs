@@ -28,19 +28,29 @@ namespace AForge.Fuzzy
         private List<object> rpnTokenList;
         // the database with the linguistic variables
         private Database database;
+        // the norm operator
+        private INorm normOperator;
+        // the conorm operator
+        private ICoNorm conormOperator;
 
-        public Rule( Database FuzzyDatabase, string Name, string Rule )
+        public Rule( Database FuzzyDatabase, string Name, string Rule, INorm NormOperator, ICoNorm CoNormOperator )
         {
             // the list with the RPN expression
             rpnTokenList  = new List<object>( );
-            
+
             // setting attributes
-            this.name     = Name;
-            this.rule     = Rule;
-            this.database = FuzzyDatabase;
-            
+            this.name           = Name;
+            this.rule           = Rule;
+            this.database       = FuzzyDatabase;
+            this.normOperator   = NormOperator;
+
             // parsing the rule to obtain RPN of the expression
             ParseRule( );
+        }
+
+        public Rule( Database FuzzyDatabase, string Name, string Rule ): 
+            this( FuzzyDatabase, Name, Rule, new MinimumNorm(), new MaximumCoNorm() )
+        {
         }
 
         /// <summary>
@@ -210,6 +220,45 @@ namespace AForge.Fuzzy
             while ( s.Count > 0 )
                 rpnTokenList.Add( s.Pop( ) );
 
+        }
+
+        public double EvaluateFiringStrength( )
+        {
+            // Stack to store the operand values
+            Stack<double> s = new Stack<double>( );
+
+            // Logic to calculate the firing strength
+            foreach ( object o in rpnTokenList )
+            {
+                // if its a clause, then its value must be calculated and pushed
+                if ( o.GetType( ) == typeof( Clause ) )
+                {
+                    Clause c = o as Clause;
+                    s.Push ( c.Evaluate( ));
+                }
+                // if its an operator (AND / OR) the operation is performed and the result 
+                // returns to the stack
+                else
+                {
+                    // Operands
+                    double y = s.Pop( );
+                    double x = s.Pop( );
+                    // Operation
+                    switch ( o.ToString() )
+                    {
+                        case "AND":
+                            s.Push( normOperator.Evaluate ( x, y ) );
+                            break;
+                        case "OR":
+                            s.Push( conormOperator.Evaluate ( x, y ) );
+                            break;
+                    }
+                }
+
+            }
+
+            // result on the top of stack
+            return s.Pop( );
         }
     }
 }

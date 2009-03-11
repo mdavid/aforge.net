@@ -69,6 +69,11 @@ namespace FuzzyRulesSample
             textBox1.Text += r2.GetRPNExpression( ) + "\r\n";
             textBox1.Text += r3.GetRPNExpression( ) + "\r\n";
 
+            // Testing the firing strength!
+            lvSteel.NumericInput = 12;
+            lvStove.NumericInput = 35;
+            textBox1.Text += r1.EvaluateFiringStrength( ).ToString( ) + "\r\n";
+
             // Checking exceptions
             // Rule r4 = new Rule( db, "Test4", "IF Steel is Cold and Tove is Warm or Stove is Hot then ..." );
             // Rule r5 = new Rule( db, "Test4", "IF Steel is Kold and Stove is Warm or Stove is Hot then ..." );

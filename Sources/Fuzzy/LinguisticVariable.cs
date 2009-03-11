@@ -73,6 +73,17 @@ namespace AForge.Fuzzy
         private double end;
         // the linguistic labels of the linguistic variable
         private Dictionary<string, FuzzySet> labels;
+        // the numeric input of this variable
+        private double numericInput;
+
+        /// <summary>
+        /// Numerical value of the input of this linguistic variable.
+        /// </summary>
+        public double NumericInput
+        {
+            get { return numericInput; }
+            set { numericInput = value; }
+        }
 
         /// <summary>
         /// Name of the linguistic variable.

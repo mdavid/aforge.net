@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Clause.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Operators\MaximumCoNorm.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="LinguisticVariable.cs" />
     <Compile Include="FuzzySet.cs" />
