@@ -154,15 +154,22 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, template.Width, template.Height ),
                 ImageLockMode.ReadOnly, template.PixelFormat );
 
-            // process the image
-            TemplateMatch[] matchings = ProcessImage(
-                new UnmanagedImage( imageData ),
-                new UnmanagedImage( templateData ),
-                searchZone );
+            TemplateMatch[] matchings;
 
-            // unlock images
-            image.UnlockBits( imageData );
-            template.UnlockBits( templateData );
+            try
+            {
+                // process the image
+                matchings = ProcessImage(
+                    new UnmanagedImage( imageData ),
+                    new UnmanagedImage( templateData ),
+                    searchZone );
+            }
+            finally
+            {
+                // unlock images
+                image.UnlockBits( imageData );
+                template.UnlockBits( templateData );
+            }
 
             return matchings;
         }

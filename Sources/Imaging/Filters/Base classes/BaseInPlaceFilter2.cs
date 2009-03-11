@@ -1,8 +1,9 @@
 ﻿// AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -152,10 +153,15 @@ namespace AForge.Imaging.Filters
                     new Rectangle( 0, 0, width, height ),
                     ImageLockMode.ReadOnly, pixelFormat );
 
-                ProcessFilter( image, new UnmanagedImage( ovrData ) );
-
-                // unlock overlay image
-                overlayImage.UnlockBits( ovrData );
+                try
+                {
+                    ProcessFilter( image, new UnmanagedImage( ovrData ) );
+                }
+                finally
+                {
+                    // unlock overlay image
+                    overlayImage.UnlockBits( ovrData );
+                }
             }
             else if ( unmanagedOverlayImage != null )
             {

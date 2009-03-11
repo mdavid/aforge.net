@@ -225,11 +225,16 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
 
-            // process the image
-            ProcessImage( new UnmanagedImage( imageData ) );
-
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // process the image
+                ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
         }
 
         /// <summary>

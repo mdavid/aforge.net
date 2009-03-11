@@ -182,13 +182,20 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, searchImage.Width, searchImage.Height ),
                 ImageLockMode.ReadOnly, searchImage.PixelFormat );
 
-            // process the image
-            BlockMatch[] matchings = ProcessImage( new UnmanagedImage( sourceImageData ),
-                coordinates, new UnmanagedImage( searchImageData ) );
+            BlockMatch[] matchings;
 
-            // unlock image
-            sourceImage.UnlockBits( sourceImageData );
-            searchImage.UnlockBits( searchImageData );
+            try
+            {
+                // process the image
+                matchings = ProcessImage( new UnmanagedImage( sourceImageData ),
+                    coordinates, new UnmanagedImage( searchImageData ) );
+            }
+            finally
+            {
+                // unlock image
+                sourceImage.UnlockBits( sourceImageData );
+                searchImage.UnlockBits( searchImageData );
+            }
 
             return matchings;
         }

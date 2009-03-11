@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -128,11 +129,16 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );
 
-            // gather statistics
-            ProcessImage( new UnmanagedImage( imageData ) );
-
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // gather statistics
+                ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
         }
 
         /// <summary>
