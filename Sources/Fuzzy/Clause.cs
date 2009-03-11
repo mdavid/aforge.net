@@ -48,6 +48,17 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
+        /// Evaluates the fuzzy clause using the linguistic variable's numeric input.
+        /// </summary>
+        /// 
+        /// <returns>Degree of membership [0..1] of the clause.</returns>
+        /// 
+        public double Evaluate( )
+        {
+            return Evaluate ( variable.NumericInput );
+        }
+
+        /// <summary>
         /// Returns the fuzzy clause in its linguistic representation.
         /// </summary>
         /// 
