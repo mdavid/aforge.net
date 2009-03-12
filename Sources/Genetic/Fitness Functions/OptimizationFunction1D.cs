@@ -28,8 +28,8 @@ namespace AForge.Genetic
     /// // define optimization function
     /// public class UserFunction : OptimizationFunction1D
     /// {
-    ///		public UserFunction( ) :
-    ///			base( new DoubleRange( 0, 255 ) ) { }
+    ///	    public UserFunction( ) :
+    ///         base( new DoubleRange( 0, 255 ) ) { }
     ///
     /// 	public override double OptimizationFunction( double x )
     ///		{
@@ -42,8 +42,13 @@ namespace AForge.Genetic
     ///		new BinaryChromosome( 32 ),
     ///		new UserFunction( ),
     ///		new EliteSelection( ) );
-    ///	// run one epoch of the population
-    ///	population.RunEpoch( );
+    ///	
+    /// while ( true )
+    /// {
+    ///	    // run one epoch of the population
+    ///     population.RunEpoch( );
+    ///     // ...
+    /// }
     /// </code>
     /// </remarks>
     ///
