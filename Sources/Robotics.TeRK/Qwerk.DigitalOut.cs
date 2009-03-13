@@ -150,7 +150,7 @@ namespace AForge.Robotics.TeRK
             /// Set state of all digital outputs.
             /// </summary>
             /// 
-            /// <param name="outpusMask">Mask array specifying which output's state needs to be set.</param>
+            /// <param name="outpusMask">Mask array specifying which output's state need to be set.</param>
             /// <param name="states">Array of outputs' states.</param>
             /// 
             /// <remarks><para>The <paramref name="outpusMask"/> and <paramref name="states"/> arrays specify

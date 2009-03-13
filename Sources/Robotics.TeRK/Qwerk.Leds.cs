@@ -176,7 +176,7 @@ namespace AForge.Robotics.TeRK
             /// Set state of all LEDs.
             /// </summary>
             /// 
-            /// <param name="ledsMask">Mask array specifying which LED's state needs to be set.</param>
+            /// <param name="ledsMask">Mask array specifying which LED's state need to be set.</param>
             /// <param name="states">Array of LEDs' states.</param>
             /// 
             /// <remarks><para>The <paramref name="ledsMask"/> and <paramref name="states"/> arrays specify

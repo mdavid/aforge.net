@@ -26,7 +26,7 @@ namespace AForge.Robotics.TeRK
         /// // get Qwerk's motors service
         /// Qwerk.Motors motors = qwerk.GetMotorsService( );
         /// // stop all motors
-        /// motors.StopMotors( false );
+        /// motors.StopMotors( );
         /// // run first motor
         /// motors.SetMotorVelocity( 0, 10000 );
         /// </code>
