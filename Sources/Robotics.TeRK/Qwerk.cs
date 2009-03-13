@@ -38,6 +38,10 @@ namespace AForge.Robotics.TeRK
     /// outputs.SetOutputs( false );
     /// // enable zero output
     /// outputs.SetOutput( 0, true );
+    /// // get state of all analog inputs
+    /// short[] inputs = qwerk.GetAnalogInService( ).GetInputs( );
+    /// // get state of all digital inputs
+    /// bool[] inputs = qwerk.GetDigitalInService( ).GetInputs( );
     /// </code>
     /// </remarks>
     /// 
@@ -157,6 +161,7 @@ namespace AForge.Robotics.TeRK
             analogIns   = null;
             video       = null;
             motors      = null;
+            servos      = null;
 
             // destroy ICE communicator
             if ( iceCommunicator != null )
@@ -286,6 +291,25 @@ namespace AForge.Robotics.TeRK
             return motors;
         }
 
+        private Qwerk.Servos servos;
+
+        /// <summary>
+        /// Get Qwerk's servos service.
+        /// </summary>
+        /// 
+        /// <returns>Returns Qwerk's servos service.</returns>
+        /// 
+        /// <remarks>For the list of possible exceptions, see documentation to
+        /// <see cref="Qwerk.Servos(Qwerk)"/>.</remarks>
+        /// 
+        public Qwerk.Servos GetServosService( )
+        {
+            if ( servos == null )
+            {
+                servos = new Servos( this );
+            }
+            return servos;
+        }
 
         /// <summary>
         /// Get Qwerk's power level.
