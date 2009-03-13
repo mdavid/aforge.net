@@ -49,7 +49,7 @@ namespace AForge.Robotics.TeRK
         /// 
         public class Servos
         {
-            // Qwerk's motor controller
+            // Qwerk's servo controller
             private TeRKIceLib.ServoControllerPrx servoController = null;
 
             /// <summary>
@@ -108,7 +108,7 @@ namespace AForge.Robotics.TeRK
             /// Stop specified servo.
             /// </summary>
             /// 
-            /// <param name="servo">Servo to stop, [0, <see cref="Motors.Count"/>).</param>
+            /// <param name="servo">Servo to stop, [0, <see cref="Servos.Count"/>).</param>
             /// 
             /// <returns>Returns current position of the specified servo.</returns>
             /// 
@@ -206,7 +206,7 @@ namespace AForge.Robotics.TeRK
             /// Set position of a single servo.
             /// </summary>
             /// 
-            /// <param name="servo">Servo to set position for, [0, <see cref="Motors.Count"/>).</param>
+            /// <param name="servo">Servo to set position for, [0, <see cref="Servos.Count"/>).</param>
             /// <param name="position">Position to set for the specified servo, [0, 255].</param>
             /// 
             /// <returns>Returns current position of the specified servo.</returns>
@@ -294,7 +294,7 @@ namespace AForge.Robotics.TeRK
             /// Get current position of a single servo.
             /// </summary>
             /// 
-            /// <param name="servo">Servo to get position for, [0, <see cref="Motors.Count"/>).</param>
+            /// <param name="servo">Servo to get position for, [0, <see cref="Servos.Count"/>).</param>
             /// 
             /// <returns>Returns current position of the specified servo.</returns>
             /// 
@@ -330,7 +330,7 @@ namespace AForge.Robotics.TeRK
             /// Set bounds for the specified servo.
             /// </summary>
             /// 
-            /// <param name="servo">Servo to set bounds for, [0, <see cref="Motors.Count"/>).</param>
+            /// <param name="servo">Servo to set bounds for, [0, <see cref="Servos.Count"/>).</param>
             /// <param name="bound">Bounds to set for the specified servo.</param>
             /// 
             /// <remarks><para>The method sets servo's physical bounds in which it may move.
@@ -410,7 +410,7 @@ namespace AForge.Robotics.TeRK
             /// Get bounds for the specified servo.
             /// </summary>
             /// 
-            /// <param name="servo">Servo to get bounds for, [0, <see cref="Motors.Count"/>).</param>
+            /// <param name="servo">Servo to get bounds for, [0, <see cref="Servos.Count"/>).</param>
             /// 
             /// <returns>Returns configured bounds of the specified servo.</returns>
             /// 
