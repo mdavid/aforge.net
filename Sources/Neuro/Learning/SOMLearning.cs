@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Neuro.Learning
@@ -17,6 +18,32 @@ namespace AForge.Neuro.Learning
     /// is widely used in clusterization tasks. The class allows to train
     /// <see cref="DistanceNetwork">Distance Networks</see>.</para>
     /// 
+    /// <para>Sample usage (clustering RGB colors):</para>
+    /// <code>
+    /// // set range for randomization neurons' weights
+    /// Neuron.RandRange = new DoubleRange( 0, 255 );
+    /// // create network
+    /// DistanceNetwork	network = new DistanceNetwork(
+    ///         3, // thress inputs in the network
+    ///         100 * 100 ); // 10000 neurons
+    /// // create learning algorithm
+    /// SOMLearning	trainer = new SOMLearning( network );
+    /// // network's input
+    /// double[] input = new double[3];
+    /// // loop
+    /// while ( !needToStop )
+    /// {
+    ///     input[0] = rand.Next( 256 );
+    ///     input[1] = rand.Next( 256 );
+    ///     input[2] = rand.Next( 256 );
+    /// 
+    ///     trainer.Run( input );
+    /// 
+    ///     // ...
+    ///     // update learning rate and radius continuously,
+    ///     // so networks may come steady state
+    /// }
+    /// </code>
     /// </remarks>
     /// 
     public class SOMLearning : IUnsupervisedLearning
