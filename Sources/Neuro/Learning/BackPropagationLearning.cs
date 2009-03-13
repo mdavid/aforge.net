@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 // Copyright © Cezary Wagner, 2008
 // changes optimizing algorithm performance
@@ -17,9 +18,39 @@ namespace AForge.Neuro.Learning
 	/// Back propagation learning algorithm.
 	/// </summary>
 	/// 
-	/// <remarks>The class implements back propagation learning algorithm,
+	/// <remarks><para>The class implements back propagation learning algorithm,
 	/// which is widely used for training multi-layer neural networks with
-	/// continuous activation functions.</remarks>
+    /// continuous activation functions.</para>
+    /// 
+    /// <para>Sample usage (training network to calculate XOR function):</para>
+    /// <code>
+    /// // initialize input and output values
+    /// double[][] input = new double[4][] {
+    ///     new double[] {0, 0}, new double[] {0, 1},
+    ///     new double[] {1, 0}, new double[] {1, 1}
+    /// };
+    /// double[][] output = new double[4][] {
+    ///     new double[] {0}, new double[] {1},
+    ///     new double[] {1}, new double[] {0}
+    /// };
+    /// // create neural network
+    /// ActivationNetwork   network = new ActivationNetwork(
+    ///     SigmoidFunction( 2 ),
+    ///     2, // two inputs in the network
+    ///     2, // two neurons in the first layer
+    ///     1 ); // one neuron in the second layer
+    /// // create teacher
+    /// BackPropagationLearning teacher = new BackPropagationLearning( network );
+    /// // loop
+    /// while ( !needToStop )
+    /// {
+    ///     // run epoch of learning procedure
+    ///     double error = teacher.RunEpoch( input, output );
+    ///     // check error value to see if we need to stop
+    ///     // ...
+    /// }
+    /// </code>
+    /// </remarks>
 	/// 
 	public class BackPropagationLearning : ISupervisedLearning
 	{
