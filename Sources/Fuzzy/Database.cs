@@ -36,7 +36,7 @@ namespace AForge.Fuzzy
         /// Adds a linguistic variable to the database. 
         /// </summary>
         /// 
-        /// <param name="label">A <see cref="LinguisticVariable"/>.</param>
+        /// <param name="label">A linguistic variable to add.</param>
         /// 
         /// <exception cref="NullReferenceException">The linguistic variable was not initialized.</exception>
         /// <exception cref="ArgumentException">The linguistic variable name already exists in the database.</exception>

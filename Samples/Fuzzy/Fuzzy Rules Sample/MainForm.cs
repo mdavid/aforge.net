@@ -6,13 +6,13 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using AForge.Fuzzy;
-using Rule=AForge.Fuzzy.Rule;
+using AForge.Fuzzy;
 
 namespace FuzzyRulesSample
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1( )
+        public MainForm( )
         {
             InitializeComponent( );
         }
@@ -57,7 +57,7 @@ namespace FuzzyRulesSample
             db.AddVariable( lvStove );
 
             // sample rules just to test the expression parsing
-            Rule r1 = new Rule( db, "Test1", 
+            Rule r1 = new Rule( db, "Test1",
                 "IF Steel is Cold and Stove is Hot then ..." );
             Rule r2 = new Rule( db, "Test2",
                 "IF Steel is Cold and (Stove is Warm or Stove is Hot) then ..." );
@@ -80,7 +80,7 @@ namespace FuzzyRulesSample
 
         }
 
-        private void Form1_Load( object sender, EventArgs e )
+        private void MainForm_Load( object sender, EventArgs e )
         {
 
         }
