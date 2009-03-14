@@ -33,23 +33,23 @@ namespace AForge.Fuzzy
         // the conorm operator
         private ICoNorm conormOperator;
 
-        public Rule( Database FuzzyDatabase, string Name, string Rule, INorm NormOperator, ICoNorm CoNormOperator )
+        public Rule( Database fuzzyDatabase, string name, string rule, INorm normOperator, ICoNorm coNormOperator )
         {
             // the list with the RPN expression
-            rpnTokenList  = new List<object>( );
+            rpnTokenList = new List<object>( );
 
             // setting attributes
-            this.name           = Name;
-            this.rule           = Rule;
-            this.database       = FuzzyDatabase;
-            this.normOperator   = NormOperator;
+            this.name         = name;
+            this.rule         = rule;
+            this.database     = fuzzyDatabase;
+            this.normOperator = normOperator;
 
             // parsing the rule to obtain RPN of the expression
             ParseRule( );
         }
 
-        public Rule( Database FuzzyDatabase, string Name, string Rule ): 
-            this( FuzzyDatabase, Name, Rule, new MinimumNorm(), new MaximumCoNorm() )
+        public Rule( Database FuzzyDatabase, string Name, string Rule ) :
+            this( FuzzyDatabase, Name, Rule, new MinimumNorm( ), new MaximumCoNorm( ) )
         {
         }
 
@@ -78,7 +78,7 @@ namespace AForge.Fuzzy
             result = result.Replace( ", #", "" );
             return result;
         }
-        
+
         /// <summary>
         /// Defines the priority of the fuzzy operators.
         /// </summary>
@@ -99,15 +99,15 @@ namespace AForge.Fuzzy
 
         /// <summary>
         /// Converts the Fuzzy Rule to RPN (Reverse Polish Notation). For debug proposes, the string representation of the 
-        /// RPN expression can be acessed by calling GetRPNExpression() method.
+        /// RPN expression can be acessed by calling <see cref="GetRPNExpression"/> method.
         /// </summary>
-        private void ParseRule(  )
+        private void ParseRule( )
         {
             // tokens like IF and THEN will be searched always in upper case
             string upRule = rule.ToUpper( );
-            
+
             // the rule must start with IF, and must have a THEN somewhere
-            if ( ! upRule.StartsWith( "IF" ) )
+            if ( !upRule.StartsWith( "IF" ) )
                 throw new ArgumentException( "A Fuzzy Rule must start with an IF statement." );
             if ( upRule.IndexOf( "THEN" ) < 0 )
                 throw new ArgumentException( "Missing the consequent (THEN) statement." );
@@ -157,7 +157,7 @@ namespace AForge.Fuzzy
                     }
                     catch ( KeyNotFoundException )
                     {
-                        throw new ArgumentException( "Linguistic label "+token+" was not found on the variable "+lingVar.Name+"." );
+                        throw new ArgumentException( "Linguistic label " + token + " was not found on the variable " + lingVar.Name + "." );
                     }
                 }
                 // not VAR and not IS statement 
@@ -174,7 +174,7 @@ namespace AForge.Fuzzy
                     {
                         // pop all the higher priority operators until the stack is empty 
                         while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( upToken ) ) )
-                            rpnTokenList.Add( s.Pop() );
+                            rpnTokenList.Add( s.Pop( ) );
 
                         // pushing the operator    
                         s.Push( upToken );
@@ -184,12 +184,12 @@ namespace AForge.Fuzzy
                     else if ( upToken == ")" )
                     {
                         // if there is nothing on the stack, an oppening parenthesis is missing.
-                        if (s.Count == 0)
+                        if ( s.Count == 0 )
                             throw new ArgumentException( "Openning parenthesis missing." );
                         // pop the tokens and copy to output until openning is found 
-                        while ( s.Peek() != "(" )
+                        while ( s.Peek( ) != "(" )
                         {
-                            rpnTokenList.Add( s.Pop() );
+                            rpnTokenList.Add( s.Pop( ) );
                             if ( s.Count == 0 )
                                 throw new ArgumentException( "Openning parenthesis missing." );
                         }
@@ -209,7 +209,7 @@ namespace AForge.Fuzzy
                         }
                         catch ( KeyNotFoundException )
                         {
-                            throw new ArgumentException( "Linguistic variable "+token+" was not found on the database." );
+                            throw new ArgumentException( "Linguistic variable " + token + " was not found on the database." );
                         }
                     }
 
@@ -234,7 +234,7 @@ namespace AForge.Fuzzy
                 if ( o.GetType( ) == typeof( Clause ) )
                 {
                     Clause c = o as Clause;
-                    s.Push ( c.Evaluate( ));
+                    s.Push( c.Evaluate( ) );
                 }
                 // if its an operator (AND / OR) the operation is performed and the result 
                 // returns to the stack
@@ -244,13 +244,13 @@ namespace AForge.Fuzzy
                     double y = s.Pop( );
                     double x = s.Pop( );
                     // Operation
-                    switch ( o.ToString() )
+                    switch ( o.ToString( ) )
                     {
                         case "AND":
-                            s.Push( normOperator.Evaluate ( x, y ) );
+                            s.Push( normOperator.Evaluate( x, y ) );
                             break;
                         case "OR":
-                            s.Push( conormOperator.Evaluate ( x, y ) );
+                            s.Push( conormOperator.Evaluate( x, y ) );
                             break;
                     }
                 }

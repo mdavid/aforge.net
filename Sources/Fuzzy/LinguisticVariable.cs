@@ -172,15 +172,15 @@ namespace AForge.Fuzzy
         /// Returns an existing label from the linguistic variable.
         /// </summary>
         /// 
-        /// <param name="VariableName">Name of the label to retrieve.</param>
+        /// <param name="labelName">Name of the label to retrieve.</param>
         /// 
         /// <returns>Reference to named label (<see cref="FuzzySet"/>).</returns>
         /// 
         /// <exception cref="KeyNotFoundException">The label indicated in LabelName was not found in the linguistic variable.</exception>
         /// 
-        public FuzzySet GetLabel( string LabelName )
+        public FuzzySet GetLabel( string labelName )
         {
-            return labels [LabelName];
+            return labels[labelName];
         }
 
         /// <summary>
@@ -195,9 +195,9 @@ namespace AForge.Fuzzy
         /// 
         /// <exception cref="KeyNotFoundException">The label indicated in labelName was not found in the linguistic variable.</exception>
         /// 
-        public double GetLabelMembership( string LabelName, double value )
+        public double GetLabelMembership( string labelName, double value )
         {
-            FuzzySet fs = labels [LabelName];
+            FuzzySet fs = labels[labelName];
             return fs.GetMembership( value );
         }
     }

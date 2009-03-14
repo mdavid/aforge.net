@@ -1,10 +1,10 @@
 // AForge Fuzzy Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2008 
+// Copyright ï¿½ Andrew Kirillov, 2005-2008 
 // andrew.kirillov@gmail.com 
 //
-// Copyright © Fabio L. Caversan, 2008
+// Copyright ï¿½ Fabio L. Caversan, 2008
 // fabio.caversan@gmail.com
 //
 
@@ -55,7 +55,7 @@ namespace AForge.Fuzzy
         /// 
         public double Evaluate( )
         {
-            return Evaluate ( variable.NumericInput );
+            return Evaluate( variable.NumericInput );
         }
 
         /// <summary>
@@ -63,6 +63,7 @@ namespace AForge.Fuzzy
         /// </summary>
         /// 
         /// <returns>A string representing the fuzzy clause.</returns>
+        /// 
         public string ToString( )
         {
             return this.variable.Name + " IS " + this.label.Name;
