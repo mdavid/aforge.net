@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2EFAA327-1789-4438-B9F5-E83ACAE12DB2}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -44,6 +44,8 @@
     <Compile Include="Chromosomes\BinaryChromosome.cs" />
     <Compile Include="Chromosomes\DoubleArrayChromosome.cs" />
     <Compile Include="Chromosomes\GP\ExtendedGeneFunction.cs" />
+    <Compile Include="Chromosomes\GP\GPTreeChromosome.cs" />
+    <Compile Include="Chromosomes\GP\GPTreeNode.cs" />
     <Compile Include="Chromosomes\GP\IGPGene.cs" />
     <Compile Include="Chromosomes\GP\SimpleGeneFunction.cs" />
     <Compile Include="Chromosomes\IChromosome.cs" />

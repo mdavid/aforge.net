@@ -277,7 +277,7 @@ namespace AForge.Genetic
 
             // add ancestor to the population
             ancestor.Evaluate( fitnessFunction );
-            population.Add( ancestor );
+            population.Add( ancestor.Clone( ) );
             // add more chromosomes to the population
             for ( int i = 1; i < size; i++ )
             {

@@ -223,6 +223,8 @@ namespace AForge.Genetic
         /// Clone the chromosome.
         /// </summary>
         /// 
+        /// <returns>Return's clone of the chromosome.</returns>
+        /// 
         /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
         ///
