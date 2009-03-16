@@ -18,7 +18,7 @@ namespace AForge.Genetic
     /// which is represented by a set of bits. Maximum number of bits comprising
     /// the chromosome is 64.</para></remarks>
     /// 
-    public class BinaryChromosome : IChromosome
+    public class BinaryChromosome : ChromosomeBase
     {
         /// <summary>
         /// Chromosome's length in bits.
@@ -29,11 +29,6 @@ namespace AForge.Genetic
         /// Numerical chromosome's value.
         /// </summary>
         protected ulong val = 0;
-
-        /// <summary>
-        /// Chromosome's fintess value.
-        /// </summary>
-        protected double fitness = 0;
 
         /// <summary>
         /// Random number generator for chromosoms generation, crossover, mutation, etc.
@@ -81,19 +76,6 @@ namespace AForge.Genetic
         public ulong MaxValue
         {
             get { return 0xFFFFFFFFFFFFFFFF >> ( 64 - length ); }
-        }
-
-        /// <summary>
-        /// Chromosome's fintess value.
-        /// </summary>
-        /// 
-        /// <remarks><para>Fitness value (usefulness) of the chromosome calculate by calling
-        /// <see cref="Evaluate"/> method. The greater the value, the more useful the chromosome.
-        /// </para></remarks>
-        /// 
-        public double Fitness
-        {
-            get { return fitness; }
         }
 
         /// <summary>
@@ -147,30 +129,13 @@ namespace AForge.Genetic
         }
 
         /// <summary>
-        /// Compare two chromosomes.
-        /// </summary>
-        /// 
-        /// <param name="o">Binary chromosome to compare to.</param>
-        /// 
-        /// <returns>Returns comparison result, which equals to 0 if fitness values
-        /// of both chromosomes are equal, 1 if fitness value of this chromosome
-        /// is less than fitness value of the specified chromosome, -1 otherwise.</returns>
-        /// 
-        public int CompareTo( object o )
-        {
-            double f = ( (BinaryChromosome) o ).fitness;
-
-            return ( fitness == f ) ? 0 : ( fitness < f ) ? 1 : -1;
-        }
-
-        /// <summary>
         /// Generate random chromosome value.
         /// </summary>
         /// 
         /// <remarks><para>Regenerates chromosome's value using random number generator.</para>
         /// </remarks>
         /// 
-        public virtual void Generate( )
+        public override void Generate( )
         {
             byte[] bytes = new byte[8];
 
@@ -187,7 +152,7 @@ namespace AForge.Genetic
         /// initialized. The method is useful as factory method for those classes, which work
         /// with chromosome's interface, but not with particular chromosome type.</para></remarks>
         /// 
-        public virtual IChromosome CreateNew( )
+        public override IChromosome CreateNew( )
         {
             return new BinaryChromosome( length );
         }
@@ -201,7 +166,7 @@ namespace AForge.Genetic
         /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
         ///
-        public virtual IChromosome Clone( )
+        public override IChromosome Clone( )
         {
             return new BinaryChromosome( this );
         }
@@ -213,7 +178,7 @@ namespace AForge.Genetic
         /// <remarks><para>The method performs chromosome's mutation, changing randomly
         /// one of its bits.</para></remarks>
         /// 
-        public virtual void Mutate( )
+        public override void Mutate( )
         {
             val ^= ( (ulong) 1 << rand.Next( length ) );
         }
@@ -227,7 +192,7 @@ namespace AForge.Genetic
         /// <remarks><para>The method performs crossover between two chromosomes – interchanging
         /// range of bits between these chromosomes.</para></remarks>
         ///
-        public virtual void Crossover( IChromosome pair )
+        public override void Crossover( IChromosome pair )
         {
             BinaryChromosome p = (BinaryChromosome) pair;
 
@@ -245,19 +210,6 @@ namespace AForge.Genetic
                 val   = ( v1 & mask1 ) | ( v2 & mask2 );
                 p.val = ( v2 & mask1 ) | ( v1 & mask2 );
             }
-        }
-
-        /// <summary>
-        /// Evaluate chromosome with specified fitness function.
-        /// </summary>
-        /// 
-        /// <param name="function">Fitness function to use for evaluation of the chromosome.</param>
-        /// 
-        /// <remarks><para>Calculates chromosome's fitness using the specifed fitness function.</para></remarks>
-        ///
-        public void Evaluate( IFitnessFunction function )
-        {
-            fitness = function.Evaluate( this );
         }
     }
 }
