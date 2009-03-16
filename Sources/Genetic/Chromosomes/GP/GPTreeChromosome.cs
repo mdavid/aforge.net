@@ -14,7 +14,7 @@ namespace AForge.Genetic
 
     /// <summary>
     /// Tree chromosome represents a tree of genes, which is is used for
-    /// different tasks of Genetic Programming.
+    /// different tasks of Genetic Programming (GP).
     /// </summary>
     /// 
     /// <remarks><para>This type of chromosome represents a tree, where each node
@@ -105,7 +105,7 @@ namespace AForge.Genetic
         /// <param name="ancestor">A gene, which is used as generator for the genetic tree.</param>
         /// 
         /// <remarks><para>This constructor creates a randomly generated genetic tree,
-        /// which has all genes of the same type and property as the specified <paramref name="ancestor"/>.
+        /// which has all genes of the same type and properties as the specified <paramref name="ancestor"/>.
         /// </para></remarks>
         /// 
         public GPTreeChromosome( IGPGene ancestor )
@@ -132,8 +132,8 @@ namespace AForge.Genetic
         }
 
         /// <summary>
-        /// Get string representation of the chromosome. Return the chromosome
-        /// in reverse polish notation (postfix notation).
+        /// Get string representation of the chromosome by providing its expression in
+        /// reverse polish notation (postfix notation).
         /// </summary>
         /// 
         /// <returns>Returns string representation of the genetic tree.</returns>

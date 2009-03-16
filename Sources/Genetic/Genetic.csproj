@@ -44,6 +44,7 @@
     <Compile Include="Chromosomes\BinaryChromosome.cs" />
     <Compile Include="Chromosomes\DoubleArrayChromosome.cs" />
     <Compile Include="Chromosomes\GP\ExtendedGeneFunction.cs" />
+    <Compile Include="Chromosomes\GP\GEPChromosome.cs" />
     <Compile Include="Chromosomes\GP\GPTreeChromosome.cs" />
     <Compile Include="Chromosomes\GP\GPTreeNode.cs" />
     <Compile Include="Chromosomes\GP\IGPGene.cs" />
