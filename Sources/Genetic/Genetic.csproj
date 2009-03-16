@@ -55,6 +55,8 @@
     <Compile Include="Fitness Functions\IFitnessFunction.cs" />
     <Compile Include="Fitness Functions\OptimizationFunction1D.cs" />
     <Compile Include="Fitness Functions\OptimizationFunction2D.cs" />
+    <Compile Include="Fitness Functions\SymbolicRegressionFitness.cs" />
+    <Compile Include="Fitness Functions\TimeSeriesPredictionFitness.cs" />
     <Compile Include="Population.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selection Algorithms\EliteSelection.cs" />
