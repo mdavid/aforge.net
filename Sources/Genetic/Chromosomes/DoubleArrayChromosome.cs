@@ -24,7 +24,7 @@ namespace AForge.Genetic
     /// for information regarding implemented mutation and crossover operators.</para>
     /// </remarks>
     /// 
-    public class DoubleArrayChromosome : IChromosome
+    public class DoubleArrayChromosome : ChromosomeBase
     {
         /// <summary>
         /// Chromosome generator.
@@ -80,11 +80,6 @@ namespace AForge.Genetic
         /// </summary>
         protected double[] val = null;
 
-        /// <summary>
-        /// Chromosome's fintess value.
-        /// </summary>
-        protected double fitness = 0;
-
         // balancers to control type of mutation and crossover
         private double mutationBalancer = 0.5;
         private double crossoverBalancer = 0.5;
@@ -109,19 +104,6 @@ namespace AForge.Genetic
         public double[] Value
         {
             get { return val; }
-        }
-
-        /// <summary>
-        /// Chromosome's fintess value.
-        /// </summary>
-        /// 
-        /// <remarks><para>Fitness value (usefulness) of the chromosome calculate by calling
-        /// <see cref="Evaluate"/> method. The greater the value, the more useful the chromosome.
-        /// </para></remarks>
-        /// 
-        public double Fitness
-        {
-            get { return fitness; }
         }
 
         /// <summary>
@@ -285,30 +267,13 @@ namespace AForge.Genetic
         }
 
         /// <summary>
-        /// Compare two chromosomes.
-        /// </summary>
-        /// 
-        /// <param name="o">Short array chromosome to compare to.</param>
-        /// 
-        /// <returns>Returns comparison result, which equals to 0 if fitness values
-        /// of both chromosomes are equal, 1 if fitness value of this chromosome
-        /// is less than fitness value of the specified chromosome, -1 otherwise.</returns>
-        ///
-        public int CompareTo( object o )
-        {
-            double f = ( (DoubleArrayChromosome) o ).fitness;
-
-            return ( fitness == f ) ? 0 : ( fitness < f ) ? 1 : -1;
-        }
-
-        /// <summary>
         /// Generate random chromosome value.
         /// </summary>
         /// 
         /// <remarks><para>Regenerates chromosome's value using random number generator.</para>
         /// </remarks>
         ///
-        public virtual void Generate( )
+        public override void Generate( )
         {
             for ( int i = 0; i < length; i++ )
             {
@@ -325,7 +290,7 @@ namespace AForge.Genetic
         /// initialized. The method is useful as factory method for those classes, which work
         /// with chromosome's interface, but not with particular chromosome type.</para></remarks>
         ///
-        public virtual IChromosome CreateNew( )
+        public override IChromosome CreateNew( )
         {
             return new DoubleArrayChromosome( chromosomeGenerator, mutationMultiplierGenerator, mutationAdditionGenerator, length );
         }
@@ -339,7 +304,7 @@ namespace AForge.Genetic
         /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
         ///
-        public virtual IChromosome Clone( )
+        public override IChromosome Clone( )
         {
             return new DoubleArrayChromosome( this );
         }
@@ -361,7 +326,7 @@ namespace AForge.Genetic
         /// mutation is done, otherwise addition mutation.
         /// </para></remarks>
         /// 
-        public virtual void Mutate( )
+        public override void Mutate( )
         {
             int mutationGene = rand.Next( length );
 
@@ -406,7 +371,7 @@ namespace AForge.Genetic
         /// of the chromosomes participating in crossover.</para>
         /// </remarks>
         ///
-        public virtual void Crossover( IChromosome pair )
+        public override void Crossover( IChromosome pair )
         {
             DoubleArrayChromosome p = (DoubleArrayChromosome) pair;
 
@@ -446,19 +411,6 @@ namespace AForge.Genetic
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Evaluate chromosome with specified fitness function.
-        /// </summary>
-        /// 
-        /// <param name="function">Fitness function to use for evaluation of the chromosome.</param>
-        /// 
-        /// <remarks><para>Calculates chromosome's fitness using the specifed fitness function.</para></remarks>
-        ///
-        public void Evaluate( IFitnessFunction function )
-        {
-            fitness = function.Evaluate( this );
         }
     }
 }

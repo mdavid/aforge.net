@@ -31,7 +31,7 @@ namespace AForge.Genetic
     /// <a href="http://www.gene-expression-programming.com/">gene expression programming</a> web site.</para>
     /// </remarks>
     /// 
-    public class GEPChromosome : IChromosome
+    public class GEPChromosome : ChromosomeBase
     {
         /// <summary>
         /// Length of GEP chromosome's head.
@@ -58,27 +58,9 @@ namespace AForge.Genetic
         protected IGPGene[] genes;
 
         /// <summary>
-        /// Chromosome's fintess value.
-        /// </summary>
-        protected double fitness = 0;
-
-        /// <summary>
         /// Random generator used for chromosoms' generation.
         /// </summary>
         protected static Random	rand = new Random( );
-
-        /// <summary>
-        /// Chromosome's fintess value.
-        /// </summary>
-        /// 
-        /// <remarks><para>Fitness value (usefulness) of the chromosome calculate by calling
-        /// <see cref="Evaluate"/> method. The greater the value, the more useful the chromosome.
-        /// </para></remarks>
-        /// 
-        public double Fitness
-        {
-            get { return fitness; }
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GEPChromosome"/> class.
@@ -123,7 +105,6 @@ namespace AForge.Genetic
                 genes[i] = source.genes[i].Clone( );
         }
 
-
         /// <summary>
         /// Get string representation of the chromosome by providing its expression in
         /// reverse polish notation (postfix notation).
@@ -159,30 +140,13 @@ namespace AForge.Genetic
         }
 
         /// <summary>
-        /// Compare two chromosomes
-        /// </summary>
-        /// 
-        /// <param name="o">Genetic tree to compare to.</param>
-        /// 
-        /// <returns>Returns comparison result, which equals to 0 if fitness values
-        /// of both chromosomes are equal, 1 if fitness value of this chromosome
-        /// is less than fitness value of the specified chromosome, -1 otherwise.</returns>
-        /// 
-        public int CompareTo( object o )
-        {
-            double f = ( (GEPChromosome) o ).fitness;
-
-            return ( fitness == f ) ? 0 : ( fitness < f ) ? 1 : -1;
-        }
-
-        /// <summary>
         /// Generate random chromosome value.
         /// </summary>
         /// 
         /// <remarks><para>Regenerates chromosome's value using random number generator.</para>
         /// </remarks>
         ///
-        public virtual void Generate( )
+        public override void Generate( )
         {
             // randomize the root
             genes[0].Generate( );
@@ -267,7 +231,7 @@ namespace AForge.Genetic
         /// initialized. The method is useful as factory method for those classes, which work
         /// with chromosome's interface, but not with particular chromosome type.</para></remarks>
         /// 
-        public virtual IChromosome CreateNew( )
+        public override IChromosome CreateNew( )
         {
             return new GEPChromosome( genes[0].Clone( ), headLength );
         }
@@ -281,7 +245,7 @@ namespace AForge.Genetic
         /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
         ///
-        public virtual IChromosome Clone( )
+        public override IChromosome Clone( )
         {
             return new GEPChromosome( this );
         }
@@ -294,7 +258,7 @@ namespace AForge.Genetic
         /// randomly: <see cref="MutateGene"/>, <see cref="TransposeIS"/>, <see cref="TransposeRoot"/>.
         /// </para></remarks>
         /// 
-        public virtual void Mutate( )
+        public override void Mutate( )
         {
             // randomly choose mutation method
             switch ( rand.Next( 3 ) )
@@ -434,7 +398,7 @@ namespace AForge.Genetic
         /// <remarks><para>The method performs one-point or two-point crossover selecting
         /// them randomly with equal probability.</para></remarks>
         /// 
-        public virtual void Crossover( IChromosome pair )
+        public override void Crossover( IChromosome pair )
         {
             GEPChromosome p = (GEPChromosome) pair;
 
@@ -527,20 +491,6 @@ namespace AForge.Genetic
             Array.Copy( src2, point, src1, point, length );
             // copy temp to the second
             Array.Copy( temp, 0, src2, point, length );
-        }
-
-
-        /// <summary>
-        /// Evaluate chromosome with specified fitness function.
-        /// </summary>
-        /// 
-        /// <param name="function">Fitness function to use for evaluation of the chromosome.</param>
-        /// 
-        /// <remarks><para>Calculates chromosome's fitness using the specifed fitness function.</para></remarks>
-        ///
-        public void Evaluate( IFitnessFunction function )
-        {
-            fitness = function.Evaluate( this );
         }
     }
 }
