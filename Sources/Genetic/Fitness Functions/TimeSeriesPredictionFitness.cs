@@ -1,7 +1,9 @@
 // AForge Genetic Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2006-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Genetic
