@@ -12,6 +12,11 @@ namespace AForge.Genetic
     /// <summary>
     /// Binary chromosome, which supports length from 2 till 64.
     /// </summary>
+    /// 
+    /// <remarks><para>The binary chromosome is the simplest type of chromosomes,
+    /// which is represented by a set of bits. Maximum number of bits comprising
+    /// the chromosome is 64.</para></remarks>
+    /// 
     public class BinaryChromosome : IChromosome
     {
         /// <summary>
@@ -189,6 +194,8 @@ namespace AForge.Genetic
         /// <summary>
         /// Clone the chromosome.
         /// </summary>
+        /// 
+        /// <returns>Return's clone of the chromosome.</returns>
         /// 
         /// <remarks><para>The method clones the chromosome returning the exact copy of it.</para>
         /// </remarks>
