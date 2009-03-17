@@ -51,6 +51,8 @@ namespace AForge.Neuro.Learning
     /// }
     /// </code>
     /// </remarks>
+    /// 
+    /// <seealso cref="EvolutionaryLearning"/>
 	/// 
 	public class BackPropagationLearning : ISupervisedLearning
 	{

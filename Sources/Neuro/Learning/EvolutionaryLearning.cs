@@ -17,6 +17,53 @@ namespace AForge.Neuro.Learning
     using AForge.Genetic;
     using AForge.Math.Random;
 
+    /// <summary>
+    /// Neural networks' evolutionary learning algorithm, which is based on Genetic Algorithms.
+    /// </summary>
+    /// 
+    /// <remarks><para>The class implements supervised neural network's learning algorithm,
+    /// which is based on Genetic Algorithms. For the given neural network, it create a population
+    /// of <see cref="DoubleArrayChromosome"/> chromosomes, which represent neural network's
+    /// weights. Then, during the learning process, the genetic population evolves and weights, which
+    /// are represented by the best chromosome, are set to the source neural network.</para>
+    /// 
+    /// <para>See <see cref="Population"/> class for additional information about genetic population
+    /// and evolutionary based search.</para>
+    /// 
+    /// <para>Sample usage (training network to calculate XOR function):</para>
+    /// <code>
+    /// // initialize input and output values
+    /// double[][] input = new double[4][] {
+    ///     new double[] {-1,  1}, new double[] {-1, 1},
+    ///     new double[] { 1, -1}, new double[] { 1, 1}
+    /// };
+    /// double[][] output = new double[4][] {
+    ///     new double[] {-1}, new double[] { 1},
+    ///     new double[] { 1}, new double[] {-1}
+    /// };
+    /// // create neural network
+    /// ActivationNetwork   network = new ActivationNetwork(
+    ///     BipolarSigmoidFunction( 2 ),
+    ///     2, // two inputs in the network
+    ///     2, // two neurons in the first layer
+    ///     1 ); // one neuron in the second layer
+    /// // create teacher
+    /// EvolutionaryLearning teacher = new EvolutionaryLearning( network,
+    ///     100 ); // number of chromosomes in genetic population
+    /// // loop
+    /// while ( !needToStop )
+    /// {
+    ///     // run epoch of learning procedure
+    ///     double error = teacher.RunEpoch( input, output );
+    ///     // check error value to see if we need to stop
+    ///     // ...
+    /// }
+    /// 
+    /// </code>
+    /// </remarks>
+    /// 
+    /// <seealso cref="BackPropagationLearning"/>
+    /// 
     public class EvolutionaryLearning : ISupervisedLearning
     {
         // designed network for training which have to matach inputs and outputs
@@ -106,6 +153,25 @@ namespace AForge.Neuro.Learning
         /// 
         /// <param name="activationNetwork">Activation network to be trained.</param>
         /// <param name="populationSize">Size of genetic population.</param>
+        /// 
+        /// <remarks><para>This version of constructor is used to create genetic population
+        /// for searching optimal neural network's weight using default set of parameters, which are:
+        /// <list type="bullet">
+        /// <item>Selection method - elite;</item>
+        /// <item>Crossover rate - 0.75;</item>
+        /// <item>Mutation rate - 0.25;</item>
+        /// <item>Rate of injection of random chromosomes during selection - 0.20;</item>
+        /// <item>Random numbers generator for initializing new chromosome -
+        /// <c>UniformGenerator( new DoubleRange( -1, 1 ) )</c>;</item>
+        /// <item>Random numbers generator used during mutation for genes' multiplication -
+        /// <c>ExponentialGenerator( 1 )</c>;</item>
+        /// <item>Random numbers generator used during mutation for adding random value to genes -
+        /// <c>UniformGenerator( new DoubleRange( -0.5, 0.5 ) )</c>.</item>
+        /// </list></para>
+        /// 
+        /// <para>In order to have full control over the above default parameters, it is possible to
+        /// used extended version of constructor, which allows to specify all of the parameters.</para>
+        /// </remarks>
         ///
         public EvolutionaryLearning( ActivationNetwork activationNetwork, int populationSize )
         {
@@ -127,7 +193,7 @@ namespace AForge.Neuro.Learning
             this.mutationAdditionGenerator = new UniformGenerator( new DoubleRange( -0.5, 0.5 ) );
             this.selectionMethod = new EliteSelection( );
             this.crossOverRate = 0.75;
-            this.mutationRate = 0.1;
+            this.mutationRate = 0.25;
             this.randomSelectionRate = 0.2;
         }
 
@@ -179,6 +245,12 @@ namespace AForge.Neuro.Learning
         /// <param name="output">Array of output vectors.</param>
         /// 
         /// <returns>Returns summary squared learning error for the entire epoch.</returns>
+        /// 
+        /// <remarks><para><note>While running the neural network's learning process, it is required to
+        /// pass the same <paramref name="input"/> and <paramref name="output"/> values for each
+        /// epoch. On the very first run of the method it will initialize evolutionary fitness
+        /// function with the given input/output. So, changing input/output in middle of the learning
+        /// process, will break it.</note></para></remarks>
         ///
         public double RunEpoch( double[][] input, double[][] output )
         {
