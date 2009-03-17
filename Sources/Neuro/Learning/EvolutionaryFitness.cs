@@ -16,7 +16,7 @@ namespace AForge.Neuro.Learning
     using System.Diagnostics;
     using AForge.Genetic;
     
-    public class EvolutionaryFitness : IFitnessFunction
+    internal class EvolutionaryFitness : IFitnessFunction
     {
         // neural network for which fitness will be calculated
         private ActivationNetwork network;
@@ -82,13 +82,14 @@ namespace AForge.Neuro.Learning
                 {
                     ActivationNeuron neuron = layer[j];
 
-                    for ( int k = 0, w = neuron.InputsCount; k < w; k++ )
+                    for ( int k = 0, weightsCount = neuron.InputsCount; k < weightsCount; k++ )
                     {
                         neuron[k] = chromosomeGenes[totalNumberOfWeights++];
                     }
-                    neuron.Threshold = daChromosome.Value[totalNumberOfWeights++];
+                    neuron.Threshold = chromosomeGenes[totalNumberOfWeights++];
                 }
             }
+
             // post check if all values are processed and lenght of chromosome
             // is equal to network size
             Debug.Assert( totalNumberOfWeights == daChromosome.Length );
@@ -109,7 +110,8 @@ namespace AForge.Neuro.Learning
             if ( totalError > 0 )
                 return 1.0 / totalError;
 
-            return 0;
+            // zero error means the best fitness
+            return double.MaxValue;
         }
     }
 }
