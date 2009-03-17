@@ -16,6 +16,10 @@ namespace AForge.Neuro.Learning
     using System.Diagnostics;
     using AForge.Genetic;
     
+    /// <summary>
+    /// Fitness function used for chromosomes representing collection of neural network's weights.
+    /// </summary>
+    /// 
     internal class EvolutionaryFitness : IFitnessFunction
     {
         // neural network for which fitness will be calculated
