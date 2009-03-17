@@ -36,7 +36,7 @@ namespace AForge.Math.Random
         private double rate = 0;
 
         /// <summary>
-        /// Rate value (inverse scale).
+        /// Rate value (inverse mean).
         /// </summary>
         /// 
         /// <remarks>The rate value should be positive and non zero.</remarks>
@@ -81,7 +81,7 @@ namespace AForge.Math.Random
         /// Initializes a new instance of the <see cref="ExponentialGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="rate">Rate value.</param>
+        /// <param name="rate">Rate value (inverse mean).</param>
         /// <param name="seed">Seed value to initialize random numbers generator.</param>
         /// 
         /// <exception cref="ArgumentException">Rate value should be greater than zero.</exception>

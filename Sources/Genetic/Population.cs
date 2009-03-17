@@ -213,7 +213,7 @@ namespace AForge.Genetic
         /// </summary>
         /// 
         /// <remarks><para>The property keeps the best chromosome existing in the population
-        /// or see langword="null"/> if all chromosomes have 0 fitness.</para>
+        /// or <see langword="null"/> if all chromosomes have 0 fitness.</para>
         /// 
         /// <para><note>The property is recalculate only after <see cref="Selection">selection</see>
         /// or <see cref="Migrate">migration</see> was done.</note></para>
