@@ -26,12 +26,31 @@ namespace AForge.Fuzzy
         private string rule;
         // the parsed RPN (reverse polish notation) expression
         private List<object> rpnTokenList;
+        // the consequento (output) of the rule
+        private Clause output;
         // the database with the linguistic variables
         private Database database;
         // the norm operator
         private INorm normOperator;
         // the conorm operator
         private ICoNorm conormOperator;
+
+        /// <summary>
+        /// The name of the fuzzy rule.
+        /// </summary>
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        /// <summary>
+        /// The fuzzy <see cref="Clause"/> that represents the consequent of the <see cref="Rule"/>.
+        /// </summary>
+        public Clause Output
+        {
+            get { return output; }
+        }
 
         public Rule( Database fuzzyDatabase, string name, string rule, INorm normOperator, ICoNorm coNormOperator )
         {
@@ -103,6 +122,9 @@ namespace AForge.Fuzzy
         /// </summary>
         private void ParseRule( )
         {
+            // flag to incicate we are on consequent state
+            bool consequent = false;
+            
             // tokens like IF and THEN will be searched always in upper case
             string upRule = rule.ToUpper( );
 
@@ -134,8 +156,13 @@ namespace AForge.Fuzzy
                 // ignoring these tokens
                 if ( upToken == "" || upToken == "IF" ) continue;
 
-                // ending token
-                if ( upToken == "THEN" ) break;
+                // if the THEN is found, the rule is now on consequent
+                if ( upToken == "THEN" )
+                {
+                    lastToken = upToken;
+                    consequent = true;
+                    continue;
+                }
 
                 // if we got a linguistic variable, an IS statement and a label is needed
                 if ( lastToken == "VAR" )
@@ -152,7 +179,10 @@ namespace AForge.Fuzzy
                     {
                         FuzzySet fs = lingVar.GetLabel( token );
                         Clause c = new Clause( lingVar, fs );
-                        rpnTokenList.Add( c );
+                        if ( consequent )
+                            output = c;
+                        else
+                            rpnTokenList.Add( c );
                         lastToken = "LAB";
                     }
                     catch ( KeyNotFoundException )
@@ -166,12 +196,20 @@ namespace AForge.Fuzzy
                     // openning new scope
                     if ( upToken == "(" )
                     {
+                        // if we are on consequent, only variables can be found
+                        if ( consequent )
+                            throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
+                        // if its a (, just push it
                         s.Push( upToken );
                         lastToken = upToken;
                     }
                     // operators
                     else if ( upToken == "AND" || upToken == "OR" )
                     {
+                        // if we are on consequent, only variables can be found
+                        if ( consequent )
+                            throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
+                        
                         // pop all the higher priority operators until the stack is empty 
                         while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( upToken ) ) )
                             rpnTokenList.Add( s.Pop( ) );
@@ -183,6 +221,10 @@ namespace AForge.Fuzzy
                     // closing the scope
                     else if ( upToken == ")" )
                     {
+                        // if we are on consequent, only variables can be found
+                        if ( consequent )
+                            throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
+
                         // if there is nothing on the stack, an oppening parenthesis is missing.
                         if ( s.Count == 0 )
                             throw new ArgumentException( "Openning parenthesis missing." );

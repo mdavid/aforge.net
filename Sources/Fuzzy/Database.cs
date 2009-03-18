@@ -36,7 +36,7 @@ namespace AForge.Fuzzy
         /// Adds a linguistic variable to the database. 
         /// </summary>
         /// 
-        /// <param name="label">A linguistic variable to add.</param>
+        /// <param name="variable">A linguistic variable to add.</param>
         /// 
         /// <exception cref="NullReferenceException">The linguistic variable was not initialized.</exception>
         /// <exception cref="ArgumentException">The linguistic variable name already exists in the database.</exception>
@@ -64,15 +64,15 @@ namespace AForge.Fuzzy
         /// Returns an existing linguistic variable from the database.
         /// </summary>
         /// 
-        /// <param name="VariableName">Name of the linguistic variable to retrieve.</param>
+        /// <param name="variableName">Name of the linguistic variable to retrieve.</param>
         /// 
         /// <returns>Reference to named <see cref="LinguisticVariable"/>.</returns>
         /// 
-        /// <exception cref="KeyNotFoundException">The variable indicated in VariableName was not found in the database.</exception>
+        /// <exception cref="KeyNotFoundException">The variable indicated was not found in the database.</exception>
         /// 
-        public LinguisticVariable GetVariable( string VariableName )
+        public LinguisticVariable GetVariable( string variableName )
         {
-            return variables [VariableName];
+            return variables [variableName];
         }
     }
 }

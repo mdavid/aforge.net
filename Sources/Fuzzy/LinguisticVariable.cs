@@ -176,7 +176,7 @@ namespace AForge.Fuzzy
         /// 
         /// <returns>Reference to named label (<see cref="FuzzySet"/>).</returns>
         /// 
-        /// <exception cref="KeyNotFoundException">The label indicated in LabelName was not found in the linguistic variable.</exception>
+        /// <exception cref="KeyNotFoundException">The label indicated was not found in the linguistic variable.</exception>
         /// 
         public FuzzySet GetLabel( string labelName )
         {
