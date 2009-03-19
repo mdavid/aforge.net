@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clause.cs" />
+    <Compile Include="Defuzzification\CentroidDefuzzifier.cs" />
     <Compile Include="Defuzzification\IDefuzzifier.cs" />
     <Compile Include="FuzzyOutput.cs" />
     <Compile Include="InferenceSystem.cs" />

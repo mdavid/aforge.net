@@ -32,7 +32,10 @@ namespace AForge.Fuzzy
         /// <param name="fuzzyOutput">A <see cref="FuzzyOutput"/> containing the output of several rules of a Fuzzy 
         /// Inference System.</param>
         /// 
-        /// <returns></returns>
-        double Defuzzify( FuzzyOutput fuzzyOutput );
+        /// <param name="normOperator">A <see cref="INorm"/> operator to be used when constraining the label to the firing strength.</param>
+        /// 
+        /// <returns>The numerical representation of the fuzzy output.</returns>
+        /// 
+        double Defuzzify( FuzzyOutput fuzzyOutput, INorm normOperator );
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using AForge.Fuzzy;
 using AForge.Fuzzy;
 
 namespace FuzzyRulesSample
@@ -58,11 +56,11 @@ namespace FuzzyRulesSample
 
             // sample rules just to test the expression parsing
             Rule r1 = new Rule( db, "Test1",
-                "IF Steel is Cold and Stove is Hot then ..." );
+                "IF Steel is Cold and Stove is Hot then Pressure is Low" );
             Rule r2 = new Rule( db, "Test2",
-                "IF Steel is Cold and (Stove is Warm or Stove is Hot) then ..." );
+                "IF Steel is Cold and (Stove is Warm or Stove is Hot) then Pressure is Medium" );
             Rule r3 = new Rule( db, "Test3",
-                "IF Steel is Cold and Stove is Warm or Stove is Hot then ..." );
+                "IF Steel is Cold and Stove is Warm or Stove is Hot then Pressure is High" );
 
             // Showing the Reverse Polish Notation of the fuzzy expression
             textBox1.Text += r1.GetRPNExpression( ) + "\r\n";
