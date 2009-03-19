@@ -157,7 +157,7 @@ namespace AForge.Fuzzy
                     double x0 = points[i - 1].X;
                     // angular coefficient
                     double m = ( y1 - y0 ) / ( x1 - x0 );
-                    // Returning the membership - the Y value for this X
+                    // returning the membership - the Y value for this X
                     return m * ( x - x0 ) + y0;
                 }
             }

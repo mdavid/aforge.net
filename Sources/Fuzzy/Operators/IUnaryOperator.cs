@@ -15,7 +15,8 @@ namespace AForge.Fuzzy
     /// Interface with the common methods of a Fuzzy Unary Operator.
     /// </summary>
     /// 
-    /// <remarks><para>All fuzzy unary operator must implement this interface.
+    /// <remarks><para>An unary operator is commonly some sort of restriction applied to a fuzzy set, which 
+    /// results in a change to its membership function. All fuzzy unary operator must implement this interface.
     /// </para></remarks>
     /// 
     public interface IUnaryOperator : IOperator

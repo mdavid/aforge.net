@@ -13,7 +13,30 @@ namespace AForge.Fuzzy
     using System;
     using System.Collections.Generic;
 
-    // TODO: Document class
+    /// <summary>
+    /// This class represents a fuzzy clause, a linguistic expression of the type "Variable IS Value".
+    /// </summary>
+    /// 
+    /// <remarks><para>A Fuzzy Clause is used to verify if a linguistic variable can be considered as a specific value at a specific moment.
+    /// Linguistic variables can only assume value of their linugistic labels. Because of the nature of the Fuzzy Logic, a Variable can be 
+    /// several of its labels at the same time, with different membership values.</para>
+    /// 
+    /// <para>
+    /// For example, a linguistic variable "temperature" can be "hot" with a membership 0.3 and "warm" with a membership 0.7 at the same time.
+    /// To obtain those memberships, Fuzzy Clauses "temperature is hot" and "temperature is war" can be built.</para>
+    /// 
+    /// <para>Typically Fuzzy Clauses are used to build Fuzzy Rules (<see cref="Rule"/>).</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // lets consider the existence of a <see cref="LinguisticVariable"/> lvTemperature and a <see cref="FuzzySet"/> hot as its label.
+    /// Clause fuzzyClause = new Clause( lvTemperature, lvTemperature.GetLabel( "Hot" ) );
+    /// // setting the numerical input of the variable to evaluate the Clause
+    /// lvTemperature.NumericInput = 35;
+    /// double result = fuzzyClause.Evaluate( );
+    /// </code>    
+    /// </remarks>
+    /// 
     public class Clause
     {
         // the linguistic var of the clause
@@ -87,7 +110,7 @@ namespace AForge.Fuzzy
         /// 
         /// <returns>A string representing the fuzzy clause.</returns>
         /// 
-        public string ToString( )
+        public override string ToString( )
         {
             return this.variable.Name + " IS " + this.label.Name;
         }

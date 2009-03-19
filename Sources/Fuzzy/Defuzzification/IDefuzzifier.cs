@@ -18,10 +18,13 @@ namespace AForge.Fuzzy
     /// that can be used in Fuzzy Inference Systems. 
     /// </summary>
     /// 
-    /// <remarks><para>Typical Fuzzy Inference Systems need to calculate a numeric output, after obtaining a fuzzy 
-    /// output. To calculate de numerical value of a fuzzy output a defuzzification method is required. Several 
-    /// deffuzification methods were proposed, and they can be created as classes that implements this interface. 
-    /// </para></remarks>
+    /// <remarks><para>In many applications, a Fuzzy Inference System is used to perform linguistic computation, 
+    /// but at the end of the inference process, a numerical value is needed. It does not mean that the system 
+    /// needs precision, but simply that a numerical value is required, most of the times because it will be used to 
+    /// control another system that needs the number. To obtain this numer, a defuzzification method is performed.</para>
+    /// 
+    /// <para> Several deffuzification methods were proposed, and they can be created as classes that 
+    /// implements this interface. </para></remarks>
     /// 
     public interface IDefuzzifier
     {

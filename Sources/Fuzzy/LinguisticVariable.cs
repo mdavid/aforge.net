@@ -114,7 +114,9 @@ namespace AForge.Fuzzy
         /// </summary>
         /// 
         /// <param name="name">Name of the linguistic variable.</param>
+        /// 
         /// <param name="start">Left limit of the valid variable range.</param>
+        /// 
         /// <param name="end">Right limit of the valid variable range.</param>
         /// 
         public LinguisticVariable( string name, double start, double end )
@@ -188,7 +190,7 @@ namespace AForge.Fuzzy
         /// "X IS A", where X is a value and A is a linguistic label.
         /// </summary>
         /// 
-        /// <param name="LabelName">Label (fuzzy set) to evaluate value's membership.</param>
+        /// <param name="labelName">Label (fuzzy set) to evaluate value's membership.</param>
         /// <param name="value">Value which label's membership will to be calculated.</param>
         /// 
         /// <returns>Degree of membership [0..1] of the value to the label (fuzzy set).</returns>

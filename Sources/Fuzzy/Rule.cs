@@ -13,11 +13,71 @@ namespace AForge.Fuzzy
     using System;
     using System.Collections.Generic;
 
-    // TODO: document the class properly
     /// <summary>
-    /// The Fuzzy Rule. This class will receive a rule expression and converts it to a RPN (Reverse Polish Notation)
-    /// so the firing strengh of the rule can be easly calculated. 
+    /// This class represents a Fuzzy Rule, a linguistic expression representing some behavioral aspect of a Fuzzy Inference System. 
     /// </summary>
+    /// 
+    /// <remarks><para>
+    /// A Fuzzy Rule is a fuzzy linguistic instruction that can be executed by a fuzzy system. The format of the Fuzzy Rule is:
+    /// </para>
+    /// 
+    /// <para><b>IF <i>antecedent</i> THEN <i>consequent</i></b></para>
+    /// 
+    /// <para>The antecedent is composed by a set of fuzzy clauses (<see cref="Clause"/>) connected by fuzzy operations, like <b>AND</b> or <b>OR</b>: </para>
+    /// 
+    /// <para><b>...<i>Clause1</i> AND (<i>Clause2</i> OR <i>Clause3</i>) ...</b></para>
+    ///     
+    /// <para>The consequent is a single of fuzzy clauses (<see cref="Clause"/>). To perform the linguistic computing, 
+    /// the Rule evaluates the clauses and then apply the fuzzy operators. Once this is done a value representing the confidence
+    /// in the antecedent being true is obtained, and this is called firing strength of the Rule.</para>
+    /// 
+    /// <para>The firing strength is used to discover with how much confidence the consequent of a rule is true.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create the linguistic labels (fuzzy sets) that compose the temperature 
+    /// TrapezoidalFunction function1 = new TrapezoidalFunction( 10, 15, TrapezoidalFunction.EdgeType.Right );
+    /// FuzzySet fsCold = new FuzzySet( "Cold", function1 );
+    /// TrapezoidalFunction function2 = new TrapezoidalFunction( 10, 15, 20, 25 );
+    /// FuzzySet fsCool = new FuzzySet( "Cool", function2 );
+    /// TrapezoidalFunction function3 = new TrapezoidalFunction( 20, 25, 30, 35 );
+    /// FuzzySet fsWarm = new FuzzySet( "Warm", function3 );
+    /// TrapezoidalFunction function4 = new TrapezoidalFunction( 30, 35, TrapezoidalFunction.EdgeType.Left );
+    /// FuzzySet fsHot = new FuzzySet( "Hot", function4 );
+    /// // create a linguistic variable to represent steel temperature
+    /// LinguisticVariable lvSteel = new LinguisticVariable( "Steel", 0, 80 );
+    /// // adding labels to the variable
+    /// lvSteel.AddLabel( fsCold );
+    /// lvSteel.AddLabel( fsCool );
+    /// lvSteel.AddLabel( fsWarm );
+    /// lvSteel.AddLabel( fsHot );
+    /// 
+    /// // create a linguistic variable to represent stove temperature
+    /// LinguisticVariable lvStove = new LinguisticVariable( "Stove", 0, 80 );
+    /// // adding labels to the variable
+    /// lvStove.AddLabel( fsCold );
+    /// lvStove.AddLabel( fsCool );
+    /// lvStove.AddLabel( fsWarm );
+    /// lvStove.AddLabel( fsHot );
+    /// 
+    /// // create a linguistic variable database
+    /// Database db = new Database( );
+    /// db.AddVariable( lvSteel );
+    /// db.AddVariable( lvStove );
+    /// 
+    /// // sample rules just to test the expression parsing
+    /// Rule r1 = new Rule( db, "Test1", "IF Steel is Cold and Stove is Hot then Pressure is Low" );
+    /// Rule r2 = new Rule( db, "Test2", "IF Steel is Cold and (Stove is Warm or Stove is Hot) then Pressure is Medium" );
+    /// Rule r3 = new Rule( db, "Test3", "IF Steel is Cold and Stove is Warm or Stove is Hot then Pressure is High" );
+    /// 
+    /// // testing the firing strength
+    /// lvSteel.NumericInput = 12;
+    /// lvStove.NumericInput = 35;
+    /// double result r1.EvaluateFiringStrength( );
+    /// 
+    /// </code>    
+    /// </remarks>
+    /// 
     public class Rule
     {
         // name of the rule 
@@ -52,23 +112,55 @@ namespace AForge.Fuzzy
             get { return output; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rule"/> class.
+        /// </summary>
+        /// 
+        /// <param name="fuzzyDatabase">A fuzzy <see cref="Database"/> containig the linguistic variables
+        /// (<see cref="LinguisticVariable"/>) that will be used in the Rule.</param>
+        /// 
+        /// <param name="name">Name of this Rule.</param>
+        /// 
+        /// <param name="rule">A string representing the Rule. It must be a "IF..THEN" statement. For a more detailed 
+        /// description see <see cref="Rule"/> class.</param>
+        /// 
+        /// <param name="normOperator">A class that implements a <see cref="INorm"/> interface to evaluate the AND 
+        /// operations of the Rule. </param>
+        /// 
+        /// <param name="coNormOperator">A class that implements a <see cref="ICoNorm"/> interface to evaluate the OR
+        /// operations of the Rule. </param>
+        /// 
         public Rule( Database fuzzyDatabase, string name, string rule, INorm normOperator, ICoNorm coNormOperator )
         {
             // the list with the RPN expression
             rpnTokenList = new List<object>( );
 
             // setting attributes
-            this.name         = name;
-            this.rule         = rule;
-            this.database     = fuzzyDatabase;
-            this.normOperator = normOperator;
+            this.name           = name;
+            this.rule           = rule;
+            this.database       = fuzzyDatabase;
+            this.normOperator   = normOperator;
+            this.conormOperator = coNormOperator;
 
             // parsing the rule to obtain RPN of the expression
             ParseRule( );
         }
 
-        public Rule( Database FuzzyDatabase, string Name, string Rule ) :
-            this( FuzzyDatabase, Name, Rule, new MinimumNorm( ), new MaximumCoNorm( ) )
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rule"/> class using as Conorm the <see cref="MaximumCoNorm"/>
+        /// and as Norm the <see cref="MinimumNorm"/>
+        /// </summary>
+        /// 
+        /// <param name="fuzzyDatabase">A fuzzy <see cref="Database"/> containig the linguistic variables
+        /// (<see cref="LinguisticVariable"/>) that will be used in the Rule.</param>
+        /// 
+        /// <param name="name">Name of this Rule.</param>
+        /// 
+        /// <param name="rule">A string representing the Rule. It must be a "IF..THEN" statement. For a more detailed 
+        /// description see <see cref="Rule"/> class.</param>
+        /// 
+        public Rule( Database fuzzyDatabase, string name, string rule ) :
+            this( fuzzyDatabase, name, rule, new MinimumNorm( ), new MaximumCoNorm( ) )
         {
         }
 
@@ -264,6 +356,13 @@ namespace AForge.Fuzzy
 
         }
 
+        /// <summary>
+        /// Evaluates the firing strength of the Rule, the degree of confidence that the consequent of this Rule
+        /// must be executed.
+        /// </summary>
+        /// 
+        /// <returns>The firing strength [0..1] of the Rule.</returns>
+        /// 
         public double EvaluateFiringStrength( )
         {
             // Stack to store the operand values

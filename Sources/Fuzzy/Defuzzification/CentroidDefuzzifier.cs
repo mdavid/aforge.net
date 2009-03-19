@@ -13,11 +13,47 @@ namespace AForge.Fuzzy
     using System;
     using System.Collections.Generic;
 
-    
-    public class CentroidDefuzzifier: IDefuzzifier
+    /// <summary>
+    /// This class implements the centroid defuzzification method.
+    /// </summary>
+    /// 
+    /// <remarks><para>In many applications, a Fuzzy Inference System is used to perform linguistic computation, 
+    /// but at the end of the inference process, a numerical value is needed. It does not mean that the system 
+    /// needs precision, but simply that a numerical value is required, most of the times because it will be used to 
+    /// control another system that needs the number. To obtain this numer, a defuzzification method is performed.</para>
+    /// 
+    /// <para>This class implements the centroid defuzzification method. The output of a Fuzzy Inference System 
+    /// is a set of rules (<see cref="Rule"/>) with firing strength greater than zero. Those firing strength apply a constraint
+    /// to the consequent fuzzy sets (<see cref="FuzzySet"/>) of the rules. Putting all those fuzzy sets  
+    /// togheter results in a a shape that is the linguistic output meaning. 
+    /// </para>
+    /// 
+    /// <para>The centroid method calculates the center of the area of this shape to obtain the numerical representation of the output.
+    /// The uses a numerical approximation, so a number of intervals must be choosen. As the number of intervals grow, the precision of the
+    /// numerical ouput grows. 
+    /// </para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // creating the defuzzifier using 1000 intervals for approximation
+    /// CentroidDefuzzifier cd = new CentroidDefuzzifier( 1000 );
+    /// // lets consider the existence of a <see cref="FuzzyOutput"/> and a <see cref="INorm"/> operator.
+    /// cd.Defuzzify( fuzzyOutput, normOperator );
+    /// </code>    
+    /// </remarks>
+    /// 
+    public class CentroidDefuzzifier : IDefuzzifier
     {
+        // number of intervals to use in numerical approximation
         private int intervals;
         
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CentroidDefuzzifier"/> class.
+        /// </summary>
+        /// 
+        /// <param name="intervals">Number of segments that the speech universe will be splited to perform
+        /// the numerical approximation of the center of area.</param>
+        /// 
         public CentroidDefuzzifier( int intervals )
         {
             this.intervals = intervals;
