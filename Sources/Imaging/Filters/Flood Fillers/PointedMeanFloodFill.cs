@@ -1,7 +1,8 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
+// Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
 //
 
@@ -77,7 +78,7 @@ namespace AForge.Imaging.Filters
         // starting point to fill from
         private Point startingPoint = new Point( 0, 0 );
         // filling tolerance
-        private Color tolerance = Color.FromArgb( 0, 0, 0 );
+        private Color tolerance = Color.FromArgb( 16, 16, 16 );
 
         // format translation dictionary
         private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
@@ -85,6 +86,10 @@ namespace AForge.Imaging.Filters
         /// <summary>
         /// Format translations dictionary.
         /// </summary>
+        /// 
+        /// <remarks><para>See <see cref="IFilterInformation.FormatTransalations"/>
+        /// documentation for additional information.</para></remarks>
+        /// 
         public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
         {
             get { return formatTransalations; }
@@ -103,6 +108,8 @@ namespace AForge.Imaging.Filters
         /// where each component (R, G and B) represents tolerance for the corresponding
         /// component of color. This allows to set different tolerances for red, green
         /// and blue components.</para>
+        /// 
+        /// <para>Default value is set to <b>(16, 16, 16)</b>.</para>
         /// </remarks>
         /// 
         public Color Tolerance
@@ -161,7 +168,7 @@ namespace AForge.Imaging.Filters
             scan0 = image.ImageData.ToInt32( );
             stride = image.Stride;
 
-            // create map visited pixels
+            // create map of visited pixels
             checkedPixels = new bool[image.Height, image.Width];
 
             pixelsCount = meanR = meanG = meanB = 0;
