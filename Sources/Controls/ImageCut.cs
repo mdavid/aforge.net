@@ -13,78 +13,78 @@ namespace AForge.Controls
     using System.Drawing.Drawing2D;
 
     /// <summary>
-    /// Declares the event handler for moving sliders 
+    /// Declares the event handler for moving sliders.
     /// </summary>
-    public delegate void OnSliderMovedEventHandler();
+    public delegate void OnSliderMovedEventHandler( );
 
     /// <summary>
-    /// The enum values represent the position of a slider as an id.
+    /// Enumeration of sliders supported by <see cref="ImageCut"/> control.
     /// </summary>
-    public enum Sliders
+    public enum Slider
     {
         /// <summary>
-        /// The id for the left slider.
+        /// Left slider.
         /// </summary>
         Left,
         /// <summary>
-        /// The id for the right slider.
+        /// Right slider.
         /// </summary>
         Right,
         /// <summary>
-        /// The id for the up slider.
+        /// Top slider.
         /// </summary>
-        Up,
+        Top,
         /// <summary>
-        /// The id for the down slider.
+        /// Bottom slider.
         /// </summary>
-        Down
+        Bottom
     }
 
     /// <summary>
-    /// The ImageCut control.
+    /// Image cut control.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    /// The ImageCut control allows to trim and cut a picture by moving
-    /// sliders per mouse dragging. 
-    /// Furthermore it provides interfaces to move a rollovered slider
-    /// or a specified slider for a defined 
-    /// value (e.g. moving the right slider for 3 pixel).
+    /// 
+    /// <remarks><para>The <see cref="ImageCut"/> control allows to trim and cut a picture by
+    /// moving sliders with help of mouse dragging. Furthermore it provides interfaces to move
+    /// a rollovered slider or a specified slider for a defined value (e.g. moving the right
+    /// slider for 3 pixel).
     /// </para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
-    /// //the picture, which will be trimmed and cut
-    /// Bitmap myPicture = (Bitmap) Bitmap.FromFile("Path of picture");
+    /// // the picture, which will be trimmed and cut
+    /// Bitmap myPicture = (Bitmap) Bitmap.FromFile( "Path of picture" );
     /// 
-    /// //Maximal allowed width of the picture
+    /// // maximal allowed width of the picture
     /// int maxWidth = 200;
     /// 
-    /// //Maximal allowed height of the picture
+    /// // maximal allowed height of the picture
     /// int maxHeight = 100;
     /// 
-    /// //Initializes the ImageCut control
-    /// ImageCut myImageCut = new ImageCut(myPicture, maxWidth, maxHeight);
+    /// // initializes the ImageCut control
+    /// ImageCut myImageCut = new ImageCut( myPicture, maxWidth, maxHeight );
     /// 
-    /// //Optional: Only necessary, if you need to process a slider movement
-    /// myImageCut.OnSliderMovedEvent += new OnSliderMovedHandler(OnSliderMoved);
+    /// // optional: only necessary, if you need to process slider's movement
+    /// myImageCut.OnSliderMovedEvent += new OnSliderMovedHandler( OnSliderMoved );
     /// 
-    /// //Optional: Setting some properties, otherwise it will be used the default values
-    /// myImageCut.Location = new Point(5, 5);
+    /// // optional: setting some properties, otherwise it will use default values
     /// myImageCut.Transparence = 220;
     /// myImageCut.LineStrength = 3;            
     /// myImageCut.ColorSliders = Color.Green;
     /// myImageCut.ColorRolloverSlider = Color.Red;
     /// myImageCut.MinSizeOfImage = 100;
     /// 
-    /// //Completes the initialization, need to be called after setting properties
-    /// myImageCut.init();
+    /// // сompletes the initialization, need to be called after setting properties
+    /// myImageCut.init( );
     /// 
-    /// //Adds the ImageCut control to the form
-    /// myForm.Controls.Add(myImageCut);
+    /// // adds the ImageCut control to the form
+    /// myForm.Controls.Add( myImageCut );
     /// </code>
+    /// 
     /// <para><b>Sample control's look:</b></para>
     /// <img src="ImageCut.jpg" width="358" height="289" />
     /// </remarks>
+    /// 
     public class ImageCut : Control
     {
         /// <summary>
@@ -103,14 +103,15 @@ namespace AForge.Controls
         private abstract class GraphicObject
         {
             /// <summary>
-            /// This Pen-Objekt is used to check, if a point is located over the line of an object. 
+            /// This Pen-Object is used to check, if a point is located over the line of an object. 
             /// The color is irrelevant. As width the value <code>4</code> makes a good job.
             /// </summary>
-            static Pen HitTestPen = new Pen(Brushes.Black, 4);
+            static Pen HitTestPen = new Pen( Brushes.Black, 4 );
             Pen pen;
             bool visible = true;
-            GraphicsPath path = new GraphicsPath();
+            GraphicsPath path = new GraphicsPath( );
             Course allowedCourse = Course.Both;
+
             private Point start;
             public Point Start
             {
@@ -125,7 +126,7 @@ namespace AForge.Controls
                 set { end = value; }
             }
 
-            public GraphicObject(Pen pen)
+            public GraphicObject( Pen pen )
             {
                 this.pen = pen;
             }
@@ -145,7 +146,6 @@ namespace AForge.Controls
             public Pen Pen
             {
                 get { return pen; }
-                //set { _pen = value; }
             }
 
             public bool Visible
@@ -163,41 +163,43 @@ namespace AForge.Controls
             /// <summary>
             /// Checks, if the given point is on the contour of the object.
             /// </summary>
-            public virtual bool Hit(Point pt)
-            {                
-                return path.IsOutlineVisible(pt, HitTestPen);
+            public virtual bool Hit( Point pt )
+            {
+                return path.IsOutlineVisible( pt, HitTestPen );
             }
 
             /// <summary>
             /// Checks, if the given point is inside the object.
             /// </summary>
-            public virtual bool Contains(Point pt)
+            public virtual bool Contains( Point pt )
             {
-                return path.IsVisible(pt);
+                return path.IsVisible( pt );
             }
 
             /// <summary>
             /// Draws the graphic object.
             /// </summary>
+            /// 
             /// <param name="g"></param>
-            public virtual void Draw(Graphics g)
+            /// 
+            public virtual void Draw( Graphics g )
             {
-                g.DrawPath(pen, path);
+                g.DrawPath( pen, path );
             }
 
             /// <summary>
-            /// Moves the graphic object <para>deltaX</para> pixel in x-direction (horizontal)
-            /// and <para>deltaY</para> pixel in y-direction (vertical)
+            /// Moves the graphic object <param name="deltaX" /> pixel in x-direction (horizontal)
+            /// and <param name="deltaY" /> pixel in y-direction (vertical).
             /// </summary>
-            public virtual void Move(int deltaX, int deltaY)
+            public virtual void Move( int deltaX, int deltaY )
             {
-                Matrix mat = new Matrix();
-                mat.Translate(deltaX, deltaY);
-                path.Transform(mat);
-                start.X = (int)Path.PathPoints[0].X;
-                start.Y = (int)Path.PathPoints[0].Y;
-                end.X = (int)Path.PathPoints[1].X;
-                end.Y = (int)Path.PathPoints[1].Y;
+                Matrix mat = new Matrix( );
+                mat.Translate( deltaX, deltaY );
+                path.Transform( mat );
+                start.X = (int) Path.PathPoints[0].X;
+                start.Y = (int) Path.PathPoints[0].Y;
+                end.X = (int) Path.PathPoints[1].X;
+                end.Y = (int) Path.PathPoints[1].Y;
             }
         }
 
@@ -206,16 +208,15 @@ namespace AForge.Controls
         /// </summary>
         private class GraphicRectangle : GraphicObject
         {
-            public GraphicRectangle(Pen pen, Rectangle rect)
-                : base(pen)
+            public GraphicRectangle( Pen pen, Rectangle rect )
+                : base( pen )
             {
-                Path.AddRectangle(rect);
-                //Path.FillMode = FillMode.Winding;
+                Path.AddRectangle( rect );
             }
 
-            public void Fill(Graphics g)
+            public void Fill( Graphics g )
             {
-                g.FillPath(new SolidBrush(Pen.Color), Path);
+                g.FillPath( new SolidBrush( Pen.Color ), Path );
             }
         }
 
@@ -224,10 +225,10 @@ namespace AForge.Controls
         /// </summary>
         private class GraphicLine : GraphicObject
         {
-            public GraphicLine(Pen pen, Point start, Point end, Course direction)
-                : base(pen)
+            public GraphicLine( Pen pen, Point start, Point end, Course direction )
+                : base( pen )
             {
-                Path.AddLine(start, end);
+                Path.AddLine( start, end );
                 AllowedCourse = direction;
                 Start = start;
                 End = end;
@@ -235,33 +236,26 @@ namespace AForge.Controls
         }
 
         #region public properties
-        /// <summary>
-        /// The distance between image- and control border.
-        /// </summary>
-        /// <remarks>
-        /// <para>The value should be bigger than <value>0</value>.</para>
-        /// <para>Otherwise it is difficult to use the mouse cursor for moving a slider exactly
-        /// to the image border</para>
-        /// <para>NOTE: The distance value is the sum of a site pair, 
-        /// e.g. <code>mDistanceToImage = 10</code> means 5 pixel distance between 
-        /// left site of control- and image border, and 5 pixel distance between 
-        /// right site of control- and image border, equivalent for up and down.</para>
-        /// <para>Default value: <code>10</code> pixel</para>
-        /// </remarks>        
+
+        // the distance between image and control border.
         private byte distanceToImage;
+
         /// <summary>
-        /// The distance between image- and control border.
+        /// The distance between image and control border.
         /// </summary>
+        /// 
         /// <remarks>
-        /// <para>The value should be bigger than <value>0</value>.</para>
-        /// <para>Otherwise it is difficult to use the mouse cursor for moving a slider exactly
-        /// to the image border</para>
-        /// <para>NOTE: The distance value is the sum of a site pair, 
-        /// e.g. <code>mDistanceToImage = 10</code> means 5 pixel distance between 
-        /// left site of control- and image border, and 5 pixel distance between 
-        /// right site of control- and image border, equivalent for up and down.</para>
-        /// <para>Default value: <code>10</code> pixel</para>
-        /// </remarks>        
+        /// <para>The value should be bigger than <b>0</b>, otherwise it is difficult to
+        /// use mouse cursor for moving a slider exactly to the image border.</para>
+        /// 
+        /// <para><note>The distance value is the sum of a site pair, 
+        /// e.g. <code>DistanceToImage = 10</code> means 5 pixel distance between 
+        /// left site of control and image border, and 5 pixel distance between 
+        /// right site of control and image border, equivalent for up and down.</note></para>
+        /// 
+        /// <para>Default value is set to <b>10</b> pixels.</para>
+        /// 
+        /// </remarks>       
         public byte DistanceToImage
         {
             get { return distanceToImage; }
@@ -271,108 +265,101 @@ namespace AForge.Controls
         /// <summary>
         /// The size-adapted picture, which will be seen.
         /// </summary>
+        /// 
         public Bitmap AdaptedPicture
         {
-            get { return (Bitmap)this.BackgroundImage; }
+            get { return (Bitmap) this.BackgroundImage; }
             set { this.BackgroundImage = value; }
         }
 
-        /// <summary>
-        /// The original picture, unmodified.
-        /// </summary>
+        // The original picture, unmodified.
         private Bitmap originalPicture;
+
         /// <summary>
         /// The original picture, unmodified.
         /// </summary>
+        /// 
         public Bitmap OriginalPicture
         {
             get { return originalPicture; }
-            //set { mOriginalPicture = value; }
         }
+
+        // original image scale factor
+        private float scaleFactor;
 
         /// <summary>
         /// The factor, which is used to scale and adapt the <see cref="OriginalPicture"/>
-        /// to the <see>AdaptedPicture</see>.
+        /// to the  <see cref="AdaptedPicture"/>.
         /// </summary>
-        private float scaleFactor;
-        /// <summary>
-        /// The factor, which is used to scale and adapt the <see cref="OriginalPicture"/>
-        /// to the <see>AdaptedPicture</see>.
-        /// </summary>
+        /// 
         public float ScaleFactor
         {
             get { return scaleFactor; }
         }
 
-        /// <summary>
-        /// The line strength of the sliders
-        /// </summary>
-        /// <remarks>
-        /// <para>Default value: <code>3</code> pixel</para>
-        /// </remarks>
+        // line strength of the sliders
         private byte lineStrength;
+
         /// <summary>
-        /// The line strength of the sliders
+        /// Line strength of the sliders.
         /// </summary>
-        /// <remarks>
-        /// <para>Default value: <code>3</code> pixel</para>
-        /// </remarks>
+        /// 
+        /// <remarks><para>Default value is set to <b>3</b> pixels.</para></remarks>
+        /// 
         public byte LineStrength
         {
             get { return lineStrength; }
             set { lineStrength = value; }
         }
 
-        /// <summary>
-        /// The general color of the sliders.
-        /// </summary>
+        // color of the sliders
         private Color colorSliders;
+
         /// <summary>
-        /// The general color of the sliders.
+        /// The general color of sliders.
         /// </summary>
+        /// 
         public Color ColorSliders
         {
             get { return colorSliders; }
             set { colorSliders = value; }
         }
 
-        /// <summary>
-        /// The color of the slider, when the mouse cursor is rollovered.
-        /// </summary>
+        // color of sliders, when the mouse cursor is rollovered
         private Color colorRolloverSlider;
+
         /// <summary>
-        /// The color of the slider, when the mouse cursor is rollovered.
+        /// The color of slider, when mouse cursor is rollovered.
         /// </summary>
+        /// 
         public Color ColorRolloverSlider
         {
             get { return colorRolloverSlider; }
             set { colorRolloverSlider = value; }
         }
 
-        /// <summary>
-        /// The transparency value of the graphic rectangles (also called Slider space), 
-        /// which represents the cutted areas of the picture.
-        /// </summary>
+        // transparency value of the graphic rectangles, which represents the cutted areas of the picture
         private byte transparency;
+
         /// <summary>
         /// The transparency value of the graphic rectangles (also called Slider space), 
         /// which represents the cutted areas of the picture.
         /// </summary>
+        /// 
         public byte Transparency
         {
             get { return transparency; }
             set { transparency = value; }
         }
 
-        /// <summary>
-        /// The color of the graphic rectangles (also called Slider space), 
-        /// which represents the cutted areas of the picture.
-        /// </summary>
+        // color of the graphic rectangles (also called Slider space), which represents the cutted areas of the picture
         private Color colorSliderSpace;
+
         /// <summary>
         /// The color of the graphic rectangles (also called Slider space), 
         /// which represents the cutted areas of the picture.
         /// </summary>
+        /// 
         public Color ColorSliderSpace
         {
             get { return colorSliderSpace; }
@@ -380,21 +367,26 @@ namespace AForge.Controls
         }
 
         private byte minSizeOfImage;
+
         /// <summary>
         /// Represents the minimum width and height of the picture.
         /// </summary>
+        /// 
         public byte MinSizeOfImage
         {
             get { return minSizeOfImage; }
             set { minSizeOfImage = value; }
-            //set { mMinSizeOfImage = (byte)((float)value / mScaleFactor); }
         }
 
         private byte neighbourTolerance;
+
         /// <summary>
-        /// Represents the tolerance value (in pixel), how far away a horicontal and a
+        /// Represents the tolerance value (in pixels) - how far away a horicontal and a
         /// vertical slider could be to be selected together as an edge.
         /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <b>50</b>.</para></remarks>
+        /// 
         public byte NeighbourTolerance
         {
             get { return neighbourTolerance; }
@@ -402,10 +394,14 @@ namespace AForge.Controls
         }
 
         private Cursor cursorMoveDisplayWindow;
+
         /// <summary>
         /// The cursor, which is displayed, when the mouse cursor is inside the 
         /// cutted picture without touching any slider.
         /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <see cref="Cursors.Hand"/>.</para></remarks>
+        /// 
         public Cursor CursorMoveDisplayWindow
         {
             get { return cursorMoveDisplayWindow; }
@@ -413,10 +409,14 @@ namespace AForge.Controls
         }
 
         private Cursor cursorDefault;
+
         /// <summary>
         /// The cursor, which is displayed, when the mouse cursor neither selects
         /// a slider nor moves the display window.
         /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <see cref="Cursors.Default"/>.</para></remarks>
+        /// 
         public Cursor CursorDefault
         {
             get { return cursorDefault; }
@@ -424,110 +424,115 @@ namespace AForge.Controls
         }
 
         private Cursor cursorRolloverSlider;
+
         /// <summary>
         /// The cursor, which is displayed, when the mouse cursor rollover a slider.
         /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <see cref="Cursors.Cross"/>.</para></remarks>
+        /// 
         public Cursor CursorRolloverSlider
         {
             get { return cursorRolloverSlider; }
             set { cursorRolloverSlider = value; }
         }
 
-        /// <summary>
-        /// Gets the left-slider's position internal (of the adapted picture).
-        /// </summary>
-        /// <value>The left-slider's position internal.</value>
+        // Left-slider's position internal (of the adapted picture)
         private int LeftPositionInternal
         {
-            get { return sliders[(byte)Sliders.Left].Start.X - distanceToImage / 2; }
+            get { return sliders[(byte) Slider.Left].Start.X - distanceToImage / 2; }
         }
 
         private int leftPosition;
+
         /// <summary>
-        /// Gets the left-slider's position.
+        /// Left slider's position.
         /// </summary>
-        /// <value>The left-slider's position.</value>
+        /// 
         public int LeftPosition
         {
             get { return leftPosition; }
         }
 
         /// <summary>
-        /// Gets the right-slider's position.
+        /// Right slider's position.
         /// </summary>
-        /// <value>The right-slider's position.</value>
+        /// 
         public int RightPosition
         {
             get { return ActualWidth + LeftPosition; }
         }
 
-        /// <summary>
-        /// Gets up-slider's position internal (of the adapted picture).
-        /// </summary>
-        /// <value>Up-slider's position internal.</value>
+        // Up-slider's position internal (of the adapted picture)
         private int UpPositionInternal
         {
-            get { return sliders[(byte)Sliders.Up].Start.Y - distanceToImage / 2; }
+            get { return sliders[(byte) Slider.Top].Start.Y - distanceToImage / 2; }
         }
 
         private int upPosition;
+
         /// <summary>
-        /// Gets up-slider's position.
+        /// Top slider's position.
         /// </summary>
-        /// <value>Up-slider's position.</value>
-        public int UpPosition
+        /// 
+        public int TopPosition
         {
             get { return upPosition; }
         }
 
         /// <summary>
-        /// Gets down-slider's position.
+        /// Bottom slider's position.
         /// </summary>
-        /// <value>Down-slider's position.</value>
-        public int DownPosition
+        /// 
+        public int BottomPosition
         {
-            get { return ActualHeight + UpPosition; }
+            get { return ActualHeight + TopPosition; }
         }
 
         /// <summary>
-        /// Actual temporar width of the <see cref="AdaptedPicture"/> after using vertical sliders.
+        /// Actual temporary width of the <see cref="AdaptedPicture"/> after using vertical sliders.
         /// </summary>
+        /// 
         private int ActualWidthInternal
         {
-            get { return sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X; }
+            get { return sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X; }
         }
 
         private int actualWidth;
+
         /// <summary>
-        /// Actual temporar width of the <see cref="OriginalPicture"/> after using vertical sliders.
+        /// Actual temporary width of the <see cref="OriginalPicture"/> after using vertical sliders.
         /// </summary>
         public int ActualWidth
         {
             get { return actualWidth; }
-            //get { return (int)((float)mActualWidthIntern * mScaleFactor); }
         }
 
         /// <summary>
-        /// Actual temporar height of the <see cref="AdaptedPicture"/> after using horicontal sliders.
+        /// Actual temporary height of the <see cref="AdaptedPicture"/> after using horicontal sliders.
         /// </summary>
         private int ActualHeightInternal
         {
-            get { return sliders[(byte)Sliders.Down].Start.Y - sliders[(byte)Sliders.Up].Start.Y; }
+            get { return sliders[(byte) Slider.Bottom].Start.Y - sliders[(byte) Slider.Top].Start.Y; }
         }
 
         private int actualHeight;
+
         /// <summary>
-        /// Actual temporar height of the <see cref="OriginalPicture"/> after using horicontal sliders.
+        /// Actual temporary height of the <see cref="OriginalPicture"/> after using horicontal sliders.
         /// </summary>
+        /// 
         public int ActualHeight
         {
-            get { return actualHeight; }            
+            get { return actualHeight; }
         }
 
         /// <summary>
         /// Gets the height of the original picture.
         /// </summary>
+        /// 
         /// <value>The height of the original picture.</value>
+        /// 
         public int OriginalHeight
         {
             get { return originalPicture.Height; }
@@ -536,17 +541,22 @@ namespace AForge.Controls
         /// <summary>
         /// Gets the width of the original picture.
         /// </summary>
+        /// 
         /// <value>The width of the original picture.</value>
+        /// 
         public int OriginalWidth
         {
             get { return originalPicture.Width; }
         }
 
         private float ratio;
+
         /// <summary>
         /// Gets or sets the ratio.
         /// </summary>
+        /// 
         /// <value>The ratio.</value>
+        /// 
         public float Ratio
         {
             get { return ratio; }
@@ -554,9 +564,10 @@ namespace AForge.Controls
         }
 
         /// <summary>
-        /// This variable handles the OnSliderMoved-event at the client.        
+        /// This variable handles the <see cref="OnSliderMoved"/> event at the client.        
         /// </summary>
-        public OnSliderMovedEventHandler OnSliderMovedEvent;
+        public OnSliderMovedEventHandler OnSliderMoved;
+
         #endregion public properties
 
         private GraphicObject[] sliders;
@@ -577,38 +588,48 @@ namespace AForge.Controls
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageCut"/> class.
         /// </summary>
+        /// 
+        /// <param name="originalPicture">The original picture.</param>
+        /// <param name="maxWidth">Maximum width.</param>
+        /// <param name="maxHeight">Maximum height.</param>
+        /// 
         /// <remarks>The picture seen on the <see cref="ImageCut"/> control will not
         /// be bigger than the given <paramref name="maxWidth"/> and 
-        /// <paramref name="maxHeight"/> </remarks>
-        /// <param name="originalPicture">The original picture.</param>
-        /// <param name="maxWidth">Maximum Width.</param>
-        /// <param name="maxHeight">Maximum Height.</param>
-        public ImageCut(Bitmap originalPicture, float maxWidth, float maxHeight)
-        {         
+        /// <paramref name="maxHeight"/>.</remarks>
+        /// 
+        public ImageCut( Bitmap originalPicture, float maxWidth, float maxHeight )
+        {
             this.originalPicture = originalPicture;
-            adaptPicture(maxWidth, maxHeight);//Calculates and sets 'adaptedPicture' and 'scaleFactor'
-            defaultValues();
+
+            // calculates and sets 'adaptedPicture' and 'scaleFactor'
+            AdaptPicture( maxWidth, maxHeight );
+
+            // set default values for the control
+            SetDefaultValues( );
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageCut"/> class,
-        /// already with the correct-sized picture.
+        /// Initializes a new instance of the <see cref="ImageCut"/> class.
         /// </summary>
+        /// 
         /// <param name="originalPicture">The original picture.</param>
-        public ImageCut(Bitmap originalPicture)
-        {            
+        /// 
+        /// <remarks><para>Initialize the control with already correct-sized
+        /// picture.</para></remarks>
+        /// 
+        public ImageCut( Bitmap originalPicture )
+        {
             this.originalPicture = originalPicture;
             AdaptedPicture = originalPicture;
             scaleFactor = 1.0f;
-            defaultValues();
+            SetDefaultValues( );
         }
 
-        /// <summary>
-        /// Defaults the values.
-        /// </summary>
-        private void defaultValues()
+        // Set all values to defaults
+        private void SetDefaultValues( )
         {
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ImageCut_MouseMove);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ImageCut_MouseMove );
+
             sliders = new GraphicObject[4];
             choosedSliders = new GraphicObject[2];
             slidersWaste = new GraphicRectangle[4];
@@ -616,87 +637,88 @@ namespace AForge.Controls
             actualWidth = originalPicture.Width;
             actualHeight = originalPicture.Height;
 
-            //properties: default values
+            // properties: default values
             ratio = 0.0f;
             distanceToImage = 10;
             lineStrength = 3;
             minSizeOfImage = 50;
             neighbourTolerance = 50;
             transparency = 220;
-            colorSliders = Color.Green;//Color.FromArgb(0);
-            colorRolloverSlider = Color.FromArgb(255, 20, 20);
-            colorSliderSpace = Color.FromArgb(220, 220, 255);
+
+            // colors
+            colorSliders = Color.Green;
+            colorRolloverSlider = Color.FromArgb( 255, 20, 20 );
+            colorSliderSpace = Color.FromArgb( 220, 220, 255 );
+
+            // cursors
             cursorMoveDisplayWindow = Cursors.Hand;
             cursorDefault = Cursors.Default;
             cursorRolloverSlider = Cursors.Cross;
         }
 
         /// <summary>      
-        /// Finalizes the initialization of this control.
+        /// Finalizes the initialization of the control.
         /// </summary>
-        /// <remarks>After initialization per constructor
-        /// and setting the properties, it is necessary to call this function.</remarks>
-        public void init()
+        /// 
+        /// <remarks>After initialization per constructor and setting the properties,
+        /// it is necessary to call this function.</remarks>
+        /// 
+        public void Initialize( )
         {
             isAlreadyInit = true;
-            this.Size = new Size(AdaptedPicture.Width + distanceToImage, AdaptedPicture.Height + distanceToImage);
+            this.Size = new Size( AdaptedPicture.Width + distanceToImage, AdaptedPicture.Height + distanceToImage );
             this.BackgroundImageLayout = ImageLayout.Center;
 
-            initBorderValues();
-            initSliders();
-            setSlidersSpace();
+            initBorderValues( );
+            initSliders( );
+            setSlidersSpace( );
 
             this.DoubleBuffered = true;
         }
 
         /// <summary>
-        /// Forces the ImageCut-control to invalidate its client area and 
+        /// Forces the control to invalidate its client area and 
         /// immediately redraw itself and any child controls.
         /// </summary>
-        /// <PermissionSet>
-        /// 	<IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
-        /// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
-        /// 	<IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence"/>
-        /// 	<IPermission class="System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
-        /// </PermissionSet>
-        public override void Refresh()
+        /// 
+        public override void Refresh( )
         {
-            //Saves the old positions
-            int leftPos = LeftPosition;
-            int rightPos = RightPosition;//ActualWidth + LeftPosition;
-            int upPos = UpPosition;
-            int downPos = DownPosition;
+            // saves the old positions
+            int leftPos   = LeftPosition;
+            int rightPos  = RightPosition;
+            int topPos    = TopPosition;
+            int bottomPos = BottomPosition;
 
-            //Resetting of the properties of the ImgaCut-components (sliders, slider-space,..)
+            // resetting of the properties of the ImgaCut components (sliders, slider-space,..)
             actualWidth = originalPicture.Width;
             actualHeight = originalPicture.Height;
             leftPosition = 0;
             upPosition = 0;
-            init();
-            //fireSliderMovedEvent();
+            Initialize( );
 
-            //Puts back the sliders in its old position
-            movingInDirectly(sliders[(byte)Sliders.Left], leftPos);
-            movingInDirectly(sliders[(byte)Sliders.Right], -(originalPicture.Width - rightPos));
-            movingInDirectly(sliders[(byte)Sliders.Up], upPos);
-            movingInDirectly(sliders[(byte)Sliders.Down], -(originalPicture.Height - downPos));
+            // puts back the sliders in its old position
+            movingInDirectly( sliders[(byte) Slider.Left], leftPos );
+            movingInDirectly( sliders[(byte) Slider.Right], -( originalPicture.Width - rightPos ) );
+            movingInDirectly( sliders[(byte) Slider.Top], topPos );
+            movingInDirectly( sliders[(byte) Slider.Bottom], -( originalPicture.Height - bottomPos ) );
 
-            base.Refresh();
-            
+            base.Refresh( );
+
         }
 
         /// <summary>
-        /// Moves the slider.
+        /// Moves a slider.
         /// </summary>
+        /// 
         /// <param name="moveValue">The move value.</param>
-        /// <param name="id">The id, which represents the
-        /// slider, <seealso cref="Sliders"/>.</param>
-        public void moveSlider(int moveValue, Sliders id)
+        /// <param name="slider">Slider to move.</param>
+        /// 
+        public void MoveSlider( int moveValue, Slider slider )
         {
-            resetChoosedSliders();
-            choosedSliders[0] = sliders[(byte)id];
-            sliders[(byte)id].ColorOfPen = colorRolloverSlider;
-            movingInDirectly(sliders[(byte)id], moveValue);
+            resetChoosedSliders( );
+            choosedSliders[0] = sliders[(byte) slider];
+            sliders[(byte) slider].ColorOfPen = colorRolloverSlider;
+            movingInDirectly( sliders[(byte) slider], moveValue );
         }
 
         /// <summary>
@@ -711,28 +733,28 @@ namespace AForge.Controls
         /// </para>
         /// </remarks>
         /// <param name="moveValue">The move value.</param>
-        public void moveSelectedVerticalSlider(int moveValue)
-        {            
-            if (choosedSliders[0] == sliders[(byte)Sliders.Left])
+        public void moveSelectedVerticalSlider( int moveValue )
+        {
+            if ( choosedSliders[0] == sliders[(byte) Slider.Left] )
             {
-                movingInDirectly(choosedSliders[0], moveValue);
+                movingInDirectly( choosedSliders[0], moveValue );
                 //Has to be copied back, otherwise the selection of the slider is damaged
-                choosedSliders[0] = sliders[(byte)Sliders.Left];
+                choosedSliders[0] = sliders[(byte) Slider.Left];
             }
-            else if(choosedSliders[0] == sliders[(byte)Sliders.Right])
+            else if ( choosedSliders[0] == sliders[(byte) Slider.Right] )
             {
-                movingInDirectly(choosedSliders[0], moveValue);
-                choosedSliders[0] = sliders[(byte)Sliders.Right];
-            }                                
-            else if (choosedSliders[1] == sliders[(byte)Sliders.Left])
-            {
-                movingInDirectly(choosedSliders[1], moveValue);
-                choosedSliders[1] = sliders[(byte)Sliders.Left];
+                movingInDirectly( choosedSliders[0], moveValue );
+                choosedSliders[0] = sliders[(byte) Slider.Right];
             }
-            else if (choosedSliders[1] == sliders[(byte)Sliders.Right])
+            else if ( choosedSliders[1] == sliders[(byte) Slider.Left] )
             {
-                movingInDirectly(choosedSliders[1], moveValue);
-                choosedSliders[1] = sliders[(byte)Sliders.Right];
+                movingInDirectly( choosedSliders[1], moveValue );
+                choosedSliders[1] = sliders[(byte) Slider.Left];
+            }
+            else if ( choosedSliders[1] == sliders[(byte) Slider.Right] )
+            {
+                movingInDirectly( choosedSliders[1], moveValue );
+                choosedSliders[1] = sliders[(byte) Slider.Right];
             }
         }
 
@@ -748,28 +770,28 @@ namespace AForge.Controls
         /// </para>
         /// </remarks>
         /// <param name="moveValue">The move value.</param>
-        public void moveSelectedHorizontalSlider(int moveValue)
+        public void moveSelectedHorizontalSlider( int moveValue )
         {
-            if (choosedSliders[0] == sliders[(byte)Sliders.Up])
+            if ( choosedSliders[0] == sliders[(byte) Slider.Top] )
             {
-                movingInDirectly(choosedSliders[0], moveValue);
+                movingInDirectly( choosedSliders[0], moveValue );
                 //Has to be copied back, otherwise the selection of the slider is damaged
-                choosedSliders[0] = sliders[(byte)Sliders.Up];
+                choosedSliders[0] = sliders[(byte) Slider.Top];
             }
-            else if (choosedSliders[0] == sliders[(byte)Sliders.Down])
+            else if ( choosedSliders[0] == sliders[(byte) Slider.Bottom] )
             {
-                movingInDirectly(choosedSliders[0], moveValue);
-                choosedSliders[0] = sliders[(byte)Sliders.Down];
+                movingInDirectly( choosedSliders[0], moveValue );
+                choosedSliders[0] = sliders[(byte) Slider.Bottom];
             }
-            else if (choosedSliders[1] == sliders[(byte)Sliders.Up])
+            else if ( choosedSliders[1] == sliders[(byte) Slider.Top] )
             {
-                movingInDirectly(choosedSliders[1], moveValue);
-                choosedSliders[1] = sliders[(byte)Sliders.Up];
+                movingInDirectly( choosedSliders[1], moveValue );
+                choosedSliders[1] = sliders[(byte) Slider.Top];
             }
-            else if (choosedSliders[1] == sliders[(byte)Sliders.Down])
+            else if ( choosedSliders[1] == sliders[(byte) Slider.Bottom] )
             {
-                movingInDirectly(choosedSliders[1], moveValue);
-                choosedSliders[1] = sliders[(byte)Sliders.Down];
+                movingInDirectly( choosedSliders[1], moveValue );
+                choosedSliders[1] = sliders[(byte) Slider.Bottom];
             }
         }
 
@@ -777,28 +799,28 @@ namespace AForge.Controls
         /// Gets the cutted picture in <seealso cref="Bitmap"/> format.
         /// </summary>
         /// <returns>The cutted Image (in <seealso cref="Bitmap"/> format)</returns>
-        public Bitmap getCuttedImage()
+        public Bitmap getCuttedImage( )
         {
             int w = ActualWidthInternal;
-            if ((LeftPositionInternal + ActualWidthInternal) > AdaptedPicture.Width)
-                w -= (LeftPositionInternal + ActualWidthInternal) - AdaptedPicture.Width;
+            if ( ( LeftPositionInternal + ActualWidthInternal ) > AdaptedPicture.Width )
+                w -= ( LeftPositionInternal + ActualWidthInternal ) - AdaptedPicture.Width;
             int h = ActualHeightInternal;
-            if ((UpPositionInternal + ActualHeightInternal) > AdaptedPicture.Height)
-                h -= (UpPositionInternal + ActualHeightInternal) - AdaptedPicture.Height;            
+            if ( ( UpPositionInternal + ActualHeightInternal ) > AdaptedPicture.Height )
+                h -= ( UpPositionInternal + ActualHeightInternal ) - AdaptedPicture.Height;
 
-            Rectangle tempSize = new Rectangle(LeftPositionInternal,
+            Rectangle tempSize = new Rectangle( LeftPositionInternal,
                                             UpPositionInternal,
                                             w,
-                                            h);
-            AdaptedPicture = AdaptedPicture.Clone(tempSize, AdaptedPicture.PixelFormat);
-            init();
+                                            h );
+            AdaptedPicture = AdaptedPicture.Clone( tempSize, AdaptedPicture.PixelFormat );
+            Initialize( );
 
-            tempSize = new Rectangle(leftPosition,
+            tempSize = new Rectangle( leftPosition,
                                   upPosition,
                                   actualWidth,
-                                  actualHeight);
+                                  actualHeight );
 
-            originalPicture = (Bitmap)originalPicture.Clone(tempSize, originalPicture.PixelFormat);
+            originalPicture = (Bitmap) originalPicture.Clone( tempSize, originalPicture.PixelFormat );
             //would make a 32 bit BMP smaller to 24 bit
             //originalPicture = originalPicture.Clone(new Rectangle(0, 0, originalPicture.Width, 
             //originalPicture.Height), PixelFormat.Format24bppRgb);
@@ -812,74 +834,74 @@ namespace AForge.Controls
         /// <param name="moveX">The move X.</param>
         /// <param name="moveY">The move Y.</param>
         /// <param name="isDirectMove">if set to <c>true</c> [is direct move].</param>
-        private void movingDirectly(GraphicObject slider, int moveX, int moveY, bool isDirectMove)
-        {            
-            switch (slider.AllowedCourse)
+        private void movingDirectly( GraphicObject slider, int moveX, int moveY, bool isDirectMove )
+        {
+            switch ( slider.AllowedCourse )
             {
                 case Course.Horicontal:
-                    slider.Move(0, moveY);
-                    checkSlidersExceedsBorder(slider.Start.X, slider.Start.Y);
-                    if (sliders[(byte)Sliders.Down].Start.Y - sliders[(byte)Sliders.Up].Start.Y <
-                        (byte)((float)minSizeOfImage / scaleFactor))
+                    slider.Move( 0, moveY );
+                    checkSlidersExceedsBorder( slider.Start.X, slider.Start.Y );
+                    if ( sliders[(byte) Slider.Bottom].Start.Y - sliders[(byte) Slider.Top].Start.Y <
+                        (byte) ( (float) minSizeOfImage / scaleFactor ) )
                     {
-                        slider.Move(0, -moveY);
+                        slider.Move( 0, -moveY );
                         return;
                     }
                     else
                     {
-                        if (isDirectMove)
+                        if ( isDirectMove )
                         {
-                            actualHeight = (int)((float)ActualHeightInternal * scaleFactor);
+                            actualHeight = (int) ( (float) ActualHeightInternal * scaleFactor );
                             //Check, if there is a rounding error
                             //if (ActualHeight > OriginalHeight)
                             //    moveSelectedHorizontalSlider(-(ActualHeight - OriginalHeight));
 
-                            upPosition = (int)((float)UpPositionInternal * scaleFactor);
+                            upPosition = (int) ( (float) UpPositionInternal * scaleFactor );
 
                             //Check, if there is a rounding error
-                            if (upPosition + ActualHeight > OriginalHeight)
+                            if ( upPosition + ActualHeight > OriginalHeight )
                                 actualHeight = OriginalHeight - upPosition;
 
-                            spaces[(int)Sliders.Up] = 0.0f;
-                            spaces[(int)Sliders.Down] = 0.0f;
-                            fireSliderMovedEvent();
+                            spaces[(int) Slider.Top] = 0.0f;
+                            spaces[(int) Slider.Bottom] = 0.0f;
+                            fireSliderMovedEvent( );
                         }
                     }
                     break;
-                case Course.Vertical:                    
-                    slider.Move(moveX, 0);
-                    checkSlidersExceedsBorder(slider.Start.X, slider.Start.Y);
-                    if (sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X <
-                        (byte)((float)minSizeOfImage / scaleFactor))
+                case Course.Vertical:
+                    slider.Move( moveX, 0 );
+                    checkSlidersExceedsBorder( slider.Start.X, slider.Start.Y );
+                    if ( sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X <
+                        (byte) ( (float) minSizeOfImage / scaleFactor ) )
                     {
-                        slider.Move(-moveX, 0);
+                        slider.Move( -moveX, 0 );
                         return;
                     }
                     else
                     {
-                        if (isDirectMove)
+                        if ( isDirectMove )
                         {
-                            actualWidth = (int)((float)ActualWidthInternal * scaleFactor);
+                            actualWidth = (int) ( (float) ActualWidthInternal * scaleFactor );
                             //Check, if there is a rounding error
                             //if (ActualWidth > OriginalWidth)
                             //    moveSelectedVerticalSlider(-(ActualWidth - OriginalWidth));                               
 
-                            leftPosition = (int)((float)LeftPositionInternal * scaleFactor);
+                            leftPosition = (int) ( (float) LeftPositionInternal * scaleFactor );
 
                             //Check, if there is a rounding error
-                            if (leftPosition + ActualWidth > OriginalWidth)
+                            if ( leftPosition + ActualWidth > OriginalWidth )
                                 actualWidth = OriginalWidth - leftPosition;
 
-                            spaces[(int)Sliders.Left] = 0.0f;
-                            spaces[(int)Sliders.Right] = 0.0f;
-                            fireSliderMovedEvent();
+                            spaces[(int) Slider.Left] = 0.0f;
+                            spaces[(int) Slider.Right] = 0.0f;
+                            fireSliderMovedEvent( );
                         }
                     }
                     break;
             }
 
-            setSlidersSpace();
-            this.Invalidate();
+            setSlidersSpace( );
+            this.Invalidate( );
         }
 
         /// <summary>
@@ -887,18 +909,18 @@ namespace AForge.Controls
         /// </summary>
         /// <param name="slider">The slider.</param>
         /// <param name="moveValue">The move value.</param>
-        private void movingInDirectly(GraphicObject slider, int moveValue)
+        private void movingInDirectly( GraphicObject slider, int moveValue )
         {
-            float move = (float)moveValue / scaleFactor;
-            int index = getSliderIndex(slider, sliders);
+            float move = (float) moveValue / scaleFactor;
+            int index = getSliderIndex( slider, sliders );
             spaces[index] = spaces[index] + move;
-            int intNumber = (int)spaces[index];
-            spaces[index] -= (float)intNumber;
+            int intNumber = (int) spaces[index];
+            spaces[index] -= (float) intNumber;
 
-            if (index == (int)Sliders.Left || index == (int)Sliders.Right)
+            if ( index == (int) Slider.Left || index == (int) Slider.Right )
             {
-                movingDirectly(slider, intNumber, 0, false);
-                if (index == (int)Sliders.Left)//pSlider == mSliders[(byte)SLIDERS.LEFT]) -> DOES NOT WORK!
+                movingDirectly( slider, intNumber, 0, false );
+                if ( index == (int) Slider.Left )//pSlider == mSliders[(byte)SLIDERS.LEFT]) -> DOES NOT WORK!
                 {
                     leftPosition += moveValue;
                     actualWidth -= moveValue;
@@ -908,8 +930,8 @@ namespace AForge.Controls
             }
             else
             {
-                movingDirectly(slider, 0, intNumber, false);
-                if (index == (int)Sliders.Up)//pSlider == mSliders[(byte)SLIDERS.UP]) -> DOES NOT WORK!
+                movingDirectly( slider, 0, intNumber, false );
+                if ( index == (int) Slider.Top )//pSlider == mSliders[(byte)SLIDERS.UP]) -> DOES NOT WORK!
                 {
                     upPosition += moveValue;
                     actualHeight -= moveValue;
@@ -918,21 +940,21 @@ namespace AForge.Controls
                     actualHeight += moveValue;
             }
 
-            checkValues();
-            if (isCheckNecessary)
-                checkRatio();
-            fireSliderMovedEvent();
+            checkValues( );
+            if ( isCheckNecessary )
+                checkRatio( );
+            fireSliderMovedEvent( );
         }
 
         /// <summary>
         /// Fires the slider moved event.
         /// </summary>
-        private void fireSliderMovedEvent()
+        private void fireSliderMovedEvent( )
         {
             //fire the event now
-            if (this.OnSliderMovedEvent != null) //is there a EventHandler?
+            if ( this.OnSliderMoved != null ) //is there a EventHandler?
             {
-                this.OnSliderMovedEvent.Invoke(); //calls its EventHandler                
+                this.OnSliderMoved.Invoke( ); //calls its EventHandler                
             }
             else { } //if not, ignore
         }
@@ -942,35 +964,35 @@ namespace AForge.Controls
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
-        private void ImageCut_MouseMove(object sender, MouseEventArgs e)
+        private void ImageCut_MouseMove( object sender, MouseEventArgs e )
         {
-            this.Focus();
+            this.Focus( );
         }
 
         /// <summary>
         /// Checks the values of the pictures sizes.
         /// </summary>
-        private void checkValues()
+        private void checkValues( )
         {
-            if (leftPosition == -1)
+            if ( leftPosition == -1 )
             {
                 leftPosition += 1;
                 actualWidth -= 1;
             }
-            if (actualWidth > originalPicture.Width)
+            if ( actualWidth > originalPicture.Width )
                 actualWidth = originalPicture.Width;
-            else if (actualWidth < minSizeOfImage)
+            else if ( actualWidth < minSizeOfImage )
                 actualWidth = minSizeOfImage;
 
-            if (upPosition == -1)
+            if ( upPosition == -1 )
             {
                 upPosition += 1;
                 actualHeight -= 1;
             }
 
-            if (actualHeight > originalPicture.Height)
+            if ( actualHeight > originalPicture.Height )
                 actualHeight = originalPicture.Height;
-            else if (actualHeight < minSizeOfImage)
+            else if ( actualHeight < minSizeOfImage )
                 actualHeight = minSizeOfImage;
         }
 
@@ -978,26 +1000,26 @@ namespace AForge.Controls
         /// Checks, if there is a ratio constraint. If yes the sliders will be 
         /// set on the correct positions to conform the ratio constraint.
         /// </summary>
-        private void checkRatio()
+        private void checkRatio( )
         {
             isCheckNecessary = false;
-            if (ratio != 0.0f)
+            if ( ratio != 0.0f )
             {
-                float tempRatio = (float)ActualHeight /
-                               (float)ActualWidth;
-                if ((tempRatio + 0.01f) < ratio)
+                float tempRatio = (float) ActualHeight /
+                               (float) ActualWidth;
+                if ( ( tempRatio + 0.01f ) < ratio )
                 {
-                    float tempNewWidth = (float)ActualHeight / ratio;
-                    float tempDiff = (float)ActualWidth - tempNewWidth;
-                    moveSlider((int)(tempDiff / 2.0f), Sliders.Left);
-                    moveSlider((int)(-tempDiff / 2.0f), Sliders.Right);
+                    float tempNewWidth = (float) ActualHeight / ratio;
+                    float tempDiff = (float) ActualWidth - tempNewWidth;
+                    MoveSlider( (int) ( tempDiff / 2.0f ), Slider.Left );
+                    MoveSlider( (int) ( -tempDiff / 2.0f ), Slider.Right );
                 }
-                else if ((tempRatio + 0.01f) > ratio)
+                else if ( ( tempRatio + 0.01f ) > ratio )
                 {
-                    float tempNewHeight = (float)ActualWidth * ratio;
-                    float tempDiff = (float)ActualHeight - tempNewHeight;
-                    moveSlider((int)(tempDiff / 2.0f), Sliders.Up);
-                    moveSlider((int)(-tempDiff / 2.0f), Sliders.Down);
+                    float tempNewHeight = (float) ActualWidth * ratio;
+                    float tempDiff = (float) ActualHeight - tempNewHeight;
+                    MoveSlider( (int) ( tempDiff / 2.0f ), Slider.Top );
+                    MoveSlider( (int) ( -tempDiff / 2.0f ), Slider.Bottom );
                 }
 
             }
@@ -1007,42 +1029,46 @@ namespace AForge.Controls
         /// <summary>
         /// Creates an adapted image, which is not bigger than the given maximum values. 
         /// </summary>
+        /// 
+        /// <param name="maxWidth">The biggest allowed width of the image.</param>
+        /// <param name="maxHeight">The biggest allowed height of the image.</param>
+        /// 
         /// <remarks>
         /// <para>It sets the <see cref="AdaptedPicture"/> and the <see cref="ScaleFactor"/>.</para>
-        /// <para>Note: It also sets the original image, it is not necessary to set it manual.</para>
-        /// <para>Note: If the original image is smaller than the given values, the adapted
-        /// image is just a clone of the original image.</para>
+        /// 
+        /// <para><note>It also sets the original image, it is not necessary to set it manual.</note></para>
+        /// 
+        /// <para><note>If the original image is smaller than the given values, the adapted
+        /// image is just a clone of the original image.</note></para>
         /// </remarks>
-        /// <param name="maxWidth">The biggest allowed width of the image</param>
-        /// <param name="maxHeight">The biggest allowed height of the image</param>
-        private void adaptPicture(float maxWidth, float maxHeight)
+        /// 
+        private void AdaptPicture( float maxWidth, float maxHeight )
         {
             Size adaptedSize;
             float screenRatio = maxWidth / maxHeight;
+            float picRatio = (float) originalPicture.Width / (float) originalPicture.Height;
 
-            float picRatio = (float)originalPicture.Width / (float)originalPicture.Height;
-
-            if (maxWidth < originalPicture.Width || maxHeight < originalPicture.Height)
+            if ( ( maxWidth < originalPicture.Width ) || ( maxHeight < originalPicture.Height ) )
             {
-                if (screenRatio < picRatio)
-                    adaptedSize = new Size((int)maxWidth, (int)(maxWidth / picRatio));
+                if ( screenRatio < picRatio )
+                    adaptedSize = new Size( (int) maxWidth, (int) ( maxWidth / picRatio ) );
                 else
-                    adaptedSize = new Size((int)(maxHeight * picRatio), (int)maxHeight);
+                    adaptedSize = new Size( (int) ( maxHeight * picRatio ), (int) maxHeight );
             }
             else
             {
-                adaptedSize = new Size(originalPicture.Width, originalPicture.Height);
+                adaptedSize = new Size( originalPicture.Width, originalPicture.Height );
             }
             //the ratio original size and adapted size (as average of widht and height ratio)
-            scaleFactor = ((float)originalPicture.Size.Width / (float)adaptedSize.Width +
-                            (float)originalPicture.Size.Height / (float)adaptedSize.Height) / 2.0f;
-            AdaptedPicture = new Bitmap(originalPicture, adaptedSize);
+            scaleFactor = ( (float) originalPicture.Size.Width / (float) adaptedSize.Width +
+                            (float) originalPicture.Size.Height / (float) adaptedSize.Height ) / 2.0f;
+            AdaptedPicture = new Bitmap( originalPicture, adaptedSize );
         }
 
         /// <summary>
         /// Inits the border values.
         /// </summary>
-        private void initBorderValues()
+        private void initBorderValues( )
         {
             up = distanceToImage / 2;// -mLineStrength;
             down = Size.Height - distanceToImage / 2;// -mLineStrength;
@@ -1054,66 +1080,66 @@ namespace AForge.Controls
         /// Sets the transparent area behind a slider.
         /// These areas represent the cut offed image areas.
         /// </summary>
-        private void setSlidersSpace()
+        private void setSlidersSpace( )
         {
-            slidersWaste[(byte)Sliders.Left] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
-                                new Rectangle(  left,
+            slidersWaste[(byte) Slider.Left] = ( new GraphicRectangle(
+                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
+                                new Rectangle( left,
                                                 up,
-                                                sliders[(byte)Sliders.Left].Start.X - left - (lineStrength-1),
-                                                down - up)));
+                                                sliders[(byte) Slider.Left].Start.X - left - ( lineStrength - 1 ),
+                                                down - up ) ) );
 
-            slidersWaste[(byte)Sliders.Right] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
-                                new Rectangle(  sliders[(byte)Sliders.Right].Start.X + (lineStrength - 1),
+            slidersWaste[(byte) Slider.Right] = ( new GraphicRectangle(
+                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
+                                new Rectangle( sliders[(byte) Slider.Right].Start.X + ( lineStrength - 1 ),
                                                 up,
-                                                right - sliders[(byte)Sliders.Right].Start.X,
-                                                down - up)));
+                                                right - sliders[(byte) Slider.Right].Start.X,
+                                                down - up ) ) );
 
-            slidersWaste[(byte)Sliders.Up] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
-                                new Rectangle(  sliders[(byte)Sliders.Left].Start.X,
+            slidersWaste[(byte) Slider.Top] = ( new GraphicRectangle(
+                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
+                                new Rectangle( sliders[(byte) Slider.Left].Start.X,
                                                 up,
-                                                sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X + (lineStrength - 1),
-                                                sliders[(byte)Sliders.Up].Start.Y - up - (lineStrength - 1) )));
+                                                sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X + ( lineStrength - 1 ),
+                                                sliders[(byte) Slider.Top].Start.Y - up - ( lineStrength - 1 ) ) ) );
 
-            slidersWaste[(byte)Sliders.Down] = (new GraphicRectangle(
-                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
-                                new Rectangle(  sliders[(byte)Sliders.Left].Start.X,
-                                                sliders[(byte)Sliders.Down].Start.Y + (lineStrength - 1),
-                                                sliders[(byte)Sliders.Right].Start.X - sliders[(byte)Sliders.Left].Start.X + (lineStrength - 1),
-                                                down - sliders[(byte)Sliders.Down].Start.Y)));
+            slidersWaste[(byte) Slider.Bottom] = ( new GraphicRectangle(
+                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
+                                new Rectangle( sliders[(byte) Slider.Left].Start.X,
+                                                sliders[(byte) Slider.Bottom].Start.Y + ( lineStrength - 1 ),
+                                                sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X + ( lineStrength - 1 ),
+                                                down - sliders[(byte) Slider.Bottom].Start.Y ) ) );
         }
 
         /// <summary>
         /// Inits the sliders with its original positions and the slider color.
         /// Is called only one time in the init()-fct.
         /// </summary>
-        private void initSliders()
+        private void initSliders( )
         {
-            sliders[(byte)Sliders.Left] = (new GraphicLine(
-                                new Pen(colorSliders, lineStrength),
-                                new Point(left, distanceToImage / 2),
-                                new Point(left, Size.Height - distanceToImage / 2 - 1),
-                                Course.Vertical));
+            sliders[(byte) Slider.Left] = ( new GraphicLine(
+                                new Pen( colorSliders, lineStrength ),
+                                new Point( left, distanceToImage / 2 ),
+                                new Point( left, Size.Height - distanceToImage / 2 - 1 ),
+                                Course.Vertical ) );
 
-            sliders[(byte)Sliders.Right] = (new GraphicLine(
-                                new Pen(colorSliders, lineStrength),
-                                new Point(right, distanceToImage / 2),
-                                new Point(right, Size.Height - distanceToImage / 2 - 1),
-                                Course.Vertical));
+            sliders[(byte) Slider.Right] = ( new GraphicLine(
+                                new Pen( colorSliders, lineStrength ),
+                                new Point( right, distanceToImage / 2 ),
+                                new Point( right, Size.Height - distanceToImage / 2 - 1 ),
+                                Course.Vertical ) );
 
-            sliders[(byte)Sliders.Up] = (new GraphicLine(
-                                new Pen(colorSliders, lineStrength),
-                                new Point(distanceToImage / 2, up),
-                                new Point(Size.Width - distanceToImage / 2 - 1, up),
-                                Course.Horicontal));
+            sliders[(byte) Slider.Top] = ( new GraphicLine(
+                                new Pen( colorSliders, lineStrength ),
+                                new Point( distanceToImage / 2, up ),
+                                new Point( Size.Width - distanceToImage / 2 - 1, up ),
+                                Course.Horicontal ) );
 
-            sliders[(byte)Sliders.Down] = (new GraphicLine(
-                                new Pen(colorSliders, lineStrength),
-                                new Point(distanceToImage / 2, down),
-                                new Point(Size.Width - distanceToImage / 2 - 1, down),
-                                Course.Horicontal));
+            sliders[(byte) Slider.Bottom] = ( new GraphicLine(
+                                new Pen( colorSliders, lineStrength ),
+                                new Point( distanceToImage / 2, down ),
+                                new Point( Size.Width - distanceToImage / 2 - 1, down ),
+                                Course.Horicontal ) );
         }
 
         /// <summary>
@@ -1126,82 +1152,82 @@ namespace AForge.Controls
         /// </remarks>
         /// <param name="x">X-coord of mouse</param>
         /// <param name="y">Y-coord of mouse</param>
-        private void checkSlidersExceedsBorder(int x, int y)
+        private void checkSlidersExceedsBorder( int x, int y )
         {
             bool choosed1 = false;
             bool choosed2 = false;
-            if (x < left)
+            if ( x < left )
             {
-                if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Left)
+                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Left )
                     choosed1 = true;
-                else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Left)
+                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Left )
                     choosed2 = true;
-                sliders[(byte)Sliders.Left] = (new GraphicLine(
-                                    new Pen(colorRolloverSlider, lineStrength),
-                                    new Point(left, distanceToImage / 2),
-                                    new Point(left, Size.Height - distanceToImage / 2 - 1),
-                                    Course.Vertical));
-                if (choosed1)
-                    choosedSliders[0] = sliders[(byte)Sliders.Left];
-                else if (choosed2)
-                    choosedSliders[1] = sliders[(byte)Sliders.Left];
-            }
-
-             choosed1 = false;
-             choosed2 = false;
-             if (x > right)
-             {
-                 if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Right)
-                     choosed1 = true;
-                 else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Right)
-                     choosed2 = true;
-                 sliders[(byte)Sliders.Right] = (new GraphicLine(
-                                     new Pen(colorRolloverSlider, lineStrength),
-                                     new Point(right, distanceToImage / 2),
-                                     new Point(right, Size.Height - distanceToImage / 2 - 1),
-                                     Course.Vertical));
-                 if (choosed1)
-                     choosedSliders[0] = sliders[(byte)Sliders.Right];
-                 else if (choosed2)
-                     choosedSliders[1] = sliders[(byte)Sliders.Right];
-             }
-
-            choosed1 = false;
-            choosed2 = false;
-            if (y < up)
-             {
-                 if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Up)
-                     choosed1 = true;
-                 else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Up)
-                     choosed2 = true;
-                sliders[(byte)Sliders.Up] = (new GraphicLine(
-                                    new Pen(colorRolloverSlider, lineStrength),
-                                    new Point(distanceToImage / 2, up),
-                                    new Point(Size.Width - distanceToImage / 2 - 1, up),
-                                    Course.Horicontal));
-                if (choosed1)
-                    choosedSliders[0] = sliders[(byte)Sliders.Up];
-                else if (choosed2)
-                    choosedSliders[1] = sliders[(byte)Sliders.Up];
+                sliders[(byte) Slider.Left] = ( new GraphicLine(
+                                    new Pen( colorRolloverSlider, lineStrength ),
+                                    new Point( left, distanceToImage / 2 ),
+                                    new Point( left, Size.Height - distanceToImage / 2 - 1 ),
+                                    Course.Vertical ) );
+                if ( choosed1 )
+                    choosedSliders[0] = sliders[(byte) Slider.Left];
+                else if ( choosed2 )
+                    choosedSliders[1] = sliders[(byte) Slider.Left];
             }
 
             choosed1 = false;
             choosed2 = false;
-            if (y > down)
-             {
-                 if (getSliderIndex(choosedSliders[0], sliders) == (int)Sliders.Down)
-                     choosed1 = true;
-                 else if (getSliderIndex(choosedSliders[1], sliders) == (int)Sliders.Down)
-                     choosed2 = true;
-                sliders[(byte)Sliders.Down] = (new GraphicLine(
-                                    new Pen(colorRolloverSlider, lineStrength),
-                                    new Point(distanceToImage / 2, down),
-                                    new Point(Size.Width - distanceToImage / 2 - 1, down),
-                                    Course.Horicontal));
-                if (choosed1)
-                    choosedSliders[0] = sliders[(byte)Sliders.Down];
-                else if (choosed2)
-                    choosedSliders[1] = sliders[(byte)Sliders.Down];
+            if ( x > right )
+            {
+                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Right )
+                    choosed1 = true;
+                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Right )
+                    choosed2 = true;
+                sliders[(byte) Slider.Right] = ( new GraphicLine(
+                                    new Pen( colorRolloverSlider, lineStrength ),
+                                    new Point( right, distanceToImage / 2 ),
+                                    new Point( right, Size.Height - distanceToImage / 2 - 1 ),
+                                    Course.Vertical ) );
+                if ( choosed1 )
+                    choosedSliders[0] = sliders[(byte) Slider.Right];
+                else if ( choosed2 )
+                    choosedSliders[1] = sliders[(byte) Slider.Right];
+            }
+
+            choosed1 = false;
+            choosed2 = false;
+            if ( y < up )
+            {
+                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Top )
+                    choosed1 = true;
+                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Top )
+                    choosed2 = true;
+                sliders[(byte) Slider.Top] = ( new GraphicLine(
+                                    new Pen( colorRolloverSlider, lineStrength ),
+                                    new Point( distanceToImage / 2, up ),
+                                    new Point( Size.Width - distanceToImage / 2 - 1, up ),
+                                    Course.Horicontal ) );
+                if ( choosed1 )
+                    choosedSliders[0] = sliders[(byte) Slider.Top];
+                else if ( choosed2 )
+                    choosedSliders[1] = sliders[(byte) Slider.Top];
+            }
+
+            choosed1 = false;
+            choosed2 = false;
+            if ( y > down )
+            {
+                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Bottom )
+                    choosed1 = true;
+                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Bottom )
+                    choosed2 = true;
+                sliders[(byte) Slider.Bottom] = ( new GraphicLine(
+                                    new Pen( colorRolloverSlider, lineStrength ),
+                                    new Point( distanceToImage / 2, down ),
+                                    new Point( Size.Width - distanceToImage / 2 - 1, down ),
+                                    Course.Horicontal ) );
+                if ( choosed1 )
+                    choosedSliders[0] = sliders[(byte) Slider.Bottom];
+                else if ( choosed2 )
+                    choosedSliders[1] = sliders[(byte) Slider.Bottom];
             }
         }
 
@@ -1212,12 +1238,12 @@ namespace AForge.Controls
         /// </summary>
         /// <param name="x">X-coord of mouse</param>
         /// <param name="y">Y-coord of mouse</param>
-        private void setMoveDisplayWindowCursor(int x, int y)
+        private void setMoveDisplayWindowCursor( int x, int y )
         {
-            if (sliders[(byte)Sliders.Down].Start.Y > y &&
-                sliders[(byte)Sliders.Up].Start.Y < y &&
-                sliders[(byte)Sliders.Left].Start.X < x &&
-                sliders[(byte)Sliders.Right].Start.X > x)
+            if ( sliders[(byte) Slider.Bottom].Start.Y > y &&
+                sliders[(byte) Slider.Top].Start.Y < y &&
+                sliders[(byte) Slider.Left].Start.X < x &&
+                sliders[(byte) Slider.Right].Start.X > x )
                 this.Cursor = cursorMoveDisplayWindow;
 
             else
@@ -1227,7 +1253,7 @@ namespace AForge.Controls
         /// <summary>
         /// Sets the cursor icon which represents a cursor, that rollover a slider.
         /// </summary>
-        private void setRollOverCursor()
+        private void setRollOverCursor( )
         {
             this.Cursor = cursorRolloverSlider;
         }
@@ -1237,29 +1263,29 @@ namespace AForge.Controls
         /// </summary>
         /// <param name="x">X-coord of mouse</param>
         /// <param name="y">Y-coord of mouse</param>
-        private void moveDisplayWindow(int x, int y)
+        private void moveDisplayWindow( int x, int y )
         {
-            if ((sliders[(byte)Sliders.Down].Start.Y < down || y < lastMouseLocation.Y) &&
-                (sliders[(byte)Sliders.Up].Start.Y > up || y > lastMouseLocation.Y))
+            if ( ( sliders[(byte) Slider.Bottom].Start.Y < down || y < lastMouseLocation.Y ) &&
+                ( sliders[(byte) Slider.Top].Start.Y > up || y > lastMouseLocation.Y ) )
             {
-                movingDirectly(sliders[(byte)Sliders.Down], 0, y - lastMouseLocation.Y, true);
-                movingDirectly(sliders[(byte)Sliders.Up], 0, y - lastMouseLocation.Y, true);
+                movingDirectly( sliders[(byte) Slider.Bottom], 0, y - lastMouseLocation.Y, true );
+                movingDirectly( sliders[(byte) Slider.Top], 0, y - lastMouseLocation.Y, true );
             }
-            if ((sliders[(byte)Sliders.Left].Start.X > left || x > lastMouseLocation.X) &&
-                (sliders[(byte)Sliders.Right].Start.X < right || x < lastMouseLocation.X))
+            if ( ( sliders[(byte) Slider.Left].Start.X > left || x > lastMouseLocation.X ) &&
+                ( sliders[(byte) Slider.Right].Start.X < right || x < lastMouseLocation.X ) )
             {
-                movingDirectly(sliders[(byte)Sliders.Left], x - lastMouseLocation.X, 0, true);
-                movingDirectly(sliders[(byte)Sliders.Right], x - lastMouseLocation.X, 0, true);
+                movingDirectly( sliders[(byte) Slider.Left], x - lastMouseLocation.X, 0, true );
+                movingDirectly( sliders[(byte) Slider.Right], x - lastMouseLocation.X, 0, true );
             }
         }
 
         /// <summary>
         /// Deletes the choosed sliders.
         /// </summary>
-        private void resetChoosedSliders()
+        private void resetChoosedSliders( )
         {
             //Draw all Sliders black
-            for (byte i = 0; i < 4; i++)
+            for ( byte i = 0; i < 4; i++ )
                 sliders[i].ColorOfPen = colorSliders;
             //Erase choosed Sliders
             choosedSliders[0] = null;
@@ -1273,13 +1299,13 @@ namespace AForge.Controls
         /// <returns>
         /// 	<c>true</c> if [is rollovered any slider] [the specified position]; otherwise, <c>false</c>.
         /// </returns>
-        private bool isRolloveredAnySlider(Point position)
+        private bool isRolloveredAnySlider( Point position )
         {
             bool choosed = false;
-            if (!(choosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], position)))
-                if (!(choosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], position)))
-                    if (!(choosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], position)))
-                        choosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], position);
+            if ( !( choosed = isRolloveredVerticalSlider( sliders[(byte) Slider.Left], position ) ) )
+                if ( !( choosed = isRolloveredVerticalSlider( sliders[(byte) Slider.Right], position ) ) )
+                    if ( !( choosed = isRolloveredHoricontalSlider( sliders[(byte) Slider.Top], position ) ) )
+                        choosed = isRolloveredHoricontalSlider( sliders[(byte) Slider.Bottom], position );
 
             return choosed;
         }
@@ -1291,26 +1317,26 @@ namespace AForge.Controls
         /// <param name="verticalSlider">The vertical slider.</param>
         /// <param name="location">The location.</param>
         /// <returns>true - if it is a rollovered vertical slider.</returns>
-        private bool isRolloveredVerticalSlider(GraphicObject verticalSlider, Point location)
+        private bool isRolloveredVerticalSlider( GraphicObject verticalSlider, Point location )
         {
-            if (verticalSlider.Hit(location))
+            if ( verticalSlider.Hit( location ) )
             {
-                resetChoosedSliders();
+                resetChoosedSliders( );
                 verticalSlider.ColorOfPen = colorRolloverSlider;
                 choosedSliders[0] = verticalSlider;
-                if (Math.Abs(sliders[(byte)Sliders.Up].Start.Y - location.Y) <= neighbourTolerance)
+                if ( Math.Abs( sliders[(byte) Slider.Top].Start.Y - location.Y ) <= neighbourTolerance )
                 {
-                    sliders[(byte)Sliders.Up].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte)Sliders.Up];
-                    setRollOverCursor();
+                    sliders[(byte) Slider.Top].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte) Slider.Top];
+                    setRollOverCursor( );
                     return true;
                 }
-                if (Math.Abs(sliders[(byte)Sliders.Down].Start.Y - location.Y) <= neighbourTolerance)
+                if ( Math.Abs( sliders[(byte) Slider.Bottom].Start.Y - location.Y ) <= neighbourTolerance )
                 {
-                    sliders[(byte)Sliders.Down].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte)Sliders.Down];
+                    sliders[(byte) Slider.Bottom].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte) Slider.Bottom];
                 }
-                setRollOverCursor();
+                setRollOverCursor( );
                 return true;
             }
             return false;
@@ -1323,26 +1349,26 @@ namespace AForge.Controls
         /// <param name="horizontalSlider">The horizontal slider.</param>
         /// <param name="location">The location.</param>
         /// <returns>true - if it is a rollovered horizontal slider.</returns>
-        private bool isRolloveredHoricontalSlider(GraphicObject horizontalSlider, Point location)
+        private bool isRolloveredHoricontalSlider( GraphicObject horizontalSlider, Point location )
         {
-            if (horizontalSlider.Hit(location))
+            if ( horizontalSlider.Hit( location ) )
             {
-                resetChoosedSliders();
+                resetChoosedSliders( );
                 horizontalSlider.ColorOfPen = colorRolloverSlider;
                 choosedSliders[0] = horizontalSlider;
-                if (Math.Abs(sliders[(byte)Sliders.Left].Start.X - location.X) <= neighbourTolerance)
+                if ( Math.Abs( sliders[(byte) Slider.Left].Start.X - location.X ) <= neighbourTolerance )
                 {
-                    sliders[(byte)Sliders.Left].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte)Sliders.Left];
-                    setRollOverCursor();
+                    sliders[(byte) Slider.Left].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte) Slider.Left];
+                    setRollOverCursor( );
                     return true;
                 }
-                if (Math.Abs(sliders[(byte)Sliders.Right].Start.X - location.X) <= neighbourTolerance)
+                if ( Math.Abs( sliders[(byte) Slider.Right].Start.X - location.X ) <= neighbourTolerance )
                 {
-                    sliders[(byte)Sliders.Right].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte)Sliders.Right];
+                    sliders[(byte) Slider.Right].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte) Slider.Right];
                 }
-                setRollOverCursor();
+                setRollOverCursor( );
                 return true;
             }
             return false;
@@ -1352,28 +1378,28 @@ namespace AForge.Controls
         /// Fires the <see cref="E:System.Windows.Forms.Control.Paint"/>-Event.
         /// </summary>
         /// <param name="e">An instance of <see cref="T:System.Windows.Forms.PaintEventArgs"/>.</param>
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint( PaintEventArgs e )
         {
-            if (!isAlreadyInit)
+            if ( !isAlreadyInit )
             {
-                MessageBox.Show("You have to call the 'init()'-function before using the ImageCuttingPanel.");
-                Application.Exit();
+                MessageBox.Show( "You have to call the 'init()'-function before using the ImageCuttingPanel." );
+                Application.Exit( );
                 return;
             }
-            base.OnPaint(e);
+            base.OnPaint( e );
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             // Only draw new the area of clip, objects outside of clip will be cutted.
-            Region clip = new Region(canvasRect);
-            clip.Intersect(e.Graphics.Clip);
+            Region clip = new Region( canvasRect );
+            clip.Intersect( e.Graphics.Clip );
             e.Graphics.Clip = clip;
             //e.Graphics.Clear(Color.White);
-            foreach (GraphicObject go in sliders)
+            foreach ( GraphicObject go in sliders )
             {
-                go.Draw(e.Graphics);
+                go.Draw( e.Graphics );
             }
-            foreach (GraphicRectangle go in slidersWaste)
+            foreach ( GraphicRectangle go in slidersWaste )
             {
-                go.Fill(e.Graphics);
+                go.Fill( e.Graphics );
             }
         }
 
@@ -1381,29 +1407,29 @@ namespace AForge.Controls
         /// Fires the <see cref="E:System.Windows.Forms.Control.MouseDown"/>-Event.
         /// </summary>
         /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown( MouseEventArgs e )
         {
-            base.OnMouseDown(e);
+            base.OnMouseDown( e );
             isMouseDown = true;
             lastMouseLocation = e.Location;
-            if (!isRolloveredAnySlider(e.Location))
-                resetChoosedSliders();
+            if ( !isRolloveredAnySlider( e.Location ) )
+                resetChoosedSliders( );
         }
 
         /// <summary>
         /// Fires the <see cref="E:System.Windows.Forms.Control.MouseMove"/>-Event.
         /// </summary>
         /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove( MouseEventArgs e )
         {
-            base.OnMouseMove(e);            
+            base.OnMouseMove( e );
 
-            if (isMouseDown)
+            if ( isMouseDown )
             {
-                if (this.Cursor == cursorMoveDisplayWindow && !isSliderChoosed)
+                if ( this.Cursor == cursorMoveDisplayWindow && !isSliderChoosed )
                 {
-                    resetChoosedSliders();
-                    moveDisplayWindow(e.X, e.Y);
+                    resetChoosedSliders( );
+                    moveDisplayWindow( e.X, e.Y );
                 }
                 else
                 {
@@ -1413,34 +1439,34 @@ namespace AForge.Controls
                     int number = choosedSliders[1] != null ? 2 : choosedSliders[0] != null ? 1 : 0;
                     int mouseX = e.X - lastMouseLocation.X;
                     int mouseY = e.Y - lastMouseLocation.Y;
-                    for (byte i = 0; i < number; i++)
-                        movingDirectly(choosedSliders[i], mouseX, mouseY, true);
+                    for ( byte i = 0; i < number; i++ )
+                        movingDirectly( choosedSliders[i], mouseX, mouseY, true );
                 }
                 lastMouseLocation = e.Location;
             }
             else
             {
-                setMoveDisplayWindowCursor(e.X, e.Y);
+                setMoveDisplayWindowCursor( e.X, e.Y );
                 // the flag 'isSliderChoosed' will set FALSE
                 isSliderChoosed = false;
                 // Check all Sliders for cursor-rollovering, if a Slider is rollovered,
                 // set the flag 'mIsSliderChoosed' TRUE
-                isSliderChoosed = isRolloveredAnySlider(e.Location);
+                isSliderChoosed = isRolloveredAnySlider( e.Location );
                 //if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], e.Location)))
                 //    if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], e.Location)))
                 //        if (!(isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], e.Location)))
                 //            isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], e.Location);
-                this.Invalidate();
-            }            
+                this.Invalidate( );
+            }
         }
 
         /// <summary>
         /// Fires the <see cref="E:System.Windows.Forms.Control.MouseUp"/>-Event.
         /// </summary>
         /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp( MouseEventArgs e )
         {
-            base.OnMouseUp(e);
+            base.OnMouseUp( e );
             isMouseDown = false;
         }
 
@@ -1448,13 +1474,13 @@ namespace AForge.Controls
         /// Fires the <see cref="E:System.Windows.Forms.Control.SizeChanged"/>-Event.
         /// </summary>
         /// <param name="e">An instance of <see cref="T:System.EventArgs"/>.</param>
-        protected override void OnSizeChanged(EventArgs e)
+        protected override void OnSizeChanged( EventArgs e )
         {
-            base.OnSizeChanged(e);
+            base.OnSizeChanged( e );
             // Wenn sich die Größe des Fensters ändert, wird die Größe der Zeichenfläche angepasst.
-            canvasRect = new Rectangle(new Point(0, 0),
-                new Size(this.ClientSize.Width, this.ClientSize.Height));
-            this.Invalidate();
+            canvasRect = new Rectangle( new Point( 0, 0 ),
+                new Size( this.ClientSize.Width, this.ClientSize.Height ) );
+            this.Invalidate( );
         }
 
         /// <summary>
@@ -1463,17 +1489,17 @@ namespace AForge.Controls
         /// <param name="choosedSlider">The choosed slider.</param>
         /// <param name="allSliders">All sliders.</param>
         /// <returns></returns>
-        private static int getSliderIndex(GraphicObject choosedSlider, 
-                                          GraphicObject[] allSliders)
+        private static int getSliderIndex( GraphicObject choosedSlider,
+                                          GraphicObject[] allSliders )
         {
-            if (choosedSlider == allSliders[(byte)Sliders.Left])
-                return (int)Sliders.Left;
-            else if (choosedSlider == allSliders[(byte)Sliders.Right])
-                return (int)Sliders.Right;
-            if (choosedSlider == allSliders[(byte)Sliders.Up])
-                return (int)Sliders.Up;
+            if ( choosedSlider == allSliders[(byte) Slider.Left] )
+                return (int) Slider.Left;
+            else if ( choosedSlider == allSliders[(byte) Slider.Right] )
+                return (int) Slider.Right;
+            if ( choosedSlider == allSliders[(byte) Slider.Top] )
+                return (int) Slider.Top;
             else //if (pChoosedSlider == pAllSliders[(byte)SLIDERS.DOWN])
-                return (int)Sliders.Down;
+                return (int) Slider.Bottom;
         }
     }
 }
