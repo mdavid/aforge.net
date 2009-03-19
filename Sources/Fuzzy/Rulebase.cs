@@ -36,7 +36,7 @@ namespace AForge.Fuzzy
         /// Adds a fuzzy rule to the database. 
         /// </summary>
         /// 
-        /// <param name="label">A linguistic variable to add.</param>
+        /// <param name="rule">A fuzzy <see cref="Rule"/> to add to the database.</param>
         /// 
         /// <exception cref="NullReferenceException">The fuzzy rule was not initialized.</exception>
         /// <exception cref="ArgumentException">The fuzzy rule name already exists in the rulebase.</exception>
@@ -64,7 +64,7 @@ namespace AForge.Fuzzy
         /// Returns an existing fuzzy rule from the rulebase.
         /// </summary>
         /// 
-        /// <param name="VariableName">Name of the fuzzy rule to retrieve.</param>
+        /// <param name="ruleName">Name of the fuzzy <see cref="Rule"/> to retrieve.</param>
         /// 
         /// <returns>Reference to named <see cref="Rule"/>.</returns>
         /// 
