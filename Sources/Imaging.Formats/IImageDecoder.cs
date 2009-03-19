@@ -17,10 +17,11 @@ namespace AForge.Imaging.Formats
     /// implemented by image decoders for different file formats.
     /// </summary>
     /// 
-    /// <remarks><para>The interface specifies set of methods, which are sutable not
+    /// <remarks><para>The interface specifies set of methods, which are suitable not
     /// only for simple one-frame image formats. The interface also defines methods
     /// to work with image formats designed to store multiple frames and image formats
-    /// which provide different type of image description (like aquasion paramters, etc).
+    /// which provide different type of image description (like acquisition
+    /// parameters, etc).
     /// </para></remarks>
     /// 
     public interface IImageDecoder
