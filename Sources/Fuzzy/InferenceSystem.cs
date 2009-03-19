@@ -21,6 +21,10 @@ namespace AForge.Fuzzy
         private Rulebase rulebase;
         // The defuzzifier method choosen 
         private IDefuzzifier defuzzifier;
+        // Norm operator used in rules and deffuzification
+        private INorm normOperator;
+        // CoNorm operator used in rules
+        private ICoNorm conormOperator;
 
         /// <summary>
         /// Initializes a new Fuzzy <see cref="InferenceSystem"/>.
@@ -31,10 +35,29 @@ namespace AForge.Fuzzy
         /// <param name="defuzzifier">A defuzzyfier method used to evaluate the numeric uotput of the system.</param>
         /// 
         public InferenceSystem( Database database, IDefuzzifier defuzzifier )
+            : this(database, defuzzifier, new MinimumNorm(), new MaximumCoNorm())
         {
-            this.database    = database;
-            this.rulebase    = new Rulebase( );
-            this.defuzzifier = defuzzifier;
+        }
+
+        /// <summary>
+        /// Initializes a new Fuzzy <see cref="InferenceSystem"/>.
+        /// </summary>
+        /// 
+        /// <param name="database">A fuzzy <see cref="Database"/> containing the system linguistic variables.</param>
+        /// 
+        /// <param name="defuzzifier">A defuzzyfier method used to evaluate the numeric uotput of the system.</param>
+        /// 
+        /// <param name="defuzzifier">A <see cref="INorm"/> operator used to evaluate the norms in the <see cref="InferenceSystem"/>.</param>
+        /// 
+        /// <param name="defuzzifier">A <see cref="ICoNorm"/> operator used to evaluate the conorms in the <see cref="InferenceSystem"/>.</param>
+        /// 
+        public InferenceSystem( Database database, IDefuzzifier defuzzifier, INorm normOperator, ICoNorm conormOperator )
+        {
+            this.database       = database;
+            this.defuzzifier    = defuzzifier;
+            this.normOperator   = normOperator;
+            this.conormOperator = conormOperator;
+            this.rulebase       = new Rulebase( );
         }
 
         /// <summary>
@@ -49,7 +72,7 @@ namespace AForge.Fuzzy
         /// <returns>The new <see cref="Rule"/> reference. </returns>
         public Rule NewRule( string name, string rule )
         {
-            Rule r = new Rule( database, name, rule );
+            Rule r = new Rule( database, name, rule, normOperator, conormOperator );
             this.rulebase.AddRule( r );
             return r;
         }
@@ -95,12 +118,13 @@ namespace AForge.Fuzzy
                 {
                     string labelName = r.Output.Label.Name;
                     double firingStrength = r.EvaluateFiringStrength();
-                    fuzzyOutput.AddOutput( labelName, firingStrength );
+                    if ( firingStrength > 0)
+                        fuzzyOutput.AddOutput( labelName, firingStrength );
                 }
             }
 
             // Call the defuzzification on fuzzy output 
-            double res = defuzzifier.Defuzzify( fuzzyOutput );
+            double res = defuzzifier.Defuzzify( fuzzyOutput, normOperator );
             return res;
         }
 

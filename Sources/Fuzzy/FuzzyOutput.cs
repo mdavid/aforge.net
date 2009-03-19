@@ -81,6 +81,13 @@ namespace AForge.Fuzzy
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="LinguisticVariable"/> acting as a Fuzzy Inference System Output.
+        /// </summary>
+        public LinguisticVariable OutputVariable
+        {
+            get { return outputVar; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FuzzyOutput"/> class.
