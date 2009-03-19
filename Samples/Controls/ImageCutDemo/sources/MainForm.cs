@@ -59,7 +59,7 @@ namespace ImageCutDemo
             float hmax = Height - 80;
 
             imageCut = new ImageCut(finalImage, wmax, hmax);
-            imageCut.OnSliderMovedEvent += new OnSliderMovedEventHandler(OnSliderMoved);
+            imageCut.OnSliderMoved += new OnSliderMovedEventHandler(OnSliderMoved);
             #region Here you could set some properties, if you like.
             //imageCut.LineStrength = 2;     
             //imageCut.BackColor = Color.Blue;                     
@@ -73,7 +73,7 @@ namespace ImageCutDemo
             //imageCut.CursorRolloverSlider = Cursors.Arrow;
             //... (take a look at the ImageCut control, there are further properties)
             #endregion
-            imageCut.init();
+            imageCut.Initialize();
             
             int xLocation = Width - optionsPanel.Width;// -SpaceAroundWorkingPanel;
             xLocation = (xLocation - imageCut.Width) / 2;
@@ -155,8 +155,8 @@ namespace ImageCutDemo
         {
             leftNumericUpDown.Value = imageCut.LeftPosition;
             rightNumericUpDown.Value = imageCut.OriginalWidth - imageCut.RightPosition;
-            upNumericUpDown.Value = imageCut.UpPosition;
-            downNumericUpDown.Value = imageCut.OriginalHeight - imageCut.DownPosition;            
+            upNumericUpDown.Value = imageCut.TopPosition;
+            downNumericUpDown.Value = imageCut.OriginalHeight - imageCut.BottomPosition;            
 
             newDimensionLabel.Text = imageCut.ActualWidth.ToString() + 
                                        " x " +
@@ -232,7 +232,7 @@ namespace ImageCutDemo
                 imageCut.Ratio = tNumber2 / tNumber1;
 
             //Trick to get the ratio handling
-            imageCut.moveSlider(0, Sliders.Left);
+            imageCut.moveSlider(0, Slider.Left);
         }
 
         private void LandscapeFormatRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -244,7 +244,7 @@ namespace ImageCutDemo
         private void RatioButton_Click(object sender, EventArgs e)
         {
             //Trick to get the ratio handling 
-            imageCut.moveSlider(0, Sliders.Left);
+            imageCut.moveSlider(0, Slider.Left);
         }
 
         #region NumericUpDown Events
@@ -257,7 +257,7 @@ namespace ImageCutDemo
             if (imageCut.RightPosition - newValue < imageCut.MinSizeOfImage)
                 leftNumericUpDown.Value = imageCut.LeftPosition;
             else
-                imageCut.moveSlider(newValue - imageCut.LeftPosition, Sliders.Left);
+                imageCut.moveSlider(newValue - imageCut.LeftPosition, Slider.Left);
         }
 
         private void rightNumericUpDown_ValueChanged(object sender, EventArgs e)
@@ -271,7 +271,7 @@ namespace ImageCutDemo
                     imageCut.OriginalWidth - imageCut.RightPosition;
             else
                 imageCut.moveSlider((imageCut.OriginalWidth -
-                                      imageCut.RightPosition) - newValue, Sliders.Right);
+                                      imageCut.RightPosition) - newValue, Slider.Right);
         }
 
         private void upNumericUpDown_ValueChanged(object sender, EventArgs e)
@@ -279,10 +279,10 @@ namespace ImageCutDemo
             if (imageCut.Focused)
                 return;
             int newValue = (int)upNumericUpDown.Value;
-            if (imageCut.DownPosition - newValue < imageCut.MinSizeOfImage)
-                upNumericUpDown.Value = imageCut.UpPosition;
+            if (imageCut.BottomPosition - newValue < imageCut.MinSizeOfImage)
+                upNumericUpDown.Value = imageCut.TopPosition;
             else
-                imageCut.moveSlider(newValue - imageCut.UpPosition, Sliders.Up);
+                imageCut.moveSlider(newValue - imageCut.TopPosition, Slider.Top);
         }
 
         private void downNumericUpDown_ValueChanged(object sender, EventArgs e)
@@ -290,13 +290,13 @@ namespace ImageCutDemo
             if (imageCut.Focused)
                 return;
             int newValue = (int)downNumericUpDown.Value;
-            if (newValue + imageCut.UpPosition >
+            if (newValue + imageCut.TopPosition >
                 imageCut.OriginalHeight - imageCut.MinSizeOfImage)
                 downNumericUpDown.Value =
-                    imageCut.OriginalHeight - imageCut.DownPosition;
+                    imageCut.OriginalHeight - imageCut.BottomPosition;
             else
                 imageCut.moveSlider((imageCut.OriginalHeight -
-                                      imageCut.DownPosition) - newValue, Sliders.Down);
+                                      imageCut.BottomPosition) - newValue, Slider.Bottom);
         }
 
         private void leftNumericUpDown_KeyUp(object sender, KeyEventArgs e)
