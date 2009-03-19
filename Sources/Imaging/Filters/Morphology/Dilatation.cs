@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -25,8 +26,6 @@ namespace AForge.Imaging.Filters
     /// 
     /// <para>The filter accepts 8 and 16 bpp grayscale images and 24 and 48 bpp
     /// color images for processing.</para>
-    /// 
-    /// <para><note>Parallelism is used – the class uses <see cref="AForge.Parallel"/> class for paralleling computations on multiple CPUs/cores. </note></para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -144,8 +143,8 @@ namespace AForge.Imaging.Filters
                 {
                     // grayscale image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
                         byte* src = baseSrc + y * srcStride;
                         byte* dst = baseDst + y * dstStride;
@@ -197,14 +196,14 @@ namespace AForge.Imaging.Filters
                             // result pixel
                             *dst = max;
                         }
-                    } );
+                    }
                 }
                 else
                 {
                     // 24 bpp color image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
                         byte* src = baseSrc + y * srcStride;
                         byte* dst = baseDst + y * dstStride;
@@ -272,7 +271,7 @@ namespace AForge.Imaging.Filters
                             dst[RGB.G] = maxG;
                             dst[RGB.B] = maxB;
                         }
-                    } );
+                    }
                 }
             }
             else
@@ -294,8 +293,8 @@ namespace AForge.Imaging.Filters
                 {
                     // 16 bpp grayscale image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for( int y = startY; y < stopY; y++ )
                     {
                         ushort* src = baseSrc + y * srcStride;
                         ushort* dst = baseDst + y * dstStride;
@@ -347,14 +346,14 @@ namespace AForge.Imaging.Filters
                             // result pixel
                             *dst = max;
                         }
-                    } );
+                    }
                 }
                 else
                 {
                     // 48 bpp color image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for( int y = startY; y < stopY; y++ )
                     {
                         ushort* src = baseSrc + y * srcStride;
                         ushort* dst = baseDst + y * dstStride;
@@ -422,7 +421,7 @@ namespace AForge.Imaging.Filters
                             dst[RGB.G] = maxG;
                             dst[RGB.B] = maxB;
                         }
-                    } );
+                    }
                 }
             }
         }
