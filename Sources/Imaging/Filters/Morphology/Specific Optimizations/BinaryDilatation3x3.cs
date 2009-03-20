@@ -23,10 +23,14 @@ namespace AForge.Imaging.Filters
     /// images – it puts white pixel to the destination image in the case if there is at least
     /// one white neighbouring pixel in the source image.</para>
     /// 
+    /// <para>See <see cref="Dilatation"/> filter, which represents generic version of
+    /// dilatation filter supporting custom structuring elements and wider range of image formats.</para>
+    /// 
     /// <para>The filter accepts 8 bpp grayscale (binary) images for processing.</para>
     /// </remarks>
     /// 
     /// <seealso cref="Dilatation"/>
+    /// <seealso cref="Dilatation3x3"/>
     /// 
     public class BinaryDilatation3x3 : BaseUsingCopyPartialFilter
     {

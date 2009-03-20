@@ -25,6 +25,9 @@ namespace AForge.Imaging.Filters
     /// are not surrounded by specified amount of neighbors. It gives ability to remove noisy pixels
     /// (stand-alone pixels) or shrink objects.</para>
     /// 
+    /// <para>For processing image with 3x3 structuring element, there are different optimizations
+    /// available, like <see cref="Erosion3x3"/> and <see cref="BinaryErosion3x3"/>.</para>
+    /// 
     /// <para>The filter accepts 8 and 16 bpp grayscale images and 24 and 48 bpp
     /// color images for processing.</para>
     /// 
@@ -45,6 +48,8 @@ namespace AForge.Imaging.Filters
     /// <seealso cref="Dilatation"/>
     /// <seealso cref="Closing"/>
     /// <seealso cref="Opening"/>
+    /// <seealso cref="Erosion3x3"/>
+    /// <seealso cref="BinaryErosion3x3"/>
     /// 
     public class Erosion : BaseUsingCopyPartialFilter
     {
