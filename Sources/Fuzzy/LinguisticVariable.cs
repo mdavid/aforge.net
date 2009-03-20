@@ -1,10 +1,11 @@
 // AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 
@@ -73,6 +74,17 @@ namespace AForge.Fuzzy
         private double end;
         // the linguistic labels of the linguistic variable
         private Dictionary<string, FuzzySet> labels;
+        // the numeric input of this variable
+        private double numericInput;
+
+        /// <summary>
+        /// Numerical value of the input of this linguistic variable.
+        /// </summary>
+        public double NumericInput
+        {
+            get { return numericInput; }
+            set { numericInput = value; }
+        }
 
         /// <summary>
         /// Name of the linguistic variable.
@@ -103,7 +115,9 @@ namespace AForge.Fuzzy
         /// </summary>
         /// 
         /// <param name="name">Name of the linguistic variable.</param>
+        /// 
         /// <param name="start">Left limit of the valid variable range.</param>
+        /// 
         /// <param name="end">Right limit of the valid variable range.</param>
         /// 
         public LinguisticVariable( string name, double start, double end )
@@ -135,7 +149,7 @@ namespace AForge.Fuzzy
         public void AddLabel( FuzzySet label )
         {
             // checking for existing name
-            if ( labels.ContainsKey( label.Name ) )
+            if ( this.labels.ContainsKey( label.Name ) )
                 throw new ArgumentException( "The linguistic label name already exists in the linguistic variable." );
 
             // checking ranges
@@ -155,6 +169,21 @@ namespace AForge.Fuzzy
         public void ClearLabels( )
         {
             this.labels.Clear( );
+        }
+
+        /// <summary>
+        /// Returns an existing label from the linguistic variable.
+        /// </summary>
+        /// 
+        /// <param name="labelName">Name of the label to retrieve.</param>
+        /// 
+        /// <returns>Reference to named label (<see cref="FuzzySet"/>).</returns>
+        /// 
+        /// <exception cref="KeyNotFoundException">The label indicated was not found in the linguistic variable.</exception>
+        /// 
+        public FuzzySet GetLabel( string labelName )
+        {
+            return labels[labelName];
         }
 
         /// <summary>
