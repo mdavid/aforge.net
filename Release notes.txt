@@ -32,7 +32,7 @@ Version updates and fixes:
     
     
 * AForge.Math
-  - Complex class is extended with set of new methods providing wider range of
+  - Complex structure is extended with set of new methods providing wider range of
     operations with complex numbers.    
 
 
@@ -42,7 +42,7 @@ Version updates and fixes:
     information about filters - which formats are supported by image processing
     filter and which format will be generated for result image.
     
-  - Introduced support of unmanaged image - images, which are don't have relation
+  - Introduced support of unmanaged images - images, which are don't have relation
     with Bitmap and BitmapData classes from .NET. Unmanaged images are just pixel data
     in unmanaged memory.
     
@@ -87,7 +87,7 @@ Version updates and fixes:
     population in deferent threads for example and perform members' migration
     from time to time. See Population.Migrate() method.
      
-  - DoubleChromosome class is extended with more advanced crossover and mutation
+  - DoubleArrayChromosome class is extended with more advanced crossover and mutation
     operators (see docs for details).
 
 
