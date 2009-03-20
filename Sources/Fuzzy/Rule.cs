@@ -2,10 +2,10 @@
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2008-2009
+// Copyright ï¿½ Andrew Kirillov, 2008-2009
 // andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008-2009
+// Copyright ï¿½ Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 
@@ -239,7 +239,7 @@ namespace AForge.Fuzzy
                 throw new ArgumentException( "Missing the consequent (THEN) statement." );
 
             // building a list with all the expression (rule) string tokens
-            string spacedRule = upRule.Replace( "(", " ( " ).Replace( ")", " ) " );
+            string spacedRule = rule.Replace( "(", " ( " ).Replace( ")", " ) " );
             string [] tokensList = spacedRule.Split( ' ' );
 
             // stack to convert to RPN
@@ -254,14 +254,16 @@ namespace AForge.Fuzzy
             {
                 // removing spaces
                 string token = tokensList[i].Trim( );
+                // getting upper case
+                string upToken = token.ToUpper( );
 
                 // ignoring these tokens
-                if ( token == "" || token == "IF" ) continue;
+                if ( upToken == "" || upToken == "IF" ) continue;
 
                 // if the THEN is found, the rule is now on consequent
-                if ( token == "THEN" )
+                if ( upToken == "THEN" )
                 {
-                    lastToken = token;
+                    lastToken = upToken;
                     consequent = true;
                     continue;
                 }
@@ -269,8 +271,8 @@ namespace AForge.Fuzzy
                 // if we got a linguistic variable, an IS statement and a label is needed
                 if ( lastToken == "VAR" )
                 {
-                    if ( token == "IS" )
-                        lastToken = token;
+                    if ( upToken == "IS" )
+                        lastToken = upToken;
                     else
                         throw new ArgumentException( "An IS statement is expected after a linguistic variable." );
                 }
@@ -296,32 +298,32 @@ namespace AForge.Fuzzy
                 else
                 {
                     // openning new scope
-                    if ( token == "(" )
+                    if ( upToken == "(" )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
                             throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
                         // if its a (, just push it
-                        s.Push( token );
-                        lastToken = token;
+                        s.Push( upToken );
+                        lastToken = upToken;
                     }
                     // operators
-                    else if ( token == "AND" || token == "OR" )
+                    else if ( upToken == "AND" || upToken == "OR" )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
                             throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
                         
                         // pop all the higher priority operators until the stack is empty 
-                        while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( token ) ) )
+                        while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( upToken ) ) )
                             rpnTokenList.Add( s.Pop( ) );
 
                         // pushing the operator    
-                        s.Push( token );
-                        lastToken = token;
+                        s.Push( upToken );
+                        lastToken = upToken;
                     }
                     // closing the scope
-                    else if ( token == ")" )
+                    else if ( upToken == ")" )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
@@ -341,7 +343,7 @@ namespace AForge.Fuzzy
                         s.Pop( );
 
                         // saving last token...
-                        lastToken = token;
+                        lastToken = upToken;
                     }
                     // finally, the token is a variable
                     else
@@ -357,7 +359,6 @@ namespace AForge.Fuzzy
                             throw new ArgumentException( "Linguistic variable " + token + " was not found on the database." );
                         }
                     }
-
                 }
             }
 
