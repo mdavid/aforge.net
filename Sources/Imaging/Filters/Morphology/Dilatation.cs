@@ -24,6 +24,9 @@ namespace AForge.Imaging.Filters
     /// <para>The filter especially useful for binary image processing, where it allows to grow
     /// separate objects or join objects.</para>
     /// 
+    /// <para>For processing image with 3x3 structuring element, there are different optimizations
+    /// available, like <see cref="Dilatation3x3"/> and <see cref="BinaryDilatation3x3"/>.</para>
+    /// 
     /// <para>The filter accepts 8 and 16 bpp grayscale images and 24 and 48 bpp
     /// color images for processing.</para>
     /// 
@@ -44,6 +47,8 @@ namespace AForge.Imaging.Filters
     /// <seealso cref="Erosion"/>
     /// <seealso cref="Closing"/>
     /// <seealso cref="Opening"/>
+    /// <seealso cref="Dilatation3x3"/>
+    /// <seealso cref="BinaryDilatation3x3"/>
     /// 
     public class Dilatation : BaseUsingCopyPartialFilter
     {

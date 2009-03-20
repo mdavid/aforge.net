@@ -23,6 +23,9 @@ namespace AForge.Imaging.Filters
     /// images – it removes all white pixels, which are neighbouring with at least one blank pixel.
     /// </para>
     /// 
+    /// <para>See <see cref="Erosion"/> filter, which represents generic version of
+    /// erosion filter supporting custom structuring elements and wider range of image formats.</para>
+    /// 
     /// <para>The filter accepts 8 bpp grayscale (binary) images for processing.</para>
     /// </remarks>
     /// 
