@@ -2,10 +2,10 @@
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
-// Copyright � Andrew Kirillov, 2008-2009
+// Copyright © Andrew Kirillov, 2008-2009
 // andrew.kirillov@aforgenet.com
 //
-// Copyright � Fabio L. Caversan, 2008-2009
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 
