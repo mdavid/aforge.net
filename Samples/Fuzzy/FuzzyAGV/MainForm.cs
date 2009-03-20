@@ -57,6 +57,7 @@ namespace FuzzyAGV
         private System.ComponentModel.Container components = null;
         private GroupBox groupBox3;
         private Label label5;
+        private Button aboutButton;
         private System.Windows.Forms.CheckBox cbTrajeto;
         #endregion
 
@@ -136,6 +137,7 @@ namespace FuzzyAGV
             this.pbRobot = new System.Windows.Forms.PictureBox( );
             this.groupBox3 = new System.Windows.Forms.GroupBox( );
             this.label5 = new System.Windows.Forms.Label( );
+            this.aboutButton = new System.Windows.Forms.Button( );
             ( (System.ComponentModel.ISupportInitialize) ( this.pbTerrain ) ).BeginInit( );
             this.groupBox1.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
@@ -356,7 +358,7 @@ namespace FuzzyAGV
             this.groupBox3.Controls.Add( this.label5 );
             this.groupBox3.Location = new System.Drawing.Point( 8, 342 );
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size( 144, 166 );
+            this.groupBox3.Size = new System.Drawing.Size( 144, 119 );
             this.groupBox3.TabIndex = 27;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Hints:";
@@ -365,15 +367,27 @@ namespace FuzzyAGV
             // 
             this.label5.Location = new System.Drawing.Point( 8, 16 );
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size( 125, 146 );
+            this.label5.Size = new System.Drawing.Size( 125, 88 );
             this.label5.TabIndex = 10;
             this.label5.Text = "Left click the image to draw passages (white), right click the image to draw wall" +
-    "s (black).";
+                "s (black).";
+            // 
+            // aboutButton
+            // 
+            this.aboutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.aboutButton.Location = new System.Drawing.Point( 41, 473 );
+            this.aboutButton.Name = "aboutButton";
+            this.aboutButton.Size = new System.Drawing.Size( 75, 23 );
+            this.aboutButton.TabIndex = 28;
+            this.aboutButton.Text = "About";
+            this.aboutButton.UseVisualStyleBackColor = true;
+            this.aboutButton.Click += new System.EventHandler( this.aboutButton_Click );
             // 
             // MainForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
             this.ClientSize = new System.Drawing.Size( 664, 513 );
+            this.Controls.Add( this.aboutButton );
             this.Controls.Add( this.groupBox3 );
             this.Controls.Add( this.gbComandos );
             this.Controls.Add( this.groupBox2 );
@@ -382,6 +396,7 @@ namespace FuzzyAGV
             this.Controls.Add( this.pbTerrain );
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ( (System.Drawing.Icon) ( resources.GetObject( "$this.Icon" ) ) );
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Fuzzy Auto Guided Vehicle Sample";
@@ -744,6 +759,14 @@ namespace FuzzyAGV
                 thMovement.Interrupt( );
                 thMovement = null;
             }
+        }
+
+        // Show About dialog
+        private void aboutButton_Click( object sender, EventArgs e )
+        {
+            AboutForm form = new AboutForm( );
+
+            form.ShowDialog( );
         }
     }
 }
