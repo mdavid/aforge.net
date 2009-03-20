@@ -1,10 +1,11 @@
 // AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 namespace AForge.Fuzzy
@@ -16,7 +17,8 @@ namespace AForge.Fuzzy
     /// Minimum Norm, used to calculate the linguistic value of a AND operation. 
     /// </summary>
     /// 
-    /// <remarks><para>The minimum norm uses a minimum operator to compute the AND among two fuzzy memberships. </para>
+    /// <remarks><para>The minimum Norm uses a minimum operator to compute the AND
+    /// among two fuzzy memberships. </para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>

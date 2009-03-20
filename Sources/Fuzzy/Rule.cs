@@ -1,8 +1,9 @@
 // AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
 // Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
@@ -14,36 +15,44 @@ namespace AForge.Fuzzy
     using System.Collections.Generic;
 
     /// <summary>
-    /// This class represents a Fuzzy Rule, a linguistic expression representing some behavioral aspect of a Fuzzy Inference System. 
+    /// This class represents a Fuzzy Rule, a linguistic expression representing some behavioral
+    /// aspect of a Fuzzy Inference System. 
     /// </summary>
     /// 
     /// <remarks><para>
-    /// A Fuzzy Rule is a fuzzy linguistic instruction that can be executed by a fuzzy system. The format of the Fuzzy Rule is:
+    /// A Fuzzy Rule is a fuzzy linguistic instruction that can be executed by a fuzzy system.
+    /// The format of the Fuzzy Rule is:
     /// </para>
     /// 
     /// <para><b>IF <i>antecedent</i> THEN <i>consequent</i></b></para>
     /// 
-    /// <para>The antecedent is composed by a set of fuzzy clauses (<see cref="Clause"/>) connected by fuzzy operations, like <b>AND</b> or <b>OR</b>: </para>
+    /// <para>The antecedent is composed by a set of fuzzy clauses (see <see cref="Clause"/>) connected
+    /// by fuzzy operations, like <b>AND</b> or <b>OR</b>: </para>
     /// 
     /// <para><b>...<i>Clause1</i> AND (<i>Clause2</i> OR <i>Clause3</i>) ...</b></para>
     ///     
-    /// <para>The consequent is a single of fuzzy clauses (<see cref="Clause"/>). To perform the linguistic computing, 
-    /// the Rule evaluates the clauses and then apply the fuzzy operators. Once this is done a value representing the confidence
-    /// in the antecedent being true is obtained, and this is called firing strength of the Rule.</para>
+    /// <para>The consequent is a single of fuzzy clauses (<see cref="Clause"/>). To perform the
+    /// linguistic computing, the <see cref="Rule"/> evaluates the clauses and then applies the fuzzy
+    /// operators. Once this is done a value representing the confidence in the antecedent being
+    /// true is obtained, and this is called firing strength of the <see cref="Rule"/>.</para>
     /// 
-    /// <para>The firing strength is used to discover with how much confidence the consequent of a rule is true.</para>
+    /// <para>The firing strength is used to discover with how much confidence the consequent
+    /// of a rule is true.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create the linguistic labels (fuzzy sets) that compose the temperature 
-    /// TrapezoidalFunction function1 = new TrapezoidalFunction( 10, 15, TrapezoidalFunction.EdgeType.Right );
+    /// TrapezoidalFunction function1 = new TrapezoidalFunction(
+    ///     10, 15, TrapezoidalFunction.EdgeType.Right );
     /// FuzzySet fsCold = new FuzzySet( "Cold", function1 );
     /// TrapezoidalFunction function2 = new TrapezoidalFunction( 10, 15, 20, 25 );
     /// FuzzySet fsCool = new FuzzySet( "Cool", function2 );
     /// TrapezoidalFunction function3 = new TrapezoidalFunction( 20, 25, 30, 35 );
     /// FuzzySet fsWarm = new FuzzySet( "Warm", function3 );
-    /// TrapezoidalFunction function4 = new TrapezoidalFunction( 30, 35, TrapezoidalFunction.EdgeType.Left );
+    /// TrapezoidalFunction function4 = new TrapezoidalFunction(
+    ///     30, 35, TrapezoidalFunction.EdgeType.Left );
     /// FuzzySet fsHot = new FuzzySet( "Hot", function4 );
+    /// 
     /// // create a linguistic variable to represent steel temperature
     /// LinguisticVariable lvSteel = new LinguisticVariable( "Steel", 0, 80 );
     /// // adding labels to the variable
@@ -74,7 +83,6 @@ namespace AForge.Fuzzy
     /// lvSteel.NumericInput = 12;
     /// lvStove.NumericInput = 35;
     /// double result r1.EvaluateFiringStrength( );
-    /// 
     /// </code>    
     /// </remarks>
     /// 
@@ -98,6 +106,7 @@ namespace AForge.Fuzzy
         /// <summary>
         /// The name of the fuzzy rule.
         /// </summary>
+        /// 
         public string Name
         {
             get { return name; }
@@ -107,6 +116,7 @@ namespace AForge.Fuzzy
         /// <summary>
         /// The fuzzy <see cref="Clause"/> that represents the consequent of the <see cref="Rule"/>.
         /// </summary>
+        /// 
         public Clause Output
         {
             get { return output; }
@@ -117,18 +127,18 @@ namespace AForge.Fuzzy
         /// </summary>
         /// 
         /// <param name="fuzzyDatabase">A fuzzy <see cref="Database"/> containig the linguistic variables
-        /// (<see cref="LinguisticVariable"/>) that will be used in the Rule.</param>
+        /// (see <see cref="LinguisticVariable"/>) that will be used in the Rule.</param>
         /// 
-        /// <param name="name">Name of this Rule.</param>
+        /// <param name="name">Name of this <see cref="Rule"/>.</param>
         /// 
-        /// <param name="rule">A string representing the Rule. It must be a "IF..THEN" statement. For a more detailed 
-        /// description see <see cref="Rule"/> class.</param>
+        /// <param name="rule">A string representing the <see cref="Rule"/>. It must be a "IF..THEN" statement.
+        /// For a more detailed  description see <see cref="Rule"/> class.</param>
         /// 
-        /// <param name="normOperator">A class that implements a <see cref="INorm"/> interface to evaluate the AND 
-        /// operations of the Rule. </param>
+        /// <param name="normOperator">A class that implements a <see cref="INorm"/> interface to
+        /// evaluate the AND operations of the Rule. </param>
         /// 
-        /// <param name="coNormOperator">A class that implements a <see cref="ICoNorm"/> interface to evaluate the OR
-        /// operations of the Rule. </param>
+        /// <param name="coNormOperator">A class that implements a <see cref="ICoNorm"/> interface
+        /// to evaluate the OR operations of the Rule. </param>
         /// 
         public Rule( Database fuzzyDatabase, string name, string rule, INorm normOperator, ICoNorm coNormOperator )
         {
@@ -147,17 +157,17 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Rule"/> class using as Conorm the <see cref="MaximumCoNorm"/>
-        /// and as Norm the <see cref="MinimumNorm"/>
+        /// Initializes a new instance of the <see cref="Rule"/> class using as
+        /// CoNorm the <see cref="MaximumCoNorm"/> and as Norm the <see cref="MinimumNorm"/>.
         /// </summary>
         /// 
         /// <param name="fuzzyDatabase">A fuzzy <see cref="Database"/> containig the linguistic variables
-        /// (<see cref="LinguisticVariable"/>) that will be used in the Rule.</param>
+        /// (see <see cref="LinguisticVariable"/>) that will be used in the <see cref="Rule"/>.</param>
         /// 
-        /// <param name="name">Name of this Rule.</param>
+        /// <param name="name">Name of this <see cref="Rule"/>.</param>
         /// 
-        /// <param name="rule">A string representing the Rule. It must be a "IF..THEN" statement. For a more detailed 
-        /// description see <see cref="Rule"/> class.</param>
+        /// <param name="rule">A string representing the <see cref="Rule"/>. It must be a "IF..THEN"
+        /// statement. For a more detailed description see <see cref="Rule"/> class.</param>
         /// 
         public Rule( Database fuzzyDatabase, string name, string rule ) :
             this( fuzzyDatabase, name, rule, new MinimumNorm( ), new MaximumCoNorm( ) )
@@ -196,7 +206,8 @@ namespace AForge.Fuzzy
         /// 
         /// <param name="Operator">A fuzzy operator or openning parenthesis.</param>
         /// 
-        /// <returns>A number indicating the priority of the operator, and zero for openning parenthesis.</returns>
+        /// <returns>A number indicating the priority of the operator, and zero for openning
+        /// parenthesis.</returns>
         /// 
         private int Priority( string Operator )
         {
@@ -212,6 +223,7 @@ namespace AForge.Fuzzy
         /// Converts the Fuzzy Rule to RPN (Reverse Polish Notation). For debug proposes, the string representation of the 
         /// RPN expression can be acessed by calling <see cref="GetRPNExpression"/> method.
         /// </summary>
+        /// 
         private void ParseRule( )
         {
             // flag to incicate we are on consequent state
@@ -227,7 +239,7 @@ namespace AForge.Fuzzy
                 throw new ArgumentException( "Missing the consequent (THEN) statement." );
 
             // building a list with all the expression (rule) string tokens
-            string spacedRule = rule.Replace( "(", " ( " ).Replace( ")", " ) " );
+            string spacedRule = upRule.Replace( "(", " ( " ).Replace( ")", " ) " );
             string [] tokensList = spacedRule.Split( ' ' );
 
             // stack to convert to RPN
@@ -242,16 +254,14 @@ namespace AForge.Fuzzy
             {
                 // removing spaces
                 string token = tokensList[i].Trim( );
-                // getting upper case
-                string upToken = token.ToUpper( );
 
                 // ignoring these tokens
-                if ( upToken == "" || upToken == "IF" ) continue;
+                if ( token == "" || token == "IF" ) continue;
 
                 // if the THEN is found, the rule is now on consequent
-                if ( upToken == "THEN" )
+                if ( token == "THEN" )
                 {
-                    lastToken = upToken;
+                    lastToken = token;
                     consequent = true;
                     continue;
                 }
@@ -259,8 +269,8 @@ namespace AForge.Fuzzy
                 // if we got a linguistic variable, an IS statement and a label is needed
                 if ( lastToken == "VAR" )
                 {
-                    if ( upToken == "IS" )
-                        lastToken = upToken;
+                    if ( token == "IS" )
+                        lastToken = token;
                     else
                         throw new ArgumentException( "An IS statement is expected after a linguistic variable." );
                 }
@@ -286,32 +296,32 @@ namespace AForge.Fuzzy
                 else
                 {
                     // openning new scope
-                    if ( upToken == "(" )
+                    if ( token == "(" )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
                             throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
                         // if its a (, just push it
-                        s.Push( upToken );
-                        lastToken = upToken;
+                        s.Push( token );
+                        lastToken = token;
                     }
                     // operators
-                    else if ( upToken == "AND" || upToken == "OR" )
+                    else if ( token == "AND" || token == "OR" )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
                             throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
                         
                         // pop all the higher priority operators until the stack is empty 
-                        while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( upToken ) ) )
+                        while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( token ) ) )
                             rpnTokenList.Add( s.Pop( ) );
 
                         // pushing the operator    
-                        s.Push( upToken );
-                        lastToken = upToken;
+                        s.Push( token );
+                        lastToken = token;
                     }
                     // closing the scope
-                    else if ( upToken == ")" )
+                    else if ( token == ")" )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
@@ -320,6 +330,7 @@ namespace AForge.Fuzzy
                         // if there is nothing on the stack, an oppening parenthesis is missing.
                         if ( s.Count == 0 )
                             throw new ArgumentException( "Openning parenthesis missing." );
+
                         // pop the tokens and copy to output until openning is found 
                         while ( s.Peek( ) != "(" )
                         {
@@ -330,7 +341,7 @@ namespace AForge.Fuzzy
                         s.Pop( );
 
                         // saving last token...
-                        lastToken = upToken;
+                        lastToken = token;
                     }
                     // finally, the token is a variable
                     else
@@ -353,7 +364,6 @@ namespace AForge.Fuzzy
             // popping all operators left in stack
             while ( s.Count > 0 )
                 rpnTokenList.Add( s.Pop( ) );
-
         }
 
         /// <summary>

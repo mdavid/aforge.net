@@ -1,10 +1,11 @@
 // AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright � Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
-// Copyright � Fabio L. Caversan, 2008
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 
@@ -17,19 +18,21 @@ namespace AForge.Fuzzy
     /// This class represents a fuzzy clause, a linguistic expression of the type "Variable IS Value".
     /// </summary>
     /// 
-    /// <remarks><para>A Fuzzy Clause is used to verify if a linguistic variable can be considered as a specific value at a specific moment.
-    /// Linguistic variables can only assume value of their linugistic labels. Because of the nature of the Fuzzy Logic, a Variable can be 
+    /// <remarks><para>A Fuzzy Clause is used to verify if a linguistic variable can be considered
+    /// as a specific value at a specific moment. Linguistic variables can only assume value of
+    /// their linugistic labels. Because of the nature of the Fuzzy Logic, a Variable can be 
     /// several of its labels at the same time, with different membership values.</para>
     /// 
-    /// <para>
-    /// For example, a linguistic variable "temperature" can be "hot" with a membership 0.3 and "warm" with a membership 0.7 at the same time.
-    /// To obtain those memberships, Fuzzy Clauses "temperature is hot" and "temperature is war" can be built.</para>
+    /// <para>For example, a linguistic variable "temperature" can be "hot" with a membership 0.3
+    /// and "warm" with a membership 0.7 at the same time. To obtain those memberships, Fuzzy Clauses
+    /// "temperature is hot" and "temperature is war" can be built.</para>
     /// 
     /// <para>Typically Fuzzy Clauses are used to build Fuzzy Rules (<see cref="Rule"/>).</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
-    /// // lets consider the existence of a <see cref="LinguisticVariable"/> lvTemperature and a <see cref="FuzzySet"/> hot as its label.
+    /// // lets consider the existence of a <see cref="LinguisticVariable"/> lvTemperature
+    /// // and a <see cref="FuzzySet"/> hot as its label.
     /// Clause fuzzyClause = new Clause( lvTemperature, lvTemperature.GetLabel( "Hot" ) );
     /// // setting the numerical input of the variable to evaluate the Clause
     /// lvTemperature.NumericInput = 35;
@@ -72,10 +75,10 @@ namespace AForge.Fuzzy
         /// 
         public Clause( LinguisticVariable variable, FuzzySet label )
         {
-            // Check if label belongs to var.
+            // check if label belongs to var.
             variable.GetLabel( label.Name );
             
-            // Initializing attributes
+            // initializing attributes
             this.label    = label;
             this.variable = variable;
         }
