@@ -1,10 +1,11 @@
 // AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 namespace AForge.Fuzzy
@@ -16,7 +17,8 @@ namespace AForge.Fuzzy
     /// Product Norm, used to calculate the linguistic value of a AND operation. 
     /// </summary>
     /// 
-    /// <remarks><para>The product norm uses a multiplication operator to compute the AND among two fuzzy memberships.</para>
+    /// <remarks><para>The product Norm uses a multiplication operator to compute the
+    /// AND among two fuzzy memberships.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -36,7 +38,6 @@ namespace AForge.Fuzzy
     ///              
     /// // show result
     /// Console.WriteLine( result );
-    /// 
     /// </code>
     /// </remarks>
     /// 

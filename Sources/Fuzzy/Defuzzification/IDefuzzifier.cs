@@ -1,8 +1,9 @@
 ﻿// AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
 // Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
@@ -23,8 +24,8 @@ namespace AForge.Fuzzy
     /// needs precision, but simply that a numerical value is required, most of the times because it will be used to 
     /// control another system that needs the number. To obtain this numer, a defuzzification method is performed.</para>
     /// 
-    /// <para> Several deffuzification methods were proposed, and they can be created as classes that 
-    /// implements this interface. </para></remarks>
+    /// <para>Several deffuzification methods were proposed, and they can be created as classes that 
+    /// implements this interface.</para></remarks>
     /// 
     public interface IDefuzzifier
     {
@@ -32,10 +33,10 @@ namespace AForge.Fuzzy
         /// Defuzzification method to obtain the numerical representation of a fuzzy output.
         /// </summary>
         /// 
-        /// <param name="fuzzyOutput">A <see cref="FuzzyOutput"/> containing the output of several rules of a Fuzzy 
-        /// Inference System.</param>
-        /// 
-        /// <param name="normOperator">A <see cref="INorm"/> operator to be used when constraining the label to the firing strength.</param>
+        /// <param name="fuzzyOutput">A <see cref="FuzzyOutput"/> containing the output of
+        /// several rules of a Fuzzy Inference System.</param>
+        /// <param name="normOperator">A <see cref="INorm"/> operator to be used when constraining
+        /// the label to the firing strength.</param>
         /// 
         /// <returns>The numerical representation of the fuzzy output.</returns>
         /// 

@@ -1,8 +1,9 @@
 ﻿// AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
 // Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
@@ -16,7 +17,8 @@ namespace AForge.Fuzzy
     /// Maximum CoNorm, used to calculate the linguistic value of a OR operation. 
     /// </summary>
     /// 
-    /// <remarks><para>The maximum conorm uses a maximum operator to compute the OR among two fuzzy memberships. </para>
+    /// <remarks><para>The maximum CoNorm uses a maximum operator to compute the OR
+    /// among two fuzzy memberships.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -30,7 +32,7 @@ namespace AForge.Fuzzy
     /// double m1 = fsCool.GetMembership( 15 );
     /// double m2 = fsNear.GetMembership( 35 );
     /// 
-    /// // computing the membership of "Cool AND Near"
+    /// // computing the membership of "Cool OR Near"
     /// MaximumCoNorm OR = new MaximumCoNorm( );
     /// double result = OR.Evaluate( m1, m2 );
     ///              

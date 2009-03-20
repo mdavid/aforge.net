@@ -1,10 +1,11 @@
 ﻿// AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 
@@ -15,12 +16,14 @@ namespace AForge.Fuzzy
 
     /// <summary>
     /// The class represents the output of a Fuzzy Inference System. 
-    /// It is a set of rule's output, a pair with the output fuzzy label and the rule's firing strength.
     /// </summary>
+    /// 
+    /// <remarks><para>The class keeps set of rule's output - pairs with the output fuzzy label
+    /// and the rule's firing strength.
+    /// </para></remarks>
     /// 
     public class FuzzyOutput
     {
-
         /// <summary>
         /// Inner class to store the pair fuzzy label / firing strength of 
         /// a fuzzy output.
@@ -37,7 +40,6 @@ namespace AForge.Fuzzy
             /// </summary>
             /// 
             /// <param name="label">A string representing the output label of a <see cref="Rule"/>.</param>
-            /// 
             /// <param name="firingStrength">The firing strength of a <see cref="Rule"/>, to be applied to its output label.</param>
             /// 
             public OutputConstraint( string label, double firingStrength )
@@ -49,6 +51,7 @@ namespace AForge.Fuzzy
             /// <summary>
             /// The <see cref="FuzzySet"/> representing the output label of a <see cref="Rule"/>.
             /// </summary>
+            /// 
             public string Label
             {
                 get { return label; }
@@ -57,6 +60,7 @@ namespace AForge.Fuzzy
             /// <summary>
             /// The firing strength of a <see cref="Rule"/>, to be applied to its output label.
             /// </summary>
+            /// 
             public double FiringStrength
             {
                 get { return firingStrength; }
@@ -73,6 +77,7 @@ namespace AForge.Fuzzy
         /// <summary>
         /// A list with <see cref="OutputConstraint"/> of a Fuzzy Inference System's output.
         /// </summary>
+        /// 
         public List<OutputConstraint> OutputList
         {
             get
@@ -84,6 +89,7 @@ namespace AForge.Fuzzy
         /// <summary>
         /// Gets the <see cref="LinguisticVariable"/> acting as a Fuzzy Inference System Output.
         /// </summary>
+        /// 
         public LinguisticVariable OutputVariable
         {
             get { return outputVar; }
@@ -105,11 +111,10 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
-        /// Adds a output to the Fuzzy Output. 
+        /// Adds an output to the Fuzzy Output. 
         /// </summary>
         /// 
         /// <param name="labelName">The name of a label representing a fuzzy rule's output.</param>
-        /// 
         /// <param name="firingStrength">The firing strength [0..1] of a fuzzy rule.</param>
         /// 
         /// <exception cref="KeyNotFoundException">The label indicated was not found in the linguistic variable.</exception>
@@ -131,6 +136,5 @@ namespace AForge.Fuzzy
         {
             this.outputList.Clear( );
         }
-
     }
 }
