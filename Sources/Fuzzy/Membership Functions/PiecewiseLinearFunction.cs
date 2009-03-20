@@ -1,10 +1,11 @@
 // AForge Fuzzy Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008 
-// andrew.kirillov@gmail.com 
+// Copyright © Andrew Kirillov, 2008-2009
+// andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008
+// Copyright © Fabio L. Caversan, 2008-2009
 // fabio.caversan@gmail.com
 //
 namespace AForge.Fuzzy
@@ -157,7 +158,7 @@ namespace AForge.Fuzzy
                     double x0 = points[i - 1].X;
                     // angular coefficient
                     double m = ( y1 - y0 ) / ( x1 - x0 );
-                    // Returning the membership - the Y value for this X
+                    // returning the membership - the Y value for this X
                     return m * ( x - x0 ) + y0;
                 }
             }
