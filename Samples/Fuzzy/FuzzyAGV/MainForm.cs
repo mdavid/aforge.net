@@ -1,3 +1,11 @@
+// Fuzzy Auto Guided Vehicle Sample
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Fabio L. Caversan, 2008-2009
+// fabio.caversan@gmail.com
+//
+
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -11,100 +19,101 @@ using AForge.Fuzzy;
 
 namespace FuzzyAGV
 {
-	public class frmMap : System.Windows.Forms.Form
+    public class MainForm : System.Windows.Forms.Form
     {
         #region Private members
         private string RunLabel;
-		private Point InitialPos;
-		private bool FirstInference;
-		private int LastX;
-		private int LastY;
-		private double Angle;
-		private Bitmap OriginalMap, InitialMap;
-		private InferenceSystem IS;
-		private Thread thMovement;
+        private Point InitialPos;
+        private bool FirstInference;
+        private int LastX;
+        private int LastY;
+        private double Angle;
+        private Bitmap OriginalMap, InitialMap;
+        private InferenceSystem IS;
+        private Thread thMovement;
+
         /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.Windows.Forms.PictureBox pbTerrain;
-		private System.Windows.Forms.Button btnRun;
-		private System.Windows.Forms.TextBox txtInterval;
-		private System.Windows.Forms.CheckBox cbLasers;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label txtRight;
-		private System.Windows.Forms.Label txtLeft;
-		private System.Windows.Forms.Label txtFront;
-		private System.Windows.Forms.Label lbl;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label txtAngle;
-		private System.Windows.Forms.Button btnStep;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.PictureBox pbRobot;
-		private System.Windows.Forms.Button btnReset;
-		private System.Windows.Forms.GroupBox gbComandos;
+        private System.Windows.Forms.Button btnRun;
+        private System.Windows.Forms.TextBox txtInterval;
+        private System.Windows.Forms.CheckBox cbLasers;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label txtRight;
+        private System.Windows.Forms.Label txtLeft;
+        private System.Windows.Forms.Label txtFront;
+        private System.Windows.Forms.Label lbl;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label txtAngle;
+        private System.Windows.Forms.Button btnStep;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.PictureBox pbRobot;
+        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.GroupBox gbComandos;
         private System.ComponentModel.Container components = null;
         private GroupBox groupBox3;
         private Label label5;
-		private System.Windows.Forms.CheckBox cbTrajeto;
+        private System.Windows.Forms.CheckBox cbTrajeto;
         #endregion
 
         #region Class constructor, destructor and Main method
 
         /// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		public static void Main() 
-		{
-			Application.Run(new frmMap());
-		}
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        public static void Main( )
+        {
+            Application.Run( new MainForm( ) );
+        }
 
-        
-        public frmMap()
-		{
-			InitializeComponent();
-			Angle = 0;
-			OriginalMap = new Bitmap(pbTerrain.Image);
-			InitialMap = new Bitmap(pbTerrain.Image);
-			
-    		InitFuzzyEngine();
-			FirstInference = true;
-			pbRobot.Top = pbTerrain.Bottom - 50;
-			pbRobot.Left = pbTerrain.Left +60;
-			InitialPos = pbRobot.Location;
-			RunLabel = btnRun.Text;
-		}
 
-		/// <summary>
-		/// Stoping the movement thread
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			StopMovement();
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        public MainForm( )
+        {
+            InitializeComponent( );
+            Angle = 0;
+            OriginalMap = new Bitmap( pbTerrain.Image );
+            InitialMap = new Bitmap( pbTerrain.Image );
+
+            InitFuzzyEngine( );
+            FirstInference = true;
+            pbRobot.Top = pbTerrain.Bottom - 50;
+            pbRobot.Left = pbTerrain.Left + 60;
+            InitialPos = pbRobot.Location;
+            RunLabel = btnRun.Text;
+        }
+
+        /// <summary>
+        /// Stoping the movement thread
+        /// </summary>
+        protected override void Dispose( bool disposing )
+        {
+            StopMovement( );
+            if ( disposing )
+            {
+                if ( components != null )
+                {
+                    components.Dispose( );
+                }
+            }
+            base.Dispose( disposing );
+        }
 
 
         #endregion
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager( typeof( frmMap ) );
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent( )
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager( typeof( MainForm ) );
             this.pbTerrain = new System.Windows.Forms.PictureBox( );
             this.btnStep = new System.Windows.Forms.Button( );
             this.btnRun = new System.Windows.Forms.Button( );
@@ -127,11 +136,11 @@ namespace FuzzyAGV
             this.pbRobot = new System.Windows.Forms.PictureBox( );
             this.groupBox3 = new System.Windows.Forms.GroupBox( );
             this.label5 = new System.Windows.Forms.Label( );
-            ( ( System.ComponentModel.ISupportInitialize ) ( this.pbTerrain ) ).BeginInit( );
+            ( (System.ComponentModel.ISupportInitialize) ( this.pbTerrain ) ).BeginInit( );
             this.groupBox1.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
             this.gbComandos.SuspendLayout( );
-            ( ( System.ComponentModel.ISupportInitialize ) ( this.pbRobot ) ).BeginInit( );
+            ( (System.ComponentModel.ISupportInitialize) ( this.pbRobot ) ).BeginInit( );
             this.groupBox3.SuspendLayout( );
             this.SuspendLayout( );
             // 
@@ -139,7 +148,7 @@ namespace FuzzyAGV
             // 
             this.pbTerrain.BackColor = System.Drawing.SystemColors.ControlText;
             this.pbTerrain.ErrorImage = null;
-            this.pbTerrain.Image = ( ( System.Drawing.Image ) ( resources.GetObject( "pbTerrain.Image" ) ) );
+            this.pbTerrain.Image = ( (System.Drawing.Image) ( resources.GetObject( "pbTerrain.Image" ) ) );
             this.pbTerrain.InitialImage = null;
             this.pbTerrain.Location = new System.Drawing.Point( 160, 8 );
             this.pbTerrain.Name = "pbTerrain";
@@ -206,7 +215,7 @@ namespace FuzzyAGV
             // 
             // txtRight
             // 
-            this.txtRight.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( ( byte ) ( 0 ) ) );
+            this.txtRight.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
             this.txtRight.Location = new System.Drawing.Point( 104, 48 );
             this.txtRight.Name = "txtRight";
             this.txtRight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -217,7 +226,7 @@ namespace FuzzyAGV
             // 
             // txtLeft
             // 
-            this.txtLeft.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( ( byte ) ( 0 ) ) );
+            this.txtLeft.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
             this.txtLeft.Location = new System.Drawing.Point( 104, 32 );
             this.txtLeft.Name = "txtLeft";
             this.txtLeft.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -228,7 +237,7 @@ namespace FuzzyAGV
             // 
             // txtFront
             // 
-            this.txtFront.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( ( byte ) ( 0 ) ) );
+            this.txtFront.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
             this.txtFront.Location = new System.Drawing.Point( 104, 16 );
             this.txtFront.Name = "txtFront";
             this.txtFront.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -282,7 +291,7 @@ namespace FuzzyAGV
             // 
             // txtAngle
             // 
-            this.txtAngle.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( ( byte ) ( 0 ) ) );
+            this.txtAngle.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
             this.txtAngle.Location = new System.Drawing.Point( 96, 16 );
             this.txtAngle.Name = "txtAngle";
             this.txtAngle.Size = new System.Drawing.Size( 40, 16 );
@@ -335,7 +344,7 @@ namespace FuzzyAGV
             // pbRobot
             // 
             this.pbRobot.BackColor = System.Drawing.Color.Transparent;
-            this.pbRobot.Image = ( ( System.Drawing.Image ) ( resources.GetObject( "pbRobot.Image" ) ) );
+            this.pbRobot.Image = ( (System.Drawing.Image) ( resources.GetObject( "pbRobot.Image" ) ) );
             this.pbRobot.Location = new System.Drawing.Point( 216, 472 );
             this.pbRobot.Name = "pbRobot";
             this.pbRobot.Size = new System.Drawing.Size( 10, 10 );
@@ -361,7 +370,7 @@ namespace FuzzyAGV
             this.label5.Text = "Left click the image to draw passages (white), right click the image to draw wall" +
     "s (black).";
             // 
-            // frmMap
+            // MainForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
             this.ClientSize = new System.Drawing.Size( 664, 513 );
@@ -372,28 +381,24 @@ namespace FuzzyAGV
             this.Controls.Add( this.pbRobot );
             this.Controls.Add( this.pbTerrain );
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-            this.Icon = ( ( System.Drawing.Icon ) ( resources.GetObject( "$this.Icon" ) ) );
-            this.Name = "frmMap";
+            this.Icon = ( (System.Drawing.Icon) ( resources.GetObject( "$this.Icon" ) ) );
+            this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Fuzzy Auto Guided Vehicle Sample";
-            ( ( System.ComponentModel.ISupportInitialize ) ( this.pbTerrain ) ).EndInit( );
+            ( (System.ComponentModel.ISupportInitialize) ( this.pbTerrain ) ).EndInit( );
             this.groupBox1.ResumeLayout( false );
             this.groupBox2.ResumeLayout( false );
             this.gbComandos.ResumeLayout( false );
             this.gbComandos.PerformLayout( );
-            ( ( System.ComponentModel.ISupportInitialize ) ( this.pbRobot ) ).EndInit( );
+            ( (System.ComponentModel.ISupportInitialize) ( this.pbRobot ) ).EndInit( );
             this.groupBox3.ResumeLayout( false );
             this.ResumeLayout( false );
             this.PerformLayout( );
 
-		}
-		#endregion
+        }
+        #endregion
 
-		#region Fuzzy Inference System
-
-        /// <summary>
-        /// Hardcode initializing the Fuzzy Inference System
-        /// </summary>
+        // Hardcode initializing the Fuzzy Inference System
         void InitFuzzyEngine( )
         {
 
@@ -401,7 +406,7 @@ namespace FuzzyAGV
             FuzzySet fsNear = new FuzzySet( "Near", new TrapezoidalFunction( 15, 50, TrapezoidalFunction.EdgeType.Right ) );
             FuzzySet fsMedium = new FuzzySet( "Medium", new TrapezoidalFunction( 15, 50, 60, 100 ) );
             FuzzySet fsFar = new FuzzySet( "Far", new TrapezoidalFunction( 60, 100, TrapezoidalFunction.EdgeType.Left ) );
-            
+
             // Right Distance (Input)
             LinguisticVariable lvRight = new LinguisticVariable( "RightDistance", 0, 120 );
             lvRight.AddLabel( fsNear );
@@ -447,7 +452,7 @@ namespace FuzzyAGV
             fuzzyDB.AddVariable( lvAngle );
 
             // Creating the inference system
-            IS = new InferenceSystem( fuzzyDB, new CentroidDefuzzifier(1000) );
+            IS = new InferenceSystem( fuzzyDB, new CentroidDefuzzifier( 1000 ) );
 
             // Going Straight
             IS.NewRule( "Rule 1", "IF FrontalDistance IS Far THEN Angle IS Zero" );
@@ -465,18 +470,15 @@ namespace FuzzyAGV
             IS.NewRule( "Rule 7", "IF RightDistance IS Far AND LeftDistance IS Far AND FrontalDistance IS Near THEN Angle IS Positive" );
         }
 
-	
-		/// <summary>
-		/// Run one epoch of the Fuzzy Inference System 
-		/// </summary>
-		private void DoInference()
-		{
-			// Setting inputs
+        // Run one epoch of the Fuzzy Inference System 
+        private void DoInference( )
+        {
+            // Setting inputs
             IS.SetInput( "RightDistance", Convert.ToDouble( txtRight.Text ) );
             IS.SetInput( "LeftDistance", Convert.ToDouble( txtLeft.Text ) );
             IS.SetInput( "FrontalDistance", Convert.ToDouble( txtFront.Text ) );
 
-			// Setting outputs
+            // Setting outputs
             try
             {
                 double NewAngle = IS.Evaluate( "Angle" );
@@ -486,177 +488,138 @@ namespace FuzzyAGV
             catch ( Exception )
             {
             }
-		}
+        }
 
-		#endregion
+        // AGV's terrain drawing
+        private void pbTerrain_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
+        {
+            pbTerrain.Image = CopyImage( OriginalMap );
+            LastX = e.X;
+            LastY = e.Y;
+        }
 
-		#region Graphic related methods 
-		
-		/// <summary>
-		/// AGV's terrain drawing
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void pbTerrain_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			pbTerrain.Image = CopyImage(OriginalMap);
-			LastX = e.X;
-			LastY = e.Y;
-		}
+        // AGV's terrain drawing
+        private void pbTerrain_MouseMove( object sender, System.Windows.Forms.MouseEventArgs e )
+        {
+            Graphics g = Graphics.FromImage( pbTerrain.Image );
 
-		/// <summary>
-        /// AGV's terrain drawing
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void pbTerrain_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			Graphics g = Graphics.FromImage(pbTerrain.Image);
+            Color c = Color.Yellow;
 
-			Color c = Color.Yellow;
+            if ( e.Button == MouseButtons.Left )
+                c = Color.White;
+            else if ( e.Button == MouseButtons.Right )
+                c = Color.Black;
 
-			if (e.Button == MouseButtons.Left)
-				c = Color.White;
-			else if (e.Button == MouseButtons.Right)
-				c = Color.Black;
+            if ( c != Color.Yellow )
+            {
+                g.FillRectangle( new SolidBrush( c ), e.X - 40, e.Y - 40, 80, 80 );
 
-			if (c != Color.Yellow)
-			{
-				g.FillRectangle(new SolidBrush(c), e.X-40, e.Y-40, 80, 80);
+                LastX = e.X;
+                LastY = e.Y;
 
-				LastX = e.X;
-				LastY = e.Y;
-				
-				g.DrawImage(pbTerrain.Image, 0 , 0);
-				OriginalMap = CopyImage(pbTerrain.Image as Bitmap);
-				pbTerrain.Refresh();
-				g.Dispose();
-			}
+                g.DrawImage( pbTerrain.Image, 0, 0 );
+                OriginalMap = CopyImage( pbTerrain.Image as Bitmap );
+                pbTerrain.Refresh( );
+                g.Dispose( );
+            }
 
-		}
+        }
 
-		/// <summary>
-		/// Getting sensors measures
-		/// </summary>
-		private void GetMeasures()
-		{
-			// Getting AGV's position
-			pbTerrain.Image = CopyImage(OriginalMap);
-			Bitmap b = pbTerrain.Image as Bitmap;
-			Point pPos = new Point(pbRobot.Left - pbTerrain.Left + 5, pbRobot.Top - pbTerrain.Top + 5);
+        // Getting sensors measures
+        private void GetMeasures( )
+        {
+            // Getting AGV's position
+            pbTerrain.Image = CopyImage( OriginalMap );
+            Bitmap b = pbTerrain.Image as Bitmap;
+            Point pPos = new Point( pbRobot.Left - pbTerrain.Left + 5, pbRobot.Top - pbTerrain.Top + 5 );
 
-			// AGV on the wall
-			if ((b.GetPixel(pPos.X, pPos.Y).R == 0) && (b.GetPixel(pPos.X, pPos.Y).G == 0) && (b.GetPixel(pPos.X, pPos.Y).B == 0))
-			{
-				if (btnRun.Text != RunLabel)
-				{
-					btnRun_Click(btnRun, null);
-				}
-				string Msg = "The vehicle is on the solid area!";
-				MessageBox.Show(Msg, "Error!");
-				throw new Exception(Msg);
-			}
+            // AGV on the wall
+            if ( ( b.GetPixel( pPos.X, pPos.Y ).R == 0 ) && ( b.GetPixel( pPos.X, pPos.Y ).G == 0 ) && ( b.GetPixel( pPos.X, pPos.Y ).B == 0 ) )
+            {
+                if ( btnRun.Text != RunLabel )
+                {
+                    btnRun_Click( btnRun, null );
+                }
+                string Msg = "The vehicle is on the solid area!";
+                MessageBox.Show( Msg, "Error!" );
+                throw new Exception( Msg );
+            }
 
-			// Getting distances
-			Point pFrontObstacle = GetObstacle(pPos, b, -1, 0);
-			Point pLeftObstacle = GetObstacle(pPos, b, 1, 90);
-			Point pRightObstacle = GetObstacle(pPos, b, 1, -90);
+            // Getting distances
+            Point pFrontObstacle = GetObstacle( pPos, b, -1, 0 );
+            Point pLeftObstacle = GetObstacle( pPos, b, 1, 90 );
+            Point pRightObstacle = GetObstacle( pPos, b, 1, -90 );
 
-			// Showing beams
-			Graphics g = Graphics.FromImage(b);
-			if (cbLasers.Checked)
-			{
-				g.DrawLine(new Pen(Color.Green, 1), pFrontObstacle, pPos);
-				g.DrawLine(new Pen(Color.Red, 1), pLeftObstacle, pPos);
-				g.DrawLine(new Pen(Color.Red, 1), pRightObstacle, pPos);
-			}
-			
+            // Showing beams
+            Graphics g = Graphics.FromImage( b );
+            if ( cbLasers.Checked )
+            {
+                g.DrawLine( new Pen( Color.Green, 1 ), pFrontObstacle, pPos );
+                g.DrawLine( new Pen( Color.Red, 1 ), pLeftObstacle, pPos );
+                g.DrawLine( new Pen( Color.Red, 1 ), pRightObstacle, pPos );
+            }
+
             // Drawing AGV
-			if (btnRun.Text != RunLabel)
-			{
-				g.FillEllipse(new SolidBrush(Color.Navy), pPos.X-5, pPos.Y-5, 10, 10);
-			}
-			
-			g.DrawImage(b, 0,0);
-			g.Dispose();
+            if ( btnRun.Text != RunLabel )
+            {
+                g.FillEllipse( new SolidBrush( Color.Navy ), pPos.X - 5, pPos.Y - 5, 10, 10 );
+            }
 
-			pbTerrain.Refresh();
+            g.DrawImage( b, 0, 0 );
+            g.Dispose( );
 
-			// Updating distances texts
-			txtFront.Text = GetDistance(pPos, pFrontObstacle).ToString();
-			txtLeft.Text = GetDistance(pPos, pLeftObstacle).ToString();
-			txtRight.Text = GetDistance(pPos, pRightObstacle).ToString();
+            pbTerrain.Refresh( );
 
-		}
-		
-        /// <summary>
-		/// Calculating distances
-		/// </summary>
-		/// <param name="p1"></param>
-		/// <param name="p2"></param>
-		/// <returns></returns>
-		private int GetDistance(Point p1, Point p2)
-		{
-			return ( Convert.ToInt32(Math.Sqrt(Math.Pow(p1.X-p2.X,2) + Math.Pow(p1.Y-p2.Y,2))) );
-		}
-		
-		/// <summary>
-		/// Finding obstacles
-		/// </summary>
-		/// <param name="Start"></param>
-		/// <param name="Map"></param>
-		/// <param name="Inc"></param>
-		/// <param name="AngleOffset"></param>
-		/// <returns></returns>
-		private Point GetObstacle(Point Start, Bitmap Map, int Inc, int AngleOffset)
-		{
-			Point p = new Point(Start.X, Start.Y);
+            // Updating distances texts
+            txtFront.Text = GetDistance( pPos, pFrontObstacle ).ToString( );
+            txtLeft.Text = GetDistance( pPos, pLeftObstacle ).ToString( );
+            txtRight.Text = GetDistance( pPos, pRightObstacle ).ToString( );
 
-			double rad = ((Angle+90+AngleOffset)*Math.PI)/180;
-			int IncX = 0;
-			int IncY = 0;
-			int Offset = 0;
+        }
 
-			while ((p.X+IncX >= 0) && (p.X+IncX < Map.Width) && (p.Y+IncY >= 0) && (p.Y+IncY < Map.Height))
-			{
-				if ((Map.GetPixel(p.X+IncX, p.Y+IncY).R == 0) && (Map.GetPixel(p.X+IncX, p.Y+IncY).G == 0) && (Map.GetPixel(p.X+IncX, p.Y+IncY).B == 0))
-					break;
-				Offset+=Inc;
-				IncX = Convert.ToInt32(Offset*Math.Cos(rad));
-				IncY = Convert.ToInt32(Offset*Math.Sin(rad));
-			}
-			p.X+=IncX;
-			p.Y+=IncY;
+        // Calculating distances
+        private int GetDistance( Point p1, Point p2 )
+        {
+            return ( Convert.ToInt32( Math.Sqrt( Math.Pow( p1.X - p2.X, 2 ) + Math.Pow( p1.Y - p2.Y, 2 ) ) ) );
+        }
 
-			return p;
-		}
+        // Finding obstacles
+        private Point GetObstacle( Point Start, Bitmap Map, int Inc, int AngleOffset )
+        {
+            Point p = new Point( Start.X, Start.Y );
 
-		/// <summary>
-		/// Copying bitmaps
-		/// </summary>
-		/// <param name="Src"></param>
-		/// <returns></returns>
-		private Bitmap CopyImage(Bitmap Src)
-		{
-			return new Bitmap(Src);
-		}
+            double rad = ( ( Angle + 90 + AngleOffset ) * Math.PI ) / 180;
+            int IncX = 0;
+            int IncY = 0;
+            int Offset = 0;
 
-		
-		
-		#endregion
-		
-		#region AGV Operation
+            while ( ( p.X + IncX >= 0 ) && ( p.X + IncX < Map.Width ) && ( p.Y + IncY >= 0 ) && ( p.Y + IncY < Map.Height ) )
+            {
+                if ( ( Map.GetPixel( p.X + IncX, p.Y + IncY ).R == 0 ) && ( Map.GetPixel( p.X + IncX, p.Y + IncY ).G == 0 ) && ( Map.GetPixel( p.X + IncX, p.Y + IncY ).B == 0 ) )
+                    break;
+                Offset += Inc;
+                IncX = Convert.ToInt32( Offset * Math.Cos( rad ) );
+                IncY = Convert.ToInt32( Offset * Math.Sin( rad ) );
+            }
+            p.X += IncX;
+            p.Y += IncY;
 
-        /// <summary>
-        /// Restarting the AGVs simulation
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnReset_Click(object sender, System.EventArgs e)
+            return p;
+        }
+
+        // Copying bitmaps
+        private Bitmap CopyImage( Bitmap Src )
+        {
+            return new Bitmap( Src );
+        }
+
+
+        // Restarting the AGVs simulation
+        private void btnReset_Click( object sender, System.EventArgs e )
         {
             Angle = 0;
-            pbTerrain.Image = new Bitmap(InitialMap);
-            OriginalMap = new Bitmap(InitialMap);
+            pbTerrain.Image = new Bitmap( InitialMap );
+            OriginalMap = new Bitmap( InitialMap );
             FirstInference = true;
             pbRobot.Location = InitialPos;
             txtFront.Text = "0";
@@ -665,144 +628,122 @@ namespace FuzzyAGV
             txtAngle.Text = "0,00";
         }
 
-        /// <summary>
-		/// Moving the AGV
-		/// </summary>
-		private void MoveAGV()
-		{
-			double rad = ((Angle+90)*Math.PI)/180;
-			int Offset = 0;
-			int Inc = -4;
-			
-			Offset+=Inc;
-			int IncX = Convert.ToInt32(Offset*Math.Cos(rad));
-			int IncY = Convert.ToInt32(Offset*Math.Sin(rad));
+        // Moving the AGV
+        private void MoveAGV( )
+        {
+            double rad = ( ( Angle + 90 ) * Math.PI ) / 180;
+            int Offset = 0;
+            int Inc = -4;
 
-			// Leaving the track 
-			if (cbTrajeto.Checked)
-			{
-				Graphics g = Graphics.FromImage(OriginalMap);
-				Point p1 = new Point(pbRobot.Left-pbTerrain.Left+pbRobot.Width/2, pbRobot.Top-pbTerrain.Top+pbRobot.Height/2);
-				Point p2 = new Point(p1.X+IncX, p1.Y+IncY);
-				g.DrawLine(new Pen(new SolidBrush(Color.Blue)), p1, p2);
-				g.DrawImage(OriginalMap, 0 , 0);
-				g.Dispose();
-			}
-			
-			pbRobot.Top = pbRobot.Top+IncY;
-			pbRobot.Left = pbRobot.Left+IncX;
-		}
+            Offset += Inc;
+            int IncX = Convert.ToInt32( Offset * Math.Cos( rad ) );
+            int IncY = Convert.ToInt32( Offset * Math.Sin( rad ) );
 
-		/// <summary>
-		/// Starting and stopping the AGV's moviment a
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void btnRun_Click(object sender, System.EventArgs e)
-		{
-			Button b = (sender as Button);
-			
-			if (b.Text == RunLabel)
-			{
-				b.Text = "&Stop";
-				btnStep.Enabled = false;
-				btnReset.Enabled = false;
-				txtInterval.Enabled = false;
-				cbLasers.Enabled = false;
-				cbTrajeto.Enabled = false;
-				pbRobot.Hide();
-				StartMovement();
-			}
-			else
-			{
-				StopMovement();
-				b.Text = RunLabel;
-				btnReset.Enabled = true;
-				btnStep.Enabled = true;
-				txtInterval.Enabled = true;
-				cbLasers.Enabled = true;
-				cbTrajeto.Enabled = true;
-				pbRobot.Show();
-				pbTerrain.Image = CopyImage(OriginalMap);
-				pbTerrain.Refresh();
-			}
-		}
+            // Leaving the track 
+            if ( cbTrajeto.Checked )
+            {
+                Graphics g = Graphics.FromImage( OriginalMap );
+                Point p1 = new Point( pbRobot.Left - pbTerrain.Left + pbRobot.Width / 2, pbRobot.Top - pbTerrain.Top + pbRobot.Height / 2 );
+                Point p2 = new Point( p1.X + IncX, p1.Y + IncY );
+                g.DrawLine( new Pen( new SolidBrush( Color.Blue ) ), p1, p2 );
+                g.DrawImage( OriginalMap, 0, 0 );
+                g.Dispose( );
+            }
 
-		/// <summary>
-		/// One step of the AGV
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void button3_Click(object sender, System.EventArgs e)
-		{
-			pbRobot.Hide();
-            AGVStep();
-			pbRobot.Show();
-		}
+            pbRobot.Top = pbRobot.Top + IncY;
+            pbRobot.Left = pbRobot.Left + IncX;
+        }
 
-		/// <summary>
-		/// Thread for the AGVs movement
-		/// </summary>
-		private void StartMovement()
-		{
-			thMovement = new Thread(new ThreadStart(MoveCycle));
-			thMovement.IsBackground = true;
-			thMovement.Priority = ThreadPriority.AboveNormal;
-			thMovement.Start();
-		}
+        // Starting and stopping the AGV's moviment a
+        private void btnRun_Click( object sender, System.EventArgs e )
+        {
+            Button b = ( sender as Button );
 
-		/// <summary>
-		/// Thread main cycle
-		/// </summary>
-		private void MoveCycle()
-		{
-			try 
-			{
-				while (Thread.CurrentThread.IsAlive)
-				{
-                    MethodInvoker mi = new MethodInvoker(AGVStep);
-					this.BeginInvoke(mi);
-					Thread.Sleep(Convert.ToInt32(txtInterval.Text));
-				}
-			}
-			catch (ThreadInterruptedException) 
-			{
-			}
-		}
+            if ( b.Text == RunLabel )
+            {
+                b.Text = "&Stop";
+                btnStep.Enabled = false;
+                btnReset.Enabled = false;
+                txtInterval.Enabled = false;
+                cbLasers.Enabled = false;
+                cbTrajeto.Enabled = false;
+                pbRobot.Hide( );
+                StartMovement( );
+            }
+            else
+            {
+                StopMovement( );
+                b.Text = RunLabel;
+                btnReset.Enabled = true;
+                btnStep.Enabled = true;
+                txtInterval.Enabled = true;
+                cbLasers.Enabled = true;
+                cbTrajeto.Enabled = true;
+                pbRobot.Show( );
+                pbTerrain.Image = CopyImage( OriginalMap );
+                pbTerrain.Refresh( );
+            }
+        }
 
-		/// <summary>
-		/// One step of the AGV
-		/// </summary>
-		private void AGVStep()
-		{
-			if (FirstInference) GetMeasures();
+        // One step of the AGV
+        private void button3_Click( object sender, System.EventArgs e )
+        {
+            pbRobot.Hide( );
+            AGVStep( );
+            pbRobot.Show( );
+        }
 
-			try
-			{
-				DoInference();
-				MoveAGV();
-				GetMeasures();
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(ex);
-			}
-		}
+        // Thread for the AGVs movement
+        private void StartMovement( )
+        {
+            thMovement = new Thread( new ThreadStart( MoveCycle ) );
+            thMovement.IsBackground = true;
+            thMovement.Priority = ThreadPriority.AboveNormal;
+            thMovement.Start( );
+        }
 
-		/// <summary>
-		/// Interrompe a Thread que move o robô
-		/// </summary>
-		private void StopMovement()
-		{
-			if (thMovement != null)
-			{
-				thMovement.Interrupt();
-				thMovement = null;
-			}
-		}
+        // Thread main cycle
+        private void MoveCycle( )
+        {
+            try
+            {
+                while ( Thread.CurrentThread.IsAlive )
+                {
+                    MethodInvoker mi = new MethodInvoker( AGVStep );
+                    this.BeginInvoke( mi );
+                    Thread.Sleep( Convert.ToInt32( txtInterval.Text ) );
+                }
+            }
+            catch ( ThreadInterruptedException )
+            {
+            }
+        }
 
-		#endregion
+        // One step of the AGV
+        private void AGVStep( )
+        {
+            if ( FirstInference ) GetMeasures( );
 
-	}
+            try
+            {
+                DoInference( );
+                MoveAGV( );
+                GetMeasures( );
+            }
+            catch ( Exception ex )
+            {
+                Debug.WriteLine( ex );
+            }
+        }
 
+        // Stop background thread
+        private void StopMovement( )
+        {
+            if ( thMovement != null )
+            {
+                thMovement.Interrupt( );
+                thMovement = null;
+            }
+        }
+    }
 }
