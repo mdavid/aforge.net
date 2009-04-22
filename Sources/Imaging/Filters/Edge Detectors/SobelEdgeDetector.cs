@@ -1,164 +1,182 @@
 // AForge Image Processing Library
+// AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2008
+// andrew.kirillov@aforgenet.com
 //
-// Article by Bill Green was used as the reference
-// http://www.pages.drexel.edu/~weg22/can_tut.html
-//
+
 namespace AForge.Imaging.Filters
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
 
-	/// <summary>
-	/// Sobel edge detector
-	/// </summary>
-	public class SobelEdgeDetector : FilterColorToGray
-	{
-		// Sobel kernels
-		private static int[,] xKernel = new int[,]
-		{
-			{ -1,  0,  1 },
-			{ -2,  0,  2 },
-			{ -1,  0,  1 }
-		};
-		private static int[,] yKernel = new int[,]
-		{
-			{  1,  2,  1 },
-			{  0,  0,  0 },
-			{ -1, -2, -1 }
-		};
+    /// <summary>
+    /// Sobel edge detector.
+    /// </summary>
+    /// 
+    /// <remarks><para>The filter searches for objects' edges by applying Sobel operator.</para>
+    /// 
+    /// <para>Each pixel of the result image is calculated as approximated absolute gradient
+    /// magnitude for corresponding pixel of the source image:
+    /// <code lang="none">
+    /// |G| = |Gx| + |Gy] ,
+    /// </code>
+    /// where Gx and Gy are calculate utilizing Sobel convolution kernels:
+    /// <code lang="none">
+    ///    Gx         Gy
+    /// -1 0 +1    +1 +2 +1
+    /// -2 0 +2     0  0  0
+    /// -1 0 +1    -1 -2 -1
+    /// </code>
+    /// Using the above kernel the approximated magnitude for pixel <b>x</b> is calculate using
+    /// the next equation:
+    /// <code lang="none">
+    /// P1 P2 P3
+    /// P8  x P4
+    /// P7 P6 P5
+    /// 
+    /// |G| = |P1 + 2P2 + P3 - P7 - 2P6 - P5| +
+    ///       |P3 + 2P4 + P5 - P1 - 2P8 - P7|
+    /// </code>
+    /// </para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// SobelEdgeDetector filter = new SobelEdgeDetector( );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample2.jpg" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/sobel_edges.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="DifferenceEdgeDetector"/>
+    /// <seealso cref="HomogenityEdgeDetector"/>
+    /// 
+    public class SobelEdgeDetector : BaseUsingCopyPartialFilter
+    {
+        private bool scaleIntensity = true;
 
-		private bool scaleIntensity = true;
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
-		/// <summary>
-		/// Scale intensity
-		/// </summary>
-		/// 
-		/// <remarks>The property  determines if pixels intensity should be scaled in the
-		/// range of the lowest and the highest possible intensity value.</remarks>
-		/// 
-		public bool ScaleIntensity
-		{
-			get { return scaleIntensity; }
-			set { scaleIntensity = value; }
-		}
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
-		/// <summary>
-		/// Process the filter on the specified image
-		/// </summary>
-		/// 
-		/// <param name="sourceData">Source image data</param>
-		/// <param name="destinationData">Destination image data</param>
-		/// 
-		protected override unsafe void ProcessFilter( BitmapData sourceData, BitmapData destinationData )
-		{
-			byte * src = null;
-			byte * dst = (byte *) destinationData.Scan0.ToPointer( );
+        /// <summary>
+        /// Scale intensity or not.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property determines if edges' pixels intensities of the result image
+        /// should be scaled in the range of the lowest and the highest possible intensity
+        /// values.</para>
+        /// 
+        /// <para>Default value is set to <see langword="true"/>.</para>
+        /// </remarks>
+        /// 
+        public bool ScaleIntensity
+        {
+            get { return scaleIntensity; }
+            set { scaleIntensity = value; }
+        }
 
-			// get width and height
-			int width = sourceData.Width;
-			int height = sourceData.Height;
-			int widthM1 = width - 1;
-			int heightM1 = height - 1;
-			int stride = destinationData.Stride;
-			int offset = stride - width;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SobelEdgeDetector"/> class.
+        /// </summary>
+        /// 
+        public SobelEdgeDetector( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+        }
 
-			// loop and array indexes
-			int i, j, ir;
-			// variables for gradient calculation
-			double	v, gx, gy, g, max = 0;
+        /// <summary>
+        /// Process the filter on the specified image.
+        /// </summary>
+        /// 
+        /// <param name="source">Source image data.</param>
+        /// <param name="destination">Destination image data.</param>
+        /// <param name="rect">Image rectangle for processing by the filter.</param>
+        /// 
+        protected override unsafe void ProcessFilter( UnmanagedImage source, UnmanagedImage destination, Rectangle rect )
+        {
+            // processing start and stop X,Y positions
+            int startX  = rect.Left + 1;
+            int startY  = rect.Top + 1;
+            int stopX   = startX + rect.Width - 2;
+            int stopY   = startY + rect.Height - 2;
 
-			// convert image to grayscale if it is color
-			Bitmap		grayImage = null;
-			BitmapData	grayData = null;
+            int dstStride = destination.Stride;
+            int srcStride = source.Stride;
 
-			if ( sourceData.PixelFormat != PixelFormat.Format8bppIndexed )
-			{
-				// create grayscale filter
-				IFilter filter = new GrayscaleRMY( );
-				// do the processing
-				grayImage = filter.Apply( sourceData );
-				// lock the image
-				grayData = grayImage.LockBits(
-					new Rectangle( 0, 0, width, height ),
-					ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
-				// set source pointer
-				src = (byte *) grayData.Scan0.ToPointer( );
-			}
-			else
-			{
-				src = (byte *) sourceData.Scan0.ToPointer( );
-			}
+            int dstOffset = dstStride - rect.Width + 2;
+            int srcOffset = srcStride - rect.Width + 2;
 
-			// do the processing job
-			// skip one stride
-			src += stride;
-			dst += stride;
+            // data pointers
+            byte* src = (byte*) source.ImageData.ToPointer( );
+            byte* dst = (byte*) destination.ImageData.ToPointer( );
 
-			// for each line
-			for ( int y = 1; y < heightM1; y++ )
-			{
-				src++;
-				dst++;
+            // allign pointers
+            src += srcStride * startY + startX;
+            dst += dstStride * startY + startX;
 
-				// for each pixel
-				for ( int x = 1; x < widthM1; x++, src++, dst++ )
-				{
-					gx = gy = 0;
-					// for each kernel row
-					for ( i = 0; i < 3; i++ )
-					{
-						ir = i - 1;
-						// for each kernel column
-						for ( j = 0; j < 3; j++ )
-						{
-							// source value
-							v = src[ir * stride + j - 1];
+            // variables for gradient calculation
+            double g, max = 0;
 
-							gx += v * xKernel[i, j];
-							gy += v * yKernel[i, j];
-						}
-					}
-					// get gradient value
-//					g = Math.Min( Math.Sqrt( gx * gx + gy * gy ), 255 );
-					g = Math.Min( Math.Abs( gx ) + Math.Abs( gy ), 255 );	// approximation
-					if ( g > max )
-						max = g;
-					*dst = (byte) g;
-				}
-				src += ( offset + 1 );
-				dst += ( offset + 1 );
-			}
+            // for each line
+            for ( int y = startY; y < stopY; y++ )
+            {
+                // for each pixel
+                for ( int x = startX; x < stopX; x++, src++, dst++ )
+                {
+                    g = Math.Min( 255,
+                        Math.Abs( src[-srcStride - 1] + src[-srcStride + 1]
+                                - src[ srcStride - 1] - src[ srcStride + 1]
+                                + 2 * ( src[-srcStride] - src[srcStride] ) )
+                      + Math.Abs( src[-srcStride + 1] + src[srcStride + 1]
+                                - src[-srcStride - 1] - src[srcStride - 1]
+                                + 2 * ( src[1] - src[-1] ) ) );
 
-			// do we need scaling
-			if ( ( scaleIntensity ) && ( max != 255 ) )
-			{
-				// make the second pass for intensity scaling
-				double factor = 255.0 / (double) max;
-				dst = (byte *) destinationData.Scan0.ToPointer( ) + stride;
+                    if ( g > max )
+                        max = g;
+                    *dst = (byte) g;
+                }
+                src += srcOffset;
+                dst += dstOffset;
+            }
 
-				// for each line
-				for ( int y = 1; y < heightM1; y++ )
-				{
-					dst++;
-					// for each pixel
-					for (int x = 1; x <	widthM1; x++, dst++ )
-					{
-						*dst = (byte) ( factor * *dst );
-					}
-					dst += ( offset + 1 );
-				}
-			}
+            // do we need scaling
+            if ( ( scaleIntensity ) && ( max != 255 ) )
+            {
+                // make the second pass for intensity scaling
+                double factor = 255.0 / (double) max;
+                dst = (byte*) destination.ImageData.ToPointer( ) + dstStride;
 
-			// release gray image, if there was conversion
-			if ( grayData != null )
-			{
-				grayImage.UnlockBits( grayData );
-				grayImage.Dispose( );
-			}
-		}
-	}
+                // for each line
+                for ( int y = startY; y < stopY; y++ )
+                {
+                    dst++;
+                    // for each pixel
+                    for ( int x = startX; x < stopX; x++, dst++ )
+                    {
+                        *dst = (byte) ( factor * *dst );
+                    }
+                    dst += dstOffset;
+                }
+            }
+        }
+    }
 }

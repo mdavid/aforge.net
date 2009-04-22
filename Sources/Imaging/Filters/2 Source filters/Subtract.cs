@@ -1,187 +1,183 @@
 // AForge Image Processing Library
+// AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2006
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
 
-	/// <summary>
-	/// Subtract filter - subtract overlay image from the source image
-	/// </summary>
-	/// 
-	/// <remarks></remarks>
-	/// 
-	public sealed class Subtract : FilterAnyToAny
-	{
-		private Bitmap	overlayImage;
-		private Point	overlayPos = new Point( 0, 0 );
+    /// <summary>
+    /// Subtract filter - subtract pixel values of two images.
+    /// </summary>
+    /// 
+    /// <remarks><para>The subtract filter takes two images (source and overlay images)
+    /// of the same size and pixel format and produces an image, where each pixel equals
+    /// to the difference value of corresponding pixels from provided images (if difference is less
+    /// than minimum allowed value, 0, then it is truncated to that minimum value).</para>
+    /// 
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24, 32, 48 and 64 bpp
+    /// color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// Subtract filter = new Subtract( overlayImage );
+    /// // apply the filter
+    /// Bitmap resultImage = filter.Apply( sourceImage );
+    /// </code>
+    /// 
+    /// <para><b>Source image:</b></para>
+    /// <img src="img/imaging/sample6.png" width="320" height="240" />
+    /// <para><b>Overlay image:</b></para>
+    /// <img src="img/imaging/sample7.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/subtract.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="Merge"/>
+    /// <seealso cref="Intersect"/>
+    /// <seealso cref="Add"/>
+    /// <seealso cref="Difference"/>
+    /// 
+    public sealed class Subtract : BaseInPlaceFilter2
+    {
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
-		/// <summary>
-		/// Overlay image
-		/// </summary>
-		public Bitmap OverlayImage
-		{
-			get { return overlayImage; }
-			set { overlayImage = value; }
-		}
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
-		/// <summary>
-		/// Overlay position
-		/// </summary>
-		public Point OverlayPos
-		{
-			get { return overlayPos; }
-			set { overlayPos = value; }
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subtract"/> class.
+        /// </summary>
+        public Subtract( )
+        {
+            InitFormatTransalations( );
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Add"/> class
-		/// </summary>
-		public Subtract( ) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subtract"/> class.
+        /// </summary>
+        /// 
+        /// <param name="overlayImage">Overlay image</param>
+        /// 
+        public Subtract( Bitmap overlayImage )
+            : base( overlayImage )
+        {
+            InitFormatTransalations( );
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Add"/> class
-		/// </summary>
-		/// 
-		/// <param name="overlayImage">Overlay image</param>
-		/// 
-		public Subtract( Bitmap overlayImage )
-		{
-			this.overlayImage = overlayImage;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subtract"/> class.
+        /// </summary>
+        /// 
+        /// <param name="unmanagedOverlayImage">Unmanaged overlay image.</param>
+        /// 
+        public Subtract( UnmanagedImage unmanagedOverlayImage )
+            : base( unmanagedOverlayImage )
+        {
+            InitFormatTransalations( );
+        }
+    
+        // Initialize format translation dictionary
+        private void InitFormatTransalations( )
+        {
+            formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]       = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb]      = PixelFormat.Format32bppArgb;
+            formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
+            formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
+            formatTransalations[PixelFormat.Format64bppArgb]      = PixelFormat.Format64bppArgb;
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Add"/> class
-		/// </summary>
-		/// 
-		/// <param name="overlayImage">Overlay image</param>
-		/// <param name="position">Overlay position</param>
-		/// 
-		public Subtract( Bitmap overlayImage, Point position )
-		{
-			this.overlayImage = overlayImage;
-			this.overlayPos = position;
-		}
+        /// <summary>
+        /// Process the filter on the specified image.
+        /// </summary>
+        /// 
+        /// <param name="image">Source image data.</param>
+        /// <param name="overlay">Overlay image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, UnmanagedImage overlay )
+        {
+            PixelFormat pixelFormat = image.PixelFormat;
+            // get image dimension
+            int width  = image.Width;
+            int height = image.Height;
 
+            if (
+                ( pixelFormat == PixelFormat.Format8bppIndexed ) ||
+                ( pixelFormat == PixelFormat.Format24bppRgb ) ||
+                ( pixelFormat == PixelFormat.Format32bppRgb ) ||
+                ( pixelFormat == PixelFormat.Format32bppArgb ) )
+            {
 
-		/// <summary>
-		/// Process the filter on the specified image
-		/// </summary>
-		/// 
-		/// <param name="imageData">image data</param>
-		/// 
-		protected override unsafe void ProcessFilter( BitmapData imageData )
-		{
-			// source image and overlay must have same pixel format
-			if ( imageData.PixelFormat != overlayImage.PixelFormat )
-				throw new ArgumentException( "Source and overlay images must have same pixel format " );
+                // initialize other variables
+                int pixelSize = ( pixelFormat == PixelFormat.Format8bppIndexed ) ? 1 :
+                    ( pixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
+                int lineSize  = width * pixelSize;
+                int srcOffset = image.Stride - lineSize;
+                int ovrOffset = overlay.Stride - lineSize;
+                // new pixel value
+                int v;
 
-			// get image dimension
-			int width	= imageData.Width;
-			int height	= imageData.Height;
+                // do the job
+                byte * ptr = (byte*) image.ImageData.ToPointer( );
+                byte * ovr = (byte*) overlay.ImageData.ToPointer( );
 
-			// overlay position and dimension
-			int ovrX = overlayPos.X;
-			int ovrY = overlayPos.Y;
-			int ovrW = overlayImage.Width;
-			int ovrH = overlayImage.Height;
+                // for each line
+                for ( int y = 0; y < height; y++ )
+                {
+                    // for each pixel
+                    for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
+                    {
+                        v = (int) *ptr - (int) *ovr;
+                        *ptr = ( v < 0 ) ? (byte) 0 : (byte) v;
+                    }
+                    ptr += srcOffset;
+                    ovr += ovrOffset;
+                }
+            }
+            else
+            {
+                // initialize other variables
+                int pixelSize = ( pixelFormat == PixelFormat.Format16bppGrayScale ) ? 1 :
+                    ( pixelFormat == PixelFormat.Format48bppRgb ) ? 3 : 4;
+                int lineSize  = width * pixelSize;
+                int srcStride = image.Stride;
+                int ovrStride = overlay.Stride;
+                // new pixel value
+                int v;
 
-			// lock overlay image
-			BitmapData ovrData = overlayImage.LockBits(
-				new Rectangle( 0, 0, ovrW, ovrH ),
-				ImageLockMode.ReadOnly, imageData.PixelFormat );
+                // do the job
+                int basePtr = (int) image.ImageData.ToPointer( );
+                int baseOvr = (int) overlay.ImageData.ToPointer( );
 
-			// initialize other variables
-			int pixelSize = ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
-			int stride = imageData.Stride;
-			int offset = stride - pixelSize * width;
-			int ovrStide = ovrData.Stride;
-			int ovrOffset, lineSize;
-			// pixel's value
-			int v;
+                // for each line
+                for ( int y = 0; y < height; y++ )
+                {
+                    ushort * ptr = (ushort*) ( basePtr + y * srcStride );
+                    ushort * ovr = (ushort*) ( baseOvr + y * ovrStride );
 
-			// do the job
-			byte * ptr = (byte *) imageData.Scan0.ToPointer( );
-			byte * ovr = (byte *) ovrData.Scan0.ToPointer( );
-
-			if ( ( width == ovrW ) && ( height == ovrH ) && ( ovrX == 0 ) && ( ovrY == 0 ) )
-			{
-				// overlay image has the same size as the source image and its position is (0, 0)
-				lineSize = width * pixelSize;
-
-				// for each line
-				for ( int y = 0; y < height; y++ )
-				{
-					// for each pixel
-					for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
-					{
-						v = (int) *ptr - (int) *ovr;
-						*ptr = ( v < 0 ) ? (byte) 0 : (byte) v;
-					}
-					ptr += offset;
-					ovr += offset;
-				}
-			}
-			else
-			{
-				// align Y
-				if ( ovrY >= 0 )
-				{
-					ptr += stride * ovrY;
-				}
-				else
-				{
-					ovr -= ovrStide * ovrY;
-					ovrH += ovrY;
-					ovrY = 0;
-				}
-
-				// align X
-				if ( ovrX >= 0 )
-				{
-					ptr += pixelSize * ovrX;
-				}
-				else
-				{
-					ovr -= pixelSize * ovrX;
-					ovrW += ovrX;
-					ovrX = 0;
-				}
-
-				// update overlay width and height
-				ovrW = Math.Min( ovrW, width - ovrX );
-				ovrH = Math.Min( ovrH, height - ovrY );
-
-				// update offset
-				ovrOffset = ovrStide - ovrW * pixelSize;
-				offset = stride - ovrW * pixelSize;
-
-				if ( ( ovrW > 0 ) && ( ovrH > 0 ) && ( ovrX < width ) && ( ovrY < height ) )
-				{
-					lineSize = pixelSize * ovrW;
-
-					// for each line
-					for ( int y = 0; y < ovrH; y++ )
-					{
-						// for each pixel
-						for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
-						{
-							v = (int) *ptr - (int) *ovr;
-							*ptr = ( v < 0 ) ? (byte) 0 : (byte) v;
-						}
-						ptr += offset;
-						ovr += ovrOffset;
-					}
-				}
-			}
-
-			// unlock overlay image
-			overlayImage.UnlockBits( ovrData );
-		}
-	}
+                    // for each pixel
+                    for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
+                    {
+                        v = (int) *ptr - (int) *ovr;
+                        *ptr = ( v < 0 ) ? (ushort) 0 : (ushort) v;
+                    }
+                }
+            }
+        }
+    }
 }

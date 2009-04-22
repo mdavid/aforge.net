@@ -1,7 +1,7 @@
 // AForge Machine Learning Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -17,6 +17,10 @@ namespace AForge.MachineLearning
     /// allowing to set certain actions as tabu for a specified amount of
     /// iterations. The actual exploration and choosing from non-tabu actions
     /// is done by <see cref="BasePolicy">base exploration policy</see>.</remarks>
+    /// 
+    /// <seealso cref="BoltzmannExploration"/>
+    /// <seealso cref="EpsilonGreedyExploration"/>
+    /// <seealso cref="RouletteWheelExploration"/>
     /// 
     public class TabuSearchExploration : IExplorationPolicy
     {
@@ -62,7 +66,7 @@ namespace AForge.MachineLearning
         /// 
         /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action.</returns>
+        /// <returns>Returns selected action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action
@@ -83,7 +87,8 @@ namespace AForge.MachineLearning
 
             // allowed actions
             double[] allowedActionEstimates = new double[nonTabuActions];
-            int[] allowedActionMap = new int[nonTabuActions];
+            int[]    allowedActionMap = new int[nonTabuActions];
+
             for ( int i = 0, j = 0; i < actions; i++ )
             {
                 if ( tabuActions[i] == 0 )

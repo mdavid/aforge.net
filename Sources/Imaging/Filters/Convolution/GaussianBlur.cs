@@ -1,8 +1,8 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2008
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -15,21 +15,48 @@ namespace AForge.Imaging.Filters
     /// Gaussian blur filter.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The filter performs <see cref="Convolution">convolution filter</see> using
+    /// the kernel, which is calculate with the help of <see cref="AForge.Math.Gaussian.Kernel2D"/>
+    /// method and then converted to integer kernel by dividing all elements by the element with the
+    /// smallest value. Using the kernel the convolution filter is known as Gaussian blur.</para>
     /// 
-    public sealed class GaussianBlur : IFilter, IInPlaceFilter, IInPlacePartialFilter
+    /// <para>Using <see cref="Sigma"/> property it is possible to configure
+    /// <see cref="AForge.Math.Gaussian.Sigma">sigma value of Gaussian function</see>.</para>
+    /// 
+    /// <para>For the list of supported pixel formats, see the documentation to <see cref="Convolution"/>
+    /// filter.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter with kernel size equal to 11
+    /// // and Gaussia sigma value equal to 4.0
+    /// GaussianBlur filter = new GaussianBlur( 4, 11 );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    ///
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/gaussian_blur.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="Convolution"/>
+    /// 
+    public sealed class GaussianBlur : Convolution
     {
-        private Convolution filter;
-        private double      sigma = 1.4;
-        private int         size = 5;
+        private double sigma = 1.4;
+        private int    size = 5;
 
         /// <summary>
-        /// Gaussian sigma value.
+        /// Gaussian sigma value, [0.5, 5.0].
         /// </summary>
         /// 
-        /// <remarks>Sigma value for Gaussian function used to calculate
-        /// the kernel. Default value is 1.4. Minimum value is 0.5. Maximum
-        /// value is 5.0.</remarks>
+        /// <remarks><para>Sigma value for Gaussian function used to calculate
+        /// the kernel.</para>
+        /// 
+        /// <para>Default value is set to <b>1.4</b>.</para>
+        /// </remarks>
         /// 
         public double Sigma
         {
@@ -44,11 +71,13 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Kernel size.
+        /// Kernel size, [3, 5].
         /// </summary>
         /// 
-        /// <remarks>Size of Gaussian kernel. Default value is 5. Minimum value is 3.
-        /// Maximum value is 21. The value should be odd.</remarks>
+        /// <remarks><para>Size of Gaussian kernel.</para>
+        /// 
+        /// <para>Default value is set to <b>5</b>.</para>
+        /// </remarks>
         /// 
         public int Size
         {
@@ -93,100 +122,6 @@ namespace AForge.Imaging.Filters
             Size = size;
         }
 
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="image">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The method keeps the source image unchanged and returns the
-        /// the result of image processing filter as new image.</remarks> 
-        ///
-        public Bitmap Apply( Bitmap image )
-        {
-            return filter.Apply( image );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The filter accepts bitmap data as input and returns the result
-        /// of image processing filter as new image. The source image data are kept
-        /// unchanged.</remarks>
-        /// 
-        public Bitmap Apply( BitmapData imageData )
-        {
-            return filter.Apply( imageData );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="image">Image to apply filter to.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image.</remarks>
-        /// 
-        public void ApplyInPlace( Bitmap image )
-        {
-            filter.ApplyInPlace( image );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Image to apply filter to.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image data.</remarks>
-        /// 
-        public void ApplyInPlace( BitmapData imageData )
-        {
-            filter.ApplyInPlace( imageData );
-        }
-
-        /// <summary>
-        /// Apply filter to an image or its part.
-        /// </summary>
-        /// 
-        /// <param name="image">Image to apply filter to.</param>
-        /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image.</remarks>
-        /// 
-        public void ApplyInPlace( Bitmap image, Rectangle rect )
-        {
-            filter.ApplyInPlace( image, rect );
-        }
-
-        /// <summary>
-        /// Apply filter to an image or its part.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Image to apply filter to.</param>
-        /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image data.</remarks>
-        /// 
-        public void ApplyInPlace( BitmapData imageData, Rectangle rect )
-        {
-            filter.ApplyInPlace( imageData, rect );
-        }
-
         // Private members
         #region Private Members
 
@@ -196,9 +131,32 @@ namespace AForge.Imaging.Filters
             // create Gaussian function
             AForge.Math.Gaussian gaus = new AForge.Math.Gaussian( sigma );
             // create kernel
-            int[,] kernel = gaus.KernelDiscret2D( size );
-            // create filter
-            filter = new Convolution( kernel );
+            double[,] kernel = gaus.Kernel2D( size );
+            double min = kernel[0, 0];
+            // integer kernel
+            int[,] intKernel = new int[size, size];
+            int divisor = 0;
+
+            for ( int i = 0; i < size; i++ )
+            {
+                for ( int j = 0; j < size; j++ )
+                {
+                    double v = kernel[i, j] / min;
+
+                    if ( v > ushort.MaxValue )
+                    {
+                        v = ushort.MaxValue;
+                    }
+                    intKernel[i, j] = (int) v;
+
+                    // collect divisor
+                    divisor += intKernel[i, j];
+                }
+            }
+
+            // update filter
+            this.Kernel = intKernel;
+            this.Divisor = divisor;
         }
         #endregion
     }

@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Neuro
@@ -62,8 +63,12 @@ namespace AForge.Neuro
         /// Network's output vector.
         /// </summary>
         /// 
-        /// <remarks>The calculation way of network's output vector is determined by
-        /// inherited class.</remarks>
+        /// <remarks><para>The calculation way of network's output vector is determined by
+        /// layers, which comprise the network.</para>
+        /// 
+        /// <para><note>The property is not initialized (equals to <see langword="null"/>) until
+        /// <see cref="Compute"/> method is called.</note></para>
+        /// </remarks>
         /// 
         public double[] Output
         {
@@ -83,7 +88,6 @@ namespace AForge.Neuro
             get { return layers[index]; }
         }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Network"/> class.
         /// </summary>
@@ -99,7 +103,7 @@ namespace AForge.Neuro
             this.inputsCount = Math.Max( 1, inputsCount );
             this.layersCount = Math.Max( 1, layersCount );
             // create collection of layers
-            layers = new Layer[this.layersCount];
+            this.layers = new Layer[this.layersCount];
         }
 
         /// <summary>
@@ -110,19 +114,32 @@ namespace AForge.Neuro
         /// 
         /// <returns>Returns network's output vector.</returns>
         /// 
-        /// <remarks>The actual network's output vecor is determined by inherited class and it
-        /// represents an output vector of the last layer of the network. The output vector is
-        /// also stored in <see cref="Output"/> property.</remarks>
+        /// <remarks><para>The actual network's output vecor is determined by layers,
+        /// which comprise the layer - represents an output vector of the last layer
+        /// of the network. The output vector is also stored in <see cref="Output"/> property.</para>
+        /// 
+        /// <para><note>The method may be called safely from multiple threads to compute network's
+        /// output value for the specified input values. However, the value of
+        /// <see cref="Output"/> property in multi-threaded environment is not predictable,
+        /// since it may hold network's output computed from any of the caller threads. Multi-threaded
+        /// access to the method is useful in those cases when it is required to improve performance
+        /// by utilizing several threads and the computation is based on the immediate return value
+        /// of the method, but not on network's output property.</note></para>
+        /// </remarks>
         /// 
         public virtual double[] Compute( double[] input )
         {
-            output = input;
+            // local variable to avoid mutlithread conflicts
+            double [] output = input;
 
             // compute each layer
             foreach ( Layer layer in layers )
             {
                 output = layer.Compute( output );
             }
+
+            // assign output property as well (works correctly for single threaded usage)
+            this.output = output;
 
             return output;
         }

@@ -1,8 +1,9 @@
-// AForge Framework
 // Time Series Prediction using Genetic Programming and Gene Expression Programming
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2006-2009
+// andrew.kirillov@aforgenet.com
 //
 
 using System;
@@ -69,8 +70,8 @@ namespace TimeSeries
 		private double[]	data = null;
 		private double[,]	dataToShow = null;
 
-		private int populationSize = 40;
-		private int iterations = 100;
+		private int populationSize = 100;
+		private int iterations = 1000;
 		private int windowSize = 5;
 		private int predictionSize = 1;
 		private int selectionMethod = 0;

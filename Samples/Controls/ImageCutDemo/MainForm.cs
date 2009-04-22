@@ -109,16 +109,16 @@ namespace ImageCutDemo
             switch (keyData /*& Keys.KeyCode*/)
             {
                 case Keys.Left:
-                    imageCut.moveSelectedVerticalSlider(-1);                    
+                    imageCut.MoveSelectedVerticalSlider(-1);                    
                     break;
                 case Keys.Right:
-                    imageCut.moveSelectedVerticalSlider(1);
+                    imageCut.MoveSelectedVerticalSlider(1);
                     break;
                 case Keys.Up:
-                    imageCut.moveSelectedHorizontalSlider(-1);
+                    imageCut.MoveSelectedHorizontalSlider(-1);
                     break;
                 case Keys.Down:
-                    imageCut.moveSelectedHorizontalSlider(1);
+                    imageCut.MoveSelectedHorizontalSlider(1);
                     break;
                 case Keys.A:
                     imageCut.ColorSliders = Color.CornflowerBlue;
@@ -136,7 +136,7 @@ namespace ImageCutDemo
         private void OkButton_Click(object sender, EventArgs e)
         {
             //Correct possible rounding errors
-            imageCut.moveSelectedVerticalSlider(0); 
+            imageCut.MoveSelectedVerticalSlider(0); 
             //Get the final cutted picture
             finalImage = imageCut.getCuttedImage();
             
@@ -232,7 +232,7 @@ namespace ImageCutDemo
                 imageCut.Ratio = tNumber2 / tNumber1;
 
             //Trick to get the ratio handling
-            imageCut.moveSlider(0, Slider.Left);
+            imageCut.MoveSlider(0, Slider.Left);
         }
 
         private void LandscapeFormatRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -244,7 +244,7 @@ namespace ImageCutDemo
         private void RatioButton_Click(object sender, EventArgs e)
         {
             //Trick to get the ratio handling 
-            imageCut.moveSlider(0, Slider.Left);
+            imageCut.MoveSlider(0, Slider.Left);
         }
 
         #region NumericUpDown Events
@@ -257,7 +257,7 @@ namespace ImageCutDemo
             if (imageCut.RightPosition - newValue < imageCut.MinSizeOfImage)
                 leftNumericUpDown.Value = imageCut.LeftPosition;
             else
-                imageCut.moveSlider(newValue - imageCut.LeftPosition, Slider.Left);
+                imageCut.MoveSlider(newValue - imageCut.LeftPosition, Slider.Left);
         }
 
         private void rightNumericUpDown_ValueChanged(object sender, EventArgs e)
@@ -270,7 +270,7 @@ namespace ImageCutDemo
                 rightNumericUpDown.Value =
                     imageCut.OriginalWidth - imageCut.RightPosition;
             else
-                imageCut.moveSlider((imageCut.OriginalWidth -
+                imageCut.MoveSlider((imageCut.OriginalWidth -
                                       imageCut.RightPosition) - newValue, Slider.Right);
         }
 
@@ -282,7 +282,7 @@ namespace ImageCutDemo
             if (imageCut.BottomPosition - newValue < imageCut.MinSizeOfImage)
                 upNumericUpDown.Value = imageCut.TopPosition;
             else
-                imageCut.moveSlider(newValue - imageCut.TopPosition, Slider.Top);
+                imageCut.MoveSlider(newValue - imageCut.TopPosition, Slider.Top);
         }
 
         private void downNumericUpDown_ValueChanged(object sender, EventArgs e)
@@ -295,7 +295,7 @@ namespace ImageCutDemo
                 downNumericUpDown.Value =
                     imageCut.OriginalHeight - imageCut.BottomPosition;
             else
-                imageCut.moveSlider((imageCut.OriginalHeight -
+                imageCut.MoveSlider((imageCut.OriginalHeight -
                                       imageCut.BottomPosition) - newValue, Slider.Bottom);
         }
 

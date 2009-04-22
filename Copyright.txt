@@ -1,11 +1,13 @@
 AForge.NET Framework
+http://www.aforgenet.com/framework
+==================================
+
+Copyright © AForge.NET, 2006-2009
+contacts@aforgenet.com
 
-Copyright © Andrew Kirillov, 2006-2008
-andrew.kirillov@gmail.com
+AForge.NET is a C# framework designed for developers and researchers
+in the fields of Computer Vision and Artificial Intelligence - image
+processing, neural networks, genetic algorithms, machine learning,
+robotics, etc.
 
-Open source framework for researchers in the areas of Computer
-Vision and Artificial Intelligence (image processing, computer
-vision, neural networks, genetic algorithms, etc).
-
-Please, contact project owners for any offers, remarks, ideas,
-etc.
+Please, contact project owners for any offers, remarks, ideas, etc.

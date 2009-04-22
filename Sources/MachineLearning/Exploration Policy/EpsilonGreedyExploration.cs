@@ -1,7 +1,7 @@
 // AForge Machine Learning Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -17,8 +17,13 @@ namespace AForge.MachineLearning
     /// the best action is chosen with probability <b>1-epsilon</b>. Otherwise,
     /// with probability <b>epsilon</b>, any other action, except the best one, is
     /// chosen randomly.</para>
+    /// 
     /// <para>According to the policy, the epsilon value is known also as exploration rate.</para>
     /// </remarks>
+    /// 
+    /// <seealso cref="RouletteWheelExploration"/>
+    /// <seealso cref="BoltzmannExploration"/>
+    /// <seealso cref="TabuSearchExploration"/>
     /// 
     public class EpsilonGreedyExploration : IExplorationPolicy
     {
@@ -26,11 +31,17 @@ namespace AForge.MachineLearning
         private double epsilon;
 
         // random number generator
-        private Random rand = new Random( (int) DateTime.Now.Ticks );
+        private Random rand = new Random( );
 
         /// <summary>
-        /// Epsilon value (exploration rate).
+        /// Epsilon value (exploration rate), [0, 1].
         /// </summary>
+        /// 
+        /// <remarks><para>The value determines the amount of exploration driven by the policy.
+        /// If the value is high, then the policy drives more to exploration - choosing random
+        /// action, which excludes the best one. If the value is low, then the policy is more
+        /// greedy - choosing the beat so far action.
+        /// </para></remarks>
         /// 
         public double Epsilon
         {
@@ -55,7 +66,7 @@ namespace AForge.MachineLearning
         /// 
         /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action.</returns>
+        /// <returns>Returns selected action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action

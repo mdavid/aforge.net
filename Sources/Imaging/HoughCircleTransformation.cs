@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -17,6 +18,8 @@ namespace AForge.Imaging
     /// </summary>
     /// 
     /// <remarks>Represents circle of Hough transform.</remarks>
+    /// 
+    /// <seealso cref="HoughCircleTransformation"/>
     /// 
     public class HoughCircle : IComparable
     {
@@ -73,7 +76,12 @@ namespace AForge.Imaging
         /// <returns><para>A signed number indicating the relative values of this instance and <b>value</b>: 1) greater than zero - 
         /// this instance is greater than <b>value</b>; 2) zero - this instance is equal to <b>value</b>;
         /// 3) greater than zero - this instance is less than <b>value</b>.</para>
+        /// 
         /// <para><note>The sort order is descending.</note></para></returns>
+        /// 
+        /// <remarks>
+        /// <para><note>Object are compared using their <see cref="Intensity">intensity</see> value.</note></para>
+        /// </remarks>
         /// 
         public int CompareTo( object value )
         {
@@ -85,10 +93,16 @@ namespace AForge.Imaging
     /// Hough circle transformation.
     /// </summary>
     ///
-    /// <remarks><para>Hough circle transformation allows to detect circles in image.</para>
+    /// <remarks><para>The class implements Hough circle transformation, which allows to detect
+    /// circles of specified radius in an image.</para>
+    /// 
+    /// <para>The class accepts binary images for processing, which are represented by 8 bpp grayscale images.
+    /// All black pixels (0 pixel's value) are treated as background, but pixels with different value are
+    /// treated as circles' pixels.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
-    /// HoughCircleTransformation circleTransform = new HoughCircleTransformation( );
+    /// HoughCircleTransformation circleTransform = new HoughCircleTransformation( 35 );
     /// // apply Hough circle transform
     /// circleTransform.ProcessImage( sourceImage );
     /// Bitmap houghCirlceImage = circleTransform.ToBitmap( );
@@ -97,11 +111,17 @@ namespace AForge.Imaging
     /// 
     /// foreach ( HoughCircle circle in circles )
     /// {
-    ///     // ..
+    ///     // ...
     /// }
-    /// 
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample8.jpg" width="400" height="300" />
+    /// <para><b>Hough circle transformation image:</b></para>
+    /// <img src="img/imaging/hough_circles.jpg" width="400" height="300" />
     /// </remarks>
+    /// 
+    /// <seealso cref="HoughLineTransformation"/>
     /// 
     public class HoughCircleTransformation
     {
@@ -121,12 +141,13 @@ namespace AForge.Imaging
         private ArrayList circles = new ArrayList( );
 
         /// <summary>
-        /// Minimum circles's intensity in Hough map to recognize a circle.
+        /// Minimum circle's intensity in Hough map to recognize a circle.
         /// </summary>
         ///
         /// <remarks><para>The value sets minimum intensity level for a circle. If a value in Hough
         /// map has lower intensity, then it is not treated as a circle.</para>
-        /// <para>Default value is <b>10</b>.</para></remarks>
+        /// 
+        /// <para>Default value is set to <b>10</b>.</para></remarks>
         ///
         public short MinCircleIntensity
         {
@@ -139,8 +160,9 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The value determines radius around a map's value, which is analyzed to determine
-        /// if the map's value is a maximum in specified area.</para>
-        /// <para>Default value is <b>4</b>. Minimum value is <b>1</b>. Maximum value is <b>10</b>.</para></remarks>
+        /// if the map's value is a local maximum in specified area.</para>
+        /// 
+        /// <para>Default value is set to <b>4</b>. Minimum value is <b>1</b>. Maximum value is <b>10</b>.</para></remarks>
         /// 
         public int LocalPeakRadius
         {
@@ -152,23 +174,19 @@ namespace AForge.Imaging
         /// Maximum found intensity in Hough map.
         /// </summary>
         /// 
+        /// <remarks><para>The property provides maximum found circle's intensity.</para></remarks>
+        /// 
         public short MaxIntensity
         {
             get { return maxMapIntensity; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HoughCircleTransformation"/> class.
-        /// </summary>
-        /// 
-        public HoughCircleTransformation( int radiusToDetect )
-		{
-            this.radiusToDetect = radiusToDetect;
-		}
-
-        /// <summary>
         /// Found circles count.
         /// </summary>
+        /// 
+        /// <remarks><para>The property provides total number of found circles, which intensity is higher (or equal to),
+        /// than the requested <see cref="MinCircleIntensity">minimum intensity</see>.</para></remarks>
         /// 
         public int CirclesCount
         {
@@ -176,27 +194,47 @@ namespace AForge.Imaging
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="HoughCircleTransformation"/> class.
+        /// </summary>
+        /// 
+        /// <param name="radiusToDetect">Circles' radius to detect.</param>
+        /// 
+        public HoughCircleTransformation( int radiusToDetect )
+		{
+            this.radiusToDetect = radiusToDetect;
+		}
+
+        /// <summary>
         /// Process an image building Hough map.
         /// </summary>
         /// 
         /// <param name="image">Source image to process.</param>
         /// 
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// 
         public void ProcessImage( Bitmap image )
         {
             // check image format
             if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
-                throw new ArgumentException( "Pixel format of source image should be 8 bpp indexed" );
+            {
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
+            }
 
             // lock source image
             BitmapData imageData = image.LockBits(
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
 
-            // process the image
-            ProcessImage( imageData );
-
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // process the image
+                ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
         }
 
         /// <summary>
@@ -205,26 +243,43 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Source image data to process.</param>
         /// 
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// 
         public void ProcessImage( BitmapData imageData )
         {
-            if ( imageData.PixelFormat != PixelFormat.Format8bppIndexed )
-                throw new ArgumentException( "Pixel format of source image should be 8 bpp indexed" );
+            ProcessImage( new UnmanagedImage( imageData ) );
+        }
 
-			// get source image size
-			width   = imageData.Width;
-            height  = imageData.Height;
+        /// <summary>
+        /// Process an image building Hough map.
+        /// </summary>
+        /// 
+        /// <param name="image">Source unmanaged image to process.</param>
+        /// 
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// 
+        public void ProcessImage( UnmanagedImage image )
+        {
+            if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
+            {
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
+            }
 
-            int srcOffset = imageData.Stride - width;
+            // get source image size
+            width  = image.Width;
+            height = image.Height;
+
+            int srcOffset = image.Stride - width;
 
             // allocate Hough map of the same size like image
             houghMap = new short[height, width];
 
-			// do the job
+            // do the job
             unsafe
             {
-                byte* src = (byte*) imageData.Scan0.ToPointer( );
+                byte* src = (byte*) image.ImageData.ToPointer( );
 
-				// for each row
+                // for each row
                 for ( int y = 0; y < height; y++ )
                 {
                     // for each pixel
@@ -259,14 +314,17 @@ namespace AForge.Imaging
         /// Ñonvert Hough map to bitmap. 
         /// </summary>
         /// 
-        /// <returns>Returns a bitmap, which shows Hough map.</returns>
+        /// <returns>Returns 8 bppp grayscale bitmap, which shows Hough map.</returns>
+        /// 
+        /// <exception cref="ApplicationException">Hough transformation was not yet done by calling
+        /// ProcessImage() method.</exception>
         /// 
         public Bitmap ToBitmap( )
         {
             // check if Hough transformation was made already
             if ( houghMap == null )
             {
-                throw new ApplicationException( "Hough transformation was not done yet" );
+                throw new ApplicationException( "Hough transformation was not done yet." );
             }
 
             int width = houghMap.GetLength( 1 );

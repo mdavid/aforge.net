@@ -1,12 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
+
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using AForge;
@@ -16,7 +18,8 @@ namespace AForge.Imaging.Filters
     /// </summary>
     /// 
     /// <remarks><para>The class is the base class for binarization algorithms based on error diffusion.</para>
-    /// <para>Binarization with error diffusion in its idea is similar with binarization based on thresholding
+    /// 
+    /// <para>Binarization with error diffusion in its idea is similar to binarization based on thresholding
     /// of pixels' cumulative value (see <see cref="ThresholdWithCarry"/>). Each pixel is binarized based not only
     /// on its own value, but on values of some surrounding pixels. During pixel's binarization, its <b>binarization
     /// error</b> is distributed (diffused) to some neighbor pixels with some coefficients. This error diffusion
@@ -24,9 +27,11 @@ namespace AForge.Imaging.Filters
     /// only on unprocessed yet neighbor pixels, which are right and bottom pixels usually (in the case if image
     /// processing is done from upper left corner to bottom right corner). <b>Binarization error</b> equals
     /// to processing pixel value, if it is below threshold value, or pixel value minus 255 otherwise.</para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
     /// </remarks>
     /// 
-    public abstract class ErrorDiffusionDithering : FilterGrayToGrayPartial
+    public abstract class ErrorDiffusionDithering : BaseInPlacePartialFilter
     {
         private byte threshold = 128;
 
@@ -77,6 +82,27 @@ namespace AForge.Imaging.Filters
         /// </summary>
         protected int stride;
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorDiffusionDithering"/> class.
+        /// </summary>
+        /// 
+        protected ErrorDiffusionDithering( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+        }
+
         /// <summary>
         /// Do error diffusion.
         /// </summary>
@@ -92,18 +118,18 @@ namespace AForge.Imaging.Filters
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
-        ///
-        /// <param name="imageData">Image data.</param>
+        /// 
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
         /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
             // processing start and stop X,Y positions
-            startX  = rect.Left;
-            startY  = rect.Top;
-            stopX   = startX + rect.Width;
-            stopY   = startY + rect.Height;
-            stride  = imageData.Stride;
+            startX = rect.Left;
+            startY = rect.Top;
+            stopX  = startX + rect.Width;
+            stopY  = startY + rect.Height;
+            stride = image.Stride;
 
             int offset = stride - rect.Width;
 
@@ -111,7 +137,7 @@ namespace AForge.Imaging.Filters
             int v, error;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
             ptr += ( startY * stride + startX );

@@ -1,16 +1,18 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
 // Copyright © Volodymyr Goncharov, 2007
 // volodymyr.goncharov@gmail.com
 //
-// Andrew Kirillov
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System.Drawing;
+    using System.Collections.Generic;
     using System.Drawing.Imaging;
 
     /// <summary>
@@ -19,6 +21,9 @@ namespace AForge.Imaging.Filters
     /// 
     /// <remarks>
     /// <para>The filter fills areas outside of specified region using the specified color.</para>
+    /// 
+    /// <para>The filter accepts 8bpp grayscale and 24/32 bpp color images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -27,38 +32,57 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.ApplyInPlace( image );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="sample1.jpg" width="480" height="361" />
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
-    /// <img src="canvas_crop.jpg" width="480" height="361" />
+    /// <img src="img/imaging/canvas_crop.jpg" width="480" height="361" />
     /// </remarks>
     /// 
-    public class CanvasCrop : FilterAnyToAny
+    /// <seealso cref="CanvasFill"/>
+    /// 
+    public class CanvasCrop : BaseInPlaceFilter
     {
         // RGB fill color
-        private byte fillRed = 255;
+        private byte fillRed   = 255;
         private byte fillGreen = 255;
-        private byte fillBlue = 255;
+        private byte fillBlue  = 255;
         // gray fill color
         private byte fillGray = 255;
         // region to keep
         private Rectangle region;
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        /// 
+        /// <remarks><para>See <see cref="IFilterInformation.FormatTransalations"/>
+        /// documentation for additional information.</para></remarks>
+        /// 
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
         /// <summary>
         /// RGB fill color.
         /// </summary>
         /// 
-        /// <remarks>The color is used to fill areas out of specified region in color images. Default value
-        /// is white - RGB(255, 255, 255).</remarks>
+        /// <remarks><para>The color is used to fill areas out of specified region in color images.</para>
+        /// 
+        /// <para>Default value is set to white - RGB(255, 255, 255).</para></remarks>
         /// 
         public Color FillColorRGB
         {
             get { return Color.FromArgb( fillRed, fillGreen, fillBlue ); }
             set
             {
-                fillRed     = value.R;
-                fillGreen   = value.G;
-                fillBlue    = value.B;
+                fillRed   = value.R;
+                fillGreen = value.G;
+                fillBlue  = value.B;
             }
         }
 
@@ -66,8 +90,9 @@ namespace AForge.Imaging.Filters
         /// Gray fill color.
         /// </summary>
         /// 
-        /// <remarks>The color is used to fill areas out of specified region in grayscale images. Default value
-        /// is white - 255.</remarks>
+        /// <remarks><para>The color is used to fill areas out of specified region in grayscale images.</para>
+        /// 
+        /// <para>Default value is set to white - 255.</para></remarks>
         /// 
         public byte FillColorGray
         {
@@ -79,7 +104,7 @@ namespace AForge.Imaging.Filters
         /// Region to keep.
         /// </summary>
         /// 
-        /// <remarks>Pixel inside of the specified region will keep their value, but
+        /// <remarks>Pixels inside of the specified region will keep their values, but
         /// pixels outside of the region will be filled with specified color.</remarks>
         /// 
         public Rectangle Region
@@ -88,13 +113,22 @@ namespace AForge.Imaging.Filters
             set { region = value; }
         }
 
+        // Private constructor to do common initialization
+        private CanvasCrop( )
+        {
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format32bppArgb;
+            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format32bppRgb;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CanvasCrop"/> class.
         /// </summary>
         /// 
         /// <param name="region">Region to keep.</param>
         /// 
-        public CanvasCrop( Rectangle  region )
+        public CanvasCrop( Rectangle region ) : this( )
         {
             this.region = region;
         }
@@ -107,11 +141,12 @@ namespace AForge.Imaging.Filters
         /// <param name="fillColorRGB">RGB color to use for filling areas outside of specified region in color images.</param>
         /// 
         public CanvasCrop( Rectangle region, Color fillColorRGB )
+            : this( )
         {
-            this.region     = region;
-            this.fillRed    = fillColorRGB.R;
-            this.fillGreen  = fillColorRGB.G;
-            this.fillBlue   = fillColorRGB.B;
+            this.region    = region;
+            this.fillRed   = fillColorRGB.R;
+            this.fillGreen = fillColorRGB.G;
+            this.fillBlue  = fillColorRGB.B;
         }
 
         /// <summary>
@@ -122,8 +157,9 @@ namespace AForge.Imaging.Filters
         /// <param name="fillColorGray">Gray color to use for filling areas outside of specified region in grayscale images.</param>
         /// 
         public CanvasCrop( Rectangle region, byte fillColorGray )
+            : this( )
         {
-            this.region = region;
+            this.region   = region;
             this.fillGray = fillColorGray;
         }
 
@@ -136,31 +172,34 @@ namespace AForge.Imaging.Filters
         /// <param name="fillColorGray">Gray color to use for filling areas outside of specified region in grayscale images.</param>
         /// 
         public CanvasCrop( Rectangle region, Color fillColorRGB, byte fillColorGray )
+            : this( )
         {
-            this.region     = region;
-            this.fillRed    = fillColorRGB.R;
-            this.fillGreen  = fillColorRGB.G;
-            this.fillBlue   = fillColorRGB.B;
-            this.fillGray   = fillColorGray;
+            this.region    = region;
+            this.fillRed   = fillColorRGB.R;
+            this.fillGreen = fillColorRGB.G;
+            this.fillBlue  = fillColorRGB.B;
+            this.fillGray  = fillColorGray;
         }
 
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData )
+        /// <param name="image">Source image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image )
         {
+            int pixelSize = Image.GetPixelFormatSize( image.PixelFormat ) / 8;
+
             // get image width and height
-            int width = imageData.Width;
-            int height = imageData.Height;
-			int offset = imageData.Stride - ( ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ? width : width * 3 );
+            int width  = image.Width;
+            int height = image.Height;
+            int offset = image.Stride - width * pixelSize;
 
-			// do the job
-			byte * ptr = (byte *) imageData.Scan0.ToPointer( );
+            // do the job
+            byte * ptr = (byte*) image.ImageData.ToPointer( );
 
-            if ( imageData.PixelFormat == PixelFormat.Format8bppIndexed )
+            if ( image.PixelFormat == PixelFormat.Format8bppIndexed )
             {
                 // grayscale image
                 for ( int y = 0; y < height; y++ )
@@ -180,7 +219,7 @@ namespace AForge.Imaging.Filters
                 // color image
                 for ( int y = 0; y < height; y++ )
                 {
-                    for ( int x = 0; x < width; x++, ptr += 3 )
+                    for ( int x = 0; x < width; x++, ptr += pixelSize )
                     {
                         if ( !region.Contains( x, y ) )
                         {

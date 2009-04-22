@@ -1,7 +1,7 @@
 // AForge Machine Learning Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -15,6 +15,8 @@ namespace AForge.MachineLearning
     /// 
     /// <remarks>The class provides implementation of Sarse algorithm, known as
     /// on-policy Temporal Difference control.</remarks>
+    /// 
+    /// <seealso cref="QLearning"/>
     /// 
     public class Sarsa
     {
@@ -63,7 +65,7 @@ namespace AForge.MachineLearning
         }
 
         /// <summary>
-        /// Learning rate.
+        /// Learning rate, [0, 1].
         /// </summary>
         /// 
         /// <remarks>The value determines the amount of updates Q-function receives
@@ -73,19 +75,23 @@ namespace AForge.MachineLearning
         public double LearningRate
         {
             get { return learningRate; }
-            set { learningRate = value; }
+            set { learningRate = Math.Max( 0.0, Math.Min( 1.0, value ) ); }
         }
 
         /// <summary>
-        /// Discount factor.
+        /// Discount factor, [0, 1].
         /// </summary>
         /// 
-        /// <remarks>Discount factor for the expected summary reward.</remarks>
+        /// <remarks>Discount factor for the expected summary reward. The value serves as
+        /// multiplier for the expected reward. So if the value is set to 1,
+        /// then the expected summary reward is not discounted. If the value is getting
+        /// smaller, then smaller amount of the expected reward is used for actions'
+        /// estimates update.</remarks>
         /// 
         public double DiscountFactor
         {
             get { return discountFactor; }
-            set { discountFactor = value; }
+            set { discountFactor = Math.Max( 0.0, Math.Min( 1.0, value ) ); }
         }
 
         /// <summary>
@@ -133,7 +139,7 @@ namespace AForge.MachineLearning
             // do randomization
             if ( randomize )
             {
-                Random rand = new Random( (int) DateTime.Now.Ticks );
+                Random rand = new Random( );
 
                 for ( int i = 0; i < states; i++ )
                 {

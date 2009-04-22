@@ -1,7 +1,7 @@
 // AForge Machine Learning Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -14,15 +14,20 @@ namespace AForge.MachineLearning
     /// </summary>
     /// 
     /// <remarks><para>The class implements exploration policy base on Boltzmann distribution.
-    /// Acording to the policy, action <i>a</i> at state <i>s</i> is selected with the next probability:
-    /// <code>
+    /// Acording to the policy, action <b>a</b> at state <b>s</b> is selected with the next probability:</para>
+    /// <code lang="none">
     ///                   exp( Q( s, a ) / t )
     /// p( s, a ) = -----------------------------
     ///              SUM( exp( Q( s, b ) / t ) )
     ///               b
     /// </code>
-    /// where <i>t</i> is <see cref="Temperature"/>.</para>
+    /// <para>where <b>Q(s, a)</b> is action's <b>a</b> estimation (usefulness) at state <b>s</b> and
+    /// <b>t</b> is <see cref="Temperature"/>.</para>
     /// </remarks>
+    /// 
+    /// <seealso cref="RouletteWheelExploration"/>
+    /// <seealso cref="EpsilonGreedyExploration"/>
+    /// <seealso cref="TabuSearchExploration"/>
     /// 
     public class BoltzmannExploration : IExplorationPolicy
     {
@@ -30,11 +35,14 @@ namespace AForge.MachineLearning
         private double temperature;
 
         // random number generator
-        private Random rand = new Random( (int) DateTime.Now.Ticks );
+        private Random rand = new Random( );
 
         /// <summary>
-        /// Termperature parameter of Boltzmann distribution.
+        /// Termperature parameter of Boltzmann distribution, >0.
         /// </summary>
+        /// 
+        /// <remarks><para>The property sets the balance between exploration and greedy actions.
+        /// If temperature is low, then the policy tends to be more greedy.</para></remarks>
         /// 
         public double Temperature
         {
@@ -59,7 +67,7 @@ namespace AForge.MachineLearning
         /// 
         /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action.</returns>
+        /// <returns>Returns selected action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action

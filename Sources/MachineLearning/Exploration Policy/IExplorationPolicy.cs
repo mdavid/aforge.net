@@ -1,7 +1,7 @@
 // AForge Machine Learning Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -24,7 +24,7 @@ namespace AForge.MachineLearning
         /// 
         /// <param name="actionEstimates">Action estimates.</param>
         /// 
-        /// <returns>Returns the next action.</returns>
+        /// <returns>Returns selected action.</returns>
         /// 
         /// <remarks>The method chooses an action depending on the provided estimates. The
         /// estimates can be any sort of estimate, which values usefulness of the action

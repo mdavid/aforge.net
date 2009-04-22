@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -24,6 +24,9 @@ namespace AForge.Imaging.Filters
     /// 	{ 160,  96, 144,  80 }
     /// };
     /// </code>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -31,10 +34,11 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.ApplyInPlace( image );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="grayscale.jpg" width="480" height="361" />
+    /// <img src="img/imaging/grayscale.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
-    /// <img src="bayer_dithering.jpg" width="480" height="361" />
+    /// <img src="img/imaging/bayer_dithering.jpg" width="480" height="361" />
     /// </remarks>
 	/// 
 	public sealed class BayerDithering : OrderedDithering

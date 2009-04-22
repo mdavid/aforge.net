@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Neuro
@@ -41,7 +42,7 @@ namespace AForge.Neuro
         /// 
         /// <remarks>The generator is used for neuron's weights randomization.</remarks>
         /// 
-        protected static Random rand = new Random( (int) DateTime.Now.Ticks );
+        protected static Random rand = new Random( );
 
         /// <summary>
         /// Random generator range.
@@ -74,6 +75,10 @@ namespace AForge.Neuro
         /// <summary>
         /// Random generator range.
         /// </summary>
+        /// 
+        /// <remarks>Sets the range of random generator. Affects initial values of neuron's weight.
+        /// Default value is [0, 1].</remarks>
+        /// 
         public static DoubleRange RandRange
         {
             get { return randRange; }
@@ -128,7 +133,7 @@ namespace AForge.Neuro
         /// <remarks>The new neuron will be randomized (see <see cref="Randomize"/> method)
         /// after it is created.</remarks>
         ///
-        public Neuron( int inputs )
+        protected Neuron( int inputs )
         {
             // allocate weights
             inputsCount = Math.Max( 1, inputs );

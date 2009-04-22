@@ -1,7 +1,7 @@
 // AForge Direct Show Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -64,7 +64,12 @@ namespace AForge.Video.DirectShow
         /// New frame event.
         /// </summary>
         /// 
-        /// <remarks>Notifies client about new available frame from video source.</remarks>
+        /// <remarks><para>Notifies clients about new available frame from video source.</para>
+        /// 
+        /// <para><note>Since video source may have multiple clients, each client is responsible for
+        /// making a copy (cloning) of the passed video frame, because the video source disposes its
+        /// own original copy after notifying of clients.</note></para>
+        /// </remarks>
         /// 
         public event NewFrameEventHandler NewFrame;
 
@@ -72,8 +77,8 @@ namespace AForge.Video.DirectShow
         /// Video source error event.
         /// </summary>
         /// 
-        /// <remarks>The event is used to notify client about any type error occurred in
-        /// video source object, for example exceptions.</remarks>
+        /// <remarks>This event is used to notify clients about any type of errors occurred in
+        /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
 
@@ -141,7 +146,7 @@ namespace AForge.Video.DirectShow
         /// State of the video source.
         /// </summary>
         /// 
-        /// <remarks>Current state of video source object.</remarks>
+        /// <remarks>Current state of video source object - running or not.</remarks>
         /// 
         public bool IsRunning
         {
@@ -167,14 +172,17 @@ namespace AForge.Video.DirectShow
         /// <remarks>
         /// <para>The value specifies if the class should prevent video freezing during and
         /// after screen saver or workstation lock. To prevent freezing the <i>DirectShow</i> graph
-        /// should not contain  <i>Renderer</i> filter, which is added by <i>Render()</i> method
+        /// should not contain <i>Renderer</i> filter, which is added by <i>Render()</i> method
         /// of graph. However, in some cases it may be required to call <i>Render()</i> method of graph, since
         /// it may add some more filters, which may be required for playing video. So, the property is
         /// a trade off - it is possible to prevent video freezing skipping adding renderer filter or
         /// it is possible to keep renderer filter, but video may freeze during screen saver.</para>
+        /// 
         /// <para>Default value of this property is set to <b>false</b> for file video source.</para>
-        /// <para><note>The property may become obsolete in the future if approach to disable freezing
+        /// 
+        /// <para><note>The property may become obsolete in the future when approach to disable freezing
         /// and adding all required filters is found.</note></para>
+        /// 
         /// <para><note>The property should be set before calling <see cref="Start"/> method
         /// of the class.</note></para>
         /// </remarks>
@@ -206,7 +214,7 @@ namespace AForge.Video.DirectShow
         /// Start video source.
         /// </summary>
         /// 
-        /// <remarks>Start video source and return execution to caller. Video source
+        /// <remarks>Starts video source and return execution to caller. Video source
         /// object creates background thread and notifies about new frames with the
         /// help of <see cref="NewFrame"/> event.</remarks>
         /// 
@@ -270,7 +278,13 @@ namespace AForge.Video.DirectShow
         /// Stop video source.
         /// </summary>
         /// 
-        /// <remarks>Stops video source aborting its thread.</remarks>
+        /// <remarks><para>Stops video source aborting its thread.</para>
+        /// 
+        /// <para><note>Since the method aborts background thread, its usage is highly not preferred
+        /// and should be done only if there are no other options. The correct way of stopping camera
+        /// is <see cref="SignalToStop">signaling it stop</see> and then
+        /// <see cref="WaitForStop">waiting</see> for background thread's completion.</note></para>
+        /// </remarks>
         /// 
         public void Stop( )
         {
@@ -486,37 +500,40 @@ namespace AForge.Video.DirectShow
             // Callback method that receives a pointer to the sample buffer
             public int BufferCB( double sampleTime, IntPtr buffer, int bufferLen )
             {
-                // create new image
-                System.Drawing.Bitmap image = new Bitmap( width, height, PixelFormat.Format24bppRgb );
-
-                // lock bitmap data
-                BitmapData imageData = image.LockBits(
-                    new Rectangle( 0, 0, width, height ),
-                    ImageLockMode.ReadWrite,
-                    PixelFormat.Format24bppRgb );
-
-                // copy image data
-                int srcStride = imageData.Stride;
-                int dstStride = imageData.Stride;
-
-                int dst = imageData.Scan0.ToInt32( ) + dstStride * ( height - 1 );
-                int src = buffer.ToInt32( );
-
-                for ( int y = 0; y < height; y++ )
+                if ( parent.NewFrame != null )
                 {
-                    Win32.memcpy( dst, src, srcStride );
-                    dst -= dstStride;
-                    src += srcStride;
+                    // create new image
+                    System.Drawing.Bitmap image = new Bitmap( width, height, PixelFormat.Format24bppRgb );
+
+                    // lock bitmap data
+                    BitmapData imageData = image.LockBits(
+                        new Rectangle( 0, 0, width, height ),
+                        ImageLockMode.ReadWrite,
+                        PixelFormat.Format24bppRgb );
+
+                    // copy image data
+                    int srcStride = imageData.Stride;
+                    int dstStride = imageData.Stride;
+
+                    int dst = imageData.Scan0.ToInt32( ) + dstStride * ( height - 1 );
+                    int src = buffer.ToInt32( );
+
+                    for ( int y = 0; y < height; y++ )
+                    {
+                        Win32.memcpy( dst, src, srcStride );
+                        dst -= dstStride;
+                        src += srcStride;
+                    }
+
+                    // unlock bitmap data
+                    image.UnlockBits( imageData );
+
+                    // notify parent
+                    parent.OnNewFrame( image );
+
+                    // release the image
+                    image.Dispose( );
                 }
-
-                // unlock bitmap data
-                image.UnlockBits( imageData );
-
-                // notify parent
-                parent.OnNewFrame( image );
-
-                // release the image
-                image.Dispose( );
 
                 return 0;
             }

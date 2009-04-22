@@ -1,54 +1,96 @@
 // AForge Image Processing Library
+// AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
     /// <summary>
-    /// Rotate image using bilinear interpolation
+    /// Rotate image using bilinear interpolation.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <para><note>Rotation is performed in counterclockwise direction.</note></para>
     /// 
-    public class RotateBilinear : FilterRotate
+    /// <remarks><para>The class implements image rotation filter using bilinear
+    /// interpolation algorithm.</para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images and 24 bpp
+    /// color images for processing.</para>
+    ///
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter - rotate for 30 degrees keeping original image size
+    /// RotateBilinear filter = new RotateBilinear( 30, true );
+    /// // apply the filter
+    /// Bitmap newImage = filter.Apply( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample9.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/rotate_bilinear.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="RotateNearestNeighbor"/>
+    /// <seealso cref="RotateBicubic"/>
+    /// 
+    public class RotateBilinear : BaseRotateFilter
     {
+        // format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RotateBilinear"/> class.
         /// </summary>
         /// 
-        /// <param name="angle">Rotation angle</param>
+        /// <param name="angle">Rotation angle.</param>
+        /// 
+        /// <remarks><para>This constructor sets <see cref="BaseRotateFilter.KeepSize"/> property
+        /// to <see langword="false"/>.</para>
+        /// </remarks>
         /// 
 		public RotateBilinear( double  angle ) :
-            base( angle )
+            this( angle, false )
 		{
 		}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class
+        /// Initializes a new instance of the <see cref="RotateBilinear"/> class.
         /// </summary>
         /// 
-        /// <param name="angle">Rotation angle</param>
-        /// <param name="keepSize">Keep image size or not</param>
+        /// <param name="angle">Rotation angle.</param>
+        /// <param name="keepSize">Keep image size or not.</param>
         /// 
         public RotateBilinear( double angle, bool keepSize ) :
             base( angle, keepSize )
 		{
-		}
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+        }
 
         /// <summary>
-        /// Process the filter on the specified image
+        /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="sourceData">Source image data</param>
-        /// <param name="destinationData">Destination image data</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData sourceData, BitmapData destinationData )
+        /// <param name="sourceData">Source image data.</param>
+        /// <param name="destinationData">Destination image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage sourceData, UnmanagedImage destinationData )
         {
             // get source image size
             int     width       = sourceData.Width;
@@ -77,8 +119,8 @@ namespace AForge.Imaging.Filters
             byte fillB = fillColor.B;
 
             // do the job
-            byte* src = (byte*) sourceData.Scan0.ToPointer( );
-            byte* dst = (byte*) destinationData.Scan0.ToPointer( );
+            byte* src = (byte*) sourceData.ImageData.ToPointer( );
+            byte* dst = (byte*) destinationData.ImageData.ToPointer( );
 
             // destination pixel's coordinate relative to image center
             double cx, cy;

@@ -39,5 +39,15 @@ namespace AForge.Imaging
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         /// 
         Point[] ProcessImage( BitmapData imageData );
+
+        /// <summary>
+        /// Process image looking for corners.
+        /// </summary>
+        /// 
+        /// <param name="image">Unmanaged source image to process.</param>
+        /// 
+        /// <returns>Returns array of found corners (X-Y coordinates).</returns>
+        /// 
+        Point[] ProcessImage( UnmanagedImage image );
     }
 }

@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Neuro
@@ -13,21 +14,21 @@ namespace AForge.Neuro
     /// Activation network.
     /// </summary>
     /// 
-    /// <remarks>Activation network is a base for multi-layer neural network
+    /// <remarks><para>Activation network is a base for multi-layer neural network
     /// with activation functions. It consists of <see cref="ActivationLayer">activation
-    /// layers</see>.</remarks>
+    /// layers</see>.</para>
     ///
-    /// <example>The following sample illustrates the usage of <see cref="ActivationNetwork"/> class:
+    /// <para>Sample usage:</para>
     /// <code>
-    ///		// create activation network
-    ///		ActivationNetwork network = new ActivationNetwork(
-    ///			new SigmoidFunction( ), // sigmoid activation function
-    ///			3,                      // 3 inputs
-    ///			4, 1 );                 // 2 layers:
-    ///                                 // 4 neurons in the firs layer
-    ///                                 // 1 neuron in the second layer
+    /// // create activation network
+    ///	ActivationNetwork network = new ActivationNetwork(
+    ///		new SigmoidFunction( ), // sigmoid activation function
+    ///		3,                      // 3 inputs
+    ///		4, 1 );                 // 2 layers:
+    ///                             // 4 neurons in the firs layer
+    ///                             // 1 neuron in the second layer
     ///	</code>
-    /// </example>
+    /// </remarks>
     /// 
     [Serializable]
     public class ActivationNetwork : Network
@@ -54,7 +55,7 @@ namespace AForge.Neuro
         /// <param name="neuronsCount">Array, which specifies the amount of neurons in
         /// each layer of the neural network.</param>
         /// 
-        /// <remarks>The new network will be randomized (see <see cref="ActivationNeuron.Randomize"/>
+        /// <remarks>The new network is randomized (see <see cref="ActivationNeuron.Randomize"/>
         /// method) after it is created.</remarks>
         /// 
         public ActivationNetwork( IActivationFunction function, int inputsCount, params int[] neuronsCount )

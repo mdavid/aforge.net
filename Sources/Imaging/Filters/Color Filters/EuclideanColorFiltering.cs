@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2006
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -15,18 +16,52 @@ namespace AForge.Imaging.Filters
     /// Euclidean color filtering.
     /// </summary>
     /// 
-    /// <remarks>The filter filters pixel, which color is inside or outside
-    /// of RGB sphere with specified center and radius.</remarks>
+    /// <remarks><para>The filter filters pixels, which color is inside/outside
+    /// of RGB sphere with specified center and radius - it keeps pixels with
+    /// colors inside/outside of the specified sphere and fills the rest with
+    /// <see cref="FillColor">specified color</see>.</para>
     /// 
-    public class EuclideanColorFiltering : FilterColorToColorPartial
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// EuclideanColorFiltering filter = new EuclideanColorFiltering( );
+    /// // set center colol and radius
+    /// filter.CenterColor = Color.FromArgb( 215, 30, 30 );
+    /// filter.Radius = 100;
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    ///
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/euclidean_filtering.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="ColorFiltering"/>
+    /// 
+    public class EuclideanColorFiltering : BaseInPlacePartialFilter
     {
         private short radius = 100;
         private Color center = Color.FromArgb( 255, 255, 255 );
-        private Color fill = Color.FromArgb( 0, 0, 0 );
+        private Color fill   = Color.FromArgb( 0, 0, 0 );
         private bool fillOutside = true;
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
         /// <summary>
-        /// RGB sphere's radius.
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
+        /// <summary>
+        /// RGB sphere's radius, [0, 450].
         /// </summary>
         /// 
         /// <remarks>Default value is 100.</remarks>
@@ -53,7 +88,7 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Fill color.
+        /// Fill color used to fill filtered pixels.
         /// </summary>
         public Color FillColor
         {
@@ -76,7 +111,12 @@ namespace AForge.Imaging.Filters
         /// Initializes a new instance of the <see cref="EuclideanColorFiltering"/> class.
         /// </summary>
         /// 
-        public EuclideanColorFiltering( ) { }
+        public EuclideanColorFiltering()
+        {
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EuclideanColorFiltering"/> class.
@@ -85,7 +125,8 @@ namespace AForge.Imaging.Filters
         /// <param name="center">RGB sphere's center.</param>
         /// <param name="radius">RGB sphere's radius.</param>
         /// 
-        public EuclideanColorFiltering( Color center, short radius )
+        public EuclideanColorFiltering( Color center, short radius ) :
+            this( )
         {
             this.center = center;
             this.radius = radius;
@@ -95,16 +136,19 @@ namespace AForge.Imaging.Filters
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
+            // get pixel size
+            int pixelSize = ( image.PixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
+
             int startX  = rect.Left;
             int startY  = rect.Top;
             int stopX   = startX + rect.Width;
             int stopY   = startY + rect.Height;
-            int offset  = imageData.Stride - rect.Width * 3;
+            int offset  = image.Stride - rect.Width * pixelSize;
 
             byte r, g, b;
             // sphere's center
@@ -117,16 +161,16 @@ namespace AForge.Imaging.Filters
             byte fB = fill.B;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX * 3 );
+            ptr += ( startY * image.Stride + startX * pixelSize );
 
             // for each row
             for ( int y = startY; y < stopY; y++ )
             {
                 // for each pixel
-                for ( int x = startX; x < stopX; x++, ptr += 3 )
+                for ( int x = startX; x < stopX; x++, ptr += pixelSize )
                 {
                     r = ptr[RGB.R];
                     g = ptr[RGB.G];

@@ -1,7 +1,9 @@
 // AForge Math Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math.Random
@@ -9,14 +11,25 @@ namespace AForge.Math.Random
     using System;
 
     /// <summary>
-    /// Uniform random numbers generator in the range of [0, 1]
+    /// Uniform random numbers generator in the range of [0, 1).
     /// </summary>
     /// 
-    /// <remarks><para>The random number generator generates unformaly
-    /// distributed numbers in the range of [0, 1].</para>
+    /// <remarks><para>The random number generator generates uniformly
+    /// distributed numbers in the range of [0, 1) - greater or equal to 0.0
+    /// and less than 1.0.</para>
+    /// 
     /// <para><note>At this point the generator is based on the
-    /// internal .NET generator, but needs to be rewriten to
-    /// use faster generation algorithm.</note></para></remarks>
+    /// internal .NET generator, but may be rewritten to
+    /// use faster generation algorithm.</note></para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create instance of random generator
+    /// IRandomNumberGenerator generator = new UniformOneGenerator( );
+    /// // generate random number
+    /// double randomNumber = generator.Next( );
+    /// </code>
+    /// </remarks>
     /// 
     public class UniformOneGenerator : IRandomNumberGenerator
     {
@@ -24,7 +37,7 @@ namespace AForge.Math.Random
         private Random rand = null;
 
         /// <summary>
-        /// Mean value of generator
+        /// Mean value of the generator.
         /// </summary>
         ///
         public double Mean
@@ -33,7 +46,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Variance value of generator
+        /// Variance value of the generator.
         /// </summary>
         ///
         public double Variance
@@ -42,7 +55,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-		/// Initializes a new instance of the <see cref="UniformOneGenerator"/> class
+		/// Initializes a new instance of the <see cref="UniformOneGenerator"/> class.
         /// </summary>
         /// 
         /// <remarks>Initializes random numbers generator with zero seed.</remarks>
@@ -53,10 +66,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-		/// Initializes a new instance of the <see cref="UniformOneGenerator"/> class
+		/// Initializes a new instance of the <see cref="UniformOneGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="seed">Seed value to initialize random numbers generator</param>
+        /// <param name="seed">Seed value to initialize random numbers generator.</param>
         /// 
         public UniformOneGenerator( int seed )
         {
@@ -64,10 +77,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Generate next random number
+        /// Generate next random number.
         /// </summary>
         /// 
-        /// <returns>Returns next random number</returns>
+        /// <returns>Returns next random number.</returns>
         /// 
         public double Next( )
         {
@@ -75,10 +88,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Set seed of the random numbers generator
+        /// Set seed of the random numbers generator.
         /// </summary>
         /// 
-        /// <param name="seed">Seed value</param>
+        /// <param name="seed">Seed value.</param>
         /// 
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>

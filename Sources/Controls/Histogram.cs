@@ -13,7 +13,7 @@ namespace AForge.Controls
     using System.Drawing;
     using System.Data;
     using System.Windows.Forms;
-    
+
     /// <summary>
     /// Arguments of histogram events.
     /// </summary>
@@ -87,6 +87,7 @@ namespace AForge.Controls
     /// <remarks><para>The control displays histograms represented with integer arrays,
     /// where each array's element keeps occurrence number of the corresponding element.
     /// </para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create array with histogram values
@@ -94,8 +95,9 @@ namespace AForge.Controls
     /// // set values to histogram control
     /// histogram.Values = histogramValues;
     /// </code>
+    /// 
     /// <para><b>Sample control's look:</b></para>
-    /// <img src="histogram.jpg" width="324" height="77" />
+    /// <img src="img/controls/histogram.jpg" width="324" height="77" />
     /// </remarks>
     /// 
     public class Histogram : System.Windows.Forms.Control
@@ -117,8 +119,8 @@ namespace AForge.Controls
         // set of pens
         private Pen blackPen = new Pen( Color.Black, 1 );
         private Pen whitePen = new Pen( Color.White, 1 );
-        private Pen drawPen = new Pen( Color.Black );
-        
+        private Pen drawPen  = new Pen( Color.Black );
+
         // width and height of histogram's area
         private int width;
         private int height;
@@ -185,8 +187,9 @@ namespace AForge.Controls
         /// Vertical view or not.
         /// </summary>
         ///
-        /// <remarks><para>The property determines if histogram should be displayed vertical or
+        /// <remarks><para>The property determines if histogram should be displayed vertically or
         /// not (horizontally).</para>
+        /// 
         /// <para>By default the property is set to <b>false</b> - horizontal view.</para></remarks>
         ///
         [DefaultValue( false )]
@@ -206,7 +209,7 @@ namespace AForge.Controls
         /// 
         /// <remarks>Non-negative histogram values.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Histogram has negative values.</exception>
+        /// <exception cref="ArgumentException">Histogram values should be non-negative.</exception>
         /// 
         [Browsable( false )]
         public int[] Values
@@ -225,7 +228,7 @@ namespace AForge.Controls
                         // value chould non-negative
                         if ( v < 0 )
                         {
-                            throw new ArgumentException( "Histogram values should be non-negative" );
+                            throw new ArgumentException( "Histogram values should be non-negative." );
                         }
 
                         if ( v > max )
@@ -295,10 +298,10 @@ namespace AForge.Controls
             // 
             // Histogram
             // 
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.Histogram_MouseUp );
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.Histogram_MouseMove );
+            this.MouseUp    += new System.Windows.Forms.MouseEventHandler( this.Histogram_MouseUp );
+            this.MouseMove  += new System.Windows.Forms.MouseEventHandler( this.Histogram_MouseMove );
             this.MouseLeave += new System.EventHandler( this.Histogram_MouseLeave );
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Histogram_MouseDown );
+            this.MouseDown  += new System.Windows.Forms.MouseEventHandler( this.Histogram_MouseDown );
         }
 
         /// <summary>
@@ -311,7 +314,7 @@ namespace AForge.Controls
         {
             Graphics g = pe.Graphics;
             // drawing area's width and height
-            width  = ( ( values == null ) || ( vertical == true ) ) ?
+            width = ( ( values == null ) || ( vertical == true ) ) ?
                 ClientRectangle.Width - 2 :
                 Math.Min( values.Length, ClientRectangle.Width - 2 );
 

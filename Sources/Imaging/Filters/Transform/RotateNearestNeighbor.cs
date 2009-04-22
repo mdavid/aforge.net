@@ -1,54 +1,96 @@
 // AForge Image Processing Library
+// AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
     /// <summary>
-    /// Rotate image using nearest neighbor algorithm
+    /// Rotate image using nearest neighbor algorithm.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The class implements image rotation filter using nearest
+    /// neighbor algorithm, which does not assume any interpolation.</para>
     /// 
-    public class RotateNearestNeighbor : FilterRotate
+    /// <para><note>Rotation is performed in counterclockwise direction.</note></para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images and 24 bpp
+    /// color images for processing.</para>
+    ///
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter - rotate for 30 degrees keeping original image size
+    /// RotateNearestNeighbor filter = new RotateNearestNeighbor( 30, true );
+    /// // apply the filter
+    /// Bitmap newImage = filter.Apply( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample9.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/rotate_nearest.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="RotateBilinear"/>
+    /// <seealso cref="RotateBicubic"/>
+    /// 
+    public class RotateNearestNeighbor : BaseRotateFilter
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class
-        /// </summary>
-        /// 
-        /// <param name="angle">Rotation angle</param>
-        /// 
-		public RotateNearestNeighbor( double  angle ) :
-            base( angle )
-		{
-		}
+        // format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class.
         /// </summary>
         /// 
-        /// <param name="angle">Rotation angle</param>
-        /// <param name="keepSize">Keep image size or not</param>
+        /// <param name="angle">Rotation angle.</param>
+        /// 
+        /// <remarks><para>This constructor sets <see cref="BaseRotateFilter.KeepSize"/> property to
+        /// <see langword="false"/>.
+        /// </para></remarks>
+        /// 
+        public RotateNearestNeighbor( double angle ) :
+            this( angle, false )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RotateNearestNeighbor"/> class.
+        /// </summary>
+        /// 
+        /// <param name="angle">Rotation angle.</param>
+        /// <param name="keepSize">Keep image size or not.</param>
         /// 
         public RotateNearestNeighbor( double angle, bool keepSize ) :
             base( angle, keepSize )
-		{
-		}
+        {
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+        }
 
         /// <summary>
-        /// Process the filter on the specified image
+        /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="sourceData">Source image data</param>
-        /// <param name="destinationData">Destination image data</param>
+        /// <param name="sourceData">Source image data.</param>
+        /// <param name="destinationData">Destination image data.</param>
         /// 
-        protected override unsafe void ProcessFilter( BitmapData sourceData, BitmapData destinationData )
+        protected override unsafe void ProcessFilter( UnmanagedImage sourceData, UnmanagedImage destinationData )
         {
             // get source image size
             int     width       = sourceData.Width;
@@ -64,8 +106,8 @@ namespace AForge.Imaging.Filters
 
             // angle's sine and cosine
             double angleRad = -angle * Math.PI / 180;
-			double angleCos = Math.Cos( angleRad );
-			double angleSin = Math.Sin( angleRad );
+            double angleCos = Math.Cos( angleRad );
+            double angleSin = Math.Sin( angleRad );
 
             int srcStride = sourceData.Stride;
             int dstOffset = destinationData.Stride -
@@ -77,8 +119,8 @@ namespace AForge.Imaging.Filters
             byte fillB = fillColor.B;
 
             // do the job
-            byte* src = (byte*) sourceData.Scan0.ToPointer( );
-            byte* dst = (byte*) destinationData.Scan0.ToPointer( );
+            byte* src = (byte*) sourceData.ImageData.ToPointer( );
+            byte* dst = (byte*) destinationData.ImageData.ToPointer( );
 
             // destination pixel's coordinate relative to image center
             double cx, cy;
@@ -98,7 +140,7 @@ namespace AForge.Imaging.Filters
                     for ( int x = 0; x < newWidth; x++, dst++ )
                     {
                         // coordinate of the nearest point
-                        ox = (int) ( angleCos * cx + angleSin * cy + halfWidth );
+                        ox = (int) (  angleCos * cx + angleSin * cy + halfWidth );
                         oy = (int) ( -angleSin * cx + angleCos * cy + halfHeight );
 
                         // validate source pixel's coordinates
@@ -128,7 +170,7 @@ namespace AForge.Imaging.Filters
                     for ( int x = 0; x < newWidth; x++, dst += 3 )
                     {
                         // coordinate of the nearest point
-                        ox = (int) ( angleCos * cx + angleSin * cy + halfWidth );
+                        ox = (int) (  angleCos * cx + angleSin * cy + halfWidth );
                         oy = (int) ( -angleSin * cx + angleCos * cy + halfHeight );
 
                         // validate source pixel's coordinates

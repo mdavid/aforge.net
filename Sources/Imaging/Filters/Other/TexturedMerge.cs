@@ -1,135 +1,168 @@
 // AForge Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
+
 namespace AForge.Imaging.Filters
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
 
-	/// <summary>
-	/// Merge two images using factors from texture
-	/// </summary>
+    /// <summary>
+    /// Merge two images using factors from texture.
+    /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The filter is similar to <see cref="Morph"/> filter in its idea, but
+    /// instead of using single value for balancing amount of source's and overlay's image
+    /// values (see <see cref="Morph.SourcePercent"/>), the filter uses texture, which determines
+    /// the amount to take from source image and overlay image.</para>
     /// 
-    public class TexturedMerge : FilterAnyToAny
-	{
+    /// <para>The filter uses specified texture to adjust values using the next formula:<br/>
+    /// <b>dst = src * textureValue + ovr * ( 1.0 - textureValue )</b>,<br/>
+    /// where <b>src</b> is value of pixel in a source image, <b>ovr</b> is value of pixel in
+    /// overlay image, <b>dst</b> is value of pixel in a destination image and
+    /// <b>textureValue</b> is corresponding value from provided texture (see <see cref="TextureGenerator"/> or
+    /// <see cref="Texture"/>).</para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale and 24 bpp color images for processing.</para>
+    /// 
+    /// <para>Sample usage #1:</para>
+    /// <code>
+    /// // create filter
+    /// TexturedMerge filter = new TexturedMerge( new TextileTexture( ) );
+    /// // create an overlay image to merge with
+    /// filter.OverlayImage = new Bitmap( image.Width, image.Height,
+    ///         PixelFormat.Format24bppRgb );
+    /// // fill the overlay image with solid color
+    /// PointedColorFloodFill fillFilter = new PointedColorFloodFill( Color.DarkKhaki );
+    /// fillFilter.ApplyInPlace( filter.OverlayImage );
+    /// // apply the merge filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para>Sample usage #2:</para>
+    /// <code>
+    /// // create filter
+    /// TexturedMerge filter = new TexturedMerge( new CloudsTexture( ) );
+    /// // create 2 images with modified Hue
+    /// HueModifier hm1 = new HueModifier( 50 );
+    /// HueModifier hm2 = new HueModifier( 200 );
+    /// filter.OverlayImage = hm2.Apply( image );
+    /// hm1.ApplyInPlace( image );
+    /// // apply the merge filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image #1:</b></para>
+    /// <img src="img/imaging/textured_merge1.jpg" width="480" height="361" />
+    /// <para><b>Result image #2:</b></para>
+    /// <img src="img/imaging/textured_merge2.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    public class TexturedMerge : BaseInPlaceFilter2
+    {
         // texture generator
         private AForge.Imaging.Textures.ITextureGenerator textureGenerator;
         // generated texture
         private float[,] texture = null;
-        // overlay image
-		private Bitmap overlayImage;
+
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
         /// <summary>
-        /// Generated texture
+        /// Format translations dictionary.
+        /// </summary>
+        ///
+        /// <remarks><para>See <see cref="IFilterInformation.FormatTransalations"/> for more information.</para></remarks>
+        ///
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
+        /// <summary>
+        /// Generated texture.
         /// </summary>
         /// 
-        /// <remarks>Two dimensional array of texture intecities.</remarks>
+        /// <remarks><para>Two dimensional array of texture intensities.</para>
+        /// 
+        /// <para><note>In the case if image passed to the filter is smaller or
+        /// larger than the specified texture, than image's region is processed, which equals to the
+        /// minimum overlapping area.</note></para>
+        /// 
+        /// <para><note>The <see cref="TextureGenerator"/> property has priority over this property - if
+        /// generator is specified than the static generated texture is not used.</note></para>
+        /// </remarks>
         /// 
         public float[,] Texture
-		{
-			get { return texture; }
-			set { texture = value; }
-		}
+        {
+            get { return texture; }
+            set { texture = value; }
+        }
 
         /// <summary>
-        /// Texture generator
+        /// Texture generator.
         /// </summary>
         /// 
-        /// <remarks>Generator used to generate texture.</remarks>
+        /// <remarks><para>Generator used to generate texture.</para>
+        /// 
+        /// <para><note>The property has priority over the <see cref="Texture"/> property.</note></para>
+        /// </remarks>
         /// 
         public AForge.Imaging.Textures.ITextureGenerator TextureGenerator
-		{
-			get { return textureGenerator; }
-			set { textureGenerator = value; }
-		}
+        {
+            get { return textureGenerator; }
+            set { textureGenerator = value; }
+        }
+
+        // Private constructor to do common initialization
+        private TexturedMerge( )
+        {
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+        }
 
         /// <summary>
-        /// Overlay image
+        /// Initializes a new instance of the <see cref="TexturedMerge"/> class.
         /// </summary>
         /// 
-        public Bitmap OverlayImage
-		{
-			get { return overlayImage; }
-			set { overlayImage = value; }
-		}
+        /// <param name="texture">Generated texture.</param>
+        /// 
+        public TexturedMerge( float[,] texture ) : this( )
+        {
+            this.texture = texture;
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TexturedMerge"/> class
+        /// Initializes a new instance of the <see cref="TexturedMerge"/> class.
         /// </summary>
         /// 
-        /// <param name="texture">Generated texture</param>
+        /// <param name="generator">Texture generator.</param>
         /// 
-		public TexturedMerge( float[,] texture )
-		{
-			this.texture = texture;
-		}
+        public TexturedMerge( AForge.Imaging.Textures.ITextureGenerator generator ) : this( )
+        {
+            this.textureGenerator = generator;
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TexturedMerge"/> class
+        /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="generator">Texture generator</param>
-        /// 
-        public TexturedMerge( AForge.Imaging.Textures.ITextureGenerator generator )
-		{
-			this.textureGenerator = generator;
-		}
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TexturedMerge"/> class
-        /// </summary>
-        /// 
-        /// <param name="texture">Generated texture</param>
-        /// <param name="overlayImage">Overlay image</param>
-        /// 
-		public TexturedMerge( float[,] texture, Bitmap overlayImage )
-		{
-			this.texture = texture;
-			this.overlayImage = overlayImage;
-		}
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TexturedMerge"/> class
-        /// </summary>
-        /// 
-        /// <param name="generator">Texture generator</param>
-        /// <param name="overlayImage">Overlay image</param>
-        /// 
-		public TexturedMerge( AForge.Imaging.Textures.ITextureGenerator generator, Bitmap overlayImage )
-		{
-			this.textureGenerator = generator;
-			this.overlayImage = overlayImage;
-		}
-
-		/// <summary>
-		/// Process the filter on the specified image
-		/// </summary>
-		/// 
-		/// <param name="imageData">image data</param>
-		/// 
-		protected override unsafe void ProcessFilter( BitmapData imageData )
-		{
-			// source image and overlay must have same pixel format
-			if ( imageData.PixelFormat != overlayImage.PixelFormat )
-				throw new ArgumentException( "Source and overlay images must have same pixel format" );
-
-			// get image dimension
-			int width	= imageData.Width;
-			int height	= imageData.Height;
-
-			// check overlay image size
-			if ( ( width != overlayImage.Width ) || ( height != overlayImage.Height ) )
-				throw new ArgumentException( "Overlay image size should be equal to source image size" );
-
-			// lock overlay image
-			BitmapData ovrData = overlayImage.LockBits(
-				new Rectangle( 0, 0, width, height ),
-				ImageLockMode.ReadOnly, imageData.PixelFormat );
+        /// <param name="image">Source image data.</param>
+        /// <param name="overlay">Overlay image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, UnmanagedImage overlay )
+        {
+            // get image dimension
+            int width	= image.Width;
+            int height	= image.Height;
 
             // width and height to process
             int widthToProcess  = width;
@@ -147,12 +180,13 @@ namespace AForge.Imaging.Filters
                 heightToProcess = Math.Min( height, texture.GetLength( 0 ) );
             }
 
-            int pixelSize = ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
-            int offset = imageData.Stride - widthToProcess * pixelSize;
+            int pixelSize = Image.GetPixelFormatSize( image.PixelFormat ) / 8;
+            int srcOffset = image.Stride - widthToProcess * pixelSize;
+            int ovrOffset = overlay.Stride - widthToProcess * pixelSize;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
-            byte* ovr = (byte*) ovrData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
+            byte* ovr = (byte*) overlay.ImageData.ToPointer( );
 
             // for each line
             for ( int y = 0; y < heightToProcess; y++ )
@@ -168,11 +202,9 @@ namespace AForge.Imaging.Filters
                         *ptr = (byte) Math.Min( 255.0f, *ptr * t1 + *ovr * t2 );
                     }
                 }
-                ptr += offset;
-                ovr += offset;
+                ptr += srcOffset;
+                ovr += ovrOffset;
             }
-
-            overlayImage.UnlockBits( ovrData );
         }
-	}
+    }
 }

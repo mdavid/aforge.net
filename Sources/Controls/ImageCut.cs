@@ -729,11 +729,11 @@ namespace AForge.Controls
         /// <para>Note: This method has to be used, when a vertical slider was 
         /// choosed/rollovered by mouse and it should be moved (without mouse navigation). 
         /// If you know sure, if you want to move the right
-        /// (or left) slider, you have to use  the <see cref="moveSlider"/> method.
+        /// (or left) slider, you have to use  the <see cref="MoveSlider"/> method.
         /// </para>
         /// </remarks>
         /// <param name="moveValue">The move value.</param>
-        public void moveSelectedVerticalSlider( int moveValue )
+        public void MoveSelectedVerticalSlider( int moveValue )
         {
             if ( choosedSliders[0] == sliders[(byte) Slider.Left] )
             {
@@ -766,11 +766,11 @@ namespace AForge.Controls
         /// <para>Note: This method has to be used, when a horizontal slider was 
         /// choosed/rollovered by mouse and it should be moved (without mouse navigation). 
         /// If you know sure, if you want to move the right
-        /// (or left) slider, you have to use  the <see cref="moveSlider"/> method.
+        /// (or left) slider, you have to use  the <see cref="MoveSlider"/> method.
         /// </para>
         /// </remarks>
         /// <param name="moveValue">The move value.</param>
-        public void moveSelectedHorizontalSlider( int moveValue )
+        public void MoveSelectedHorizontalSlider( int moveValue )
         {
             if ( choosedSliders[0] == sliders[(byte) Slider.Top] )
             {

@@ -1,188 +1,249 @@
 // AForge Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+    using System;
+    using System.Drawing;
+    using System.Drawing.Imaging;
     using AForge;
-	using AForge.Math;
+    using AForge.Math;
 
-	/// <summary>
-	/// Gather statistics about the image in HSL color space
-	/// </summary>
+    /// <summary>
+    /// Gather statistics about image in HSL color space.
+    /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The class is used to accumulate statistical values about images,
+    /// like histogram, mean, standard deviation, etc. for each <b>HSL</b> color channel.</para>
     /// 
-	public class ImageStatisticsHSL
-	{
-		private ContinuousHistogram luminance;
+    /// <para>The class accepts 24 and 32 bpp color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // gather statistics
+    /// ImageStatisticsHSL stat = new ImageStatisticsHSL( image );
+    /// // get saturation channel's histogram
+    /// ContinuousHistogram saturation = stat.Saturation;
+    /// // check mean value of saturation channel
+    /// if ( saturation.Mean > 0.5 )
+    /// {
+    ///     // do further processing
+    /// }
+    /// </code>
+    /// </remarks>
+    /// 
+    /// <seealso cref="AForge.Math.ContinuousHistogram"/>
+    /// 
+    public class ImageStatisticsHSL
+    {
+        private ContinuousHistogram luminance;
         private ContinuousHistogram saturation;
 
         private ContinuousHistogram luminanceWithoutBlack;
         private ContinuousHistogram saturationWithoutBlack;
 
-		private int pixels;
-		private int pixelsWithoutBlack;
+        private int pixels;
+        private int pixelsWithoutBlack;
 
         /// <summary>
-        /// Histogram of saturation channel
+        /// Histogram of saturation channel.
         /// </summary>
         /// 
         public ContinuousHistogram Saturation
-		{
-			get { return saturation; }
-		}
+        {
+            get { return saturation; }
+        }
 
         /// <summary>
-        /// Histogram of luminance channel
+        /// Histogram of luminance channel.
         /// </summary>
         /// 
         public ContinuousHistogram Luminance
-		{
-			get { return luminance; }
-		}
+        {
+            get { return luminance; }
+        }
 
         /// <summary>
-        /// Histogram of saturation channel excluding black pixels
+        /// Histogram of saturation channel excluding black pixels.
         /// </summary>
+        /// 
+        /// <remarks><para>The property keeps statistics about saturation channel, which
+        /// excludes all black pixels, what affects mean, standard deviation, etc.</para>
+        /// </remarks>
         /// 
         public ContinuousHistogram SaturationWithoutBlack
-		{
-			get { return saturationWithoutBlack; }
-		}
+        {
+            get { return saturationWithoutBlack; }
+        }
 
         /// <summary>
-        /// Histogram of luminance channel excluding black pixels
+        /// Histogram of luminance channel excluding black pixels.
         /// </summary>
         /// 
+        /// <remarks><para>The property keeps statistics about luminance channel, which
+        /// excludes all black pixels, what affects mean, standard deviation, etc.</para>
+        /// </remarks>
+        /// 
         public ContinuousHistogram LuminanceWithoutBlack
-		{
-			get { return luminanceWithoutBlack; }
-		}
+        {
+            get { return luminanceWithoutBlack; }
+        }
 
         /// <summary>
-        /// Total pixel count of the image
+        /// Total pixels count in the processed image.
         /// </summary>
         /// 
         public int PixelsCount
-		{
-			get { return pixels; }
-		}
+        {
+            get { return pixels; }
+        }
 
         /// <summary>
-        /// Total pixel count of the image excluding black pixels
+        /// Total pixels count in the processed image excluding black pixels.
         /// </summary>
         /// 
-		public int PixelsCountWithoutBlack
-		{
-			get { return pixelsWithoutBlack; }
-		}
+        public int PixelsCountWithoutBlack
+        {
+            get { return pixelsWithoutBlack; }
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageStatisticsHSL"/> class
+        /// Initializes a new instance of the <see cref="ImageStatisticsHSL"/> class.
         /// </summary>
         /// 
-        /// <param name="image">Image to gather statistics about</param>
+        /// <param name="image">Image to gather statistics about.</param>
         /// 
-        /// <remarks>24 bit per pixel images are supported only.</remarks>
+        /// <exception cref="UnsupportedImageFormatException">Source pixel format is not supported.</exception>
         /// 
-		public ImageStatisticsHSL( Bitmap image )
-		{
-			if ( image.PixelFormat != PixelFormat.Format24bppRgb )
-				throw new ArgumentException( );
+        public ImageStatisticsHSL( Bitmap image )
+        {
+            CheckSourceFormat( image.PixelFormat );
 
-			// lock bitmap data
-			BitmapData imageData = image.LockBits(
-				new Rectangle( 0, 0, image.Width, image.Height ),
-				ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );
+            // lock bitmap data
+            BitmapData imageData = image.LockBits(
+                new Rectangle( 0, 0, image.Width, image.Height ),
+                ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );
 
-			// gather statistics
-            ProcessImage( imageData );
-
-			// unlock image
-            image.UnlockBits( imageData );
-		}
+            try
+            {
+                // gather statistics
+                ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageStatisticsHSL"/> class
+        /// Initializes a new instance of the <see cref="ImageStatisticsHSL"/> class.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data to gather statistics about</param>
+        /// <param name="imageData">Image data to gather statistics about.</param>
         /// 
-        /// <remarks>24 bit per pixel images are supported only.</remarks>
+        /// <exception cref="UnsupportedImageFormatException">Source pixel format is not supported.</exception>
         /// 
         public ImageStatisticsHSL( BitmapData imageData )
-		{
-			ProcessImage( imageData );
-		}
+        {
+            ProcessImage( new UnmanagedImage( imageData ) );
+        }
 
         /// <summary>
-        /// Gather statistics about specified image
+        /// Initializes a new instance of the <see cref="ImageStatisticsHSL"/> class.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data</param>
+        /// <param name="image">Unmanaged image to gather statistics about.</param>
         /// 
-        private void ProcessImage( BitmapData imageData )
-		{
+        /// <exception cref="UnsupportedImageFormatException">Source pixel format is not supported.</exception>
+        /// 
+        public ImageStatisticsHSL( UnmanagedImage image )
+        {
+            ProcessImage( image );
+        }
+
+        /// <summary>
+        /// Gather statistics about specified image.
+        /// </summary>
+        /// 
+        /// <param name="image">Unmanaged image to process.</param>
+        /// 
+        private void ProcessImage( UnmanagedImage image )
+        {
+            CheckSourceFormat( image.PixelFormat );
+
             // get image dimension
-            int width = imageData.Width;
-            int height = imageData.Height;
+            int width  = image.Width;
+            int height = image.Height;
 
-			pixels = pixelsWithoutBlack = 0;
+            pixels = pixelsWithoutBlack = 0;
 
-			int[]	s = new int[256];
-			int[]	l = new int[256];
-			int[]	swb = new int[256];
-			int[]	lwb = new int[256];
-			RGB		rgb = new RGB( );
-			HSL		hsl = new HSL( );
+            int[] s   = new int[256];
+            int[] l   = new int[256];
+            int[] swb = new int[256];
+            int[] lwb = new int[256];
+            RGB   rgb = new RGB( );
+            HSL   hsl = new HSL( );
 
-			int offset = imageData.Stride - width * 3;
+            int pixelSize = ( image.PixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
+            int offset = image.Stride - width * pixelSize;
 
-			// do the job
-			unsafe
-			{
-				byte * p = (byte *) imageData.Scan0.ToPointer( );
+            // do the job
+            unsafe
+            {
+                byte * p = (byte*) image.ImageData.ToPointer( );
 
-				// for each line
-				for ( int y = 0; y < height; y++ )
-				{
-					// for each pixel
-					for ( int x = 0; x < width; x++, p += 3 )
-					{
-						rgb.Red		= p[RGB.R];
-						rgb.Green	= p[RGB.G];
-						rgb.Blue	= p[RGB.B];
+                // for each line
+                for ( int y = 0; y < height; y++ )
+                {
+                    // for each pixel
+                    for ( int x = 0; x < width; x++, p += pixelSize )
+                    {
+                        rgb.Red = p[RGB.R];
+                        rgb.Green = p[RGB.G];
+                        rgb.Blue = p[RGB.B];
 
-						// convert to HSL color space
-						AForge.Imaging.ColorConverter.RGB2HSL( rgb, hsl );
+                        // convert to HSL color space
+                        AForge.Imaging.HSL.FromRGB( rgb, hsl );
 
-						s[(int) ( hsl.Saturation * 255 )]++;
-						l[(int) ( hsl.Luminance * 255 )]++;
-						pixels++;
+                        s[(int) ( hsl.Saturation * 255 )]++;
+                        l[(int) ( hsl.Luminance  * 255 )]++;
+                        pixels++;
 
-						if ( hsl.Luminance != 0.0 )
-						{
-							swb[(int) ( hsl.Saturation * 255 )]++;
-							lwb[(int) ( hsl.Luminance * 255 )]++;
-							pixelsWithoutBlack++;
-						}
-					}
-					p += offset;
-				}
-			}
+                        if ( hsl.Luminance != 0.0 )
+                        {
+                            swb[(int) ( hsl.Saturation * 255 )]++;
+                            lwb[(int) ( hsl.Luminance  * 255 )]++;
+                            pixelsWithoutBlack++;
+                        }
+                    }
+                    p += offset;
+                }
+            }
 
-			// create histograms
-			saturation = new ContinuousHistogram( s, new DoubleRange( 0, 1 ) );
-            luminance = new ContinuousHistogram( l, new DoubleRange( 0, 1 ) );
+            // create histograms
+            saturation = new ContinuousHistogram( s, new DoubleRange( 0, 1 ) );
+            luminance  = new ContinuousHistogram( l, new DoubleRange( 0, 1 ) );
 
             saturationWithoutBlack = new ContinuousHistogram( swb, new DoubleRange( 0, 1 ) );
-            luminanceWithoutBlack = new ContinuousHistogram( lwb, new DoubleRange( 0, 1 ) );
-		}
-	}
+            luminanceWithoutBlack  = new ContinuousHistogram( lwb, new DoubleRange( 0, 1 ) );
+        }
+
+        // Check pixel format of the source image
+        private void CheckSourceFormat( PixelFormat pixelFormat )
+        {
+            if (
+                ( pixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( pixelFormat != PixelFormat.Format32bppRgb ) &&
+                ( pixelFormat != PixelFormat.Format32bppArgb ) )
+            {
+                throw new UnsupportedImageFormatException( "Source pixel format is not supported." );
+            }
+        }
+    }
 }

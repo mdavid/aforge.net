@@ -1,95 +1,169 @@
 // AForge Image Processing Library
 //
-// Copyright © Andrew Kirillov, 2005-2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
 
-	/// <summary>
-	/// Extract RGB channel from image
-	/// </summary>
-	/// 
-	/// <remarks>Extracts specified channel of color image and returns
-	/// it the form of grayscale image.</remarks>
-	/// 
-	public class ExtractChannel : FilterColorToGray
-	{
-		private short channel = RGB.R;
+    /// <summary>
+    /// Extract RGB channel from image.
+    /// </summary>
+    /// 
+    /// <remarks><para>Extracts specified channel of color image and returns
+    /// it as grayscale image.</para>
+    /// 
+    /// <para>The filter accepts 24, 32, 48 and 64 bpp color images and produces
+    /// 8 (if source is 24 or 32 bpp image) or 16 (if source is 48 or 64 bpp image)
+    /// bpp grayscale image.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// ExtractChannel filter = new ExtractChannel( RGB.G );
+    /// // apply the filter
+    /// Bitmap channelImage = filter.Apply( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/extract_channel.jpg" width="480" height="361" />
+    /// 
+    /// </remarks>
+    /// 
+    /// <seealso cref="ReplaceChannel"/>
+    /// 
+    public class ExtractChannel : BaseFilter
+    {
+        private short channel = RGB.R;
 
-		/// <summary>
-		/// RGB channel to extract (default value is red)
-		/// </summary>
-		public short Channel
-		{
-			get { return channel; }
-			set
-			{
-				if (
-					( value != RGB.R ) &&
-					( value != RGB.G ) &&
-					( value != RGB.B )
-					)
-				{
-					throw new ArgumentException( );
-				}
-				channel = value;
-			}
-		}
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ExtractChannel"/> class
-		/// </summary>
-		/// 
-		public ExtractChannel( ) { }
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ExtractChannel"/> class
-		/// </summary>
-		/// 
-		/// <param name="channel">RGB channel to extract</param>
-		/// 
-		public ExtractChannel( short channel )
-		{
-			this.Channel = channel;
-		}
+        /// <summary>
+        /// RGB channel to extract.
+        /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <see cref="AForge.Imaging.RGB.R"/>.</para></remarks>
+        /// 
+        /// <exception cref="ArgumentException">Invalid channel is specified.</exception>
+        /// 
+        public short Channel
+        {
+            get { return channel; }
+            set
+            {
+                if (
+                    ( value != RGB.R ) &&
+                    ( value != RGB.G ) &&
+                    ( value != RGB.B )
+                    )
+                {
+                    throw new ArgumentException( "Invalid channel is specified." );
+                }
+                channel = value;
+            }
+        }
 
-		/// <summary>
-		/// Process the filter on the specified image
-		/// </summary>
-		/// 
-		/// <param name="sourceData">Source image data</param>
-		/// <param name="destinationData">Destination image data</param>
-		/// 
-		protected override unsafe void ProcessFilter( BitmapData sourceData, BitmapData destinationData )
-		{
-			// get width and height
-			int width = sourceData.Width;
-			int height = sourceData.Height;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExtractChannel"/> class.
+        /// </summary>
+        /// 
+        public ExtractChannel( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format48bppRgb]  = PixelFormat.Format16bppGrayScale;
+            formatTransalations[PixelFormat.Format64bppArgb] = PixelFormat.Format16bppGrayScale;
+        }
 
-			int srcOffset = sourceData.Stride - width * 3;
-			int dstOffset = destinationData.Stride - width;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExtractChannel"/> class.
+        /// </summary>
+        /// 
+        /// <param name="channel">RGB channel to extract.</param>
+        /// 
+        public ExtractChannel( short channel ) : this( )
+        {
+            this.Channel = channel;
+        }
 
-			// do the job
-			byte * src = (byte *) sourceData.Scan0.ToPointer( );
-			byte * dst = (byte *) destinationData.Scan0.ToPointer( );
+        /// <summary>
+        /// Process the filter on the specified image.
+        /// </summary>
+        /// 
+        /// <param name="sourceData">Source image data.</param>
+        /// <param name="destinationData">Destination image data.</param>
+        /// 
+        protected override unsafe void ProcessFilter( UnmanagedImage sourceData, UnmanagedImage destinationData )
+        {
+            // get width and height
+            int width = sourceData.Width;
+            int height = sourceData.Height;
 
-			// allign source pointer to the required channel
-			src += channel;
+            int pixelSize = Image.GetPixelFormatSize( sourceData.PixelFormat ) / 8;
 
-			for ( int y = 0; y < height; y++ )
-			{
-				for ( int x = 0; x < width; x++, src += 3, dst ++ )
-				{
-					*dst = *src;
-				}
-				src += srcOffset;
-				dst += dstOffset;
-			}
-		}
-	}
+            if ( pixelSize <= 4 )
+            {
+                int srcOffset = sourceData.Stride - width * pixelSize;
+                int dstOffset = destinationData.Stride - width;
+
+                // do the job
+                byte * src = (byte*) sourceData.ImageData.ToPointer( );
+                byte * dst = (byte*) destinationData.ImageData.ToPointer( );
+
+                // allign source pointer to the required channel
+                src += channel;
+
+                for ( int y = 0; y < height; y++ )
+                {
+                    for ( int x = 0; x < width; x++, src += pixelSize, dst++ )
+                    {
+                        *dst = *src;
+                    }
+                    src += srcOffset;
+                    dst += dstOffset;
+                }
+            }
+            else
+            {
+                pixelSize /= 2;
+
+                int srcBase   = (int) sourceData.ImageData.ToPointer( );
+                int dstBase   = (int) destinationData.ImageData.ToPointer( );
+                int srcStride = sourceData.Stride;
+                int dstStride = destinationData.Stride;
+
+                // for each line
+                for ( int y = 0; y < height; y++ )
+                {
+                    ushort* src = (ushort*) ( srcBase + y * srcStride );
+                    ushort* dst = (ushort*) ( dstBase + y * dstStride );
+
+                    // for each pixel
+                    for ( int x = 0; x < width; x++, src += pixelSize, dst++ )
+                    {
+                        *dst = *src;
+                    }
+                }
+
+            }
+        }
+    }
 }

@@ -1,12 +1,17 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2008
+// andrew.kirillov@aforgenet.com
 //
+// Article by Bill Green was used as the reference
+// http://www.pages.drexel.edu/~weg22/can_tut.html
+//
+
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -14,32 +19,53 @@ namespace AForge.Imaging.Filters
     /// Canny edge detector.
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The filter searches for objects' edges by applying Canny edge detector.
+    /// The implementation follows
+    /// <a href="http://www.pages.drexel.edu/~weg22/can_tut.html">Bill Green's Canny edge detection tutorial</a>.</para>
     /// 
-    public class CannyEdgeDetector : FilterColorToGray
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// CannyEdgeDetector filter = new CannyEdgeDetector( );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample2.jpg" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/canny_edges.png" width="320" height="240" />
+    /// </remarks>
+    /// 
+    public class CannyEdgeDetector : BaseUsingCopyPartialFilter
     {
-        private IFilter grayscaleFilter = new GrayscaleBT709( );
         private GaussianBlur gaussianFilter = new GaussianBlur( );
         private byte lowThreshold = 20;
         private byte highThreshold = 100;
 
-        // Sobel kernels
-        private static int[,] xKernel = new int[,]
-		{
-			{ -1,  0,  1 },
-			{ -2,  0,  2 },
-			{ -1,  0,  1 }
-		};
-        private static int[,] yKernel = new int[,]
-		{
-			{  1,  2,  1 },
-			{  0,  0,  0 },
-			{ -1, -2, -1 }
-		};
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
         /// <summary>
         /// Low threshold.
         /// </summary>
+        /// 
+        /// <remarks><para>Low threshold value used for hysteresis
+        /// (see  <a href="http://www.pages.drexel.edu/~weg22/can_tut.html">tutorial</a>
+        /// for more information).</para>
+        /// 
+        /// <para>Default value is set to <b>20</b>.</para>
+        /// </remarks>
         /// 
         public byte LowThreshold
         {
@@ -51,6 +77,13 @@ namespace AForge.Imaging.Filters
         /// High threshold.
         /// </summary>
         /// 
+        /// <remarks><para>High threshold value used for hysteresis
+        /// (see  <a href="http://www.pages.drexel.edu/~weg22/can_tut.html">tutorial</a>
+        /// for more information).</para>
+        /// 
+        /// <para>Default value is set to <b>100</b>.</para>
+        /// </remarks>
+        /// 
         public byte HighThreshold
         {
             get { return highThreshold; }
@@ -61,7 +94,7 @@ namespace AForge.Imaging.Filters
         /// Gaussian sigma.
         /// </summary>
         /// 
-        /// <remarks>The value is for Gaussian bluring.</remarks>
+        /// <remarks>Sigma value for <see cref="GaussianBlur.Sigma">Gaussian bluring</see>.</remarks>
         /// 
         public double GaussianSigma
         {
@@ -73,7 +106,7 @@ namespace AForge.Imaging.Filters
         /// Gaussian size.
         /// </summary>
         /// 
-        /// <remarks>Size of Gaussian kernel.</remarks>
+        /// <remarks>Size of <see cref="GaussianBlur.Size">Gaussian kernel</see>.</remarks>
         /// 
         public int GaussianSize
         {
@@ -85,7 +118,11 @@ namespace AForge.Imaging.Filters
         /// Initializes a new instance of the <see cref="CannyEdgeDetector"/> class.
         /// </summary>
         /// 
-        public CannyEdgeDetector( ) { }
+        public CannyEdgeDetector( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CannyEdgeDetector"/> class.
@@ -94,9 +131,9 @@ namespace AForge.Imaging.Filters
         /// <param name="lowThreshold">Low threshold.</param>
         /// <param name="highThreshold">High threshold.</param>
         /// 
-        public CannyEdgeDetector( byte lowThreshold, byte highThreshold )
+        public CannyEdgeDetector( byte lowThreshold, byte highThreshold ) : this( )
         {
-            this.lowThreshold = lowThreshold;
+            this.lowThreshold  = lowThreshold;
             this.highThreshold = highThreshold;
         }
 
@@ -109,9 +146,10 @@ namespace AForge.Imaging.Filters
         /// <param name="sigma">Gaussian sigma.</param>
         /// 
         public CannyEdgeDetector( byte lowThreshold, byte highThreshold, double sigma )
+            : this( )
         {
-            this.lowThreshold = lowThreshold;
-            this.highThreshold = highThreshold;
+            this.lowThreshold    = lowThreshold;
+            this.highThreshold   = highThreshold;
             gaussianFilter.Sigma = sigma;
         }
 
@@ -119,89 +157,68 @@ namespace AForge.Imaging.Filters
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="sourceData">Source image data.</param>
-        /// <param name="destinationData">Destination image data.</param>
+        /// <param name="source">Source image data.</param>
+        /// <param name="destination">Destination image data.</param>
+        /// <param name="rect">Image rectangle for processing by the filter.</param>
         /// 
-        protected override unsafe void ProcessFilter( BitmapData sourceData, BitmapData destinationData )
+        protected override unsafe void ProcessFilter( UnmanagedImage source, UnmanagedImage destination, Rectangle rect )
         {
-            // get width and height
-            int width    = sourceData.Width;
-            int height   = sourceData.Height;
-            int widthM1  = width - 1;
-            int heightM1 = height - 1;
-            int stride   = destinationData.Stride;
-            int offset   = stride - width;
+            // processing start and stop X,Y positions
+            int startX  = rect.Left + 1;
+            int startY  = rect.Top + 1;
+            int stopX   = startX + rect.Width - 2;
+            int stopY   = startY + rect.Height - 2;
 
-            // loop and array indexes
-            int i, j, ir;
+            int width  = rect.Width - 2;
+            int height = rect.Height - 2;
+
+            int dstStride = destination.Stride;
+            int srcStride = source.Stride;
+
+            int dstOffset = dstStride - rect.Width + 2;
+            int srcOffset = srcStride - rect.Width + 2;
+
             // pixel's value and gradients
-            double v, gx, gy;
+            double gx, gy;
             //
             double orientation, toAngle = 180.0 / System.Math.PI;
             float leftPixel = 0, rightPixel = 0;
 
+            // STEP 1 - blur image
+            UnmanagedImage blurredImage = gaussianFilter.Apply( source );
+
             // orientation array
             byte[] orients = new byte[width * height];
-
-            // STEP 1 - convert image to grayscale if it is color
-            Bitmap grayImage = null;
-            BitmapData grayData = null;
-
-            if ( sourceData.PixelFormat != PixelFormat.Format8bppIndexed )
-            {
-                // do the processing
-                grayImage = grayscaleFilter.Apply( sourceData );
-                // lock the image
-                grayData = grayImage.LockBits(
-                    new Rectangle( 0, 0, width, height ),
-                    ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
-                // substitute the source
-                sourceData = grayData;
-            }
-
-            // STEP 2 - blur image
-            Bitmap blurredImage = gaussianFilter.Apply( sourceData );
-            BitmapData blurredData = blurredImage.LockBits(
-                    new Rectangle( 0, 0, width, height ),
-                    ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
-
             // gradients array
-            float[,] gradients = new float[width, height];
+            float[,] gradients = new float[source.Width, source.Height];
             float maxGradient = float.NegativeInfinity;
 
             // do the job
-            byte* src = (byte*) blurredData.Scan0.ToPointer( ) + stride;
-            int p = width;
+            byte* src = (byte*) blurredImage.ImageData.ToPointer( );
+            // allign pointer
+            src += srcStride * startY + startX;
 
-            // STEP 3 - calculate magnitude and edge orientation
+            // STEP 2 - calculate magnitude and edge orientation
+            int p = 0;
 
             // for each line
-            for ( int y = 1; y < heightM1; y++ )
+            for ( int y = startY; y < stopY; y++ )
             {
-                src++;
-                p++;
-
                 // for each pixel
-                for ( int x = 1; x < widthM1; x++, src++, p++ )
+                for ( int x = startX; x < stopX; x++, src++, p++ )
                 {
-                    gx = gy = 0;
-                    // for each kernel row
-                    for ( i = 0; i < 3; i++ )
-                    {
-                        ir = i - 1;
-                        // for each kernel column
-                        for ( j = 0; j < 3; j++ )
-                        {
-                            // source value
-                            v = src[ir * stride + j - 1];
+                    gx = src[-srcStride + 1] + src[srcStride + 1]
+                       - src[-srcStride - 1] - src[srcStride - 1]
+                       + 2 * ( src[1] - src[-1] );
 
-                            gx += v * xKernel[i, j];
-                            gy += v * yKernel[i, j];
-                        }
-                    }
+                    gy = src[-srcStride - 1] + src[-srcStride + 1]
+                       - src[srcStride - 1] - src[srcStride + 1]
+                       + 2 * ( src[-srcStride] - src[srcStride] );
+
                     // get gradient value
                     gradients[x, y] = (float) Math.Sqrt( gx * gx + gy * gy );
-                    maxGradient = Math.Max( maxGradient, gradients[x, y] );
+                    if ( gradients[x, y] > maxGradient )
+                        maxGradient = gradients[x, y];
 
                     // --- get orientation
                     if ( gx == 0 )
@@ -239,22 +256,21 @@ namespace AForge.Imaging.Filters
                     // save orientation
                     orients[p] = (byte) orientation;
                 }
-                src += ( offset + 1 );
-                p++;
+                src += srcOffset;
             }
 
-            // STEP 4 - suppres non maximums
-            byte* dst = (byte*) destinationData.Scan0.ToPointer( ) + stride;
-            p = width;
+            // STEP 3 - suppres non maximums
+            byte* dst = (byte*) destination.ImageData.ToPointer( );
+            // allign pointer
+            dst += dstStride * startY + startX;
+
+            p = 0;
 
             // for each line
-            for ( int y = 1; y < heightM1; y++ )
+            for ( int y = startY; y < stopY; y++ )
             {
-                dst++;
-                p++;
-
                 // for each pixel
-                for ( int x = 1; x < widthM1; x++, dst++, p++ )
+                for ( int x = startX; x < stopX; x++, dst++, p++ )
                 {
                     // get two adjacent pixels
                     switch ( orients[p] )
@@ -286,22 +302,21 @@ namespace AForge.Imaging.Filters
                         *dst = (byte) ( gradients[x, y] / maxGradient * 255 );
                     }
                 }
-                dst += ( offset + 1 );
-                p++;
+                dst += dstOffset;
             }
 
-            // STEP 5 - hysteresis
-            dst = (byte*) destinationData.Scan0.ToPointer( ) + stride;
-            p = width;
+            // STEP 4 - hysteresis
+            dst = (byte*) destination.ImageData.ToPointer( );
+            // allign pointer
+            dst += dstStride * startY + startX;
+
+            p = 0;
 
             // for each line
-            for ( int y = 1; y < heightM1; y++ )
+            for ( int y = startY; y < stopY; y++ )
             {
-                dst++;
-                p++;
-
                 // for each pixel
-                for ( int x = 1; x < widthM1; x++, dst++, p++ )
+                for ( int x = startX; x < stopX; x++, dst++, p++ )
                 {
                     if ( *dst < highThreshold )
                     {
@@ -315,32 +330,23 @@ namespace AForge.Imaging.Filters
                             // check 8 neighboring pixels
                             if ( ( dst[-1] < highThreshold ) &&
                                 ( dst[1] < highThreshold ) &&
-                                ( dst[-stride - 1] < highThreshold ) &&
-                                ( dst[-stride] < highThreshold ) &&
-                                ( dst[-stride + 1] < highThreshold ) &&
-                                ( dst[stride - 1] < highThreshold ) &&
-                                ( dst[stride] < highThreshold ) &&
-                                ( dst[stride + 1] < highThreshold ) )
+                                ( dst[-dstStride - 1] < highThreshold ) &&
+                                ( dst[-dstStride] < highThreshold ) &&
+                                ( dst[-dstStride + 1] < highThreshold ) &&
+                                ( dst[dstStride - 1] < highThreshold ) &&
+                                ( dst[dstStride] < highThreshold ) &&
+                                ( dst[dstStride + 1] < highThreshold ) )
                             {
                                 *dst = 0;
                             }
                         }
                     }
                 }
-                dst += ( offset + 1 );
-                p++;
+                dst += dstOffset;
             }
 
             // release blurred image
-            blurredImage.UnlockBits( blurredData );
             blurredImage.Dispose( );
-
-            // release gray image, if there was conversion
-            if ( grayData != null )
-            {
-                grayImage.UnlockBits( grayData );
-                grayImage.Dispose( );
-            }
         }
     }
 }

@@ -1,3 +1,132 @@
+AForge.NET Framework 2.0.0 BETA release notes
+---------------------------------------------
+20.03.2009.
+
+
+Version updates and fixes:
+
+* Fixed registered issues/requests:
+  - Issue 7: New population shuffling
+  - Issue 34: Suport of 32 bpp imag
+  - Issue 35: Apply filters to raw image in unmanaged memory
+  - Issue 42: Support of 16 bpp grayscale images
+  - Issue 43: Support of 48 and 64 bpp color images
+  - Issue 71: Flood Fill Algorithms in C#
+  - Issue 84: AccessViolitionException in ReplaceChannel.ProcessFilter
+
+
+* General
+  - Added new AForge.Fuzzy namespace containing classes for building fuzzy systems
+    (many thanks to Fabio Caversan, who is the main contributor to it).
+    
+  - Added new AForge.Imaging.Formats namespace containing some classes to decode
+    different specialized image formats, like PNM, FITS.
+    
+  - Added new AForge.Robotis.TeRK namespace containing classes to manipulate
+    Qwerk - Linux board aimed for building robots.
+
+
+* AForge
+  - Parallel class is added providing Parallel.For() method aimed for paralleling
+    computations across all cores in they system.
+    
+    
+* AForge.Math
+  - Complex structure is extended with set of new methods providing wider range of
+    operations with complex numbers.    
+
+
+* AForge.Imaging
+  - Added new set of base classes for image processing filters. These classes are
+    more flexible in support of different image formats and also provide runtime
+    information about filters - which formats are supported by image processing
+    filter and which format will be generated for result image.
+    
+  - Introduced support of unmanaged images - images, which are don't have relation
+    with Bitmap and BitmapData classes from .NET. Unmanaged images are just pixel data
+    in unmanaged memory.
+    
+  - Some image processing routines introduced support of 16 bpp grayscale image,
+    32 bpp color images, 48 and 64 bpp color image. See documentation for particular
+    routine to check supported image formats.
+
+  - DocumentSkewChecker is added, which is aimed for checking rotation angle of scanned
+    documents.
+    
+  - BlobCounterBase class now supports extracting of blobs' images, which size equals
+    to source image size (this is configurable, so user may specify size of blobs'
+    images).
+   
+  - Added PointedColorFloodFill, which fills image starting from the specified point
+    with solid color. The filter supports tolerance, which allows filling areas with
+    similar color.
+     
+  - Added PointedMeanFloodFill, which fills image starting from the specified point
+    with mean value of the filled area. Size of the area to fill depends on
+    specified tolerance.
+
+  - Added optimized versions of Erosion and Dilatation filters, which are aimed for
+    image processing with 3x3 structuring element and are optimized for certain
+    image formats: BinaryDilatation3x3, BinaryErosion3x3, Dilatation3x3, Erosion3x3.
+
+
+* AForge.Controls
+  - Added PictureBox control, which is derived from .NET's control, but supports
+    displaying of 16 bpp grayscale image and 48/64 color images, which are not
+    handled by .NET routines.
+     
+  - Added VideoSourcePlayer control, which allows playing video feeds provided by
+    classes implementing AForge.Video.IVideoSource inerface.
+     
+  - Added ColorSlider control, which is aimed for selection of RGB color value
+    and ranges.
+     
+     
+* AForge.Genetic
+  - Added support for migration between genetic populations. User may run several
+    population in deferent threads for example and perform members' migration
+    from time to time. See Population.Migrate() method.
+     
+  - DoubleArrayChromosome class is extended with more advanced crossover and mutation
+    operators (see docs for details).
+
+
+* AForge.Neuro
+  - Added support of using network classes from multiple threads (thread safety).
+    See documentation to Layer.Compute() and Network.Compute() for details.
+     
+  - Added EvolutionaryLearning classes - neural networks' learning algorithm
+    based on Genetic Algorithms.
+
+
+* AForge.NET Framework's samples
+  - Added ParallelTest sample application, which demonstrates usage of
+    AForge.Parallel.For().
+     
+  - Added Fuzze Set Sample and FuzzyAGV sample applications, which demonstrate
+    usage of new AForge.Fuzzy namespace.
+     
+  - Added ImageViewer sample application, which demostrates usage of new
+    AForge.Imaging.Formats namespace.
+     
+  - Added QwertStart sample application, which demonstrates basics of using
+    new AForge.Robotics.TeRK namespace and performs basic manipulations
+    of Qwerk.
+     
+  - Added Player sample, which demonstrates usage of AForge.Video.* namespaces
+    for playing different video source.
+     
+  - Added Two Cameras Test sample application, which demonstrates how to open
+    two web cameras simultaneously. Also may serve as useful utility of testing
+    two cameras from the same manufacturer (some cameras do not support dual
+    setup, so it is nice to have something to that quickly).
+
+
+* and just many smaller updates in this version ...
+
+
+
+
 AForge.NET 1.7.0 release notes
 ------------------------------
 21.07.2008.
@@ -540,4 +669,3 @@ Version updates and fixes:
 
 * Samples
   - Textures demo application;
-

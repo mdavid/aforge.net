@@ -1,7 +1,9 @@
 // AForge Math Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math.Random
@@ -9,13 +11,23 @@ namespace AForge.Math.Random
     using System;
 
     /// <summary>
-    /// Gaussian random numbers generator
+    /// Gaussian random numbers generator.
     /// </summary>
     /// 
     /// <remarks><para>The random number generator generates gaussian
     /// random numbers with specified mean and standard deviation values.</para>
-    /// <para>The generator uses <see cref="StandardGenerator"/> generator
-    /// to generate random numbers.</para></remarks>
+    /// 
+    /// <para>The generator uses <see cref="StandardGenerator"/> generator as base
+    /// to generate random numbers.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create instance of random generator
+    /// IRandomNumberGenerator generator = new GaussianGenerator( 5.0, 1.5 );
+    /// // generate random number
+    /// double randomNumber = generator.Next( );
+    /// </code>
+    /// </remarks>
     /// 
     public class GaussianGenerator : IRandomNumberGenerator
     {
@@ -27,7 +39,7 @@ namespace AForge.Math.Random
         private double stdDev;
 
         /// <summary>
-        /// Mean value of generator
+        /// Mean value of the generator.
         /// </summary>
         ///
         public double Mean
@@ -36,7 +48,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Variance value of generator
+        /// Variance value of the generator.
         /// </summary>
         ///
         public double Variance
@@ -45,7 +57,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Standard deviation value
+        /// Standard deviation value.
         /// </summary>
         ///
         public double StdDev
@@ -54,11 +66,11 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GaussianGenerator"/> class
+        /// Initializes a new instance of the <see cref="GaussianGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="mean">Mean value</param>
-        /// <param name="stdDev">Standard deviation value</param>
+        /// <param name="mean">Mean value.</param>
+        /// <param name="stdDev">Standard deviation value.</param>
         /// 
         public GaussianGenerator( double mean, double stdDev ) :
             this( mean, stdDev, 0 )
@@ -66,12 +78,12 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GaussianGenerator"/> class
+        /// Initializes a new instance of the <see cref="GaussianGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="mean">Mean value</param>
-        /// <param name="stdDev">Standard deviation value</param>
-        /// <param name="seed">Seed value to initialize random numbers generator</param>
+        /// <param name="mean">Mean value.</param>
+        /// <param name="stdDev">Standard deviation value.</param>
+        /// <param name="seed">Seed value to initialize random numbers generator.</param>
         /// 
         public GaussianGenerator( double mean, double stdDev, int seed )
         {
@@ -82,10 +94,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Generate next random number
+        /// Generate next random number.
         /// </summary>
         /// 
-        /// <returns>Returns next random number</returns>
+        /// <returns>Returns next random number.</returns>
         /// 
         public double Next( )
         {
@@ -93,10 +105,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Set seed of the random numbers generator
+        /// Set seed of the random numbers generator.
         /// </summary>
         /// 
-        /// <param name="seed">Seed value</param>
+        /// <param name="seed">Seed value.</param>
         /// 
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>

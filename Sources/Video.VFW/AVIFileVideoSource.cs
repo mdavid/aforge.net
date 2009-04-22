@@ -1,8 +1,9 @@
 // AForge Video for Windows Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
 //
 namespace AForge.Video.VFW
 {
@@ -19,6 +20,7 @@ namespace AForge.Video.VFW
 	/// </summary>
     /// 
     /// <remarks><para>The video source read AVI files using Video for Windows.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create AVI file video source
@@ -53,7 +55,12 @@ namespace AForge.Video.VFW
         /// New frame event.
         /// </summary>
         /// 
-        /// <remarks>Notifies client about new available frame from video source.</remarks>
+        /// <remarks><para>Notifies clients about new available frame from video source.</para>
+        /// 
+        /// <para><note>Since video source may have multiple clients, each client is responsible for
+        /// making a copy (cloning) of the passed video frame, because the video source disposes its
+        /// own original copy after notifying of clients.</note></para>
+        /// </remarks>
         /// 
         public event NewFrameEventHandler NewFrame;
 
@@ -61,8 +68,8 @@ namespace AForge.Video.VFW
         /// Video source error event.
         /// </summary>
         /// 
-        /// <remarks>The event is used to notify client about any type error occurred in
-        /// video source object, for example exceptions.</remarks>
+        /// <remarks>This event is used to notify clients about any type of errors occurred in
+        /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
 
@@ -147,7 +154,7 @@ namespace AForge.Video.VFW
         /// State of the video source.
         /// </summary>
         /// 
-        /// <remarks>Current state of video source object.</remarks>
+        /// <remarks>Current state of video source object - running or not.</remarks>
         /// 
         public bool IsRunning
 		{
@@ -187,7 +194,7 @@ namespace AForge.Video.VFW
         /// Start video source.
         /// </summary>
         /// 
-        /// <remarks>Start video source and return execution to caller. Video source
+        /// <remarks>Starts video source and return execution to caller. Video source
         /// object creates background thread and notifies about new frames with the
         /// help of <see cref="NewFrame"/> event.</remarks>
         /// 
@@ -250,7 +257,13 @@ namespace AForge.Video.VFW
         /// Stop video source.
         /// </summary>
         /// 
-        /// <remarks>Stops video source aborting its thread.</remarks>
+        /// <remarks><para>Stops video source aborting its thread.</para>
+        /// 
+        /// <para><note>Since the method aborts background thread, its usage is highly not preferred
+        /// and should be done only if there are no other options. The correct way of stopping camera
+        /// is <see cref="SignalToStop">signaling it stop</see> and then
+        /// <see cref="WaitForStop">waiting</see> for background thread's completion.</note></para>
+        /// </remarks>
         /// 
         public void Stop( )
 		{
@@ -278,7 +291,7 @@ namespace AForge.Video.VFW
         /// Worker thread.
         /// </summary>
         /// 
-        public void WorkerThread( )
+        private void WorkerThread( )
 		{
             // AVI reader
 			AVIReader aviReader = new AVIReader( );

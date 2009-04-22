@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -12,7 +13,6 @@ namespace AForge.Imaging
     using System.Drawing.Imaging;
     using AForge;
     using AForge.Math;
-    using AForge.Imaging.ComplexFilters;
 
     /// <summary>
     /// Complex image.
@@ -20,6 +20,7 @@ namespace AForge.Imaging
     /// 
     /// <remarks><para>The class is used to keep image represented in complex numbers sutable for Fourier
     /// transformations.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create complex image
@@ -29,10 +30,11 @@ namespace AForge.Imaging
     /// // get complex image as bitmat
     /// Bitmap fourierImage = complexImage.ToBitmap( );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="sample3.jpg" width="256" height="256" />
+    /// <img src="img/imaging/sample3.jpg" width="256" height="256" />
     /// <para><b>Fourier image:</b></para>
-    /// <img src="fourier.jpg" width="256" height="256" />
+    /// <img src="img/imaging/fourier.jpg" width="256" height="256" />
     /// </remarks>
     /// 
     public class ComplexImage : ICloneable
@@ -97,9 +99,9 @@ namespace AForge.Imaging
         ///
         protected ComplexImage( int width, int height )
         {
-            this.width  = width;
+            this.width = width;
             this.height = height;
-            this.data   = new Complex[height, width];
+            this.data = new Complex[height, width];
             this.fourierTransformed = false;
         }
 
@@ -137,14 +139,15 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns an instance of complex image.</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Image width and height should be power of 2.</exception>
         /// 
         public static ComplexImage FromBitmap( Bitmap image )
         {
             // check image format
             if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
             {
-                throw new ArgumentException( "Source image can be graysclae (8bpp indexed) image only" );
+                throw new UnsupportedImageFormatException( "Source image can be graysclae (8bpp indexed) image only." );
             }
 
             // lock source bitmap data
@@ -152,10 +155,17 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
 
-            ComplexImage complexImage = FromBitmap( imageData );
+            ComplexImage complexImage;
 
-            // unlock source images
-            image.UnlockBits( imageData );
+            try
+            {
+                complexImage = FromBitmap( imageData );
+            }
+            finally
+            {
+                // unlock source images
+                image.UnlockBits( imageData );
+            }
 
             return complexImage;
         }
@@ -168,14 +178,15 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns an instance of complex image.</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Image width and height should be power of 2.</exception>
         /// 
         public static ComplexImage FromBitmap( BitmapData imageData )
         {
             // check image format
             if ( imageData.PixelFormat != PixelFormat.Format8bppIndexed )
             {
-                throw new ArgumentException( "Source image can be graysclae (8bpp indexed) image only" );
+                throw new UnsupportedImageFormatException( "Source image can be graysclae (8bpp indexed) image only." );
             }
 
             // get source image size
@@ -186,7 +197,7 @@ namespace AForge.Imaging
             // check image size
             if ( ( !Tools.IsPowerOf2( width ) ) || ( !Tools.IsPowerOf2( height ) ) )
             {
-                throw new ArgumentException( "Image width and height should be power of 2" );
+                throw new InvalidImagePropertiesException( "Image width and height should be power of 2." );
             }
 
             // create new complex image
@@ -299,25 +310,6 @@ namespace AForge.Imaging
                         }
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Performs frequency filter.
-        /// </summary>
-        /// 
-        /// <param name="range">Frequency range to keep.</param>
-        /// 
-        /// <remarks>Frequency filter zeros all values which frequencies are
-        /// outside of the spefied range.</remarks>
-        /// 
-        [Obsolete( "Frequency filter in Complex Filters namespace should be used instead of this method." )]
-        public void FrequencyFilter( IntRange range )
-        {
-            if ( fourierTransformed )
-            {
-                FrequencyFilter filter = new FrequencyFilter( range );
-                filter.Apply( this );
             }
         }
     }

@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Neuro
@@ -33,7 +34,6 @@ namespace AForge.Neuro
             get { return (DistanceNeuron) neurons[index]; }
         }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="DistanceLayer"/> class.
         /// </summary>
@@ -41,7 +41,7 @@ namespace AForge.Neuro
         /// <param name="neuronsCount">Layer's neurons count.</param>
         /// <param name="inputsCount">Layer's inputs count.</param>
         /// 
-        /// <remarks>The new layet will be randomized (see <see cref="Neuron.Randomize"/>
+        /// <remarks>The new layet is randomized (see <see cref="Neuron.Randomize"/>
         /// method) after it is created.</remarks>
         /// 
         public DistanceLayer( int neuronsCount, int inputsCount )

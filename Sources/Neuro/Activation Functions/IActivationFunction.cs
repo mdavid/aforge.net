@@ -28,7 +28,7 @@ namespace AForge.Neuro
         /// 
         /// <returns>Function output value, <i>f(x)</i>.</returns>
         ///
-        /// <remarks>The method calculates function value at point <b>x</b>.</remarks>
+        /// <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
         ///
         double Function( double x );
 
@@ -40,7 +40,7 @@ namespace AForge.Neuro
         /// 
         /// <returns>Function derivative, <i>f'(x)</i>.</returns>
         /// 
-        /// <remarks>The method calculates function derivative at point <b>x</b>.</remarks>
+        /// <remarks>The method calculates function derivative at point <paramref name="x"/>.</remarks>
         ///
         double Derivative( double x );
 
@@ -53,12 +53,14 @@ namespace AForge.Neuro
         /// 
         /// <returns>Function derivative, <i>f'(x)</i>.</returns>
         /// 
-        /// <remarks>The method calculates the same derivative value as the
+        /// <remarks><para>The method calculates the same derivative value as the
         /// <see cref="Derivative"/> method, but it takes not the input <b>x</b> value
         /// itself, but the function value, which was calculated previously with
-        /// the help of <see cref="Function"/> method. <i>(Some applications require as
-        /// function value, as derivative value, so they can seve the amount of
-        /// calculations using this method to calculate derivative)</i>.</remarks>
+        /// the help of <see cref="Function"/> method.</para>
+        /// 
+        /// <para><note>Some applications require as function value, as derivative value,
+        /// so they can save the amount of calculations using this method to calculate derivative.</note></para>
+        /// </remarks>
         /// 
         double Derivative2( double y );
     }

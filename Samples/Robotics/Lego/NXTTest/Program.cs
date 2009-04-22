@@ -12,13 +12,6 @@ namespace NXTTest
         [STAThread]
         static void Main( )
         {
-            sbyte a = -50;
-            sbyte b = 50;
-
-            System.Diagnostics.Debug.WriteLine( (byte) a );
-            System.Diagnostics.Debug.WriteLine( (byte) b );
-
-
             Application.EnableVisualStyles( );
             Application.SetCompatibleTextRenderingDefault( false );
             Application.Run( new MainForm( ) );

@@ -1,7 +1,9 @@
 // AForge Math Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math.Random
@@ -9,14 +11,24 @@ namespace AForge.Math.Random
     using System;
 
     /// <summary>
-    /// Standard random numbers generator
+    /// Standard random numbers generator.
     /// </summary>
     /// 
     /// <remarks><para>The random number generator generates gaussian
     /// random numbers with zero mean and standard deviation of one. The generator
     /// implements polar form of the Box-Muller transformation.</para>
-    /// <para>The generator uses <see cref="UniformOneGenerator"/> generator
-    /// to generate random numbers.</para></remarks>
+    /// 
+    /// <para>The generator uses <see cref="UniformOneGenerator"/> generator as a base
+    /// to generate random numbers.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create instance of random generator
+    /// IRandomNumberGenerator generator = new StandardGenerator( );
+    /// // generate random number
+    /// double randomNumber = generator.Next( );
+    /// </code>
+    /// </remarks>
     /// 
     public class StandardGenerator : IRandomNumberGenerator
     {
@@ -26,7 +38,7 @@ namespace AForge.Math.Random
         private bool    useSecond = false;
 
         /// <summary>
-        /// Mean value of generator
+        /// Mean value of the generator.
         /// </summary>
         /// 
         public double Mean
@@ -35,7 +47,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Variance value of generator
+        /// Variance value of the generator.
         /// </summary>
         ///
         public double Variance
@@ -44,7 +56,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardGenerator"/> class
+        /// Initializes a new instance of the <see cref="StandardGenerator"/> class.
         /// </summary>
         /// 
         public StandardGenerator( )
@@ -53,10 +65,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardGenerator"/> class
+        /// Initializes a new instance of the <see cref="StandardGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="seed">Seed value to initialize random numbers generator</param>
+        /// <param name="seed">Seed value to initialize random numbers generator.</param>
         /// 
         public StandardGenerator( int seed )
         {
@@ -64,10 +76,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Generate next random number
+        /// Generate next random number.
         /// </summary>
         /// 
-        /// <returns>Returns next random number</returns>
+        /// <returns>Returns next random number.</returns>
         /// 
         public double Next( )
         {
@@ -103,10 +115,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Set seed of the random numbers generator
+        /// Set seed of the random numbers generator.
         /// </summary>
         /// 
-        /// <param name="seed">Seed value</param>
+        /// <param name="seed">Seed value.</param>
         /// 
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>

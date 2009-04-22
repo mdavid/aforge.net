@@ -1,9 +1,10 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
+
 namespace AForge.Imaging.Filters
 {
     using System;
@@ -20,23 +21,29 @@ namespace AForge.Imaging.Filters
     /// 2 dimensional jugged array, where first array of coefficients is for
     /// right-standing pixels, but the rest of arrays are for bottom-standing pixels.
     /// All arrays except the first one should have odd number of coefficients.</para>
+    /// 
     /// <para>Suppose that error diffusion coefficients are represented by the next
     /// jugged array:</para>
+    /// 
     /// <code>
     /// int[][] coefficients = new int[2][] {
     ///     new int[1] { 7 },
     ///     new int[3] { 3, 5, 1 }
     /// };
     /// </code>
+    /// 
     /// <para>The above coefficients are used to diffuse error over the next neighbor
     /// pixels (<b>*</b> marks current pixel, coefficients are placed to corresponding
     /// neighbor pixels):</para>
-    /// <code>
+    /// <code lang="none">
     ///     | * | 7 |
     /// | 3 | 5 | 1 |
     /// 
     /// / 16
     /// </code>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -74,7 +81,7 @@ namespace AForge.Imaging.Filters
                 CalculateCoefficientsSum( );
             }
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorDiffusionToAdjacentNeighbors"/> class.
         /// </summary>

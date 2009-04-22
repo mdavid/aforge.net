@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using AForge;
@@ -16,18 +17,56 @@ namespace AForge.Imaging.Filters
     /// Color filtering.
     /// </summary>
     /// 
-    /// <remarks>The filter filters pixels inside or outside of specified color range.</remarks>
+    /// <remarks><para>The filter filters pixels inside/outside of specified RGB color range -
+    /// it keeps pixels with colors inside/outside of specified range and fills the rest with
+    /// <see cref="FillColor">specified color</see>.</para>
     /// 
-    public class ColorFiltering : FilterColorToColorPartial
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// ColorFiltering filter = new ColorFiltering( );
+    /// // set color ranges to keep
+    /// filter.Red   = new IntRange( 100, 255 );
+    /// filter.Green = new IntRange( 0, 75 );
+    /// filter.Blue  = new IntRange( 0, 75 );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/color_filtering.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="ChannelFiltering"/>
+    /// <seealso cref="EuclideanColorFiltering"/>
+    /// <seealso cref="HSLFiltering"/>
+    /// <seealso cref="YCbCrFiltering"/>
+    /// 
+    public class ColorFiltering : BaseInPlacePartialFilter
     {
-        private IntRange red = new IntRange( 0, 255 );
+        private IntRange red   = new IntRange( 0, 255 );
         private IntRange green = new IntRange( 0, 255 );
-        private IntRange blue = new IntRange( 0, 255 );
+        private IntRange blue  = new IntRange( 0, 255 );
 
         private byte fillR = 0;
         private byte fillG = 0;
         private byte fillB = 0;
         private bool fillOutsideRange = true;
+
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
         #region Public properties
 
@@ -73,8 +112,8 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
-        /// Determines, if pixels should be filled inside or outside specified
-        /// color range.
+        /// Determines, if pixels should be filled inside or outside of specified
+        /// color ranges.
         /// </summary>
         public bool FillOutsideRange
         {
@@ -88,7 +127,12 @@ namespace AForge.Imaging.Filters
         /// Initializes a new instance of the <see cref="ColorFiltering"/> class.
         /// </summary>
         /// 
-        public ColorFiltering( ) { }
+        public ColorFiltering( )
+        {
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColorFiltering"/> class.
@@ -98,40 +142,44 @@ namespace AForge.Imaging.Filters
         /// <param name="green">Green components filtering range.</param>
         /// <param name="blue">Blue components filtering range.</param>
         /// 
-        public ColorFiltering( IntRange red, IntRange green, IntRange blue )
+        public ColorFiltering( IntRange red, IntRange green, IntRange blue ) :
+            this( )
         {
-            this.red = red;
+            this.red   = red;
             this.green = green;
-            this.blue = blue;
+            this.blue  = blue;
         }
 
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
+            // get pixel size
+            int pixelSize = ( image.PixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
+
             int startX  = rect.Left;
             int startY  = rect.Top;
             int stopX   = startX + rect.Width;
             int stopY   = startY + rect.Height;
-            int offset  = imageData.Stride - rect.Width * 3;
+            int offset  = image.Stride - rect.Width * pixelSize;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
             byte r, g, b;
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX * 3 );
+            ptr += ( startY * image.Stride + startX * pixelSize );
 
             // for each row
             for ( int y = startY; y < stopY; y++ )
             {
                 // for each pixel
-                for ( int x = startX; x < stopX; x++, ptr += 3 )
+                for ( int x = startX; x < stopX; x++, ptr += pixelSize )
                 {
                     r = ptr[RGB.R];
                     g = ptr[RGB.G];
@@ -139,9 +187,9 @@ namespace AForge.Imaging.Filters
 
                     // check pixel
                     if (
-                        ( r >= red.Min ) && ( r <= red.Max ) &&
+                        ( r >= red.Min )   && ( r <= red.Max ) &&
                         ( g >= green.Min ) && ( g <= green.Max ) &&
-                        ( b >= blue.Min ) && ( b <= blue.Max )
+                        ( b >= blue.Min )  && ( b <= blue.Max )
                         )
                     {
                         if ( !fillOutsideRange )

@@ -1,7 +1,7 @@
-// AForge Framework
-// Hough line transformation demo
+// AForge.NET Framework
+// Hough line and circle transformation demo
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2007-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 
@@ -20,10 +21,6 @@ namespace HoughTransform
 {
     public partial class MainForm : Form
     {
-        private Bitmap sourceImage;
-        private Bitmap houghLineImage;
-        private Bitmap houghCirlceImage;
-
         // binarization filtering sequence
         private FiltersSequence filter = new FiltersSequence(
             new GrayscaleBT709( ),
@@ -57,12 +54,15 @@ namespace HoughTransform
                     Bitmap image = (Bitmap) Bitmap.FromFile( openFileDialog.FileName );
                     // format image
                     AForge.Imaging.Image.FormatImage( ref image );
+                    // lock the source image
+                    BitmapData sourceData = image.LockBits(
+                        new Rectangle( 0, 0, image.Width, image.Height ),
+                        ImageLockMode.ReadOnly, image.PixelFormat );
                     // binarize the image
-                    sourceImage = filter.Apply( image );
+                    UnmanagedImage binarySource = filter.Apply( new UnmanagedImage( sourceData ) );
                     
                     // apply Hough line transofrm
-                    lineTransform.ProcessImage( sourceImage );
-                    houghLineImage = lineTransform.ToBitmap( );
+                    lineTransform.ProcessImage( binarySource );
                     // get lines using relative intensity
                     HoughLine[] lines = lineTransform.GetLinesByRelativeIntensity( 0.5 );
 
@@ -76,9 +76,7 @@ namespace HoughTransform
                     System.Diagnostics.Debug.WriteLine( "Max intensity: " + lineTransform.MaxIntensity );
 
                     // apply Hough circle transform
-                    circleTransform.ProcessImage( sourceImage );
-                    houghCirlceImage = circleTransform.ToBitmap( );
-
+                    circleTransform.ProcessImage( binarySource );
                     // get circles using relative intensity
                     HoughCircle[] circles = circleTransform.GetCirclesByRelativeIntensity( 0.5 );
 
@@ -91,10 +89,15 @@ namespace HoughTransform
                     System.Diagnostics.Debug.WriteLine( "Found circles: " + circleTransform.CirclesCount );
                     System.Diagnostics.Debug.WriteLine( "Max intensity: " + circleTransform.MaxIntensity );
 
+                    // unlock source image
+                    image.UnlockBits( sourceData );
+                    // dispose temporary binary source image
+                    binarySource.Dispose( );
+
                     // show images
-                    sourcePictureBox.Image = sourceImage;
-                    houghLinePictureBox.Image = houghLineImage;
-                    houghCirclePictureBox.Image = houghCirlceImage;
+                    sourcePictureBox.Image = image;
+                    houghLinePictureBox.Image = lineTransform.ToBitmap( );
+                    houghCirclePictureBox.Image = circleTransform.ToBitmap( );
                 }
             }
             catch

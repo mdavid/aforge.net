@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 // Original idea from CxImage
@@ -20,13 +20,15 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>The filter represents binarization filter, which is based on
     /// error diffusion dithering with Jarvis-Judice-Ninke coefficients. Error is diffused
     /// on 12 neighbor pixels with next coefficients:</para>
-    /// <code>
+    /// <code lang="none">
     ///         | * | 7 | 5 |
     /// | 3 | 5 | 7 | 5 | 3 |
     /// | 1 | 3 | 5 | 3 | 1 |
     /// 
     /// / 48
     /// </code>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -35,12 +37,18 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.ApplyInPlace( image );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="grayscale.jpg" width="480" height="361" />
+    /// <img src="img/imaging/grayscale.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
-    /// <img src="jarvis_judice_ninke.jpg" width="480" height="361" />
+    /// <img src="img/imaging/jarvis_judice_ninke.jpg" width="480" height="361" />
     /// </remarks>
     ///
+    /// <seealso cref="BurkesDithering"/>
+    /// <seealso cref="FloydSteinbergDithering"/>
+    /// <seealso cref="SierraDithering"/>
+    /// <seealso cref="StuckiDithering"/>
+    /// 
     public sealed class JarvisJudiceNinkeDithering : ErrorDiffusionToAdjacentNeighbors
     {
         /// <summary>
