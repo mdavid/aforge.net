@@ -1,7 +1,7 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -23,6 +23,10 @@ namespace AForge.Imaging.Filters
     /// </list>
     /// </remarks>
     /// 
+    /// <seealso cref="Grayscale"/>
+    /// <seealso cref="GrayscaleBT709"/>
+    /// <seealso cref="GrayscaleRMY"/>
+    ///
     public sealed class GrayscaleY : Grayscale
     {
         /// <summary>

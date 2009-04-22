@@ -1,8 +1,9 @@
-// AForge Framework
 // Approximation (Symbolic Regression) using Genetic Programming and Gene Expression Programming
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2006-2009
+// andrew.kirillov@aforgenet.com
 //
 
 using System;
@@ -61,8 +62,8 @@ namespace Approximation
 
 		private double[,] data = null;
 
-		private int populationSize = 40;
-		private int iterations = 100;
+		private int populationSize = 100;
+		private int iterations = 1000;
 		private int selectionMethod = 0;
 		private int functionsSet = 0;
 		private int geneticMethod = 0;

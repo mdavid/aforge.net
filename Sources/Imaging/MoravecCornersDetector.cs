@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -19,9 +20,12 @@ namespace AForge.Imaging
     /// <remarks><para>The class implements Moravec corners detector. For information about algorithm's
     /// details its <a href="http://www.cim.mcgill.ca/~dparks/CornerDetector/mainMoravec.htm">description</a>
     /// should be studied.</para>
+    /// 
     /// <para><note>Due to limitations of Moravec corners detector (anisotropic response, etc.) its usage is limited
     /// to certain cases only.</note></para>
-    /// <para><note>The class processes only grayscale (8 bpp indexed) and color (24 bpp) images.</note></para>
+    /// 
+    /// <para>The class processes only grayscale 8 bpp and color 24 bpp images.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create corner detector's instance
@@ -36,6 +40,8 @@ namespace AForge.Imaging
     /// </code>
     /// </remarks>
     /// 
+    /// <seealso cref="SusanCornersDetector"/>
+    /// 
     public class MoravecCornersDetector : ICornersDetector
     {
         // window size
@@ -44,12 +50,13 @@ namespace AForge.Imaging
         private int threshold = 500;
 
         /// <summary>
-        /// Window size used to determine if point is interesting.
+        /// Window size used to determine if point is interesting, [3, 15].
         /// </summary>
         /// 
         /// <remarks><para>The value specifies window size, which is used for initial searching of
         /// corners candidates and then for searching local maximums.</para>
-        /// <para>Default value is set to <b>3</b>. Value’s acceptable range is [3, 15].</para>
+        /// 
+        /// <para>Default value is set to <b>3</b>.</para>
         /// </remarks>
         /// 
         /// <exception cref="ArgumentException">Setting value is not odd.</exception>
@@ -61,7 +68,7 @@ namespace AForge.Imaging
             {
                 // check if value is odd
                 if ( ( value & 1 ) == 0 )
-                    throw new ArgumentException( "The value shoule be odd" );
+                    throw new ArgumentException( "The value shoule be odd." );
 
                 windowSize = Math.Max( 3, Math.Min( 15, value ) );
             }
@@ -74,6 +81,7 @@ namespace AForge.Imaging
         /// <remarks><para>The value is used to filter uninteresting points - points which have value below
         /// specified threshold value are treated as not corners candidates. Increasing this value decreases
         /// the amount of detected point.</para>
+        /// 
         /// <para>Default value is set to <b>500</b>.</para>
         /// </remarks>
         /// 
@@ -83,8 +91,8 @@ namespace AForge.Imaging
             set { threshold = value; }
         }
 
-        private static int[] xDelta = new int[8] { -1,  0,  1, 1, 1, 0, -1, -1 };
-        private static int[] yDelta = new int[8] { -1, -1, -1, 0, 1, 1,  1,  0 };
+        private static int[] xDelta = new int[8] { -1, 0, 1, 1, 1, 0, -1, -1 };
+        private static int[] yDelta = new int[8] { -1, -1, -1, 0, 1, 1, 1, 0 };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MoravecCornersDetector"/> class.
@@ -113,7 +121,6 @@ namespace AForge.Imaging
             this.WindowSize = windowSize;
         }
 
-
         /// <summary>
         /// Process image looking for corners.
         /// </summary>
@@ -122,7 +129,7 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
         /// 
         public Point[] ProcessImage( Bitmap image )
         {
@@ -132,7 +139,7 @@ namespace AForge.Imaging
                 ( image.PixelFormat != PixelFormat.Format24bppRgb )
                 )
             {
-                throw new ArgumentException( "Source image can be grayscale (8 bpp indexed) or color (24 bpp) image only" );
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
             }
 
             // lock source image
@@ -140,11 +147,18 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, image.PixelFormat );
 
-            // process the image
-            Point[] corners = ProcessImage( imageData );
+            Point[] corners;
 
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // process the image
+                corners = ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
 
             return corners;
         }
@@ -157,24 +171,39 @@ namespace AForge.Imaging
         /// 
         /// <returns>Returns array of found corners (X-Y coordinates).</returns>
         /// 
-        /// <exception cref="ArgumentException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
         /// 
         public Point[] ProcessImage( BitmapData imageData )
         {
+            return ProcessImage( new UnmanagedImage( imageData ) );
+        }
+
+        /// <summary>
+        /// Process image looking for corners.
+        /// </summary>
+        /// 
+        /// <param name="image">Unmanaged source image to process.</param>
+        /// 
+        /// <returns>Returns array of found corners (X-Y coordinates).</returns>
+        ///
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// 
+        public Point[] ProcessImage( UnmanagedImage image )
+        {
             // check image format
             if (
-                ( imageData.PixelFormat != PixelFormat.Format8bppIndexed ) &&
-                ( imageData.PixelFormat != PixelFormat.Format24bppRgb )
+                ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
+                ( image.PixelFormat != PixelFormat.Format24bppRgb )
                 )
             {
-                throw new ArgumentException( "Source image can be grayscale (8 bpp indexed) or color (24 bpp) image only" );
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
             }
 
             // get source image size
-            int width  = imageData.Width;
-            int height = imageData.Height;
-            int stride = imageData.Stride;
-            int pixelSize = ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
+            int width  = image.Width;
+            int height = image.Height;
+            int stride = image.Stride;
+            int pixelSize = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
             // window radius
             int windowRadius = windowSize / 2;
 
@@ -187,9 +216,9 @@ namespace AForge.Imaging
             // do the job
             unsafe
             {
-                byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+                byte* ptr = (byte*) image.ImageData.ToPointer( );
 
-			    // for each row
+                // for each row
                 for ( int y = windowRadius, maxY = height - windowRadius; y < maxY; y++ )
                 {
                     // for each pixel
@@ -216,7 +245,7 @@ namespace AForge.Imaging
 
                             int sum = 0;
 
-                            byte* ptr1 = ptr + ( y  - windowRadius ) * stride + (  x - windowRadius ) * pixelSize;
+                            byte* ptr1 = ptr + ( y - windowRadius )  * stride + ( x - windowRadius )  * pixelSize;
                             byte* ptr2 = ptr + ( sy - windowRadius ) * stride + ( sx - windowRadius ) * pixelSize;
 
                             // for each windows' rows

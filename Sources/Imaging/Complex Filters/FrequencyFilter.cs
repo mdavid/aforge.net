@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.ComplexFilters
@@ -16,8 +17,9 @@ namespace AForge.Imaging.ComplexFilters
     /// transformed image.
     /// </summary>
     /// 
-    /// <remarks><para>The filer keeps on only specified range of frequencies in complex
+    /// <remarks><para>The filer keeps only specified range of frequencies in complex
     /// Fourier transformed image. The rest of frequencies are zeroed.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create complex image
@@ -25,7 +27,7 @@ namespace AForge.Imaging.ComplexFilters
     /// // do forward Fourier transformation
     /// complexImage.ForwardFourierTransform( );
     /// // create filter
-    /// FrequencyFilter filter = FrequencyFilter( new IntRange( 40, 128 ) );
+    /// FrequencyFilter filter = new FrequencyFilter( new IntRange( 20, 128 ) );
     /// // apply filter
     /// filter.Apply( complexImage );
     /// // do backward Fourier transformation
@@ -33,10 +35,11 @@ namespace AForge.Imaging.ComplexFilters
     /// // get complex image as bitmat
     /// Bitmap fourierImage = complexImage.ToBitmap( );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="sample3.jpg" width="256" height="256" />
+    /// <img src="img/imaging/sample3.jpg" width="256" height="256" />
     /// <para><b>Fourier image:</b></para>
-    /// <img src="frequency_filter.jpg" width="256" height="256" />
+    /// <img src="img/imaging/frequency_filter.jpg" width="256" height="256" />
     /// </remarks>
     /// 
     public class FrequencyFilter : IComplexFilter
@@ -49,7 +52,8 @@ namespace AForge.Imaging.ComplexFilters
         /// 
         /// <remarks><para>The range specifies the range of frequencies to keep. Values is frequencies
         /// outside of this range are zeroed.</para>
-        /// <para>Default value is [0, 1024].</para></remarks>
+        /// 
+        /// <para>Default value is set to <b>[0, 1024]</b>.</para></remarks>
         /// 
         public IntRange FrequencyRange
         {
@@ -80,11 +84,13 @@ namespace AForge.Imaging.ComplexFilters
         /// 
         /// <param name="complexImage">Complex image to apply filter to.</param>
         /// 
+        /// <exception cref="ArgumentException">The source complex image should be Fourier transformed.</exception>
+        /// 
         public void Apply( ComplexImage complexImage )
         {
             if ( !complexImage.FourierTransformed )
             {
-                throw new ArgumentException( "The source complex image should be Fourier transformed" );
+                throw new ArgumentException( "The source complex image should be Fourier transformed." );
             }
 
             // get image dimenstion

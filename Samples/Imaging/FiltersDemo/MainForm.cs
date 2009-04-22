@@ -1,8 +1,9 @@
-// AForge Framework
 // Image Processing filters demo
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 using System;
@@ -73,7 +74,6 @@ namespace FiltersDemo
         private System.Windows.Forms.MenuItem rgbLinearFiltersItem;
         private System.Windows.Forms.MenuItem menuItem8;
         private System.Windows.Forms.MenuItem medianFiltersItem;
-        private System.Windows.Forms.MenuItem conservativeSmoothingFiltersItem;
         private System.Windows.Forms.MenuItem jitterFiltersItem;
         private System.Windows.Forms.MenuItem oilFiltersItem;
         private MenuItem gaussianFiltersItem;
@@ -161,7 +161,6 @@ namespace FiltersDemo
             this.sobelEdgesFiltersItem = new System.Windows.Forms.MenuItem( );
             this.menuItem8 = new System.Windows.Forms.MenuItem( );
             this.medianFiltersItem = new System.Windows.Forms.MenuItem( );
-            this.conservativeSmoothingFiltersItem = new System.Windows.Forms.MenuItem( );
             this.jitterFiltersItem = new System.Windows.Forms.MenuItem( );
             this.oilFiltersItem = new System.Windows.Forms.MenuItem( );
             this.textureFiltersItem = new System.Windows.Forms.MenuItem( );
@@ -250,7 +249,6 @@ namespace FiltersDemo
             this.sobelEdgesFiltersItem,
             this.menuItem8,
             this.medianFiltersItem,
-            this.conservativeSmoothingFiltersItem,
             this.jitterFiltersItem,
             this.oilFiltersItem,
             this.textureFiltersItem} );
@@ -471,27 +469,21 @@ namespace FiltersDemo
             this.medianFiltersItem.Text = "Median";
             this.medianFiltersItem.Click += new System.EventHandler( this.medianFiltersItem_Click );
             // 
-            // conservativeSmoothingFiltersItem
-            // 
-            this.conservativeSmoothingFiltersItem.Index = 37;
-            this.conservativeSmoothingFiltersItem.Text = "Conservative Smoothing";
-            this.conservativeSmoothingFiltersItem.Click += new System.EventHandler( this.conservativeSmoothingFiltersItem_Click );
-            // 
             // jitterFiltersItem
             // 
-            this.jitterFiltersItem.Index = 38;
+            this.jitterFiltersItem.Index = 37;
             this.jitterFiltersItem.Text = "Jitter";
             this.jitterFiltersItem.Click += new System.EventHandler( this.jitterFiltersItem_Click );
             // 
             // oilFiltersItem
             // 
-            this.oilFiltersItem.Index = 39;
+            this.oilFiltersItem.Index = 38;
             this.oilFiltersItem.Text = "Oil Painting";
             this.oilFiltersItem.Click += new System.EventHandler( this.oilFiltersItem_Click );
             // 
             // textureFiltersItem
             // 
-            this.textureFiltersItem.Index = 40;
+            this.textureFiltersItem.Index = 39;
             this.textureFiltersItem.Text = "Texture";
             this.textureFiltersItem.Click += new System.EventHandler( this.textureFiltersItem_Click );
             // 
@@ -920,13 +912,6 @@ namespace FiltersDemo
         {
             ApplyFilter( new Median( ) );
             medianFiltersItem.Checked = true;
-        }
-
-        // On Filters->Conservative Smoothing
-        private void conservativeSmoothingFiltersItem_Click( object sender, System.EventArgs e )
-        {
-            ApplyFilter( new ConservativeSmoothing( ) );
-            conservativeSmoothingFiltersItem.Checked = true;
         }
 
         // On Filters->Jitter

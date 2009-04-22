@@ -1,7 +1,7 @@
 // AForge Framework
 // Traveling Salesman Problem using Elastic Net
 //
-// Copyright © Andrew Kirillov, 2006
+// Copyright © Andrew Kirillov, 2008
 // andrew.kirillov@gmail.com
 //
 
@@ -21,7 +21,7 @@ using AForge.Controls;
 namespace TSP
 {
 	/// <summary>
-	/// Summary description for Form1.
+    /// Summary description for MainForm.
 	/// </summary>
 	public class MainForm : System.Windows.Forms.Form
 	{

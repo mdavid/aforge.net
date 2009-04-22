@@ -1,3 +1,9 @@
+// Time Series Prediction using Genetic Programming and Gene Expression Programming
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Andrew Kirillov, 2006-2009
+// andrew.kirillov@aforgenet.com
+
 using System;
 using System.Drawing;
 using System.Collections;

@@ -45,7 +45,7 @@ namespace RCXTest
         // On Connect button
         private void connectButton_Click( object sender, EventArgs e )
         {
-            if ( rcx.Connect( ) )
+            if ( rcx.Connect( RCXBrick.IRTowerType.USB ) )
             {
                 EnableConnectionControls( true );
 

@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -15,18 +16,57 @@ namespace AForge.Imaging.Filters
     /// Threshold using Simple Image Statistics (SIS).
     /// </summary>
     /// 
-    /// <remarks></remarks>
+    /// <remarks><para>The filter performs image thresholding calculating threshold automatically
+    /// using simple image statistics method. For each pixel:
+    /// <list type="bullet">
+    /// <item>two gradients are calculated - ex = |I(x + 1, y) - I(x - 1, y)| and
+    /// |I(x, y + 1) - I(x, y - 1)|;</item>
+    /// <item>weight is calculated as maximum of two gradients;</item>
+    /// <item>sum of weights is updated (weightTotal += weight);</item>
+    /// <item>sum of weighted pixel values is updated (total += weight * I(x, y)).</item>
+    /// </list>
+    /// The result threshold is calculated as sum of weighted pixel values divided by sum of weight.</para>
     /// 
-    public class SISThreshold : FilterGrayToGrayPartial
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// SISThreshold filter = new SISThreshold( );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample11.png" width="256" height="256" />
+    /// <para><b>Result image (calculated threshold is 127):</b></para>
+    /// <img src="img/imaging/sis_threshold.png" width="256" height="256" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="IterativeThreshold"/>
+    /// <seealso cref="OtsuThreshold"/>
+    /// 
+    public class SISThreshold : BaseInPlacePartialFilter
     {
         private byte threshold;
+
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
         /// <summary>
         /// Threshold value.
         /// </summary>
         /// 
-        /// <remarks>The property is read only and represents the value, which
-        /// was automaticaly calculated using image statistics.</remarks>
+        /// <remarks><para>The property is read only and represents the value, which
+        /// was automaticaly calculated using image statistics.</para></remarks>
         /// 
         public byte ThresholdValue
         {
@@ -34,13 +74,23 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="SISThreshold"/> class.
+        /// </summary>
+        /// 
+        public SISThreshold( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+        }
+
+        /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
         /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
             int startX  = rect.Left;
             int startY  = rect.Top;
@@ -48,17 +98,17 @@ namespace AForge.Imaging.Filters
             int stopY   = startY + rect.Height;
             int stopXM1 = stopX - 1;
             int stopYM1 = stopY - 1;
-            int stride  = imageData.Stride;
+            int stride  = image.Stride;
             int offset  = stride - rect.Width;
 
             // differences and weights
             double ex, ey, weight, weightTotal = 0, total = 0;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX );
+            ptr += ( startY * image.Stride + startX );
 
             // --- 1st pass - collecting statistics
 
@@ -92,10 +142,10 @@ namespace AForge.Imaging.Filters
             threshold = ( weightTotal == 0 ) ? (byte) 0 : (byte) ( total / weightTotal );
 
             // --- 2nd pass - thresholding
-            ptr = (byte*) imageData.Scan0.ToPointer( );
+            ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX );
+            ptr += ( startY * image.Stride + startX );
 
             // for each line
             for ( int y = startY; y < stopY; y++ )

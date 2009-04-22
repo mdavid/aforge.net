@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2008
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -15,16 +16,47 @@ namespace AForge.Imaging.Filters
     /// Hue modifier.
     /// </summary>
     /// 
-    /// <remarks>The filter operates in <b>HSL</b> color space and updates
-    /// pixels hue value setting it the specified value.</remarks>
+    /// <remarks><para>The filter operates in <b>HSL</b> color space and updates
+    /// pixels' hue values setting it to the specified value (luminance and
+    /// saturation are kept unchanged). The result of the filter looks like the image
+    /// is observed through a glass of the given color.</para>
+    ///
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// HueModifier filter = new HueModifier( 180 );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
     /// 
-    public class HueModifier : FilterColorToColorPartial
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/hue_modifier.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    public class HueModifier : BaseInPlacePartialFilter
     {
         private int hue = 0;
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
         /// <summary>
-        /// Hue value to set in the range of [0, 359].
+        /// Format translations dictionary.
         /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+        
+        /// <summary>
+        /// Hue value to set, [0, 359].
+        /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <b>0</b>.</para></remarks>
+        /// 
         public int Hue
         {
             get { return hue; }
@@ -35,15 +67,20 @@ namespace AForge.Imaging.Filters
         /// Initializes a new instance of the <see cref="HueModifier"/> class.
         /// </summary>
         /// 
-        public HueModifier( ) { }
+        public HueModifier( )
+        {
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HueModifier"/> class.
         /// </summary>
         /// 
-        /// <param name="hue">Hue value to set</param>
+        /// <param name="hue">Hue value to set.</param>
         /// 
-        public HueModifier( int hue )
+        public HueModifier( int hue ) : this( )
         {
             this.hue = hue;
         }
@@ -52,25 +89,25 @@ namespace AForge.Imaging.Filters
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
             int startX  = rect.Left;
             int startY  = rect.Top;
             int stopX   = startX + rect.Width;
             int stopY   = startY + rect.Height;
-            int offset  = imageData.Stride - rect.Width * 3;
+            int offset  = image.Stride - rect.Width * 3;
 
             RGB rgb = new RGB( );
             HSL hsl = new HSL( );
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX * 3 );
+            ptr += ( startY * image.Stride + startX * 3 );
 
             // for each row
             for ( int y = startY; y < stopY; y++ )
@@ -83,13 +120,13 @@ namespace AForge.Imaging.Filters
                     rgb.Blue    = ptr[RGB.B];
 
                     // convert to HSL
-                    AForge.Imaging.ColorConverter.RGB2HSL( rgb, hsl );
+                    AForge.Imaging.HSL.FromRGB( rgb, hsl );
 
                     // modify hue value
                     hsl.Hue = hue;
 
                     // convert back to RGB
-                    AForge.Imaging.ColorConverter.HSL2RGB( hsl, rgb );
+                    AForge.Imaging.HSL.ToRGB( hsl, rgb );
 
                     ptr[RGB.R] = rgb.Red;
                     ptr[RGB.G] = rgb.Green;

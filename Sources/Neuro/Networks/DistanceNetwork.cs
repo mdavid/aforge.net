@@ -1,8 +1,9 @@
 // AForge Neural Net Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Neuro
@@ -40,7 +41,7 @@ namespace AForge.Neuro
         /// <param name="inputsCount">Network's inputs count.</param>
         /// <param name="neuronsCount">Network's neurons count.</param>
         /// 
-        /// <remarks>The new network will be randomized (see <see cref="Neuron.Randomize"/>
+        /// <remarks>The new network is randomized (see <see cref="Neuron.Randomize"/>
         /// method) after it is created.</remarks>
         /// 
         public DistanceNetwork( int inputsCount, int neuronsCount )

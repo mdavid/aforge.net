@@ -1,8 +1,10 @@
 // AForge Video for Windows Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
+// 
 //
 namespace AForge.Video.VFW
 {
@@ -13,10 +15,11 @@ namespace AForge.Video.VFW
     using AForge;
 
 	/// <summary>
-	/// AVI files writing using Video for Windows.
+    /// AVI files writing using Video for Windows interface.
 	/// </summary>
     /// 
     /// <remarks><para>The class allows to write AVI files using Video for Windows API.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // instantiate AVI writer, use WMV3 codec
@@ -67,6 +70,10 @@ namespace AForge.Video.VFW
         /// Width of video frames.
         /// </summary>
         /// 
+        /// <remarks><para>The property specifies the width of video frames, which are acceptable
+        /// by <see cref="AddFrame"/> method for saving, which is set in <see cref="Open"/>
+        /// method.</para></remarks>
+        /// 
         public int Width
         {
             get { return ( buffer != IntPtr.Zero ) ? width : 0; }
@@ -75,6 +82,10 @@ namespace AForge.Video.VFW
         /// <summary>
         /// Height of video frames.
         /// </summary>
+        /// 
+        /// <remarks><para>The property specifies the height of video frames, which are acceptable
+        /// by <see cref="AddFrame"/> method for saving, which is set in <see cref="Open"/>
+        /// method.</para></remarks>
         /// 
         public int Height
         {
@@ -85,6 +96,9 @@ namespace AForge.Video.VFW
         /// Current position in video stream.
         /// </summary>
         /// 
+        /// <remarks><para>The property tell current position in video stream, which actually equals
+        /// to the amount of frames added using <see cref="AddFrame"/> method.</para></remarks>
+        /// 
         public int Position
 		{
 			get { return position; }
@@ -94,8 +108,12 @@ namespace AForge.Video.VFW
         /// Desired playing frame rate.
         /// </summary>
         /// 
-        /// <remarks>The property should be set befor opening new file to take effect.
-        /// Default frame rate is set to 25.</remarks>
+        /// <remarks><para>The property sets the video frame rate, which should be use during playing
+        /// of the video to be saved.</para>
+        /// 
+        /// <para><note>The property should be set befor opening new file to take effect.</note></para>
+        /// 
+        /// <para>Default frame rate is set to <b>25</b>.</para></remarks>
         /// 
         public int FrameRate
         {
@@ -107,8 +125,12 @@ namespace AForge.Video.VFW
         /// Codec used for video compression.
         /// </summary>
         /// 
-        /// <remarks>The property should be set befor opening new file to take effect.
-        /// Default video codec is set "DIB ".</remarks>
+        /// <remarks><para>The property sets the FOURCC code of video compression codec, which needs to
+        /// be used for video encoding.</para>
+        /// 
+        /// <para><note>The property should be set befor opening new file to take effect.</note></para>
+        /// 
+        /// <para>Default video codec is set <b>"DIB "</b>, which means no compression.</para></remarks>
         /// 
         public string Codec
 		{
@@ -120,8 +142,12 @@ namespace AForge.Video.VFW
         /// Compression video quality.
         /// </summary>
         /// 
-        /// <remarks>The property should be set befor opening new file to take effect.
-        /// Default value is -1 - default compression quality of the codec.</remarks>
+        /// <remarks><para>The property sets video quality used by codec in order to balance compression rate
+        /// and image quality. The quality is measured usually in the [0, 100] range.</para>
+        /// 
+        /// <para><note>The property should be set befor opening new file to take effect.</note></para>
+        /// 
+        /// <para>Default value is set to <b>-1</b> - default compression quality of the codec.</para></remarks>
         /// 
 		public int Quality
 		{
@@ -177,10 +203,10 @@ namespace AForge.Video.VFW
 		}
 
         /// <summary>
-        /// Dispose the object
+        /// Dispose the object.
         /// </summary>
         /// 
-        /// <param name="disposing">Indicates if disposing was initiated manually</param>
+        /// <param name="disposing">Indicates if disposing was initiated manually.</param>
         /// 
         protected virtual void Dispose( bool disposing )
 		{
@@ -201,8 +227,11 @@ namespace AForge.Video.VFW
         /// <param name="width">Video width.</param>
         /// <param name="height">Video height.</param>
         /// 
-        /// <remarks>This method throws <see cref="System.ApplicationException"/> in the case
-        /// of failure.</remarks>
+        /// <remarks><para>The method opens (creates) a video files, configure video codec and prepares
+        /// the stream for saving video frames with a help of <see cref="AddFrame"/> method.</para></remarks>
+        /// 
+        /// <exception cref="ApplicationException">Failure of opening video files (the exception message
+        /// specifies the issues).</exception>
         /// 
         public void Open( string fileName, int width, int height )
 		{
@@ -275,7 +304,7 @@ namespace AForge.Video.VFW
 		}
 
         /// <summary>
-        /// Close video file
+        /// Close video file.
         /// </summary>
         /// 
         public void Close( )
@@ -313,13 +342,17 @@ namespace AForge.Video.VFW
 		}
 
         /// <summary>
-        /// Add new frame to the AVI file 
+        /// Add new frame to the AVI file.
         /// </summary>
         /// 
-        /// <param name="frameImage">New frame image</param>
+        /// <param name="frameImage">New frame image.</param>
         /// 
-        /// <remarks>This method throws <see cref="System.ApplicationException"/> in the case
-        /// of failure.</remarks>
+        /// <remarks><para>The method adds new video frame to an opened video file. The width and heights
+        /// of the frame should be the same as it was specified in <see cref="Open"/> method
+        /// (see <see cref="Width"/> and <see cref="Height"/> properties).</para></remarks>
+        /// 
+        /// <exception cref="ApplicationException">Failure of opening video files (the exception message
+        /// specifies the issues).</exception>
         /// 
         public void AddFrame( Bitmap frameImage )
 		{
@@ -347,7 +380,7 @@ namespace AForge.Video.VFW
 
                 for ( int y = 0; y < height; y++ )
                 {
-                    AForge.Win32.memcpy( dst, src, dstStride );
+                    Win32.memcpy( dst, src, dstStride );
                     dst += dstStride;
                     src -= srcStride;
                 }

@@ -1,102 +1,189 @@
 // AForge Image Processing Library
+// AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2006
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
 
-	/// <summary>
-	/// Difference filter - get the difference of overlay and source images
-	/// </summary>
-	/// 
-	/// <remarks></remarks>
-	/// 
-	public sealed class Difference : FilterAnyToAny
-	{
-		private Bitmap	overlayImage;
+    /// <summary>
+    /// Difference filter - get the difference between overlay and source images.
+    /// </summary>
+    /// 
+    /// <remarks><para>The difference filter takes two images (source and
+    /// <see cref="BaseInPlaceFilter2.OverlayImage">overlay</see> images)
+    /// of the same size and pixel format and produces an image, where each pixel equals
+    /// to absolute difference between corresponding pixels from provided images.</para>
+    /// 
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24, 32, 48 and 64 bpp
+    /// color images for processing.</para>
+    /// 
+    /// <para><note>In the case if images with alpha channel are used (32 or 64 bpp), visualization
+    /// of the result image may seem a bit unexpected - most probably nothing will be seen
+    /// (in the case if image is displayed according to its alpha channel). This may be
+    /// caused by the fact that after differencing the entire alpha channel will be zeroed
+    /// (zero difference between alpha channels), what means that the resulting image will be
+    /// 100% transparent.</note></para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// Difference filter = new Difference( overlayImage );
+    /// // apply the filter
+    /// Bitmap resultImage = filter.Apply( sourceImage );
+    /// </code>
+    ///
+    /// <para><b>Source image:</b></para>
+    /// <img src="img/imaging/sample6.png" width="320" height="240" />
+    /// <para><b>Overlay image:</b></para>
+    /// <img src="img/imaging/sample7.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/difference.png" width="320" height="240" />
+    /// </remarks>
+    ///
+    /// <seealso cref="Intersect"/>
+    /// <seealso cref="Merge"/>
+    /// <seealso cref="Add"/>
+    /// <seealso cref="Subtract"/>
+    /// 
+    public sealed class Difference : BaseInPlaceFilter2
+    {
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
-		/// <summary>
-		/// Overlay image
-		/// </summary>
-		public Bitmap OverlayImage
-		{
-			get { return overlayImage; }
-			set { overlayImage = value; }
-		}
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Difference"/> class
-		/// </summary>
-		public Difference( ) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Difference"/> class.
+        /// </summary>
+        public Difference( )
+        {
+            InitFormatTransalations( );
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Difference"/> class
-		/// </summary>
-		/// 
-		/// <param name="overlayImage">Overlay image</param>
-		/// 
-		public Difference( Bitmap overlayImage )
-		{
-			this.overlayImage = overlayImage;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Difference"/> class.
+        /// </summary>
+        /// 
+        /// <param name="overlayImage">Overlay image.</param>
+        /// 
+        public Difference( Bitmap overlayImage )
+            : base( overlayImage )
+        {
+            InitFormatTransalations( );
+        }
 
-		/// <summary>
-		/// Process the filter on the specified image
-		/// </summary>
-		/// 
-		/// <param name="imageData">image data</param>
-		/// 
-		protected override unsafe void ProcessFilter( BitmapData imageData )
-		{
-			// source image and overlay must have same pixel format
-			if ( imageData.PixelFormat != overlayImage.PixelFormat )
-				throw new ArgumentException( "Source and overlay images must have same pixel format" );
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Difference"/> class.
+        /// </summary>
+        /// 
+        /// <param name="unmanagedOverlayImage">Unmanaged overlay image.</param>
+        /// 
+        public Difference( UnmanagedImage unmanagedOverlayImage )
+            : base( unmanagedOverlayImage )
+        {
+            InitFormatTransalations( );
+        }
 
-			// get image dimension
-			int width	= imageData.Width;
-			int height	= imageData.Height;
+        // Initialize format translation dictionary
+        private void InitFormatTransalations( )
+        {
+            formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]       = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb]      = PixelFormat.Format32bppArgb;
+            formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
+            formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
+            formatTransalations[PixelFormat.Format64bppArgb]      = PixelFormat.Format64bppArgb;
+        }
 
-			// check overlay image size
-			if ( ( width != overlayImage.Width ) || ( height != overlayImage.Height ) )
-				throw new ArgumentException( "Overlay image size should be equal to source image size" );
+        /// <summary>
+        /// Process the filter on the specified image.
+        /// </summary>
+        /// 
+        /// <param name="image">Source image data.</param>
+        /// <param name="overlay">Overlay image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, UnmanagedImage overlay )
+        {
+            PixelFormat pixelFormat = image.PixelFormat;
+            // get image dimension
+            int width  = image.Width;
+            int height = image.Height;
+            // pixel value
+            int v;
 
-			// lock overlay image
-			BitmapData ovrData = overlayImage.LockBits(
-				new Rectangle( 0, 0, width, height ),
-				ImageLockMode.ReadOnly, imageData.PixelFormat );
+            if (
+                ( pixelFormat == PixelFormat.Format8bppIndexed ) ||
+                ( pixelFormat == PixelFormat.Format24bppRgb ) ||
+                ( pixelFormat == PixelFormat.Format32bppRgb ) ||
+                ( pixelFormat == PixelFormat.Format32bppArgb ) )
+            {
+                // initialize other variables
+                int pixelSize = ( pixelFormat == PixelFormat.Format8bppIndexed ) ? 1 :
+                    ( pixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
+                int lineSize  = width * pixelSize;
+                int srcOffset = image.Stride - lineSize;
+                int ovrOffset = overlay.Stride - lineSize;
 
-			// initialize other variables
-			int pixelSize = ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
-			int lineSize = width * pixelSize;
-			int offset = imageData.Stride - lineSize;
-			// pixel value
-			int v;
+                // do the job
+                byte * ptr = (byte*) image.ImageData.ToPointer( );
+                byte * ovr = (byte*) overlay.ImageData.ToPointer( );
 
-			// do the job
-			byte * ptr = (byte *) imageData.Scan0.ToPointer( );
-			byte * ovr = (byte *) ovrData.Scan0.ToPointer( );
+                // for each line
+                for ( int y = 0; y < height; y++ )
+                {
+                    // for each pixel
+                    for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
+                    {
+                        // abs(sub)
+                        v = (int) *ptr - (int) *ovr;
+                        *ptr = ( v < 0 ) ? (byte) -v : (byte) v;
+                    }
+                    ptr += srcOffset;
+                    ovr += ovrOffset;
+                }
+            }
+            else
+            {
+                // initialize other variables
+                int pixelSize = ( pixelFormat == PixelFormat.Format16bppGrayScale ) ? 1 :
+                    ( pixelFormat == PixelFormat.Format48bppRgb ) ? 3 : 4;
+                int lineSize  = width * pixelSize;
+                int srcStride = image.Stride;
+                int ovrStride = overlay.Stride;
 
-			// for each line
-			for ( int y = 0; y < height; y++ )
-			{
-				// for each pixel
-				for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
-				{
-					// abs(sub)
-					v = (int) *ptr - (int) *ovr;
-					*ptr = ( v < 0 ) ? (byte) -v : (byte) v;
-				}
-				ptr += offset;
-				ovr += offset;
-			}
+                // do the job
+                int basePtr = (int) image.ImageData.ToPointer( );
+                int baseOvr = (int) overlay.ImageData.ToPointer( );
 
-			// unlock overlay image
-			overlayImage.UnlockBits( ovrData );
-		}
-	}
+                // for each line
+                for ( int y = 0; y < height; y++ )
+                {
+                    ushort * ptr = (ushort*) ( basePtr + y * srcStride );
+                    ushort * ovr = (ushort*) ( baseOvr + y * ovrStride );
+
+                    // for each pixel
+                    for ( int x = 0; x < lineSize; x++, ptr++, ovr++ )
+                    {
+                        // abs(sub)
+                        v = (int) *ptr - (int) *ovr;
+                        *ptr = ( v < 0 ) ? (ushort) -v : (ushort) v;
+                    }
+                }
+            }
+        }
+    }
 }

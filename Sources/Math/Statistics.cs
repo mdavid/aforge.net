@@ -1,8 +1,9 @@
 // AForge Math Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math
@@ -14,11 +15,14 @@ namespace AForge.Math
     /// Set of statistics functions.
     /// </summary>
     /// 
-    /// <remarks>The class represents collection of functions used
+    /// <remarks>The class represents collection of simple functions used
     /// in statistics.</remarks>
     /// 
     public class Statistics
     {
+        // Private constructor to avoid instantiation
+        private Statistics( ) { }
+
         /// <summary>
         /// Calculate mean value.
         /// </summary>
@@ -27,10 +31,21 @@ namespace AForge.Math
         /// 
         /// <returns>Returns mean value.</returns>
         /// 
-        /// <remarks>The input array is treated as histogram, i.e. its
+        /// <remarks><para>The input array is treated as histogram, i.e. its
         /// indexes are treated as values of stochastic function, but
         /// array values are treated as "probabilities" (total amount of
-        /// hits).</remarks>
+        /// hits).</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram array
+        /// int[] histogram = new int[10] { 1, 1, 2, 3, 6, 8, 11, 12, 7, 3 };
+        /// // calculate mean value
+        /// double mean = Statistics.Mean( histogram );
+        /// // output it (5.759)
+        /// System.Diagnostics.Debug.WriteLine( "mean = " + mean.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
         /// 
         public static double Mean( int[] values )
         {
@@ -58,10 +73,21 @@ namespace AForge.Math
         /// 
         /// <returns>Returns value of standard deviation.</returns>
         /// 
-        /// <remarks>The input array is treated as histogram, i.e. its
+        /// <remarks><para>The input array is treated as histogram, i.e. its
         /// indexes are treated as values of stochastic function, but
         /// array values are treated as "probabilities" (total amount of
-        /// hits).</remarks>
+        /// hits).</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram array
+        /// int[] histogram = new int[10] { 1, 1, 2, 3, 6, 8, 11, 12, 7, 3 };
+        /// // calculate standard deviation value
+        /// double stdDev = Statistics.StdDev( histogram );
+        /// // output it (1.999)
+        /// System.Diagnostics.Debug.WriteLine( "std.dev. = " + stdDev.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
         /// 
         public static double StdDev( int[] values )
         {
@@ -94,10 +120,26 @@ namespace AForge.Math
         /// 
         /// <returns>Returns value of median.</returns>
         /// 
-        /// <remarks>The input array is treated as histogram, i.e. its
+        /// <remarks>
+        /// <para>The input array is treated as histogram, i.e. its
         /// indexes are treated as values of stochastic function, but
         /// array values are treated as "probabilities" (total amount of
-        /// hits).</remarks>
+        /// hits).</para>
+        /// 
+        /// <para><note>The median value is calculated accumulating histogram's
+        /// values starting from the <b>left</b> point until the sum reaches 50% of
+        /// histogram's sum.</note></para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram array
+        /// int[] histogram = new int[10] { 1, 1, 2, 3, 6, 8, 11, 12, 7, 3 };
+        /// // calculate median value
+        /// int median = Statistics.Median( histogram );
+        /// // output it (6)
+        /// System.Diagnostics.Debug.WriteLine( "median = " + median );
+        /// </code>
+        /// </remarks>
         /// 
         public static int Median( int[] values )
         {
@@ -134,6 +176,26 @@ namespace AForge.Math
         /// <returns>Returns the range which containes specifies percentage
         /// of values.</returns>
         /// 
+        /// <remarks>
+        /// <para>The input array is treated as histogram, i.e. its
+        /// indexes are treated as values of stochastic function, but
+        /// array values are treated as "probabilities" (total amount of
+        /// hits).</para>
+        /// 
+        /// <para>The method calculates range of stochastic variable, which summary probability
+        /// comprises the specified percentage of histogram's hits.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram array
+        /// int[] histogram = new int[10] { 1, 1, 2, 3, 6, 8, 11, 12, 7, 3 };
+        /// // get 75% range around median
+        /// IntRange range = Statistics.GetRange( histogram, 0.75 );
+        /// // output it ([4, 8])
+        /// System.Diagnostics.Debug.WriteLine( "range = [" + range.Min + ", " + range.Max + "]" );
+        /// </code>
+        /// </remarks>
+        /// 
         public static IntRange GetRange( int[] values, double percent )
         {
             int total = 0, n = values.Length;
@@ -166,17 +228,42 @@ namespace AForge.Math
         }
 
         /// <summary>
-        /// Calculate an entropy.
+        /// Calculate entropy value.
         /// </summary>
         /// 
         /// <param name="values">Histogram array.</param>
         /// 
-        /// <returns>Returns entropy value.</returns>
+        /// <returns>Returns entropy value of the specified histagram array.</returns>
         /// 
-        /// <remarks>The input array is treated as histogram, i.e. its
+        /// <remarks><para>The input array is treated as histogram, i.e. its
         /// indexes are treated as values of stochastic function, but
         /// array values are treated as "probabilities" (total amount of
-        /// hits).</remarks>
+        /// hits).</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram array with 2 values of equal probabilities
+        /// int[] histogram1 = new int[2] { 3, 3 };
+        /// // calculate entropy
+        /// double entropy1 = Statistics.Entropy( histogram1 );
+        /// // output it (1.000)
+        /// System.Diagnostics.Debug.WriteLine( "entropy1 = " + entropy1.ToString( "F3" ) );
+        /// 
+        /// // create histogram array with 4 values of equal probabilities
+        /// int[] histogram2 = new int[4] { 1, 1, 1, 1 };
+        /// // calculate entropy
+        /// double entropy2 = Statistics.Entropy( histogram2 );
+        /// // output it (2.000)
+        /// System.Diagnostics.Debug.WriteLine( "entropy2 = " + entropy2.ToString( "F3" ) );
+        /// 
+        /// // create histogram array with 4 values of different probabilities
+        /// int[] histogram3 = new int[4] { 1, 2, 3, 4 };
+        /// // calculate entropy
+        /// double entropy3 = Statistics.Entropy( histogram3 );
+        /// // output it (1.846)
+        /// System.Diagnostics.Debug.WriteLine( "entropy3 = " + entropy3.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
         /// 
         public static double Entropy( int[] values )
         {

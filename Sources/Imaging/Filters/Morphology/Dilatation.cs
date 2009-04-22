@@ -1,13 +1,15 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -16,10 +18,18 @@ namespace AForge.Imaging.Filters
     /// </summary>
     /// 
     /// <remarks><para>The filter assigns maximum value of surrounding pixels to each pixel of
-    /// the result filter. Surrounding pixels, which should be processed, are specified by
-    /// structuring element: 1 - to process the neighbor, 0 - to skip it.</para>
+    /// the result image. Surrounding pixels, which should be processed, are specified by
+    /// structuring element: 1 - to process the neighbor, -1 - to skip it.</para>
+    /// 
     /// <para>The filter especially useful for binary image processing, where it allows to grow
-    /// separate objects or join close objects.</para>
+    /// separate objects or join objects.</para>
+    /// 
+    /// <para>For processing image with 3x3 structuring element, there are different optimizations
+    /// available, like <see cref="Dilatation3x3"/> and <see cref="BinaryDilatation3x3"/>.</para>
+    /// 
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24 and 48 bpp
+    /// color images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -27,23 +37,52 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.Apply( image );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="sample1.jpg" width="480" height="361" />
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
     /// <para><b>Result image:</b></para>
-    /// <img src="dilatation.jpg" width="480" height="361" />
+    /// <img src="img/imaging/dilatation.png" width="320" height="240" />
     /// </remarks>
     /// 
-    public class Dilatation : FilterAnyToAnyUsingCopyPartial
+    /// <seealso cref="Erosion"/>
+    /// <seealso cref="Closing"/>
+    /// <seealso cref="Opening"/>
+    /// <seealso cref="Dilatation3x3"/>
+    /// <seealso cref="BinaryDilatation3x3"/>
+    /// 
+    public class Dilatation : BaseUsingCopyPartialFilter
     {
         // structuring element
         private short[,] se = new short[3, 3] { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
         private int size = 3;
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Dilatation"/> class.
         /// </summary>
         /// 
-        public Dilatation( ) { }
+        /// <remarks><para>Initializes new instance of the <see cref="Dilatation"/> class using
+        /// default structuring element - 3x3 structuring element with all elements equal to 1.
+        /// </para></remarks>
+        /// 
+        public Dilatation( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
+            formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Dilatation"/> class.
@@ -51,13 +90,19 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="se">Structuring element.</param>
         /// 
+        /// <remarks><para>Structuring elemement for the dilatation morphological operator
+        /// must be square matrix with odd size in the range of [3, 25].</para></remarks>
+        /// 
+        /// <exception cref="ArgumentException">Invalid size of structuring element.</exception>
+        /// 
         public Dilatation( short[,] se )
+            : this( )
         {
             int s = se.GetLength( 0 );
 
             // check structuring element size
             if ( ( s != se.GetLength( 1 ) ) || ( s < 3 ) || ( s > 25 ) || ( s % 2 == 0 ) )
-                throw new ArgumentException( );
+                throw new ArgumentException( "Invalid size of structuring element." );
 
             this.se = se;
             this.size = s;
@@ -67,13 +112,13 @@ namespace AForge.Imaging.Filters
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="sourceData">Pointer to source image data (first scan line).</param>
+        /// <param name="sourceData">Source image data.</param>
         /// <param name="destinationData">Destination image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
         /// 
-        protected override unsafe void ProcessFilter( IntPtr sourceData, BitmapData destinationData, Rectangle rect )
+        protected override unsafe void ProcessFilter( UnmanagedImage sourceData, UnmanagedImage destinationData, Rectangle rect )
         {
-            int pixelSize = ( destinationData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
+            PixelFormat pixelFormat = sourceData.PixelFormat;
 
             // processing start and stop X,Y positions
             int startX  = rect.Left;
@@ -81,144 +126,307 @@ namespace AForge.Imaging.Filters
             int stopX   = startX + rect.Width;
             int stopY   = startY + rect.Height;
 
-            int stride = destinationData.Stride;
-            int offset = stride - rect.Width * pixelSize;
-
-            // loop and array indexes
-            int t, ir, jr, i, j;
             // structuring element's radius
             int r = size >> 1;
 
-            // do the job
-            byte* src = (byte*) sourceData.ToPointer( );
-            byte* dst = (byte*) destinationData.Scan0.ToPointer( );
-
-            // allign pointers to the first pixel to process
-            src += ( startY * stride + startX * pixelSize );
-            dst += ( startY * stride + startX * pixelSize );
-
-            if ( destinationData.PixelFormat == PixelFormat.Format8bppIndexed )
+            if ( ( pixelFormat == PixelFormat.Format8bppIndexed ) || ( pixelFormat == PixelFormat.Format24bppRgb ) )
             {
-                // grayscale image
-                byte max, v;
+                int pixelSize = ( pixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
 
-                // for each line
-                for ( int y = startY; y < stopY; y++ )
+                int dstStride = destinationData.Stride;
+                int srcStride = sourceData.Stride;
+
+                // base pointers
+                byte* baseSrc = (byte*) sourceData.ImageData.ToPointer( );
+                byte* baseDst = (byte*) destinationData.ImageData.ToPointer( );
+
+                // allign pointers by X
+                baseSrc += ( startX * pixelSize );
+                baseDst += ( startX * pixelSize );
+
+                if ( pixelFormat == PixelFormat.Format8bppIndexed )
                 {
-                    // for each pixel
-                    for ( int x = startX; x < stopX; x++, src++, dst++ )
+                    // grayscale image
+
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
-                        max = 0;
+                        byte* src = baseSrc + y * srcStride;
+                        byte* dst = baseDst + y * dstStride;
 
-                        // for each structuring element's row
-                        for ( i = 0; i < size; i++ )
+                        byte max, v;
+
+                        // loop and array indexes
+                        int t, ir, jr, i, j;
+
+                        // for each pixel
+                        for ( int x = startX; x < stopX; x++, src++, dst++ )
                         {
-                            ir = i - r;
-                            t = y + ir;
+                            max = 0;
 
-                            // skip row
-                            if ( t < startY )
-                                continue;
-                            // break
-                            if ( t >= stopY )
-                                break;
-
-                            // for each structuring slement's column
-                            for ( j = 0; j < size; j++ )
+                            // for each structuring element's row
+                            for ( i = 0; i < size; i++ )
                             {
-                                jr = j - r;
-                                t = x + jr;
+                                ir = i - r;
+                                t = y + ir;
 
-                                // skip column
-                                if ( t < startX )
+                                // skip row
+                                if ( t < startY )
                                     continue;
-                                if ( t < stopX )
+                                // break
+                                if ( t >= stopY )
+                                    break;
+
+                                // for each structuring slement's column
+                                for ( j = 0; j < size; j++ )
                                 {
-                                    if ( se[i, j] == 1 )
+                                    jr = j - r;
+                                    t = x + jr;
+
+                                    // skip column
+                                    if ( t < startX )
+                                        continue;
+                                    if ( t < stopX )
                                     {
-                                        // get new MAX value
-                                        v = src[ir * stride + jr];
-                                        if ( v > max )
-                                            max = v;
+                                        if ( se[i, j] == 1 )
+                                        {
+                                            // get new MAX value
+                                            v = src[ir * srcStride + jr];
+                                            if ( v > max )
+                                                max = v;
+                                        }
                                     }
                                 }
                             }
+                            // result pixel
+                            *dst = max;
                         }
-                        // result pixel
-                        *dst = max;
                     }
-                    src += offset;
-                    dst += offset;
+                }
+                else
+                {
+                    // 24 bpp color image
+
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
+                    {
+                        byte* src = baseSrc + y * srcStride;
+                        byte* dst = baseDst + y * dstStride;
+
+                        byte maxR, maxG, maxB, v;
+                        byte* p;
+
+                        // loop and array indexes
+                        int t, ir, jr, i, j;
+
+                        // for each pixel
+                        for ( int x = startX; x < stopX; x++, src += 3, dst += 3 )
+                        {
+                            maxR = maxG = maxB = 0;
+
+                            // for each structuring element's row
+                            for ( i = 0; i < size; i++ )
+                            {
+                                ir = i - r;
+                                t = y + ir;
+
+                                // skip row
+                                if ( t < startY )
+                                    continue;
+                                // break
+                                if ( t >= stopY )
+                                    break;
+
+                                // for each structuring element's column
+                                for ( j = 0; j < size; j++ )
+                                {
+                                    jr = j - r;
+                                    t = x + jr;
+
+                                    // skip column
+                                    if ( t < startX )
+                                        continue;
+                                    if ( t < stopX )
+                                    {
+                                        if ( se[i, j] == 1 )
+                                        {
+                                            // get new MAX values
+                                            p = &src[ir * srcStride + jr * 3];
+
+                                            // red
+                                            v = p[RGB.R];
+                                            if ( v > maxR )
+                                                maxR = v;
+
+                                            // green
+                                            v = p[RGB.G];
+                                            if ( v > maxG )
+                                                maxG = v;
+
+                                            // blue
+                                            v = p[RGB.B];
+                                            if ( v > maxB )
+                                                maxB = v;
+                                        }
+                                    }
+                                }
+                            }
+                            // result pixel
+                            dst[RGB.R] = maxR;
+                            dst[RGB.G] = maxG;
+                            dst[RGB.B] = maxB;
+                        }
+                    }
                 }
             }
             else
             {
-                // color image
-                byte maxR, maxG, maxB, v;
-                byte* p;
+                int pixelSize = ( pixelFormat == PixelFormat.Format16bppGrayScale ) ? 1 : 3;
 
-                // for each line
-                for ( int y = startY; y < stopY; y++ )
+                int dstStride = destinationData.Stride / 2;
+                int srcStride = sourceData.Stride / 2;
+
+                // base pointers
+                ushort* baseSrc = (ushort*) sourceData.ImageData.ToPointer( );
+                ushort* baseDst = (ushort*) destinationData.ImageData.ToPointer( );
+
+                // allign pointers by X
+                baseSrc += ( startX * pixelSize );
+                baseDst += ( startX * pixelSize );
+
+                if ( pixelFormat == PixelFormat.Format16bppGrayScale )
                 {
-                    // for each pixel
-                    for ( int x = startX; x < stopX; x++, src += 3, dst += 3 )
+                    // 16 bpp grayscale image
+
+                    // compute each line
+                    for( int y = startY; y < stopY; y++ )
                     {
-                        maxR = maxG = maxB = 0;
+                        ushort* src = baseSrc + y * srcStride;
+                        ushort* dst = baseDst + y * dstStride;
 
-                        // for each structuring element's row
-                        for ( i = 0; i < size; i++ )
+                        ushort max, v;
+
+                        // loop and array indexes
+                        int t, ir, jr, i, j;
+
+                        // for each pixel
+                        for ( int x = startX; x < stopX; x++, src++, dst++ )
                         {
-                            ir = i - r;
-                            t = y + ir;
+                            max = 0;
 
-                            // skip row
-                            if ( t < startY )
-                                continue;
-                            // break
-                            if ( t >= stopY )
-                                break;
-
-                            // for each structuring element's column
-                            for ( j = 0; j < size; j++ )
+                            // for each structuring element's row
+                            for ( i = 0; i < size; i++ )
                             {
-                                jr = j - r;
-                                t = x + jr;
+                                ir = i - r;
+                                t = y + ir;
 
-                                // skip column
-                                if ( t < startX )
+                                // skip row
+                                if ( t < startY )
                                     continue;
-                                if ( t < stopX )
+                                // break
+                                if ( t >= stopY )
+                                    break;
+
+                                // for each structuring slement's column
+                                for ( j = 0; j < size; j++ )
                                 {
-                                    if ( se[i, j] == 1 )
+                                    jr = j - r;
+                                    t = x + jr;
+
+                                    // skip column
+                                    if ( t < startX )
+                                        continue;
+                                    if ( t < stopX )
                                     {
-                                        // get new MAX values
-                                        p = &src[ir * stride + jr * 3];
-
-                                        // red
-                                        v = p[RGB.R];
-                                        if ( v > maxR )
-                                            maxR = v;
-
-                                        // green
-                                        v = p[RGB.G];
-                                        if ( v > maxG )
-                                            maxG = v;
-
-                                        // blue
-                                        v = p[RGB.B];
-                                        if ( v > maxB )
-                                            maxB = v;
+                                        if ( se[i, j] == 1 )
+                                        {
+                                            // get new MAX value
+                                            v = src[ir * srcStride + jr];
+                                            if ( v > max )
+                                                max = v;
+                                        }
                                     }
                                 }
                             }
+                            // result pixel
+                            *dst = max;
                         }
-                        // result pixel
-                        dst[RGB.R] = maxR;
-                        dst[RGB.G] = maxG;
-                        dst[RGB.B] = maxB;
                     }
-                    src += offset;
-                    dst += offset;
+                }
+                else
+                {
+                    // 48 bpp color image
+
+                    // compute each line
+                    for( int y = startY; y < stopY; y++ )
+                    {
+                        ushort* src = baseSrc + y * srcStride;
+                        ushort* dst = baseDst + y * dstStride;
+
+                        ushort maxR, maxG, maxB, v;
+                        ushort* p;
+
+                        // loop and array indexes
+                        int t, ir, jr, i, j;
+
+                        // for each pixel
+                        for ( int x = startX; x < stopX; x++, src += 3, dst += 3 )
+                        {
+                            maxR = maxG = maxB = 0;
+
+                            // for each structuring element's row
+                            for ( i = 0; i < size; i++ )
+                            {
+                                ir = i - r;
+                                t = y + ir;
+
+                                // skip row
+                                if ( t < startY )
+                                    continue;
+                                // break
+                                if ( t >= stopY )
+                                    break;
+
+                                // for each structuring element's column
+                                for ( j = 0; j < size; j++ )
+                                {
+                                    jr = j - r;
+                                    t = x + jr;
+
+                                    // skip column
+                                    if ( t < startX )
+                                        continue;
+                                    if ( t < stopX )
+                                    {
+                                        if ( se[i, j] == 1 )
+                                        {
+                                            // get new MAX values
+                                            p = &src[ir * srcStride + jr * 3];
+
+                                            // red
+                                            v = p[RGB.R];
+                                            if ( v > maxR )
+                                                maxR = v;
+
+                                            // green
+                                            v = p[RGB.G];
+                                            if ( v > maxG )
+                                                maxG = v;
+
+                                            // blue
+                                            v = p[RGB.B];
+                                            if ( v > maxB )
+                                                maxB = v;
+                                        }
+                                    }
+                                }
+                            }
+                            // result pixel
+                            dst[RGB.R] = maxR;
+                            dst[RGB.G] = maxG;
+                            dst[RGB.B] = maxB;
+                        }
+                    }
                 }
             }
         }

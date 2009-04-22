@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -18,6 +19,13 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>Top-hat morphological operator <see cref="Subtract">subtracts</see>
     /// result of <see cref="Opening">morphological opening</see> on the the input image
     /// from the input image itself.</para>
+    /// 
+    ///  <para>Applied to binary image, the filter allows to get all those object (their parts)
+    ///  which were removed by <see cref="Opening">opening</see> filter, but never restored.</para>
+    /// 
+    /// <para>The filter accepts 8 and 16 bpp grayscale images and 24 and 48 bpp
+    /// color images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -25,123 +33,70 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.Apply( image );
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/tophat.png" width="320" height="240" />
     /// </remarks>
     /// 
-    public class TopHat : IFilter, IInPlaceFilter
+    /// <see cref="BottomHat"/>
+    /// 
+    public class TopHat : BaseInPlaceFilter
     {
         private Opening opening = new Opening( );
         private Subtract subtract = new Subtract( );
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="TopHat"/> class.
+        /// Format translations dictionary.
         /// </summary>
-        /// 
-        public TopHat( ) { }
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TopHat"/> class.
         /// </summary>
         /// 
-        /// <param name="se">Structuring element.</param>
+        public TopHat( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
+            formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TopHat"/> class.
+        /// </summary>
         /// 
-        public TopHat( short[,] se )
+        /// <param name="se">Structuring element to pass to <see cref="Opening"/> operator.</param>
+        /// 
+        public TopHat( short[,] se ) : this( )
         {
             opening = new Opening( se );
         }
 
         /// <summary>
-        /// Apply filter to an image.
+        /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="image">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The method keeps the source image unchanged and returns the
-        /// the result of image processing filter as new image.</remarks> 
+        /// <param name="image">Source image data.</param>
         ///
-        public Bitmap Apply( Bitmap image )
+        protected override unsafe void ProcessFilter( UnmanagedImage image )
         {
-            // morphological opening
-            Bitmap tempImage = opening.Apply( image );
-
-            // subtraction from original image
-            subtract.OverlayImage = tempImage;
-            Bitmap destImage = subtract.Apply( image );
-
-            tempImage.Dispose( );
-
-            return destImage;
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The filter accepts bitmap data as input and returns the result
-        /// of image processing filter as new image. The source image data are kept
-        /// unchanged.</remarks>
-        /// 
-        public Bitmap Apply( BitmapData imageData )
-        {
-            // morphological opening
-            Bitmap tempImage = opening.Apply( imageData );
-
-            // subtraction from original image
-            subtract.OverlayImage = tempImage;
-            Bitmap destImage = subtract.Apply( imageData );
-
-            tempImage.Dispose( );
-
-            return destImage;
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="image">Image to apply filter to.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image.</remarks>
-        /// 
-        public void ApplyInPlace( Bitmap image )
-        {
-            // morphological opening
-            Bitmap tempImage = opening.Apply( image );
-
-            // subtraction from original image
-            subtract.OverlayImage = tempImage;
+            // perform opening on the source image
+            UnmanagedImage openedImage = opening.Apply( image );
+            // subtract opened image from source image
+            subtract.UnmanagedOverlayImage = openedImage;
             subtract.ApplyInPlace( image );
 
-            tempImage.Dispose( );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Image to apply filter to.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image data.</remarks>
-        /// 
-        public void ApplyInPlace( BitmapData imageData )
-        {
-            // morphological opening
-            Bitmap tempImage = opening.Apply( imageData );
-
-            // subtraction from original image
-            subtract.OverlayImage = tempImage;
-            subtract.ApplyInPlace( imageData );
-
-            tempImage.Dispose( );
+            openedImage.Dispose( );
         }
     }
 }

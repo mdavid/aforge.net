@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using AForge;
@@ -16,19 +17,39 @@ namespace AForge.Imaging.Filters
     /// Saturation adjusting in HSL color space.
     /// </summary>
     /// 
-    /// <remarks>The filter operates in <b>HSL</b> color space and adjusts
-    /// pixels saturation value.</remarks>
+    /// <remarks><para>The filter operates in <b>HSL</b> color space and adjusts
+    /// pixels' saturation value, increasing it or decreasing by specified percentage.
+    /// The filters is based on <see cref="HSLLinear"/> filter, passing work to it after
+    /// recalculating saturation <see cref="AdjustValue">adjust value</see> to input/output
+    /// ranges of the <see cref="HSLLinear"/> filter.</para>
     /// 
-    public class SaturationCorrection : IFilter, IInPlaceFilter, IInPlacePartialFilter
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// SaturationCorrection filter = new SaturationCorrection( -0.5 );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/saturation_correction.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    public class SaturationCorrection : BaseInPlacePartialFilter
     {
         private HSLLinear   baseFilter = new HSLLinear( );
         private double      adjustValue;	// [-1, 1]
 
         /// <summary>
-        /// Saturation adjust value in the range of [-1, 1].
+        /// Saturation adjust value, [-1, 1].
         /// </summary>
         /// 
-        /// <remarks>Default value is 0.1.</remarks>
+        /// <remarks>Default value is set to <b>0.1</b>, which corresponds to increasing
+        /// saturation by 10%.</remarks>
         /// 
         public double AdjustValue
         {
@@ -40,24 +61,34 @@ namespace AForge.Imaging.Filters
                 // create saturation filter
                 if ( adjustValue > 0 )
                 {
-                    baseFilter.InSaturation = new DoubleRange( 0.0, 1.0 - adjustValue );
+                    baseFilter.InSaturation  = new DoubleRange( 0.0, 1.0 - adjustValue );
                     baseFilter.OutSaturation = new DoubleRange( adjustValue, 1.0 );
                 }
                 else
                 {
-                    baseFilter.InSaturation = new DoubleRange( -adjustValue, 1.0 );
+                    baseFilter.InSaturation  = new DoubleRange( -adjustValue, 1.0 );
                     baseFilter.OutSaturation = new DoubleRange( 0.0, 1.0 + adjustValue );
                 }
             }
+        }
+
+        // format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SaturationCorrection"/> class.
         /// </summary>
         /// 
-        public SaturationCorrection( )
+        public SaturationCorrection( ) : this( 0.1 )
         {
-            AdjustValue = 0.1;
         }
 
         /// <summary>
@@ -69,99 +100,22 @@ namespace AForge.Imaging.Filters
         public SaturationCorrection( double adjustValue )
         {
             AdjustValue = adjustValue;
+
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
         }
 
         /// <summary>
-        /// Apply filter to an image.
+        /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="image">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The method keeps the source image unchanged and returns the
-        /// the result of image processing filter as new image.</remarks> 
-        ///
-        public Bitmap Apply( Bitmap image )
-        {
-            return baseFilter.Apply( image );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Source image to apply filter to.</param>
-        /// 
-        /// <returns>Returns filter's result obtained by applying the filter to
-        /// the source image.</returns>
-        /// 
-        /// <remarks>The filter accepts bitmap data as input and returns the result
-        /// of image processing filter as new image. The source image data are kept
-        /// unchanged.</remarks>
-        /// 
-        public Bitmap Apply( BitmapData imageData )
-        {
-            return baseFilter.Apply( imageData );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="image">Image to apply filter to.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image.</remarks>
-        /// 
-        public void ApplyInPlace( Bitmap image )
-        {
-            baseFilter.ApplyInPlace( image );
-        }
-
-        /// <summary>
-        /// Apply filter to an image.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Image to apply filter to.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image data.</remarks>
-        /// 
-        public void ApplyInPlace( BitmapData imageData )
-        {
-            baseFilter.ApplyInPlace( imageData );
-        }
-
-        /// <summary>
-        /// Apply filter to an image or its part.
-        /// </summary>
-        /// 
-        /// <param name="image">Image to apply filter to.</param>
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image.</remarks>
-        /// 
-        public void ApplyInPlace( Bitmap image, Rectangle rect )
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
             baseFilter.ApplyInPlace( image, rect );
-        }
-
-        /// <summary>
-        /// Apply filter to an image or its part.
-        /// </summary>
-        /// 
-        /// <param name="imageData">Image to apply filter to.</param>
-        /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        /// <remarks>The method applies the filter directly to the provided
-        /// image data.</remarks>
-        /// 
-        public void ApplyInPlace( BitmapData imageData, Rectangle rect )
-        {
-            baseFilter.ApplyInPlace( imageData, rect );
         }
     }
 }

@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2008
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using AForge;
@@ -16,16 +17,39 @@ namespace AForge.Imaging.Filters
     /// Linear correction of YCbCr channels.
     /// </summary>
     /// 
-    /// <remarks>The filter operates in <b>YCbCr</b> color space and provides
-    /// with the facility of linear correction of its channels.</remarks>
+    /// <remarks><para>The filter operates in <b>YCbCr</b> color space and provides
+    /// with the facility of linear correction of its channels - mapping specified channels'
+    /// input ranges to specified output ranges.</para>
     /// 
-    public class YCbCrLinear : FilterColorToColorPartial
+    /// <para>The filter accepts 24 and 32 bpp color images for processing.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// YCbCrLinear filter = new YCbCrLinear( );
+    /// // configure the filter
+    /// filter.InCb = new DoubleRange( -0.276, 0.163 );
+    /// filter.InCr = new DoubleRange( -0.202, 0.500 );
+    /// // apply the filter
+    /// filter.ApplyInPlace( image );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/ycbcr_linear.jpg" width="480" height="361" />
+    /// </remarks>
+    /// 
+    /// <seealso cref="HSLLinear"/>
+    /// <seealso cref="YCbCrLinear"/>
+    /// 
+    public class YCbCrLinear : BaseInPlacePartialFilter
     {
-        private DoubleRange inY = new DoubleRange( 0.0, 1.0 );
+        private DoubleRange inY  = new DoubleRange(  0.0, 1.0 );
         private DoubleRange inCb = new DoubleRange( -0.5, 0.5 );
         private DoubleRange inCr = new DoubleRange( -0.5, 0.5 );
 
-        private DoubleRange outY = new DoubleRange( 0.0, 1.0 );
+        private DoubleRange outY  = new DoubleRange(  0.0, 1.0 );
         private DoubleRange outCb = new DoubleRange( -0.5, 0.5 );
         private DoubleRange outCr = new DoubleRange( -0.5, 0.5 );
 
@@ -105,25 +129,49 @@ namespace AForge.Imaging.Filters
 
         #endregion
 
+        // format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="YCbCrLinear"/> class.
+        /// </summary>
+        /// 
+        public YCbCrLinear( )
+        {
+            formatTransalations[PixelFormat.Format24bppRgb]  = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]  = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb] = PixelFormat.Format32bppArgb;
+        }
+
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
+        /// <param name="image">Source image data.</param>
         /// <param name="rect">Image rectangle for processing by the filter.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData, Rectangle rect )
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
         {
+            int pixelSize = Image.GetPixelFormatSize( image.PixelFormat ) / 8;
+
             int startX  = rect.Left;
             int startY  = rect.Top;
             int stopX   = startX + rect.Width;
             int stopY   = startY + rect.Height;
-            int offset  = imageData.Stride - rect.Width * 3;
+            int offset  = image.Stride - rect.Width * pixelSize;
 
             RGB     rgb = new RGB( );
             YCbCr   ycbcr = new YCbCr( );
 
-            double ky = 0, by = 0;
+            double ky  = 0, by  = 0;
             double kcb = 0, bcb = 0;
             double kcr = 0, bcr = 0;
 
@@ -147,23 +195,23 @@ namespace AForge.Imaging.Filters
             }
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             // allign pointer to the first pixel to process
-            ptr += ( startY * imageData.Stride + startX * 3 );
+            ptr += ( startY * image.Stride + startX * pixelSize );
 
             // for each row
             for ( int y = startY; y < stopY; y++ )
             {
                 // for each pixel
-                for ( int x = startX; x < stopX; x++, ptr += 3 )
+                for ( int x = startX; x < stopX; x++, ptr += pixelSize )
                 {
                     rgb.Red     = ptr[RGB.R];
                     rgb.Green   = ptr[RGB.G];
                     rgb.Blue    = ptr[RGB.B];
 
                     // convert to YCbCr
-                    AForge.Imaging.ColorConverter.RGB2YCbCr( rgb, ycbcr );
+                    AForge.Imaging.YCbCr.FromRGB( rgb, ycbcr );
 
                     // correct Y
                     if ( ycbcr.Y >= inY.Max )
@@ -190,7 +238,7 @@ namespace AForge.Imaging.Filters
                         ycbcr.Cr = kcr * ycbcr.Cr + bcr;
 
                     // convert back to RGB
-                    AForge.Imaging.ColorConverter.YCbCr2RGB( ycbcr, rgb );
+                    AForge.Imaging.YCbCr.ToRGB( ycbcr, rgb );
 
                     ptr[RGB.R] = rgb.Red;
                     ptr[RGB.G] = rgb.Green;

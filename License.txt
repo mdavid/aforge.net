@@ -1,20 +1,12 @@
-AForge.NET Framework's License
+AForge.NET Framework
+http://www.aforgenet.com/framework
+==================================
 
+License agreement
 
-The frameworks is provided under dual licensing. Please, refer to the link
-below for information about dual licensing:
-http://en.wikipedia.org/wiki/Dual_license
+The framework is provided under LGPL v.3 license, which exact definition
+may be found in lgpl-3.0.txt file provided with the framework or on the
+next web page: http://www.gnu.org/licenses/lgpl.html
 
-1) The GPL v2 license is provided for free without any sort of fee required.
-The GPL v2 license can be found in the GPL.txt file placed in the same folder.
-The license allows framework's usage both in non-commercial and in commercial
-projects as long as they are open.
-
-2) The LGPL license is available for a fee, which is a matter for negotiation.
-Please, contact project owners for LGPL licensing requests. The LGPL license
-text may be found following the next link:
-http://www.gnu.org/licenses/lgpl.html
-
-
-Copyright © Andrew Kirillov, 2006-2008
-andrew.kirillov@gmail.com
+Copyright © AForge.NET, 2006-2009
+contacts@aforgenet.com

@@ -1,7 +1,7 @@
 // AForge Direct Show Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2007
+// Copyright © Andrew Kirillov, 2008
 // andrew.kirillov@gmail.com
 //
 
@@ -33,7 +33,7 @@ namespace AForge.Video.DirectShow
         /// Initializes a new instance of the <see cref="FilterInfo"/> class.
         /// </summary>
         /// 
-        /// <param name="monikerString">Filters's moniker string</param>
+        /// <param name="monikerString">Filters's moniker string.</param>
         /// 
         public FilterInfo( string monikerString )
         {
@@ -74,6 +74,8 @@ namespace AForge.Video.DirectShow
         /// <summary>
         /// Create an instance of the filter.
         /// </summary>
+        /// 
+        /// <param name="filterMoniker">Filter's moniker string.</param>
         /// 
         /// <returns>Returns filter's object, which implements <b>IBaseFilter</b> interface.</returns>
         /// 

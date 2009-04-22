@@ -1,13 +1,14 @@
 // AForge Image Processing Library
 // AForge.NET framework
 //
-// Copyright © Andrew Kirillov, 2005-2007
+// Copyright © Andrew Kirillov, 2005-2008
 // andrew.kirillov@gmail.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -15,7 +16,11 @@ namespace AForge.Imaging.Filters
     /// Blobs filtering by size.
     /// </summary>
     /// 
-    /// <remarks><para>The filter performs filtering of blobs by their size in binary image.</para>
+    /// <remarks><para>The filter performs filtering of blobs by their size in binary image - all
+    /// blobs, which are smaller or bigger then specified limits, are removed from source image.</para>
+    /// 
+    /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
@@ -27,16 +32,31 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.ApplyInPlace( image );
     /// </code>
+    /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="sample2.jpg" width="320" height="240" />
+    /// <img src="img/imaging/sample2.jpg" width="320" height="240" />
     /// <para><b>Result image:</b></para>
-    /// <img src="blobs_filtering.jpg" width="320" height="240" />
+    /// <img src="img/imaging/blobs_filtering.jpg" width="320" height="240" />
     /// </remarks>
+    /// 
+    /// <seealso cref="BlobCounter"/>
+    /// <seealso cref="BlobCounterBase"/>
     ///
-    public class BlobsFiltering : FilterGrayToGray
+    public class BlobsFiltering : BaseInPlaceFilter
     {
         private BlobCounter blobCounter = new BlobCounter( );
 
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
+        
         /// <summary>
         /// Specifies if size filetering should be coupled or not.
         /// </summary>
@@ -95,6 +115,7 @@ namespace AForge.Imaging.Filters
         /// </summary>
         /// 
         public BlobsFiltering( )
+            : this( 1, 1, int.MaxValue, int.MaxValue, false )
         {
             blobCounter.FilterBlobs = true;
         }
@@ -136,27 +157,29 @@ namespace AForge.Imaging.Filters
             blobCounter.MaxWidth  = maxWidth;
             blobCounter.MaxHeight = maxHeight;
             blobCounter.CoupledSizeFiltering = coupledSizeFiltering;
+
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
         }
 
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData )
+        /// <param name="image">Source image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image )
         {
             // use blob counter to build objects map and filter them
-            blobCounter.ProcessImage( imageData );
+            blobCounter.ProcessImage( image );
             int[] objectsMap = blobCounter.ObjectLabels;
 
             // get image width and height
-            int width  = imageData.Width;
-            int height = imageData.Height;
-            int offset = imageData.Stride - width;
+            int width  = image.Width;
+            int height = image.Height;
+            int offset = image.Stride - width;
 
             // do the job
-            byte* ptr = (byte*) imageData.Scan0.ToPointer( );
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
 
             for ( int y = 0, p = 0; y < height; y++ )
             {

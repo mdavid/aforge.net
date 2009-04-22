@@ -13,14 +13,17 @@ namespace AForge.Neuro
     /// Threshold activation function.
     /// </summary>
     ///
-    /// <remarks>The class represents threshold activation function with
-    /// the next expression:<br />
-    /// <code>
+    /// <remarks><para>The class represents threshold activation function with
+    /// the next expression:
+    /// <code lang="none">
     /// f(x) = 1, if x >= 0, otherwise 0
     /// </code>
-    /// Output range of the function: <b>[0, 1]</b><br /><br />
-    /// Functions graph:<br />
-    /// <img src="threshold.bmp" width="242" height="172" />
+    /// </para>
+    /// 
+    /// <para>Output range of the function: <b>[0, 1]</b>.</para>
+    /// 
+    /// <para>Functions graph:</para>
+    /// <img src="img/neuro/threshold.bmp" width="242" height="172" />
     /// </remarks>
     ///
     [Serializable]
@@ -39,7 +42,7 @@ namespace AForge.Neuro
         /// 
         /// <returns>Function output value, <i>f(x)</i>.</returns>
         ///
-        /// <remarks>The method calculates function value at point <b>x</b>.</remarks>
+        /// <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
         ///
         public double Function( double x )
         {
@@ -47,15 +50,15 @@ namespace AForge.Neuro
         }
 
         /// <summary>
-        /// Not supported.
+        /// Calculates function derivative (not supported).
         /// </summary>
         /// 
         /// <param name="x">Input value.</param>
         /// 
         /// <returns>Always returns 0.</returns>
         /// 
-        /// <remarks>The method is not supported, because it is not possible to
-        /// calculate derivative of the function.</remarks>
+        /// <remarks><para><note>The method is not supported, because it is not possible to
+        /// calculate derivative of the function.</note></para></remarks>
         ///
         public double Derivative( double x )
         {
@@ -65,15 +68,15 @@ namespace AForge.Neuro
         }
 
         /// <summary>
-        /// Not supported.
+        /// Calculates function derivative (not supported).
         /// </summary>
         /// 
         /// <param name="y">Input value.</param>
         /// 
         /// <returns>Always returns 0.</returns>
         /// 
-        /// <remarks>The method is not supported, because it is not possible to
-        /// calculate derivative of the function.</remarks>
+        /// <remarks><para><note>The method is not supported, because it is not possible to
+        /// calculate derivative of the function.</note></para></remarks>
         /// 
         public double Derivative2( double y )
         {

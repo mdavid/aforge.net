@@ -1,8 +1,9 @@
-// AForge Framework
 // XOR Problem solution using Multi-Layer Neural Network
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 using System;
@@ -22,7 +23,7 @@ using AForge.Controls;
 namespace XORProblem
 {
 	/// <summary>
-	/// Summary description for Form1.
+    /// Summary description for MainForm.
 	/// </summary>
 	public class MainForm : System.Windows.Forms.Form
 	{
@@ -527,7 +528,7 @@ namespace XORProblem
 										 };
 			}
 
-			// create perceptron
+			// create neural network
 			ActivationNetwork	network = new ActivationNetwork(
 				( sigmoidType == 0 ) ? 
 					(IActivationFunction) new SigmoidFunction( sigmoidAlphaValue ) :

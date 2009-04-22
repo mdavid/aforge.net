@@ -1,7 +1,7 @@
 // AForge Framework
 // 1D Optimization using Genetic Algorithms
 //
-// Copyright © Andrew Kirillov, 2006
+// Copyright © Andrew Kirillov, 2006-2008
 // andrew.kirillov@gmail.com
 //
 
@@ -20,7 +20,7 @@ using AForge.Controls;
 namespace Optimization1D
 {
 	/// <summary>
-	/// Summary description for Form1.
+	/// Summary description for MainForm.
 	/// </summary>
 	public class MainForm : System.Windows.Forms.Form
 	{
@@ -620,14 +620,14 @@ namespace Optimization1D
 				// show current solution
 				if ( showOnlyBest )
 				{
-					data[0, 0] = userFunction.TranslateNative( population.BestChromosome );
+					data[0, 0] = userFunction.Translate( population.BestChromosome );
 					data[0, 1] = userFunction.OptimizationFunction( data[0, 0] );
 				}
 				else
 				{
 					for ( int j = 0; j < populationSize; j++ )
 					{
-						data[j, 0] = userFunction.TranslateNative( population[j] );
+						data[j, 0] = userFunction.Translate( population[j] );
 						data[j, 1] = userFunction.OptimizationFunction( data[j, 0] );
 					}
 				}
@@ -635,7 +635,7 @@ namespace Optimization1D
 
 				// set current iteration's info
                 SetText( currentIterationBox, i.ToString( ) );
-                SetText( currentValueBox, userFunction.TranslateNative( population.BestChromosome ).ToString( "F3" ) );
+                SetText( currentValueBox, userFunction.Translate( population.BestChromosome ).ToString( "F3" ) );
 
 				// increase current iteration
 				i++;

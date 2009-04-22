@@ -1,12 +1,12 @@
 ﻿// AForge Image Formats Library Example
 // AForge.NET framework
 //
-// Copyright © Frank Nagl, 2008
+// Copyright © Frank Nagl, 2008-2009
 // admin@franknagl.de
 // www.franknagl.de
 //
 using AForge.Imaging.Formats;
-namespace AForge_2._0_Test
+namespace FormatsDemo
 {
     class Program
     {

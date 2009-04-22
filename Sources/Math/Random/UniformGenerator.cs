@@ -1,7 +1,9 @@
 // AForge Math Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math.Random
@@ -10,13 +12,25 @@ namespace AForge.Math.Random
     using AForge;
 
     /// <summary>
-    /// Uniform random numbers generator
+    /// Uniform random numbers generator.
     /// </summary>
     /// 
-    /// <remarks><para>The random number generator generates unformaly
-    /// distributed numbers in the specified range.</para>
+    /// <remarks><para>The random numbers generator generates uniformly
+    /// distributed numbers in the <see cref="Range">specified range</see> - values
+    /// are greater or equal to minimum range's value and less than maximum range's
+    /// value.</para>
+    /// 
     /// <para>The generator uses <see cref="UniformOneGenerator"/> generator
-    /// to generate random numbers.</para></remarks>
+    /// to generate random numbers.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create instance of random generator
+    /// IRandomNumberGenerator generator = new UniformGenerator( new DoubleRange( 50, 100 ) );
+    /// // generate random number
+    /// double randomNumber = generator.Next( );
+    /// </code>
+    /// </remarks>
     /// 
     public class UniformGenerator : IRandomNumberGenerator
     {
@@ -27,7 +41,7 @@ namespace AForge.Math.Random
         private double length;
 
         /// <summary>
-        /// Mean value of generator
+        /// Mean value of the generator.
         /// </summary>
         ///
         public double Mean
@@ -36,7 +50,7 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Variance value of generator
+        /// Variance value of the generator.
         /// </summary>
         ///
         public double Variance
@@ -45,8 +59,13 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Random numbers range
+        /// Random numbers range.
         /// </summary>
+        /// 
+        /// <remarks><para>Range of random numbers to generate. Generated numbers are
+        /// greater or equal to minimum range's value and less than maximum range's
+        /// value.</para>
+        /// </remarks>
         /// 
         public DoubleRange Range
         {
@@ -54,10 +73,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniformGenerator"/> class
+        /// Initializes a new instance of the <see cref="UniformGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="range">Random numbers range</param>
+        /// <param name="range">Random numbers range.</param>
         /// 
         /// <remarks>Initializes random numbers generator with zero seed.</remarks>
         /// 
@@ -67,11 +86,11 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniformGenerator"/> class
+        /// Initializes a new instance of the <see cref="UniformGenerator"/> class.
         /// </summary>
         /// 
-        /// <param name="range">Random numbers range</param>
-        /// <param name="seed">Seed value to initialize random numbers generator</param>
+        /// <param name="range">Random numbers range.</param>
+        /// <param name="seed">Seed value to initialize random numbers generator.</param>
         /// 
         public UniformGenerator( DoubleRange range, int seed )
         {
@@ -82,10 +101,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Generate next random number
+        /// Generate next random number.
         /// </summary>
         /// 
-        /// <returns>Returns next random number</returns>
+        /// <returns>Returns next random number.</returns>
         /// 
         public double Next( )
         {
@@ -93,10 +112,10 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Set seed of the random numbers generator
+        /// Set seed of the random numbers generator.
         /// </summary>
         /// 
-        /// <param name="seed">Seed value</param>
+        /// <param name="seed">Seed value.</param>
         /// 
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>

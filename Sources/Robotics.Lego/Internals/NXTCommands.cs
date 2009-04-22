@@ -21,7 +21,7 @@ namespace AForge.Robotics.Lego.Internals
         DirectCommand = 0x00,
 
         /// <summary>
-        /// System command, which requies reply.
+        /// System command, which requires reply.
         /// </summary>
         SystemCommand = 0x01,
 

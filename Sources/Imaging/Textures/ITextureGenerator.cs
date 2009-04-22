@@ -1,42 +1,45 @@
 // AForge Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Textures
 {
-	using System;
+    using System;
 
-	/// <summary>
-	/// Texture generator interface
-	/// </summary>
+    /// <summary>
+    /// Texture generator interface.
+    /// </summary>
     /// 
-    /// <remarks>Each texture generator generates a texture of the specified size and returns
-	/// a two dimensional array of intensities in the range of [0; 1].</remarks>
+    /// <remarks><para>Each texture generator generates a 2-D texture of the specified size and returns
+    /// it as two dimensional array of intensities in the range of [0, 1] - texture's values.</para>
+    /// </remarks>
     /// 
-	public interface ITextureGenerator
-	{
-		/// <summary>
-		/// Generate texture
-		/// </summary>
+    public interface ITextureGenerator
+    {
+        /// <summary>
+        /// Generate texture.
+        /// </summary>
         /// 
-        /// <param name="width">Texture's width</param>
-        /// <param name="height">Texture's height</param>
+        /// <param name="width">Texture's width.</param>
+        /// <param name="height">Texture's height.</param>
         /// 
-        /// <returns>Two dimensional array of intensities</returns>
+        /// <returns>Two dimensional array of texture's intensities.</returns>
         /// 
-        /// <remarks>Generates new texture with specified dimension.</remarks>
+        /// <remarks>Generates new texture of the specified size.</remarks>
         /// 
-		float[,] Generate( int width, int height );
+        float[,] Generate( int width, int height );
 
-		/// <summary>
-		/// Reset generator
-		/// </summary>
+        /// <summary>
+        /// Reset generator.
+        /// </summary>
         /// 
-        /// <remarks>Resets the generator - resets interl variables, regenerates
+        /// <remarks>Resets the generator - resets all internal variables, regenerates
         /// internal random numbers, etc.</remarks>
         /// 
-		void Reset( );
-	}
+        void Reset( );
+    }
 }

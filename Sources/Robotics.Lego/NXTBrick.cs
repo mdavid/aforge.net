@@ -18,7 +18,7 @@ namespace AForge.Robotics.Lego
     /// <para>The class allows to manipulate with Lego Mindstorms NXT device,
     /// setting/getting its motors' state, getting information about sensors'
     /// values and retrieving generic information about the NXT brick.</para>
-    /// <para><img src="nxt.jpg" width="250" height="201" /></para>
+    /// <para><img src="img/robotics/nxt.jpg" width="250" height="201" /></para>
     /// 
     /// <para><note>Only communication through Bluetooth (virtual serial port) is supported at this point.</note></para>
     /// 
@@ -327,11 +327,11 @@ namespace AForge.Robotics.Lego
             /// <summary>
             /// Power, [-100, 100].
             /// </summary>
-            public sbyte Power;
+            public int Power;
             /// <summary>
             /// Turn ratio, [-100, 100].
             /// </summary>
-            public sbyte TurnRatio;
+            public int TurnRatio;
             /// <summary>
             /// Mode (bit field).
             /// </summary>
@@ -384,7 +384,13 @@ namespace AForge.Robotics.Lego
         /// 
         public bool IsConnected
         {
-            get { return ( communicationInterface != null ); }
+            get
+            {
+                lock ( this )
+                {
+                    return ( communicationInterface != null );
+                }
+            }
         }
 
         /// <summary>
@@ -419,17 +425,19 @@ namespace AForge.Robotics.Lego
         /// 
         public bool Connect( string portName )
         {
-            if ( communicationInterface != null )
-                return true;
+            lock ( this )
+            {
+                if ( communicationInterface != null )
+                    return true;
 
-            // create communication interface,
-            communicationInterface = new SerialCommunication( portName );
-            // connect and check if NXT is alive
-            if ( ( communicationInterface.Connect( ) ) && ( IsAlive( ) ) )
-                return true;
+                // create communication interface,
+                communicationInterface = new SerialCommunication( portName );
+                // connect and check if NXT is alive
+                if ( ( communicationInterface.Connect( ) ) && ( IsAlive( ) ) )
+                    return true;
 
-            Disconnect( );
-
+                Disconnect( );
+            }
             return false;
         }
 
@@ -439,10 +447,13 @@ namespace AForge.Robotics.Lego
         /// 
         public void Disconnect( )
         {
-            if ( communicationInterface != null )
+            lock ( this )
             {
-                communicationInterface.Disconnect( );
-                communicationInterface = null;
+                if ( communicationInterface != null )
+                {
+                    communicationInterface.Disconnect( );
+                    communicationInterface = null;
+                }
             }
         }
 
@@ -808,32 +819,34 @@ namespace AForge.Robotics.Lego
         {
             bool result = false;
 
-            // check connection
-            if ( communicationInterface == null )
+            lock ( this )
             {
-                throw new NullReferenceException( "Not connected to NXT brick" );
-            }
-
-
-            // send message to NXT brick
-            if ( communicationInterface.SendMessage( command, command.Length ) )
-            {
-                int bytesRead;
-
-                // read message
-                if ( communicationInterface.ReadMessage( reply, out bytesRead ) )
+                // check connection
+                if ( communicationInterface == null )
                 {
-                    // check that reply corresponds to command
-                    if ( reply[1] != command[1] )
-                        throw new ApplicationException( "Reply does not correspond to command" );
+                    throw new NullReferenceException( "Not connected to NXT brick" );
+                }
 
-                    // check for errors
-                    if ( reply[2] != 0 )
+                // send message to NXT brick
+                if ( communicationInterface.SendMessage( command, command.Length ) )
+                {
+                    int bytesRead;
+
+                    // read message
+                    if ( communicationInterface.ReadMessage( reply, out bytesRead ) )
                     {
-                        throw new ApplicationException( "Error occured in NXT brick. Error code: " + reply[2].ToString( ) );
-                    }
+                        // check that reply corresponds to command
+                        if ( reply[1] != command[1] )
+                            throw new ApplicationException( "Reply does not correspond to command" );
 
-                    result = true;
+                        // check for errors
+                        if ( reply[2] != 0 )
+                        {
+                            throw new ApplicationException( "Error occured in NXT brick. Error code: " + reply[2].ToString( ) );
+                        }
+
+                        result = true;
+                    }
                 }
             }
 

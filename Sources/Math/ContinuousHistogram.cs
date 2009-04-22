@@ -1,7 +1,9 @@
 // AForge Math Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math
@@ -12,8 +14,31 @@ namespace AForge.Math
     /// Histogram for continuous random values.
     /// </summary>
     /// 
-    /// <remarks>The class also works with integer arrays as <see cref="Histogram"/> class.
-    /// But it also takes as parameter a range of random values. ... </remarks>
+    /// <remarks><para>The class wraps histogram for continuous stochastic function, which is represented
+    /// by integer array and range of the function. Values of the integer array are treated
+    /// as total amount of hits on the corresponding subranges, which are calculated by splitting the
+    /// specified range into required amount of consequent ranges.</para>
+    /// 
+    /// <para>For example, if the integer array is equal to { 1, 2, 4, 8, 16 } and the range is set
+    /// to [0, 1], then the histogram consists of next subranges:
+    /// <list type="bullet">
+    /// <item>[0.0, 0.2] - 1 hit;</item>
+    /// <item>[0.2, 0.4] - 2 hits;</item>
+    /// <item>[0.4, 0.6] - 4 hits;</item>
+    /// <item>[0.6, 0.8] - 8 hits;</item>
+    /// <item>[0.8, 1.0] - 16 hits.</item>
+    /// </list>
+    /// </para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create histogram
+    /// ContinuousHistogram histogram = new ContinuousHistogram(
+    ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+    /// // get mean and standard deviation values
+    /// System.Diagnostics.Debug.WriteLine( "mean = " + histogram.Mean + ", std.dev = " + histogram.StdDev );
+    /// </code>
+    /// </remarks>
     /// 
     public class ContinuousHistogram
     {
@@ -49,6 +74,18 @@ namespace AForge.Math
         /// Mean value.
         /// </summary>
         /// 
+        /// <remarks><para>The property allows to retrieve mean value of the histogram.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram
+        /// ContinuousHistogram histogram = new ContinuousHistogram(
+        ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+        /// // get mean value (= 0.505 )
+        /// System.Diagnostics.Debug.WriteLine( "mean = " + histogram.Mean.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
+        /// 
         public double Mean
         {
             get { return mean; }
@@ -57,6 +94,18 @@ namespace AForge.Math
         /// <summary>
         /// Standard deviation.
         /// </summary>
+        /// 
+        /// <remarks><para>The property allows to retrieve standard deviation value of the histogram.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram
+        /// ContinuousHistogram histogram = new ContinuousHistogram(
+        ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+        /// // get std.dev. value (= 0.215)
+        /// System.Diagnostics.Debug.WriteLine( "std.dev. = " + histogram.StdDev.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
         /// 
         public double StdDev
         {
@@ -67,6 +116,18 @@ namespace AForge.Math
         /// Median value.
         /// </summary>
         /// 
+        /// <remarks><para>The property allows to retrieve median value of the histogram.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram
+        /// ContinuousHistogram histogram = new ContinuousHistogram(
+        ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+        /// // get median value (= 0.500)
+        /// System.Diagnostics.Debug.WriteLine( "median = " + histogram.Median.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
+        /// 
         public double Median
         {
             get { return median; }
@@ -76,9 +137,18 @@ namespace AForge.Math
         /// Minimum value.
         /// </summary>
         /// 
-        /// <remarks>Minimum value of the histogram with non zero
-        /// hits count.</remarks>
+        /// <remarks><para>The property allows to retrieve minimum value of the histogram with non zero
+        /// hits count.</para>
         /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram
+        /// ContinuousHistogram histogram = new ContinuousHistogram(
+        ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+        /// // get min value (= 0.250)
+        /// System.Diagnostics.Debug.WriteLine( "min = " + histogram.Min.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
         public double Min
         {
             get { return min; }
@@ -88,8 +158,18 @@ namespace AForge.Math
         /// Maximum value.
         /// </summary>
         /// 
-        /// <remarks>Maximum value of the histogram with non zero
-        /// hits count.</remarks>
+        /// <remarks><para>The property allows to retrieve maximum value of the histogram with non zero
+        /// hits count.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram
+        /// ContinuousHistogram histogram = new ContinuousHistogram(
+        ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+        /// // get max value (= 0.875)
+        /// System.Diagnostics.Debug.WriteLine( "max = " + histogram.Max.ToString( "F3" ) );
+        /// </code>
+        /// </remarks>
         /// 
         public double Max
         {
@@ -103,22 +183,42 @@ namespace AForge.Math
         /// <param name="values">Values of the histogram.</param>
         /// <param name="range">Range of random values.</param>
         /// 
+        /// <remarks>Values of the integer array are treated as total amount of hits on the
+        /// corresponding subranges, which are calculated by splitting the specified range into
+        /// required amount of consequent ranges (see <see cref="ContinuousHistogram"/> class
+        /// description for more information).
+        /// </remarks>
+        /// 
         public ContinuousHistogram( int[] values, DoubleRange range )
         {
             this.values = values;
-            this.range = range;
+            this.range  = range;
 
             Update( );
         }
 
         /// <summary>
-        /// Get range around median containing specified percentage of values
+        /// Get range around median containing specified percentage of values.
         /// </summary>
         /// 
-        /// <param name="percent">Values percentage around median</param>
+        /// <param name="percent">Values percentage around median.</param>
         /// 
-        /// <returns>Returns the range which containes specifies percentage
-        /// of values.</returns>
+        /// <returns>Returns the range which containes specifies percentage of values.</returns>
+        /// 
+        /// <remarks><para>The method calculates range of stochastic variable, which summary probability
+        /// comprises the specified percentage of histogram's hits.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // create histogram
+        /// ContinuousHistogram histogram = new ContinuousHistogram(
+        ///     new int[] { 0, 0, 8, 4, 2, 4, 7, 1, 0 }, new DoubleRange( 0.0, 1.0 ) );
+        /// // get 50% range
+        /// DoubleRange range = histogram.GetRange( 0.5 );
+        /// // show the range ([0.25, 0.75])
+        /// System.Diagnostics.Debug.WriteLine( "50% range = [" + range.Min + ", " + range.Max + "]" );
+        /// </code>
+        /// </remarks>
         /// 
         public DoubleRange GetRange( double percent )
         {

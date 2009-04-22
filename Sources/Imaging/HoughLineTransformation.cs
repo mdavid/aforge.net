@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2007
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -17,6 +18,8 @@ namespace AForge.Imaging
     /// </summary>
     /// 
     /// <remarks>Represents line of Hough transform using radial coordinates.</remarks>
+    /// 
+    /// <seealso cref="HoughLineTransformation"/>
     /// 
     public class HoughLine : IComparable
 	{
@@ -66,7 +69,12 @@ namespace AForge.Imaging
         /// <returns><para>A signed number indicating the relative values of this instance and <b>value</b>: 1) greater than zero - 
         /// this instance is greater than <b>value</b>; 2) zero - this instance is equal to <b>value</b>;
         /// 3) greater than zero - this instance is less than <b>value</b>.</para>
+        /// 
         /// <para><note>The sort order is descending.</note></para></returns>
+        /// 
+        /// <remarks>
+        /// <para><note>Object are compared using their <see cref="Intensity">intensity</see> value.</note></para>
+        /// </remarks>
         /// 
         public int CompareTo( object value )
         {
@@ -78,7 +86,14 @@ namespace AForge.Imaging
 	/// Hough line transformation.
 	/// </summary>
     ///
-    /// <remarks><para>Hough line transformation allows to detect lines in image.</para>
+    /// <remarks><para>The class implements Hough line transformation, which allows to detect
+    /// straight lines in an image. Lines, which are found by the class, are provided in polar
+    /// coordinates system - lines' distances from image's center and lines' slopes are provided.</para>
+    /// 
+    /// <para>The class accepts binary images for processing, which are represented by 8 bpp grayscale images.
+    /// All black pixels (0 pixel's value) are treated as background, but pixels with different value are
+    /// treated as lines' pixels.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// HoughLineTransformation lineTransform = new HoughLineTransformation( );
@@ -93,7 +108,14 @@ namespace AForge.Imaging
     ///     // ...
     /// }
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample8.jpg" width="400" height="300" />
+    /// <para><b>Hough line transformation image:</b></para>
+    /// <img src="img/imaging/hough_lines.jpg" width="500" height="180" />
     /// </remarks>
+    /// 
+    /// <seealso cref="HoughCircleTransformation"/>
     /// 
 	public class HoughLineTransformation
 	{
@@ -117,9 +139,10 @@ namespace AForge.Imaging
         /// Steps per degree.
         /// </summary>
         /// 
-        /// <remarks><para>The value defines quality of Hough transform and its ability to detect
-        /// line slope precisely.</para>
-        /// <para>Default value is <b>1</b>. Minimum value is <b>1</b>. Maximum value is <b>10</b>.</para></remarks>
+        /// <remarks><para>The value defines quality of Hough line transformation and its ability to detect
+        /// lines' slope precisely.</para>
+        /// 
+        /// <para>Default value is set to <b>1</b>. Minimum value is <b>1</b>. Maximum value is <b>10</b>.</para></remarks>
         /// 
         public int StepsPerDegree
         {
@@ -148,7 +171,8 @@ namespace AForge.Imaging
         ///
         /// <remarks><para>The value sets minimum intensity level for a line. If a value in Hough
         /// map has lower intensity, then it is not treated as a line.</para>
-        /// <para>Default value is <b>10</b>.</para></remarks>
+        /// 
+        /// <para>Default value is set to <b>10</b>.</para></remarks>
         ///
         public short MinLineIntensity
         {
@@ -161,8 +185,9 @@ namespace AForge.Imaging
         /// </summary>
         /// 
         /// <remarks><para>The value determines radius around a map's value, which is analyzed to determine
-        /// if the map's value is a maximum in specified area.</para>
-        /// <para>Default value is <b>4</b>. Minimum value is <b>1</b>. Maximum value is <b>10</b>.</para></remarks>
+        /// if the map's value is a local maximum in specified area.</para>
+        /// 
+        /// <para>Default value is set to <b>4</b>. Minimum value is <b>1</b>. Maximum value is <b>10</b>.</para></remarks>
         /// 
         public int LocalPeakRadius
         {
@@ -174,6 +199,8 @@ namespace AForge.Imaging
         /// Maximum found intensity in Hough map.
         /// </summary>
         /// 
+        /// <remarks><para>The property provides maximum found line's intensity.</para></remarks>
+        /// 
 		public short MaxIntensity
 		{
             get { return maxMapIntensity; }
@@ -182,6 +209,9 @@ namespace AForge.Imaging
         /// <summary>
         /// Found lines count.
         /// </summary>
+        /// 
+        /// <remarks><para>The property provides total number of found lines, which intensity is higher (or equal to),
+        /// than the requested <see cref="MinLineIntensity">minimum intensity</see>.</para></remarks>
         /// 
         public int LinesCount
         {
@@ -203,12 +233,14 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source image to process.</param>
         /// 
-		public void ProcessImage( Bitmap image )
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// 
+        public void ProcessImage( Bitmap image )
 		{
             // check image format
             if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
             {
-                throw new ArgumentException( "Source image can be binary (8 bpp indexed) image only" );
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
             }
 
             // lock source image
@@ -216,11 +248,16 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed );
 
-            // process the image
-            ProcessImage( imageData );
-
-            // unlock image
-            image.UnlockBits( imageData );
+            try
+            {
+                // process the image
+                ProcessImage( new UnmanagedImage( imageData ) );
+            }
+            finally
+            {
+                // unlock image
+                image.UnlockBits( imageData );
+            }
         }
 
         /// <summary>
@@ -229,85 +266,103 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Source image data to process.</param>
         /// 
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// 
         public void ProcessImage( BitmapData imageData )
         {
-            if ( imageData.PixelFormat != PixelFormat.Format8bppIndexed )
+            ProcessImage( new UnmanagedImage( imageData ) );
+        }
+
+        /// <summary>
+        /// Process an image building Hough map.
+        /// </summary>
+        /// 
+        /// <param name="image">Source unmanaged image to process.</param>
+        /// 
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// 
+        public void ProcessImage( UnmanagedImage image )
+        {
+            if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
             {
-                throw new ArgumentException( "Source image can be binary (8 bpp indexed) image only" );
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
             }
 
-			// get source image size
-			int width       = imageData.Width;
-            int height      = imageData.Height;
-            int offset      = imageData.Stride - width;
-			int halfWidth   = width / 2;
-			int halfHeight  = height / 2;
-			int toWidth     = width - halfWidth;
-			int toHeight    = height - halfHeight;
+            // get source image size
+            int width       = image.Width;
+            int height      = image.Height;
+            int offset      = image.Stride - width;
+            int halfWidth   = width / 2;
+            int halfHeight  = height / 2;
+            int toWidth     = width - halfWidth;
+            int toHeight    = height - halfHeight;
 
             // calculate Hough map's width
             int halfHoughWidth = (int) Math.Sqrt( halfWidth * halfWidth + halfHeight * halfHeight );
             int houghWidth = halfHoughWidth * 2;
 
-			houghMap = new short[houghHeight, houghWidth];
+            houghMap = new short[houghHeight, houghWidth];
 
-			// do the job
-			unsafe
-			{
-                byte* src = (byte*) imageData.Scan0.ToPointer( );
+            // do the job
+            unsafe
+            {
+                byte* src = (byte*) image.ImageData.ToPointer( );
 
-				// for each row
-				for ( int y = -halfHeight; y < toHeight; y++ )
-				{
-					// for each pixel
-					for ( int x = -halfWidth; x < toWidth; x++, src++ )
-					{
-						if ( *src != 0 )
-						{
-							// for each Theta value
+                // for each row
+                for ( int y = -halfHeight; y < toHeight; y++ )
+                {
+                    // for each pixel
+                    for ( int x = -halfWidth; x < toWidth; x++, src++ )
+                    {
+                        if ( *src != 0 )
+                        {
+                            // for each Theta value
                             for ( int theta = 0; theta < houghHeight; theta++ )
-							{
+                            {
                                 int radius = (int) ( cosMap[theta] * x - sinMap[theta] * y ) + halfHoughWidth;
 
                                 if ( ( radius < 0 ) || ( radius >= houghWidth ) )
-									continue;
+                                    continue;
 
                                 houghMap[theta, radius]++;
-							}
-						}
-					}
-					src += offset;
-				}
-			}
+                            }
+                        }
+                    }
+                    src += offset;
+                }
+            }
 
-			// find max value in Hough map
+            // find max value in Hough map
             maxMapIntensity = 0;
-			for ( int i = 0; i < houghHeight; i++ )
-			{
-				for ( int j = 0; j < houghWidth; j++ )
-				{
+            for ( int i = 0; i < houghHeight; i++ )
+            {
+                for ( int j = 0; j < houghWidth; j++ )
+                {
                     if ( houghMap[i, j] > maxMapIntensity )
-					{
+                    {
                         maxMapIntensity = houghMap[i, j];
-					}
-				}
-			}
+                    }
+                }
+            }
 
             CollectLines( );
-		}
+        }
 
         /// <summary>
-        /// Ñonvert Hough map to bitmap. 
+        /// Convert Hough map to bitmap. 
         /// </summary>
         /// 
-        /// <returns>Returns a bitmap, which shows Hough map.</returns>
+        /// <returns>Returns 8 bppp grayscale bitmap, which shows Hough map.</returns>
+        /// 
+        /// <exception cref="ApplicationException">Hough transformation was not yet done by calling
+        /// ProcessImage() method.</exception>
         /// 
 		public Bitmap ToBitmap( )
 		{
 			// check if Hough transformation was made already
 			if ( houghMap == null )
 			{
-				throw new ApplicationException( "Hough transformation was not done yet" );
+				throw new ApplicationException( "Hough transformation was not done yet." );
 			}
 
 			int width = houghMap.GetLength( 1 );

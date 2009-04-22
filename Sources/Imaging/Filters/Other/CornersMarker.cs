@@ -1,13 +1,15 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
 
@@ -19,23 +21,41 @@ namespace AForge.Imaging.Filters
     /// <para>The filter highlights corners of objects on the image using provided corners
     /// detection algorithm.</para>
     /// 
+    /// <para>The filter accepts 8 bpp grayscale and 24 color images for processing.</para>
+    /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create corner detector's instance
-    /// MoravecCornersDetector mcd = new MoravecCornersDetector( );
+    /// SusanCornersDetector scd = new SusanCornersDetector( );
     /// // create corner maker filter
-    /// CornersMarker filter = new CornersMarker( mcd, Color.Red );
+    /// CornersMarker filter = new CornersMarker( scd, Color.Red );
     /// // apply the filter
     /// filter.ApplyInPlace( image );
     /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample2.jpg" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/susan_corners.png" width="320" height="240" />
     /// </remarks>
     /// 
-    public class CornersMarker : FilterAnyToAny
+    public class CornersMarker : BaseInPlaceFilter
     {
         // color used to mark corners
         private Color markerColor = Color.White;
         // algorithm used to detect corners
         private ICornersDetector detector = null;
+
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
+
+        /// <summary>
+        /// Format translations dictionary.
+        /// </summary>
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
+        {
+            get { return formatTransalations; }
+        }
 
         /// <summary>
         /// Color used to mark corners.
@@ -61,9 +81,8 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="detector">Interface of corners' detection algorithm.</param>
         /// 
-        public CornersMarker( ICornersDetector detector )
+        public CornersMarker( ICornersDetector detector ) : this( detector, Color.White )
         {
-            this.detector = detector;
         }
 
         /// <summary>
@@ -77,22 +96,25 @@ namespace AForge.Imaging.Filters
         {
             this.detector    = detector;
             this.markerColor = markerColor;
+
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
         }
 
         /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="imageData">Image data.</param>
-        /// 
-        protected override unsafe void ProcessFilter( BitmapData imageData )
+        /// <param name="image">Source image data.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image )
         {
             // get collection of corners
-            Point[] corners = detector.ProcessImage( imageData );
+            Point[] corners = detector.ProcessImage( image );
             // mark all corners
             foreach ( Point corner in corners )
             {
-                Drawing.FillRectangle( imageData, new Rectangle( corner.X - 1, corner.Y - 1, 3, 3 ), markerColor );
+                Drawing.FillRectangle( image, new Rectangle( corner.X - 1, corner.Y - 1, 3, 3 ), markerColor );
             }
         }
     }

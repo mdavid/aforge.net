@@ -1,8 +1,9 @@
-// AForge Framework
 // Color Clustering using Kohonen SOM
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2006
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 using System;
@@ -21,7 +22,7 @@ using AForge.Neuro.Learning;
 namespace Color
 {
 	/// <summary>
-	/// Summary description for Form1.
+	/// Summary description for MainForm.
 	/// </summary>
 	public class MainForm : System.Windows.Forms.Form
 	{

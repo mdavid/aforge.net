@@ -19,19 +19,20 @@ namespace AForge.Robotics.Lego
     /// <para>The class allows to manipulate with Lego Mindstorms RCX device,
     /// setting its motors' state, getting information about sensors'
     /// values and performing some other manipulations.</para>
-    /// <para><img src="rcx.jpg" width="312" height="251" /></para>
+    /// <para><img src="img/robotics/rcx.jpg" width="312" height="251" /></para>
     /// 
-    /// <para><note>Only communication through USB IR tower is supported at this point.</note></para>
+    /// <para><note>The class supports both types of IR towers - USB and serial (see
+    /// <see cref="RCXBrick.IRTowerType"/>).</note></para>
     /// 
     /// <para><note>The class uses GhostAPI to communicate with Lego RCX device, so its
-    /// libraries should be placed into applications folder.</note></para>
+    /// libraries (GhostAPI.dll, PbkComm32.dll and PbkUsbPort.dll) should be placed into applications folder.</note></para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // create an instance of RCX brick
     /// RCXBrick rcx = new RCXBrick( );
     /// // connect to the device
-    /// if ( rcx.Connect( ) )
+    /// if ( rcx.Connect( RCXBrick.IRTowerType.USB ) )
     /// {
     ///     // set forward direction of motor A
     ///     rcx.SetMotorDirection( RCXBrick.Motor.A, true );
@@ -58,7 +59,22 @@ namespace AForge.Robotics.Lego
     /// 
     public class RCXBrick
     {
-        #region Embedded type
+        #region Embedded types
+
+        /// <summary>
+        /// Type of IR tower used for communication with RCX.
+        /// </summary>
+        public enum IRTowerType
+        {
+            /// <summary>
+            /// USB IR tower.
+            /// </summary>
+            USB,
+            /// <summary>
+            /// RS232 IR tower.
+            /// </summary>
+            Serial
+        }
 
         /// <summary>
         /// Enumeration of sound type playable by Lego RCX brick.
@@ -113,6 +129,9 @@ namespace AForge.Robotics.Lego
         /// <summary>
         /// Enumeration of RCX brick sensor types.
         /// </summary>
+        /// 
+        /// <remarks><para>Use <see cref="SetSensorType"/> method to set RCX sensor's type.</para></remarks>
+        /// 
         public enum SensorType
         {
             /// <summary>
@@ -140,6 +159,9 @@ namespace AForge.Robotics.Lego
         /// <summary>
         /// Enumeration of RCX brick sensor modes.
         /// </summary>
+        /// 
+        /// <remarks><para>Use <see cref="SetSensorMode"/> method to set RCX sensor's mode.</para></remarks>
+        /// 
         public enum SensorMode
         {
             /// <summary>
@@ -227,7 +249,13 @@ namespace AForge.Robotics.Lego
         /// 
         public bool IsConnected
         {
-            get { return ( stack != IntPtr.Zero ); }
+            get
+            {
+                lock ( this )
+                {
+                    return ( stack != IntPtr.Zero );
+                }
+            }
         }
 
         /// <summary>
@@ -251,6 +279,8 @@ namespace AForge.Robotics.Lego
         /// Connect to Lego RCX brick.
         /// </summary>
         /// 
+        /// <param name="towerType">Type of IR tower to use for communication with RCX brick.</param>
+        /// 
         /// <returns>Returns <b>true</b> on successful connection or <b>false</b>
         /// otherwise.</returns>
         /// 
@@ -258,44 +288,47 @@ namespace AForge.Robotics.Lego
         /// If it is required to force reconnection, then <see cref="Disconnect"/> method should be called before.
         /// </remarks>
         /// 
-        public bool Connect( )
+        public bool Connect( IRTowerType towerType )
         {
-            // check if we are already connected
-            if ( stack != IntPtr.Zero )
-                return true;
-
-            uint status;
-
-            // create stack
-            status = GhostAPI.GhCreateStack(
-                "LEGO.Pbk.CommStack.Port.USB",
-                "LEGO.Pbk.CommStack.Protocol.IR",
-                "LEGO.Pbk.CommStack.Session",
-                out stack );
-
-            if ( !GhostAPI.PBK_SUCCEEDED( status ) )
-                return false;
-
-            // select first available device
-            StringBuilder sb = new StringBuilder( 200 );
-            status = GhostAPI.GhSelectFirstDevice( stack, sb, sb.Length );
-
-            if ( !GhostAPI.PBK_SUCCEEDED( status ) )
+            lock ( this )
             {
-                Disconnect( );
-                return false;
-            }
+                // check if we are already connected
+                if ( stack != IntPtr.Zero )
+                    return true;
 
-            // open stack, set interleave, set wait mode and check if the brick is alive
-            if (
-                !GhostAPI.PBK_SUCCEEDED( GhostAPI.GhOpen( stack ) ) ||
-                !GhostAPI.PBK_SUCCEEDED( GhostAPI.GhSetWaitMode( stack, IntPtr.Zero ) ) ||
-                !GhostAPI.PBK_SUCCEEDED( GhostAPI.GhSetInterleave( stack, 1, 0 ) ) ||
-                !IsAlive( )
-                )
-            {
-                Disconnect( );
-                return false;
+                uint status;
+
+                // create stack
+                status = GhostAPI.GhCreateStack(
+                    ( towerType == IRTowerType.USB ) ? "LEGO.Pbk.CommStack.Port.USB" : "LEGO.Pbk.CommStack.Port.RS232",
+                    "LEGO.Pbk.CommStack.Protocol.IR",
+                    "LEGO.Pbk.CommStack.Session",
+                    out stack );
+
+                if ( !GhostAPI.PBK_SUCCEEDED( status ) )
+                    return false;
+
+                // select first available device
+                StringBuilder sb = new StringBuilder( 200 );
+                status = GhostAPI.GhSelectFirstDevice( stack, sb, sb.Length );
+
+                if ( !GhostAPI.PBK_SUCCEEDED( status ) )
+                {
+                    Disconnect( );
+                    return false;
+                }
+
+                // open stack, set interleave, set wait mode and check if the brick is alive
+                if (
+                    !GhostAPI.PBK_SUCCEEDED( GhostAPI.GhOpen( stack ) ) ||
+                    !GhostAPI.PBK_SUCCEEDED( GhostAPI.GhSetWaitMode( stack, IntPtr.Zero ) ) ||
+                    !GhostAPI.PBK_SUCCEEDED( GhostAPI.GhSetInterleave( stack, 1, 0 ) ) ||
+                    !IsAlive( )
+                    )
+                {
+                    Disconnect( );
+                    return false;
+                }
             }
 
             return true;
@@ -307,10 +340,13 @@ namespace AForge.Robotics.Lego
         /// 
         public void Disconnect( )
         {
-            if ( stack != IntPtr.Zero )
+            lock ( this )
             {
-                Internals.GhostAPI.GhClose( stack );
-                stack = IntPtr.Zero;
+                if ( stack != IntPtr.Zero )
+                {
+                    Internals.GhostAPI.GhClose( stack );
+                    stack = IntPtr.Zero;
+                }
             }
         }
 
@@ -440,7 +476,7 @@ namespace AForge.Robotics.Lego
         /// 
         /// <param name="sensor">Sensor to get value of.</param>
         /// <param name="value">Retrieved sensor's value (units depend on current
-        /// sensor's type and mode).</param>
+        /// <see cref="SensorType">sensor's type</see> and <see cref="SensorMode">mode</see>).</param>
         /// 
         /// <returns>Returns <b>true</b> if command was executed successfully or <b>false</b> otherwise.</returns>
         /// 
@@ -585,58 +621,61 @@ namespace AForge.Robotics.Lego
             uint status;
             IntPtr queue;
 
-            // check if GhostAPI stack was created (if device is connected)
-            if ( stack == IntPtr.Zero )
+            lock ( this )
             {
-                throw new NullReferenceException( "Not connected to RCX brick" );
-            }
+                // check if GhostAPI stack was created (if device is connected)
+                if ( stack == IntPtr.Zero )
+                {
+                    throw new NullReferenceException( "Not connected to RCX brick" );
+                }
 
-            // create command queue
-            status = GhostAPI.GhCreateCommandQueue( out queue );
+                // create command queue
+                status = GhostAPI.GhCreateCommandQueue( out queue );
 
-            if ( !GhostAPI.PBK_SUCCEEDED( status ) )
-                return false;
+                if ( !GhostAPI.PBK_SUCCEEDED( status ) )
+                    return false;
 
-            // append command to the queue
-            status = GhostAPI.GhAppendCommand( queue, command, command.Length, expectedReplyLen );
-
-            if ( GhostAPI.PBK_SUCCEEDED( status ) )
-            {
-                // execute command
-                status = GhostAPI.GhExecute( stack, queue );
+                // append command to the queue
+                status = GhostAPI.GhAppendCommand( queue, command, command.Length, expectedReplyLen );
 
                 if ( GhostAPI.PBK_SUCCEEDED( status ) )
                 {
-                    IntPtr commandHandle;
-                    uint replyLen;
+                    // execute command
+                    status = GhostAPI.GhExecute( stack, queue );
 
-                    // get first command and its reply data lenght
-                    if (
-                        ( GhostAPI.PBK_SUCCEEDED( GhostAPI.GhGetFirstCommand( queue, out commandHandle ) ) ) &&
-                        ( GhostAPI.PBK_SUCCEEDED( GhostAPI.GhGetCommandReplyLen( commandHandle, out replyLen ) ) )
-                        )
+                    if ( GhostAPI.PBK_SUCCEEDED( status ) )
                     {
-                        // check provided reply buffer size
-                        if ( reply.Length < replyLen )
-                            throw new ArgumentException( "Reply buffer is too small" );
+                        IntPtr commandHandle;
+                        uint replyLen;
 
-                        // get reply data
-                        status = GhostAPI.GhGetCommandReply( commandHandle, reply, replyLen );
-
-                        if ( GhostAPI.PBK_SUCCEEDED( status ) )
+                        // get first command and its reply data lenght
+                        if (
+                            ( GhostAPI.PBK_SUCCEEDED( GhostAPI.GhGetFirstCommand( queue, out commandHandle ) ) ) &&
+                            ( GhostAPI.PBK_SUCCEEDED( GhostAPI.GhGetCommandReplyLen( commandHandle, out replyLen ) ) )
+                            )
                         {
-                            // check that reply corresponds to command
-                            if ( ( command[0] | 0x08 ) != (byte) ~reply[0] )
-                                throw new ApplicationException( "Reply does not correspond to command" );
+                            // check provided reply buffer size
+                            if ( reply.Length < replyLen )
+                                throw new ArgumentException( "Reply buffer is too small" );
 
-                            result = true;
+                            // get reply data
+                            status = GhostAPI.GhGetCommandReply( commandHandle, reply, replyLen );
+
+                            if ( GhostAPI.PBK_SUCCEEDED( status ) )
+                            {
+                                // check that reply corresponds to command
+                                if ( ( command[0] | 0x08 ) != (byte) ~reply[0] )
+                                    throw new ApplicationException( "Reply does not correspond to command" );
+
+                                result = true;
+                            }
                         }
                     }
                 }
-            }
 
-            // destroy command queue
-            GhostAPI.GhDestroyCommandQueue( queue );
+                // destroy command queue
+                GhostAPI.GhDestroyCommandQueue( queue );
+            }
 
             return result;
         }

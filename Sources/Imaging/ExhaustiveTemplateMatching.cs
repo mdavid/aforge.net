@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -20,7 +21,7 @@ namespace AForge.Imaging
     /// which performs complete scan of source image, comparing each pixel with corresponding
     /// pixel of template.</para>
     /// 
-    /// <para><note>The class processes only grayscale (8 bpp indexed) and color (24 bpp) images.</note></para>
+    /// <para>The class processes only grayscale 8 bpp and color 24 bpp images.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -41,7 +42,7 @@ namespace AForge.Imaging
     /// </code>
     /// 
     /// <para>The class also can be used to get similarity level between two image of the same
-    /// size, which can be useful to get information how about different/similar are images:</para>
+    /// size, which can be useful to get information about how different/similar are images:</para>
     /// <code>
     /// // create template matching algorithm's instance
     /// // use zero similarity to make sure algorithm will provide anything
@@ -49,7 +50,7 @@ namespace AForge.Imaging
     /// // compare two images
     /// TemplateMatch[] matchings = tm.ProcessImage( image1, image2 );
     /// // check similarity level
-    /// if ( matchings[0].Similarity > 0.95 )
+    /// if ( matchings[0].Similarity > 0.95f )
     /// {
     ///     // do something with quite similar images
     /// }
@@ -69,6 +70,7 @@ namespace AForge.Imaging
         /// and potential found candidate. If similarity is lower than this value,
         /// then object is not treated as matching with template.
         /// </para>
+        /// 
         /// <para>Default value is set to <b>0.9</b>.</para>
         /// </remarks>
         /// 
@@ -105,7 +107,29 @@ namespace AForge.Imaging
         /// <returns>Returns array of found template matches. The array is sorted by similarity
         /// of found matches in descending order.</returns>
         /// 
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Template image is bigger than source image.</exception>
+        /// 
         public TemplateMatch[] ProcessImage( Bitmap image, Bitmap template )
+        {
+            return ProcessImage( image, template, new Rectangle( 0, 0, image.Width, image.Height ) );
+        }
+
+        /// <summary>
+        /// Process image looking for matchings with specified template.
+        /// </summary>
+        /// 
+        /// <param name="image">Source image to process.</param>
+        /// <param name="template">Template image to search for.</param>
+        /// <param name="searchZone">Rectangle in source image to search template for.</param>
+        /// 
+        /// <returns>Returns array of found template matches. The array is sorted by similarity
+        /// of found matches in descending order.</returns>
+        /// 
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Template image is bigger than source image.</exception>
+        /// 
+        public TemplateMatch[] ProcessImage( Bitmap image, Bitmap template, Rectangle searchZone )
         {
             // check image format
             if (
@@ -113,13 +137,13 @@ namespace AForge.Imaging
                   ( image.PixelFormat != PixelFormat.Format24bppRgb ) ) ||
                 ( image.PixelFormat != template.PixelFormat ) )
             {
-                throw new ArgumentException( "Source and template images can be grayscale (8 bpp indexed) or color (24 bpp) images only ans should have the same pixel format" );
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source or template image." );
             }
 
             // check template's size
             if ( ( template.Width > image.Width ) || ( template.Height > image.Height ) )
             {
-                throw new ArgumentException( "Template image should be smaller than source image" );
+                throw new InvalidImagePropertiesException( "Template's size should be smaller or equal to source image's size." );
             }
 
             // lock source and template images
@@ -130,12 +154,22 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, template.Width, template.Height ),
                 ImageLockMode.ReadOnly, template.PixelFormat );
 
-            // process the image
-            TemplateMatch[] matchings = ProcessImage( imageData, templateData );
+            TemplateMatch[] matchings;
 
-            // unlock images
-            image.UnlockBits( imageData );
-            template.UnlockBits( templateData );
+            try
+            {
+                // process the image
+                matchings = ProcessImage(
+                    new UnmanagedImage( imageData ),
+                    new UnmanagedImage( templateData ),
+                    searchZone );
+            }
+            finally
+            {
+                // unlock images
+                image.UnlockBits( imageData );
+                template.UnlockBits( templateData );
+            }
 
             return matchings;
         }
@@ -150,35 +184,103 @@ namespace AForge.Imaging
         /// <returns>Returns array of found template matches. The array is sorted by similarity
         /// of found matches in descending order.</returns>
         /// 
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Template image is bigger than source image.</exception>
+        /// 
         public TemplateMatch[] ProcessImage( BitmapData imageData, BitmapData templateData )
+        {
+            return ProcessImage( new UnmanagedImage( imageData ), new UnmanagedImage( templateData ),
+                new Rectangle( 0, 0, imageData.Width, imageData.Height ) );
+        }
+
+        /// <summary>
+        /// Process image looking for matchings with specified template.
+        /// </summary>
+        /// 
+        /// <param name="imageData">Source image data to process.</param>
+        /// <param name="templateData">Template image to search for.</param>
+        /// <param name="searchZone">Rectangle in source image to search template for.</param>
+        /// 
+        /// <returns>Returns array of found template matches. The array is sorted by similarity
+        /// of found matches in descending order.</returns>
+        /// 
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Template image is bigger than source image.</exception>
+        /// 
+        public TemplateMatch[] ProcessImage( BitmapData imageData, BitmapData templateData, Rectangle searchZone )
+        {
+            return ProcessImage( new UnmanagedImage( imageData ), new UnmanagedImage( templateData ), searchZone );
+        }
+
+        /// <summary>
+        /// Process image looking for matchings with specified template.
+        /// </summary>
+        /// 
+        /// <param name="image">Unmanaged source image to process.</param>
+        /// <param name="template">Unmanaged template image to search for.</param>
+        /// 
+        /// <returns>Returns array of found template matches. The array is sorted by similarity
+        /// of found matches in descending order.</returns>
+        /// 
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Template image is bigger than source image.</exception>
+        ///
+        public TemplateMatch[] ProcessImage( UnmanagedImage image, UnmanagedImage template )
+        {
+            return ProcessImage( image, template, new Rectangle( 0, 0, image.Width, image.Height ) );
+        }
+
+        /// <summary>
+        /// Process image looking for matchings with specified template.
+        /// </summary>
+        /// 
+        /// <param name="image">Unmanaged source image to process.</param>
+        /// <param name="template">Unmanaged template image to search for.</param>
+        /// <param name="searchZone">Rectangle in source image to search template for.</param>
+        /// 
+        /// <returns>Returns array of found template matches. The array is sorted by similarity
+        /// of found matches in descending order.</returns>
+        /// 
+        /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Template image is bigger than search zone.</exception>
+        ///
+        public TemplateMatch[] ProcessImage( UnmanagedImage image, UnmanagedImage template, Rectangle searchZone )
         {
             // check image format
             if (
-                ( ( imageData.PixelFormat != PixelFormat.Format8bppIndexed ) &&
-                  ( imageData.PixelFormat != PixelFormat.Format24bppRgb ) ) ||
-                ( imageData.PixelFormat != templateData.PixelFormat ) )
+                ( ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
+                  ( image.PixelFormat != PixelFormat.Format24bppRgb ) ) ||
+                ( image.PixelFormat != template.PixelFormat ) )
             {
-                throw new ArgumentException( "Source and template images can be grayscale (8 bpp indexed) or color (24 bpp) images only ans should have the same pixel format" );
+                throw new UnsupportedImageFormatException( "Unsupported pixel format of the source or template image." );
             }
 
+            // clip search zone
+            Rectangle zone = searchZone;
+            zone.Intersect( new Rectangle( 0, 0, image.Width, image.Height ) );
+
+            // search zone's starting point
+            int startX = zone.X;
+            int startY = zone.Y;
+
             // get source and template image size
-            int sourceWidth    = imageData.Width;
-            int sourceHeight   = imageData.Height;
-            int templateWidth  = templateData.Width;
-            int templateHeight = templateData.Height;
+            int sourceWidth    = zone.Width;
+            int sourceHeight   = zone.Height;
+            int templateWidth  = template.Width;
+            int templateHeight = template.Height;
 
             // check template's size
             if ( ( templateWidth > sourceWidth ) || ( templateHeight > sourceHeight ) )
             {
-                throw new ArgumentException( "Template image should be smaller than source image" );
+                throw new InvalidImagePropertiesException( "Template's size should be smaller or equal to search zone." );
             }
 
-            int pixelSize = ( imageData.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
-            int sourceStride = imageData.Stride;
+            int pixelSize = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
+            int sourceStride = image.Stride;
 
             // similarity map. its size is increased by 4 from each side to increase
             // performance of non-maximum suppresion
-            int mapWidth  = sourceWidth  - templateWidth  + 1;
+            int mapWidth  = sourceWidth - templateWidth + 1;
             int mapHeight = sourceHeight - templateHeight + 1;
             int[,] map = new int[mapHeight + 4, mapWidth + 4];
 
@@ -188,14 +290,17 @@ namespace AForge.Imaging
             // integer similarity threshold
             int threshold = (int) ( similarityThreshold * maxDiff );
 
+            // width of template in bytes
+            int templateWidthInBytes = templateWidth * pixelSize;
+
             // do the job
             unsafe
             {
-                byte* baseSrc = (byte*) imageData.Scan0.ToPointer( );
-                byte* baseTpl = (byte*) templateData.Scan0.ToPointer( );
+                byte* baseSrc = (byte*) image.ImageData.ToPointer( );
+                byte* baseTpl = (byte*) template.ImageData.ToPointer( );
 
-                int sourceOffset = imageData.Stride - templateWidth * pixelSize;
-                int templateOffset = templateData.Stride - templateWidth * pixelSize;
+                int sourceOffset = image.Stride - templateWidth * pixelSize;
+                int templateOffset = template.Stride - templateWidth * pixelSize;
 
                 // for each row of the source image
                 for ( int y = 0; y < mapHeight; y++ )
@@ -203,7 +308,7 @@ namespace AForge.Imaging
                     // for each pixel of the source image
                     for ( int x = 0; x < mapWidth; x++ )
                     {
-                        byte* src = baseSrc + sourceStride * y + pixelSize * x;
+                        byte* src = baseSrc + sourceStride * ( y + startY ) + pixelSize * ( x + startX );
                         byte* tpl = baseTpl;
 
                         // compare template with source image starting from current X,Y
@@ -213,7 +318,7 @@ namespace AForge.Imaging
                         for ( int i = 0; i < templateHeight; i++ )
                         {
                             // for each pixel of the template
-                            for ( int j = 0, maxJ = templateWidth * pixelSize; j < maxJ; j++, src++, tpl++ )
+                            for ( int j = 0; j < templateWidthInBytes; j++, src++, tpl++ )
                             {
                                 int d = *src - *tpl;
                                 if ( d > 0 )
@@ -267,7 +372,7 @@ namespace AForge.Imaging
                     if ( currentValue != 0 )
                     {
                         matchingsList.Add( new TemplateMatch(
-                            new Rectangle( x - 2, y - 2, templateWidth, templateHeight ),
+                            new Rectangle( x - 2 + startX, y - 2 + startY, templateWidth, templateHeight ),
                             (float) currentValue / maxDiff ) );
                     }
                 }
