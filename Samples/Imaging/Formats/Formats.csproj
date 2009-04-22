@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="AForge.Imaging.Formats, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8065ed5a639199a0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Imaging\Formats\bin\Debug\AForge.Imaging.Formats.dll</HintPath>
+      <HintPath>..\..\..\Release\AForge.Imaging.Formats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
