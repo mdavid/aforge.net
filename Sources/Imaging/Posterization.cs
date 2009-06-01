@@ -9,35 +9,37 @@
 // admin@franknagl.de
 // www.franknagl.de
 //
-namespace AForge.Imaging
+namespace AForge.Imaging.Filters
 {
-    using System.Drawing;
-    using System.Drawing.Imaging;
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
 
     /// <summary>
-    /// Posterizates a colored image.
+    /// Simple posterization of an image.
     /// </summary>
     /// 
-    /// <remarks><para>The class implements the posterization of a colored image.
-    /// Posterization is a process in photograph development which converts normal 
-    /// photographs into an image consisting of distinct, but flat, areas of different 
-    /// tones or colors.</para>
+    /// <remarks><para>The class implements simple <a href="http://en.wikipedia.org/wiki/Posterization">posterization</a> of an image by splitting
+    /// each color plane into adjacent areas of the <see cref="PosterizationInterval">specified size</see>. After the process
+    /// is done, each color plane will contain maximum of 256/<see cref="PosterizationInterval">PosterizationInterval</see> colors.
+    /// For example, if grayscale image is posterized with posterization interval equal to 64,
+    /// then result image will contain maximum of 4 tones. If color image is posterized with
+    /// same posterization interval, then it will contain maximum of 4<sup>3</sup>=64 colors.
+    /// See <see cref="FillingType"/> property to get information about the way how to control
+    /// color used to fill posterization areas.</para>
     /// 
-    /// <para>The posterization process should be used before 
-    /// using <see cref="SimpleFloodFill"/> or <see cref="SimpleRegionColorSegmentation"/> algorithms.</para>
-    /// 
-    /// <para>The class processes only color 24 bpp images.</para>
+    /// <para>Posterization is a process in photograph development which converts normal photographs
+    /// into an image consisting of distinct, but flat, areas of different tones or colors.</para>
+    ///
+    /// <para>The filter accepts 8 bpp grayscale and 24/32 bpp color images.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
-    /// // create Posterization's instance
-    /// Posterization poster = new Posterization( );
-    /// //set threshold
-    /// poster.Threshold = 50;
-    /// // posterizate image
-    /// poster.ProcessImage( image );
+    /// // create filter
+    /// Posterization filter = new Posterization( );
+    /// // process image
+    /// filter.ApplyInPlace( sourceImage );
     /// </code>
     /// 
     /// <para><b>Initial image:</b></para>
@@ -46,68 +48,159 @@ namespace AForge.Imaging
     /// <img src="img/imaging/posterization.png" width="480" height="361" />
     /// </remarks>
     /// 
-    /// <seealso cref="SimpleFloodFill"/>
-    /// <seealso cref="SimpleRegionColorSegmentation"/>
-    /// 
-    public class Posterization
+    public class SimplePosterization : BaseInPlacePartialFilter
     {
-        byte threshold = 90;
         /// <summary>
-        /// Gets or sets the threshold for the posterization process.
+        /// Enumeration of possible types of filling posterized areas.
         /// </summary>
-        /// <remarks>Default value: 90</remarks>
-        /// <value>The threshold value for the posterization process.</value>
-        public byte Threshold
+        public enum PosterizationFillingType
         {
-            get { return threshold; }
-            set { threshold = value; }
+            /// <summary>
+            /// Fill area with minimum color's value.
+            /// </summary>
+            Min,
+            /// <summary>
+            /// Fill area with maximum color's value.
+            /// </summary>
+            Max,
+            /// <summary>
+            /// Fill area with average color's value.
+            /// </summary>
+            Average
+        }
+        
+        byte posterizationInterval = 64;
+        PosterizationFillingType fillingType = PosterizationFillingType.Average;
+
+        /// <summary>
+        /// Posterization interval, which specifies size of posterization areas.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property specifies size of adjacent posterization areas
+        /// for each color plane. The value has direct effect on the amount of colors
+        /// in the result image. For example, if grayscale image is posterized with posterization
+        /// interval equal to 64, then result image will contain maximum of 4 tones. If color
+        /// image is posterized with same posterization interval, then it will contain maximum
+        /// of 4<sup>3</sup>=64 colors.</para>
+        /// 
+        /// <para>Default value is set to <b>64</b>.</para>
+        /// </remarks>
+        /// 
+        public byte PosterizationInterval
+        {
+            get { return posterizationInterval; }
+            set { posterizationInterval = value; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Posterization"/> class.
+        /// Posterization filling type.
         /// </summary>
-        public Posterization() { }
+        /// 
+        /// <remarks><para>The property controls the color, which is used to substitute
+        /// colors within the same posterization interval - minimum, maximum or average value.
+        /// </para>
+        /// 
+        /// <para>Default value is set to <see cref="PosterizationFillingType.Average"/>.</para>
+        /// </remarks>
+        /// 
+        public PosterizationFillingType FillingType
+        {
+            get { return fillingType; }
+            set { fillingType = value; }
+        }
+
+        // private format translation dictionary
+        private Dictionary<PixelFormat, PixelFormat> formatTransalations = new Dictionary<PixelFormat, PixelFormat>( );
 
         /// <summary>
-        /// Posterizate image.
+        /// Format translations dictionary.
         /// </summary>
-        /// <param name="image">Source image to posterizate.</param>
-        /// <exception cref="UnsupportedImageFormatException">Source image can be color (24 bpp) image only.</exception>
-        /// 
-        public void ProcessImage(Bitmap image)
+        public override Dictionary<PixelFormat, PixelFormat> FormatTransalations
         {
+            get { return formatTransalations; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimplePosterization"/> class.
+        /// </summary>
+        public SimplePosterization( )
+        {
+            // initialize format translation dictionary
+            formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format8bppIndexed;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimplePosterization"/> class.
+        /// </summary>
+        /// 
+        /// <param name="fillingType">Specifies <see cref="FillingType">filling type</see> of posterization areas.</param>
+        /// 
+        public SimplePosterization( PosterizationFillingType fillingType ) : this ( )
+        {
+            this.fillingType = fillingType;
+        }
+
+        /// <summary>
+        /// Process the filter on the specified image.
+        /// </summary>
+        /// 
+        /// <param name="image">Source image data.</param>
+        /// <param name="rect">Image rectangle for processing by the filter.</param>
+        ///
+        protected override unsafe void ProcessFilter( UnmanagedImage image, Rectangle rect )
+        {
+            // get pixel size
+            int pixelSize = Image.GetPixelFormatSize( image.PixelFormat ) / 8;
+
+            int startX  = rect.Left;
+            int startY  = rect.Top;
+            int stopX   = startX + rect.Width;
+            int stopY   = startY + rect.Height;
+            int offset  = image.Stride - rect.Width * pixelSize;
+
+            // calculate posterization offset
+            int posterizationOffset = ( fillingType == PosterizationFillingType.Min ) ?
+                0 : ( ( fillingType == PosterizationFillingType.Max ) ?
+                posterizationInterval - 1 : posterizationInterval / 2 );
+
+            // do the job
+            byte* ptr = (byte*) image.ImageData.ToPointer( );
+
+            // allign pointer to the first pixel to process
+            ptr += ( startY * image.Stride + startX * pixelSize );
+
             // check image format
-            if (image.PixelFormat != PixelFormat.Format24bppRgb)
-                throw new UnsupportedImageFormatException("Source image can be color (24 bpp) image only.");
-            
-            int w = image.Width;
-            int h = image.Height;            
-            Rectangle rect = new Rectangle(0, 0, w, h);
-
-            // lock source bitmap data
-            BitmapData imageData = image.LockBits(
-                rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            int offset = imageData.Stride - w * 3;
-
-            // process image
-            unsafe
+            if ( image.PixelFormat == PixelFormat.Format8bppIndexed )
             {
-                byte* src = (byte*)imageData.Scan0.ToPointer();
                 // for each line
-                for (int y = 0; y < h; y++)
+                for ( int y = startY; y < stopY; y++ )
                 {
                     // for each pixel in line
-                    for (int x = 0; x < w; x++, src += 3)
+                    for ( int x = startX; x < stopX; x++, ptr++ )
                     {
-                        src[RGB.R] = (byte)((src[RGB.R] / threshold) * threshold);
-                        src[RGB.G] = (byte)((src[RGB.G] / threshold) * threshold);
-                        src[RGB.B] = (byte)((src[RGB.B] / threshold) * threshold);
+                        *ptr = (byte) ( ( *ptr / posterizationInterval ) * posterizationInterval + posterizationOffset );
                     }
-                    src += offset;
+                    ptr += offset;
                 }
             }
-            // unlock destination image
-            image.UnlockBits(imageData);
+            else
+            {
+                // for each line
+                for ( int y = startY; y < stopY; y++ )
+                {
+                    // for each pixel in line
+                    for ( int x = startX; x < stopX; x++, ptr += pixelSize )
+                    {
+                        ptr[RGB.R] = (byte) ( ( ptr[RGB.R] / posterizationInterval ) * posterizationInterval + posterizationOffset );
+                        ptr[RGB.G] = (byte) ( ( ptr[RGB.G] / posterizationInterval ) * posterizationInterval + posterizationOffset );
+                        ptr[RGB.B] = (byte) ( ( ptr[RGB.B] / posterizationInterval ) * posterizationInterval + posterizationOffset );
+                    }
+                    ptr += offset;
+                }
+            }
         }
     }
 }
