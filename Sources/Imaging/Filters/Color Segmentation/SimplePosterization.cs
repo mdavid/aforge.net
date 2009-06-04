@@ -37,7 +37,7 @@ namespace AForge.Imaging.Filters
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
-    /// Posterization filter = new Posterization( );
+    /// SimplePosterization filter = new SimplePosterization( );
     /// // process image
     /// filter.ApplyInPlace( sourceImage );
     /// </code>
@@ -127,9 +127,15 @@ namespace AForge.Imaging.Filters
         {
             // initialize format translation dictionary
             formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
-            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format8bppIndexed;
-            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format8bppIndexed;
-            formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format32bppRgb;
+            formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format32bppArgb;
+
+            // #### Wrong, isn't it? ####
+            //formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
+            //formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format8bppIndexed;
+            //formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format8bppIndexed;
+            //formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format8bppIndexed;
         }
 
         /// <summary>
