@@ -37,13 +37,7 @@ namespace AForge.Fuzzy
     /// numerical ouput grows. 
     /// </para>
     /// 
-    /// <para>Sample usage:</para>
-    /// <code>
-    /// // creating the defuzzifier using 1000 intervals for approximation
-    /// CentroidDefuzzifier cd = new CentroidDefuzzifier( 1000 );
-    /// // lets consider the existence of a <see cref="FuzzyOutput"/> and a <see cref="INorm"/> operator
-    /// cd.Defuzzify( fuzzyOutput, normOperator );
-    /// </code>    
+    /// <para>For a sample usage of the CentroidDefuzzifier see <see cref="InferenceSystem"/>. </para>
     /// </remarks>
     /// 
     public class CentroidDefuzzifier : IDefuzzifier
