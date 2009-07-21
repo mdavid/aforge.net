@@ -37,7 +37,8 @@ namespace AForge.Fuzzy
     /// numerical ouput grows. 
     /// </para>
     /// 
-    /// <para>For a sample usage of the CentroidDefuzzifier see <see cref="InferenceSystem"/>. </para>
+    /// <para>For a sample usage of the <see cref="CentroidDefuzzifier"/> see <see cref="InferenceSystem"/>
+    /// class.</para>
     /// </remarks>
     /// 
     public class CentroidDefuzzifier : IDefuzzifier
