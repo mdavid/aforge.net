@@ -64,9 +64,9 @@ namespace AForge.Fuzzy
     /// // creating the inference system
     /// InferenceSystem IS = new InferenceSystem( fuzzyDB, new CentroidDefuzzifier( 1000 ) );
     /// 
-    /// // going Straight
+    /// // going straight
     /// IS.NewRule( "Rule 1", "IF FrontalDistance IS Far THEN Angle IS Zero" );
-    /// // Turning Left
+    /// // turning left
     /// IS.NewRule( "Rule 2", "IF FrontalDistance IS Near THEN Angle IS Positive" );
     /// 
     /// ...
