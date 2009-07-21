@@ -20,8 +20,10 @@ namespace AForge.Fuzzy
     /// 
     /// <remarks><para>The class keeps set of rule's output - pairs with the output fuzzy label
     /// and the rule's firing strength.
-    /// </para></remarks>
+    /// </para>
     /// 
+    /// 
+    /// <para>Sample usage:</para>
     /// <code>
     /// // linguistic labels (fuzzy sets) that compose the distances
     /// FuzzySet fsNear = new FuzzySet( "Near",
@@ -70,24 +72,26 @@ namespace AForge.Fuzzy
     /// ...
     /// // inference section
     /// 
-    /// // Setting inputs
+    /// // setting inputs
     /// IS.SetInput( "FrontalDistance", 20 );
     /// 
     /// // getting outputs
     /// try
     /// {
-    /// FuzzyOutput fuzzyOutput = IS.ExecuteInference ( "Angle" );
+    ///     FuzzyOutput fuzzyOutput = IS.ExecuteInference ( "Angle" );
     /// 
-    /// // Showing the fuzzy output
-    /// foreach ( FuzzyOutput.OutputConstraint oc in fuzzyOutput.OutputList )
-    /// {
-    ///    Console.Write( oc.Label + " - " + oc.FiringStrength.ToString( ) );
+    ///     // showing the fuzzy output
+    ///     foreach ( FuzzyOutput.OutputConstraint oc in fuzzyOutput.OutputList )
+    ///     {
+    ///         Console.WriteLine( oc.Label + " - " + oc.FiringStrength.ToString( ) );
+    ///     }
     /// }
     /// catch ( Exception )
     /// {
     ///    ...
     /// }
-    /// </code>    
+    /// </code>  
+    /// </remarks>
     /// 
     public class FuzzyOutput
     {

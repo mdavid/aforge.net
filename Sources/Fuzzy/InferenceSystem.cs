@@ -181,10 +181,10 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
-        /// Gets one of the LinguisticVariables of the <see cref="Database"/>. 
+        /// Gets one of the <see cref="LinguisticVariable"/> of the <see cref="Database"/>. 
         /// </summary>
         /// 
-        /// <param name="variableName">Name of the <see cref="LinguisticVariable"/>.</param>
+        /// <param name="variableName">Name of the <see cref="LinguisticVariable"/> to get.</param>
         /// 
         /// <exception cref="KeyNotFoundException">The variable indicated in <paramref name="variableName"/>
         /// was not found in the database.</exception>
@@ -198,7 +198,7 @@ namespace AForge.Fuzzy
         /// Gets one of the Rules of the <see cref="Rulebase"/>. 
         /// </summary>
         /// 
-        /// <param name="ruleName">Name of the <see cref="Rule"/>.</param>
+        /// <param name="ruleName">Name of the <see cref="Rule"/> to get.</param>
         /// 
         /// <exception cref="KeyNotFoundException">The rule indicated in <paramref name="ruleName"/>
         /// was not found in the rulebase.</exception>
@@ -234,7 +234,8 @@ namespace AForge.Fuzzy
         /// 
         /// <param name="variableName">Name of the <see cref="LinguisticVariable"/> to evaluate.</param>
         /// 
-        /// <returns>A <see cref="FuzzyOutput"/> containing the fuzzy output of the system for the <see cref="LinguisticVariable"/> informed in variableName. </returns>
+        /// <returns>A <see cref="FuzzyOutput"/> containing the fuzzy output of the system for the
+        /// <see cref="LinguisticVariable"/> specified in <paramref name="variableName"/>.</returns>
         /// 
         /// <exception cref="KeyNotFoundException">The variable indicated was not found in the database.</exception>
         /// 

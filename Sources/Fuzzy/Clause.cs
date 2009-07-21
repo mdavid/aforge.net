@@ -94,7 +94,6 @@ namespace AForge.Fuzzy
         /// 
         public Clause( LinguisticVariable variable, FuzzySet label )
         {
-            
             // check if label belongs to var.
             variable.GetLabel( label.Name );
             
