@@ -52,7 +52,7 @@ namespace SVSTest
             }
             else
             {
-                MessageBox.Show( "Failed connecting to Qwerk.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                MessageBox.Show( "Failed connecting to SVS.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
             }
         }
 
@@ -93,7 +93,7 @@ namespace SVSTest
         // Disconnect from Qwerk
         private void Disconnect( )
         {
-            // if ( qwerk.IsConnected )
+            // if (  )
             {
                 // timer.Stop( );
 
@@ -108,22 +108,7 @@ namespace SVSTest
                     rightCameraPlayer.VideoSource.SignalToStop( );
                     rightCameraPlayer.VideoSource.WaitForStop( );
                 }
-                /*
-                try
-                {
-                    // stop Qwerk's camera
-                    Qwerk.Video qwerkVideo = qwerk.GetVideoService( );
-                    qwerkVideo.SignalToStop( );
-                    qwerkVideo.WaitForStop( );
-
-                    // turn of all LEDs and disconnect
-                    qwerk.GetLedsService( ).SetLedsState( Qwerk.LedState.Off );
-                }
-                catch
-                {
-                }
-
-                qwerk.Disconnect( );*/
+ 
 
                 EnableContols( false );
             }
