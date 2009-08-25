@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent( )
         {
+            this.components = new System.ComponentModel.Container( );
             this.groupBox1 = new System.Windows.Forms.GroupBox( );
             this.disconnectButton = new System.Windows.Forms.Button( );
             this.connectButton = new System.Windows.Forms.Button( );
@@ -40,6 +41,7 @@
             this.leftCameraPlayer = new AForge.Controls.VideoSourcePlayer( );
             this.groupBox3 = new System.Windows.Forms.GroupBox( );
             this.rightCameraPlayer = new AForge.Controls.VideoSourcePlayer( );
+            this.timer = new System.Windows.Forms.Timer( this.components );
             this.groupBox1.SuspendLayout( );
             this.statusStrip.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
@@ -170,6 +172,11 @@
             this.rightCameraPlayer.TabIndex = 0;
             this.rightCameraPlayer.VideoSource = null;
             // 
+            // timer
+            // 
+            this.timer.Interval = 1000;
+            this.timer.Tick += new System.EventHandler( this.timer_Tick );
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
@@ -209,6 +216,7 @@
         private AForge.Controls.VideoSourcePlayer leftCameraPlayer;
         private System.Windows.Forms.GroupBox groupBox3;
         private AForge.Controls.VideoSourcePlayer rightCameraPlayer;
+        private System.Windows.Forms.Timer timer;
     }
 }
 

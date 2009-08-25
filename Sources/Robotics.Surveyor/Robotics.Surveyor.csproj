@@ -44,10 +44,12 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SVS.Camera.cs" />
+    <Compile Include="SVS.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AForge.Robotics.Surveyor.snk" />
