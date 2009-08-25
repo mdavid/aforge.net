@@ -168,7 +168,8 @@ namespace AForge.Robotics.Surveyor
                 }
             }
 
-            public Camera( string ip, short port )
+            // The class may be instantiate using SVS object only
+            internal Camera( string ip, short port )
             {
                 this.ip = ip;
                 this.port = port;
@@ -310,6 +311,12 @@ namespace AForge.Robotics.Surveyor
                                     commands.Peek( ) : commands.Pop( ) );
                             }
 
+                            // offset of image response (in the case if camera returned
+                            // some else before the response)
+                            int  imageResponseOffset = 0;
+                            bool imageIsLocated = false;
+                            int  imageSize = 0;
+
                             // read response
                             int total = 0;
 
@@ -327,40 +334,44 @@ namespace AForge.Robotics.Surveyor
                                 // break if allocated buffer seems to be small
                                 if ( total + readSize > bufferSize )
                                     break;
+
+                                if ( !imageIsLocated )
+                                {
+                                    while ( total - imageResponseOffset > 10 )
+                                    {
+                                        // check for image reply signature
+                                        if (
+                                            ( buffer[imageResponseOffset    ] == (byte) '#' ) &&
+                                            ( buffer[imageResponseOffset + 1] == (byte) '#' ) &&
+                                            ( buffer[imageResponseOffset + 2] == (byte) 'I' ) &&
+                                            ( buffer[imageResponseOffset + 3] == (byte) 'M' ) &&
+                                            ( buffer[imageResponseOffset + 4] == (byte) 'J' ) )
+                                        {
+                                            // extract image size
+                                            imageSize = System.BitConverter.ToInt32( buffer, imageResponseOffset + 6 );
+
+                                            imageIsLocated = true;
+                                            break;
+                                        }
+
+                                        imageResponseOffset++;
+                                    }
+                                }
+
+                                // break if entire image was downloaded
+                                if ( ( imageIsLocated ) && ( total >= imageResponseOffset + imageSize + 10 ) )
+                                    break;
                             }
 
                             bytesReceived += total;
 
-                            // image response is never less than 10 bytes, so ignore
-                            // anything else
-                            if ( ( total > 10 ) && ( !stopEvent.WaitOne( 0, true ) ) )
+                            // check if image is in the buffer
+                            if ( ( imageIsLocated ) && ( !stopEvent.WaitOne( 0, true ) ) )
                             {
-                                // locate image reply just in case multiple replyies were read
-                                int offset = 0;
-
-                                while ( total - offset > 10 )
-                                {
-                                    // check for image reply signature
-                                    if (
-                                        ( buffer[offset    ] == (byte) '#' ) &&
-                                        ( buffer[offset + 1] == (byte) '#' ) &&
-                                        ( buffer[offset + 2] == (byte) 'I' ) &&
-                                        ( buffer[offset + 3] == (byte) 'M' ) &&
-                                        ( buffer[offset + 4] == (byte) 'J' ) )
-                                    {
-                                        break;
-                                    }
-
-                                    offset++;
-                                }
-
-                                // extract image size
-                                int imageSize = System.BitConverter.ToInt32( buffer, offset + 6 );
-
                                 try
                                 {
                                     // decode image from memory stream
-                                    Bitmap bitmap = (Bitmap) Bitmap.FromStream( new MemoryStream( buffer, offset + 10, imageSize ) );
+                                    Bitmap bitmap = (Bitmap) Bitmap.FromStream( new MemoryStream( buffer, imageResponseOffset + 10, imageSize ) );
                                     framesReceived++;
 
                                     // let subscribers know if there are any

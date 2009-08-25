@@ -21,6 +21,18 @@ namespace SVSTest
 {
     public partial class MainForm : Form
     {
+        private SVS svs = new SVS( );
+
+        // statistics length
+        private const int statLength = 15;
+        // current statistics index
+        private int statIndex = 0;
+        // ready statistics values
+        private int statReady = 0;
+        // statistics array
+        private int[] statCount1 = new int[statLength];
+        private int[] statCount2 = new int[statLength];
+        
         // Class constructor
         public MainForm( )
         {
@@ -62,6 +74,7 @@ namespace SVSTest
             Disconnect( );
             statusLabel.Text = "Disconnected";
             fpsLabel.Text = string.Empty;
+            fpsLabel.Text = string.Empty;
         }
 
         // Connect to SVS
@@ -71,16 +84,21 @@ namespace SVSTest
 
             try
             {
+                svs.Connect( host );
+
                 // start left camera
-                SVS.Camera leftCamera = new SVS.Camera( host, 10001 );
-                leftCameraPlayer.VideoSource = leftCamera;
+                leftCameraPlayer.VideoSource = svs.GetLeftCamera( );
                 leftCameraPlayer.Start( );
 
                 // start right camera
-                SVS.Camera rightCamera = new SVS.Camera( host, 10002 );
-                rightCameraPlayer.VideoSource = rightCamera;
+                rightCameraPlayer.VideoSource = svs.GetRightCamera( );
                 rightCameraPlayer.Start( );
 
+                // reset statistics
+                statIndex = statReady = 0;
+
+                // start timer
+                timer.Start( );
             }
             catch
             {
@@ -95,22 +113,66 @@ namespace SVSTest
         {
             // if (  )
             {
-                // timer.Stop( );
+                timer.Stop( );
 
                 if ( leftCameraPlayer.VideoSource != null )
                 {
                     leftCameraPlayer.VideoSource.SignalToStop( );
                     leftCameraPlayer.VideoSource.WaitForStop( );
+                    leftCameraPlayer.VideoSource = null;
                 }
 
                 if ( rightCameraPlayer.VideoSource != null )
                 {
                     rightCameraPlayer.VideoSource.SignalToStop( );
                     rightCameraPlayer.VideoSource.WaitForStop( );
+                    rightCameraPlayer.VideoSource = null;
                 }
- 
+
+                svs.Disconnect( );
 
                 EnableContols( false );
+            }
+        }
+
+        // On timer's tick
+        private void timer_Tick( object sender, EventArgs e )
+        {
+            // update camaeras' FPS
+            if ( ( leftCameraPlayer.VideoSource != null ) || ( rightCameraPlayer.VideoSource != null ) )
+            {
+                // get number of frames for the last second
+                if ( leftCameraPlayer.VideoSource != null )
+                {
+                    statCount1[statIndex] = leftCameraPlayer.VideoSource.FramesReceived;
+                }
+                if ( rightCameraPlayer.VideoSource != null )
+                {
+                    statCount2[statIndex] = rightCameraPlayer.VideoSource.FramesReceived;
+                }
+
+                // increment indexes
+                if ( ++statIndex >= statLength )
+                    statIndex = 0;
+                if ( statReady < statLength )
+                    statReady++;
+
+                float fps1 = 0;
+                float fps2 = 0;
+
+                // calculate average value
+                for ( int i = 0; i < statReady; i++ )
+                {
+                    fps1 += statCount1[i];
+                    fps2 += statCount2[i];
+                }
+                fps1 /= statReady;
+                fps2 /= statReady;
+
+                fpsLabel.Text = string.Format( "L: {0:F2} fps, R: {1:F2} fps",
+                    fps1, fps2 );
+//                fpsLabel.Text = string.Format( "L: {0} fps, R: {1} fps",
+//                    fps1.ToString( "F2" ), fps2.ToString( "F2" ) );
             }
         }
     }
