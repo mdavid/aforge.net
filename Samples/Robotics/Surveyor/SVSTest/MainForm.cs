@@ -87,11 +87,15 @@ namespace SVSTest
                 svs.Connect( host );
 
                 // start left camera
-                leftCameraPlayer.VideoSource = svs.GetLeftCamera( );
+                SVS.Camera leftCamera = svs.GetLeftCamera( );
+//                leftCamera.SetQuality( 5 );
+                leftCameraPlayer.VideoSource = leftCamera;
                 leftCameraPlayer.Start( );
 
                 // start right camera
-                rightCameraPlayer.VideoSource = svs.GetRightCamera( );
+                SVS.Camera rightCamera = svs.GetRightCamera( );
+//                rightCamera.SetQuality( 5 );
+                rightCameraPlayer.VideoSource = rightCamera;
                 rightCameraPlayer.Start( );
 
                 // reset statistics
@@ -171,8 +175,36 @@ namespace SVSTest
 
                 fpsLabel.Text = string.Format( "L: {0:F2} fps, R: {1:F2} fps",
                     fps1, fps2 );
-//                fpsLabel.Text = string.Format( "L: {0} fps, R: {1} fps",
-//                    fps1.ToString( "F2" ), fps2.ToString( "F2" ) );
+            }
+        }
+
+        private void button1_Click( object sender, EventArgs e )
+        {
+
+            svs.GetVersion( );
+
+            // svs.RunningTime( );
+        }
+
+        private void button2_Click( object sender, EventArgs e )
+        {
+            if ( leftCameraPlayer.VideoSource != null )
+            {
+                SVS.Camera camera = (SVS.Camera) leftCameraPlayer.VideoSource;
+
+                camera.SetQuality( 1 );
+                camera.SetResolution( SVS.CameraResolution.Large );
+            }
+        }
+
+        private void button3_Click( object sender, EventArgs e )
+        {
+            if ( leftCameraPlayer.VideoSource != null )
+            {
+                SVS.Camera camera = (SVS.Camera) leftCameraPlayer.VideoSource;
+
+                camera.SetQuality( 5 );
+                camera.SetResolution( SVS.CameraResolution.Small );
             }
         }
     }
