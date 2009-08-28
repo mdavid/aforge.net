@@ -357,10 +357,6 @@ namespace AForge.Robotics.Surveyor
                                     }
                                 }
                             }
-                            else
-                            {
-                                int stop = 0;
-                            }
                         }
                     }
                     catch
