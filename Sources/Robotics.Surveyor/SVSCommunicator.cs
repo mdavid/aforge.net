@@ -71,8 +71,6 @@ namespace AForge.Robotics.Surveyor
                 socket.ReceiveTimeout = 2000;
                 socket.SendTimeout    = 1000;
 
-                System.Diagnostics.Debug.WriteLine( "buf size: " + socket.ReceiveBufferSize );
-
                 // connect to SVS
                 socket.Connect( endPoint );
 
@@ -125,11 +123,42 @@ namespace AForge.Robotics.Surveyor
 
                 replyIsAvailable.Close( );
                 replyIsAvailable = null;
-                
+
                 if ( socket.Connected )
+                {
                     socket.Disconnect( false );
+                }
                 socket.Close( );
                 socket = null;
+                endPoint = null;
+            }
+        }
+
+        private void Reconnect( )
+        {
+            if ( socket != null )
+            {
+                if ( socket.Connected )
+                {
+                    socket.Disconnect( false );
+                }
+                socket.Close( );
+
+
+                try
+                {
+                    // create TCP/IP socket and set timeouts
+                    socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+                    socket.ReceiveTimeout = 2000;
+                    socket.SendTimeout = 1000;
+
+                    // connect to SVS
+                    socket.Connect( endPoint );
+                }
+                catch
+                {
+                    throw new ApplicationException( );
+                }
             }
         }
 
@@ -176,6 +205,8 @@ namespace AForge.Robotics.Surveyor
 
         private void CommunicationThread( )
         {
+            bool lastRequestFailed = false;
+
             while ( !stopEvent.WaitOne( 0, true ) )
             {
                 // wait for any request
@@ -194,10 +225,17 @@ namespace AForge.Robotics.Surveyor
 
                     try
                     {
+                        if ( lastRequestFailed )
+                        {
+                            Reconnect( );
+                            lastRequestFailed = false;
+                        }
+
+
                         System.Diagnostics.Debug.WriteLine( ">> " +
                             System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
 
-                        
+
 
                         socket.Send( cr.Request );
 
@@ -245,30 +283,6 @@ namespace AForge.Robotics.Surveyor
                                 }
                             }
 
-
-/*
-
-                            cr.BytesRead = 0;
-
-                            int bytesToRead = Math.Min( readSize, cr.ResponseBuffer.Length );
-
-                            while ( !stopEvent.WaitOne( 0, true ) )
-                            {
-                                int read = socket.Receive( cr.ResponseBuffer, cr.BytesRead, bytesToRead, SocketFlags.None );
-
-                                cr.BytesRead += read;
-
-                                if ( ( socket.Available == 0 ) ) // ( read < bytesToRead ) &&
-                                    break;
-
-                                bytesToRead = Math.Min( readSize, cr.ResponseBuffer.Length - cr.BytesRead );
-                                if ( bytesToRead == 0 )
-                                {
-                                    throw new ApplicationException( );
-                                }
-                            }
- */
-
                             System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
                                 System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
 
@@ -298,6 +312,8 @@ namespace AForge.Robotics.Surveyor
                     }
                     finally
                     {
+                        lastRequestFailed = true;
+
                         if ( ( !stopEvent.WaitOne( 0, true ) ) && ( cr.ResponseBuffer != null ) )
                         {
                             lastRequestWithReply = cr;
