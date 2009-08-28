@@ -1,4 +1,4 @@
-﻿// AForge TeRK Robotics Library
+﻿// AForge Surveyor Robotics Library
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
@@ -19,12 +19,19 @@ namespace AForge.Robotics.Surveyor
 
     public partial class SVS
     {
+        public enum CameraResolution
+        {
+            Tiny   = 'a',
+            Small  = 'b',
+            Medium = 'c',
+            Large  = 'd'
+        }
+
+
         public class Camera : IVideoSource
         {
-            // IP address of SVS
-            private string ip;
-            // port namber of the camera
-            private int port;
+            private SVSCommunicator communicator;
+
             // received frames count
             private int framesReceived;
             // recieved bytes count
@@ -36,12 +43,7 @@ namespace AForge.Robotics.Surveyor
             private ManualResetEvent stopEvent = null;
 
             // buffer size used to download JPEG image
-            private const int bufferSize = 512 * 1024;
-            // size of portion to read at once
-            private const int readSize = 1024;
-
-            private Stack<byte[]> commands = new Stack<byte[]>( );
-
+            private const int bufferSize = 768 * 1024;
             /// <summary>
             /// New frame event.
             /// </summary>
@@ -90,7 +92,7 @@ namespace AForge.Robotics.Surveyor
             /// 
             public string Source
             {
-                get { return string.Format( "{0}:{1}", ip, port ); }
+                get { return ""; }
                 set
                 {
                     throw new NotImplementedException( "Setting the property is not allowed" );
@@ -169,10 +171,9 @@ namespace AForge.Robotics.Surveyor
             }
 
             // The class may be instantiate using SVS object only
-            internal Camera( string ip, short port )
+            internal Camera( SVSCommunicator communicator )
             {
-                this.ip = ip;
-                this.port = port;
+                this.communicator = communicator;
             }
 
             /// <summary>
@@ -188,11 +189,7 @@ namespace AForge.Robotics.Surveyor
                 if ( thread == null )
                 {
                     framesReceived = 0;
-                    bytesReceived = 0;
-
-                    // make sure we have only one command at the start
-                    commands.Clear( );
-                    commands.Push( new byte[] { (byte) 'I' } );
+                    bytesReceived  = 0;
 
                     // create events
                     stopEvent = new ManualResetEvent( false );
@@ -273,6 +270,19 @@ namespace AForge.Robotics.Surveyor
                 stopEvent = null;
             }
 
+            public void SetQuality( byte quality )
+            {
+                if ( ( quality < 1 ) || ( quality > 8 ) )
+                    throw new ArgumentOutOfRangeException( "Invalid quality level was specified." );
+
+                communicator.Send( new byte[] { (byte) 'q', (byte) ( quality + (byte) '0' ) } );
+            }
+
+            public void SetResolution( CameraResolution resolution )
+            {
+                communicator.Send( new byte[] { (byte) resolution } );
+            }
+
             /// <summary>
             /// Worker thread.
             /// </summary>
@@ -284,139 +294,81 @@ namespace AForge.Robotics.Surveyor
                 // buffer to read stream into
                 byte[] buffer = new byte[bufferSize];
 
-                // IP end point to connect to
-                IPEndPoint ipEnd = new IPEndPoint( IPAddress.Parse( ip ), System.Convert.ToInt16( port ) );
-
                 while ( !stopEvent.WaitOne( 0, true ) )
                 {
-                    // create TCP/IP socket and receive timeout to 1 second
-                    Socket socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-                    socket.ReceiveTimeout = 1000;
-
                     try
                     {
-                        socket.Connect( ipEnd );
+                        stopWatch.Reset( );
+                        stopWatch.Start( );
 
-                        while ( !stopEvent.WaitOne( 0, true ) )
+                        int bytesRead = communicator.SendAndReceive( new byte[] { (byte) 'I' }, buffer );
+
+                        bytesReceived += bytesRead;
+
+                        if ( bytesRead > 10 )
                         {
-                            stopWatch.Reset( );
-                            stopWatch.Start( );
-
-                            // send command on the top of the stack
-                            lock ( commands )
+                            // check for image reply signature
+                            if (
+                                ( buffer[0] == (byte) '#' ) &&
+                                ( buffer[1] == (byte) '#' ) &&
+                                ( buffer[2] == (byte) 'I' ) &&
+                                ( buffer[3] == (byte) 'M' ) &&
+                                ( buffer[4] == (byte) 'J' ) )
                             {
-                                // last command is never removed from stack, since
-                                // it is image request
-                                socket.Send( ( commands.Count == 1 ) ?
-                                    commands.Peek( ) : commands.Pop( ) );
-                            }
+                                // extract image size
+                                int imageSize = System.BitConverter.ToInt32( buffer, 6 );
 
-                            // offset of image response (in the case if camera returned
-                            // some else before the response)
-                            int  imageResponseOffset = 0;
-                            bool imageIsLocated = false;
-                            int  imageSize = 0;
-
-                            // read response
-                            int total = 0;
-
-                            while ( !stopEvent.WaitOne( 0, true ) )
-                            {
-                                int read = socket.Receive( buffer, total, readSize, SocketFlags.None );
-
-                                total += read;
-
-                                // break if amount of read data is less than we asked for
-                                // and there is nothing more to read for now
-                                if ( ( read < readSize ) && ( socket.Available == 0 ) )
-                                    break;
-
-                                // break if allocated buffer seems to be small
-                                if ( total + readSize > bufferSize )
-                                    break;
-
-                                if ( !imageIsLocated )
+                                // check if image is in the buffer
+                                if ( !stopEvent.WaitOne( 0, true ) )
                                 {
-                                    while ( total - imageResponseOffset > 10 )
+                                    try
                                     {
-                                        // check for image reply signature
-                                        if (
-                                            ( buffer[imageResponseOffset    ] == (byte) '#' ) &&
-                                            ( buffer[imageResponseOffset + 1] == (byte) '#' ) &&
-                                            ( buffer[imageResponseOffset + 2] == (byte) 'I' ) &&
-                                            ( buffer[imageResponseOffset + 3] == (byte) 'M' ) &&
-                                            ( buffer[imageResponseOffset + 4] == (byte) 'J' ) )
-                                        {
-                                            // extract image size
-                                            imageSize = System.BitConverter.ToInt32( buffer, imageResponseOffset + 6 );
+                                        // decode image from memory stream
+                                        Bitmap bitmap = (Bitmap) Bitmap.FromStream( new MemoryStream( buffer, 10, imageSize ) );
+                                        framesReceived++;
 
-                                            imageIsLocated = true;
-                                            break;
+                                        // let subscribers know if there are any
+                                        if ( NewFrame != null )
+                                        {
+                                            NewFrame( this, new NewFrameEventArgs( bitmap ) );
                                         }
 
-                                        imageResponseOffset++;
+                                        bitmap.Dispose( );
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    // wait for a while ?
+                                    if ( frameInterval > 0 )
+                                    {
+                                        // get download duration
+                                        stopWatch.Stop( );
+
+                                        // miliseconds to sleep
+                                        int msec = frameInterval - (int) stopWatch.ElapsedMilliseconds;
+
+                                        while ( ( msec > 0 ) && ( stopEvent.WaitOne( 0, true ) == false ) )
+                                        {
+                                            // sleeping ...
+                                            Thread.Sleep( ( msec < 100 ) ? msec : 100 );
+                                            msec -= 100;
+                                        }
                                     }
                                 }
-
-                                // break if entire image was downloaded
-                                if ( ( imageIsLocated ) && ( total >= imageResponseOffset + imageSize + 10 ) )
-                                    break;
                             }
-
-                            bytesReceived += total;
-
-                            // check if image is in the buffer
-                            if ( ( imageIsLocated ) && ( !stopEvent.WaitOne( 0, true ) ) )
+                            else
                             {
-                                try
-                                {
-                                    // decode image from memory stream
-                                    Bitmap bitmap = (Bitmap) Bitmap.FromStream( new MemoryStream( buffer, imageResponseOffset + 10, imageSize ) );
-                                    framesReceived++;
-
-                                    // let subscribers know if there are any
-                                    if ( NewFrame != null )
-                                    {
-                                        NewFrame( this, new NewFrameEventArgs( bitmap ) );
-                                    }
-
-                                    bitmap.Dispose( );
-                                }
-                                catch
-                                {
-                                }
-
-                                // wait for a while ?
-                                if ( frameInterval > 0 )
-                                {
-                                    // get download duration
-                                    stopWatch.Stop( );
-
-                                    // miliseconds to sleep
-                                    int msec = frameInterval - (int) stopWatch.ElapsedMilliseconds;
-
-                                    while ( ( msec > 0 ) && ( stopEvent.WaitOne( 0, true ) == false ) )
-                                    {
-                                        // sleeping ...
-                                        Thread.Sleep( ( msec < 100 ) ? msec : 100 );
-                                        msec -= 100;
-                                    }
-                                }
+                                int stop = 0;
                             }
                         }
                     }
-                    catch ( SocketException ex )
+                    catch
                     {
                         if ( VideoSourceError != null )
                         {
-                            VideoSourceError( this, new VideoSourceErrorEventArgs( ex.Message ) );
+                            VideoSourceError( this, new VideoSourceErrorEventArgs( "" ) );
                         }
-                    }
-                    finally
-                    {
-                        if ( socket.Connected )
-                            socket.Disconnect( false );
-                        socket.Close( );
                     }
                 }
 
