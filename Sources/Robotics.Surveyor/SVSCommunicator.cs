@@ -17,26 +17,35 @@ namespace AForge.Robotics.Surveyor
 
     internal class SVSCommunicator
     {
-        IPEndPoint endPoint = null;
+        private IPEndPoint endPoint = null;
+
+        // Connecton end-point
+        public IPEndPoint EndPoint
+        {
+            get { return endPoint; }
+        }
+
+        // socket used for communication with SVS
         Socket socket = null;
-
+        // background communicaton thread
         private Thread thread = null;
-
+        // event signaling thread to exit
         private ManualResetEvent stopEvent = null;
+        // event signaling about available request in communication queue
         private AutoResetEvent requestIsAvailable;
+        // event sugnaling about available response
         private AutoResetEvent replyIsAvailable;
 
+        // last processed request which requires reply
         private CommunicationRequest lastRequestWithReply;
 
-        
-
+        // communication request
         private class CommunicationRequest
         {
             public byte[] Request;
             public byte[] ResponseBuffer;
             public int    BytesRead; // -1 on error
 
-            
             public CommunicationRequest( byte[] request )
             {
                 this.Request = request;
@@ -48,92 +57,100 @@ namespace AForge.Robotics.Surveyor
             }
         }
 
+        // communication queue
         Queue<CommunicationRequest> communicationQueue = new Queue<CommunicationRequest>( );
 
-        public SVSCommunicator( )
-        {
-            
-        }
+        public SVSCommunicator( ) { }
 
+        // Connect to SVS using specfied IP and port number
         public void Connect( string ip, int port )
         {
-            if ( socket != null )
-                return;
-
-            try
+            lock ( this )
             {
-                // make sure communication queue is empty
-                communicationQueue.Clear( );
+                if ( socket != null )
+                    return;
 
-                endPoint = new IPEndPoint( IPAddress.Parse( ip ), Convert.ToInt16( port ) );
-                // create TCP/IP socket and set timeouts
-                socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-                socket.ReceiveTimeout = 2000;
-                socket.SendTimeout    = 1000;
+                try
+                {
+                    // make sure communication queue is empty
+                    communicationQueue.Clear( );
 
-                // connect to SVS
-                socket.Connect( endPoint );
+                    endPoint = new IPEndPoint( IPAddress.Parse( ip ), Convert.ToInt16( port ) );
+                    // create TCP/IP socket and set timeouts
+                    socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+                    socket.ReceiveTimeout = 2000;
+                    socket.SendTimeout    = 1000;
 
-                // create events
-                stopEvent = new ManualResetEvent( false );
+                    // connect to SVS
+                    socket.Connect( endPoint );
 
-                requestIsAvailable = new AutoResetEvent( false );
-                replyIsAvailable   = new AutoResetEvent( false );
+                    // create events
+                    stopEvent = new ManualResetEvent( false );
 
-                // create and start new thread
-                thread = new Thread( new ThreadStart( CommunicationThread ) );
-                thread.Start( );
-            }
-            catch ( SocketException )
-            {
+                    requestIsAvailable = new AutoResetEvent( false );
+                    replyIsAvailable = new AutoResetEvent( false );
 
-
-                throw new ApplicationException( );
+                    // create and start new thread
+                    thread = new Thread( new ThreadStart( CommunicationThread ) );
+                    thread.Start( );
+                }
+                catch ( SocketException )
+                {
+                    throw new ApplicationException( );
+                }
             }
         }
 
+        // Disconnect from SVS
         public void Disconnect( )
         {
-            if ( socket != null )
+            lock ( this )
             {
-                // signal worker thread to stop
-                stopEvent.Set( );
-                requestIsAvailable.Set( );
-                replyIsAvailable.Set( );
-
-                // wait for aroung 1 s
-                for ( int i = 0; ( i < 20 ) && ( thread.Join( 0 ) == false ); i++ )
+                if ( thread != null )
                 {
-                    System.Threading.Thread.Sleep( 50 );
+                    // signal worker thread to stop
+                    stopEvent.Set( );
+                    requestIsAvailable.Set( );
+                    replyIsAvailable.Set( );
+
+                    // wait for aroung 1 s
+                    for ( int i = 0; ( i < 20 ) && ( thread.Join( 0 ) == false ); i++ )
+                    {
+                        System.Threading.Thread.Sleep( 50 );
+                    }
+                    // abort thread if it can not be stopped
+                    if ( thread.Join( 0 ) == false )
+                    {
+                        thread.Abort( );
+                    }
+
+                    thread = null;
+
+                    // release events
+                    stopEvent.Close( );
+                    stopEvent = null;
+
+                    requestIsAvailable.Close( );
+                    requestIsAvailable = null;
+
+                    replyIsAvailable.Close( );
+                    replyIsAvailable = null;
                 }
-                // abort thread if it can not be stopped
-                if ( thread.Join( 0 ) == false )
+
+                if ( socket != null )
                 {
-                    thread.Abort( );
+                    if ( socket.Connected )
+                    {
+                        socket.Disconnect( false );
+                    }
+                    socket.Close( );
+                    socket = null;
+                    endPoint = null;
                 }
-
-                thread = null;
-
-                // release events
-                stopEvent.Close( );
-                stopEvent = null;
-
-                requestIsAvailable.Close( );
-                requestIsAvailable = null;
-
-                replyIsAvailable.Close( );
-                replyIsAvailable = null;
-
-                if ( socket.Connected )
-                {
-                    socket.Disconnect( false );
-                }
-                socket.Close( );
-                socket = null;
-                endPoint = null;
             }
         }
 
+        // Try to reconnect to SVS
         private void Reconnect( )
         {
             if ( socket != null )
@@ -144,24 +161,17 @@ namespace AForge.Robotics.Surveyor
                 }
                 socket.Close( );
 
+                // create TCP/IP socket and set timeouts
+                socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+                socket.ReceiveTimeout = 2000;
+                socket.SendTimeout = 1000;
 
-                try
-                {
-                    // create TCP/IP socket and set timeouts
-                    socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-                    socket.ReceiveTimeout = 2000;
-                    socket.SendTimeout = 1000;
-
-                    // connect to SVS
-                    socket.Connect( endPoint );
-                }
-                catch
-                {
-                    throw new ApplicationException( );
-                }
+                // connect to SVS
+                socket.Connect( endPoint );
             }
         }
 
+        // Enqueue request and leave - don't wait for reply
         public void Send( byte[] request )
         {
             lock ( communicationQueue )
@@ -171,23 +181,34 @@ namespace AForge.Robotics.Surveyor
             requestIsAvailable.Set( );
         }
 
+        // Enqueue request and wait for reply
         public int SendAndReceive( byte[] request, byte[] responseBuffer )
         {
             lock ( this )
             {
+                if ( socket == null )
+                {
+                    // handle error
+                    throw new ApplicationException( );
+                }
+
                 lock ( communicationQueue )
                 {
                     communicationQueue.Enqueue( new CommunicationRequest( request, responseBuffer ) );
                 }
                 requestIsAvailable.Set( );
 
+                // waiting for reply
                 replyIsAvailable.WaitOne( );
 
+                // no reply since we got disconnect request from user - background thread is exiting
                 if ( lastRequestWithReply == null )
                     return 0;
 
+                // get number of bytes read
                 int bytesRead = lastRequestWithReply.BytesRead;
 
+                // clean the last reply
                 lastRequestWithReply = null;
 
                 if ( bytesRead == -1 )
@@ -203,6 +224,7 @@ namespace AForge.Robotics.Surveyor
         // size of portion to read at once
         private const int readSize = 1024;
 
+        // Communication thread
         private void CommunicationThread( )
         {
             bool lastRequestFailed = false;
@@ -214,6 +236,7 @@ namespace AForge.Robotics.Surveyor
 
                 while ( !stopEvent.WaitOne( 0, true ) )
                 {
+                    // get next communication request from queue
                     CommunicationRequest cr = null;
 
                     lock ( communicationQueue )
@@ -225,6 +248,7 @@ namespace AForge.Robotics.Surveyor
 
                     try
                     {
+                        // try to reconnect if we had communication issues on last request
                         if ( lastRequestFailed )
                         {
                             Reconnect( );
@@ -232,14 +256,12 @@ namespace AForge.Robotics.Surveyor
                         }
 
 
-                        System.Diagnostics.Debug.WriteLine( ">> " +
-                            System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
+                        // System.Diagnostics.Debug.WriteLine( ">> " +
+                        //    System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
 
 
-
+                        // send request
                         socket.Send( cr.Request );
-
-
 
                         // read response
                         if ( cr.ResponseBuffer != null )
@@ -266,9 +288,11 @@ namespace AForge.Robotics.Surveyor
 
                                     if ( bytesToRead > cr.ResponseBuffer.Length - cr.BytesRead )
                                     {
+                                        // response buffer is too small
                                         throw new ApplicationException( );
                                     }
 
+                                    // read the rest
                                     while ( !stopEvent.WaitOne( 0, true ) )
                                     {
                                         int read = socket.Receive( cr.ResponseBuffer, cr.BytesRead,
@@ -283,9 +307,8 @@ namespace AForge.Robotics.Surveyor
                                 }
                             }
 
-                            System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
-                                System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
-
+                            // System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
+                            //     System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
                         }
                         else
                         {
@@ -298,9 +321,8 @@ namespace AForge.Robotics.Surveyor
 
                                 if ( ( read < 100 ) && ( socket.Available == 0 ) )
                                 {
-                                    System.Diagnostics.Debug.WriteLine( "<< " +
-                                        System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, read ) );
-
+                                    // System.Diagnostics.Debug.WriteLine( "<< " +
+                                    //    System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, read ) );
                                     break;
                                 }
                             }
@@ -308,12 +330,13 @@ namespace AForge.Robotics.Surveyor
                     }
                     catch
                     {
+                        lastRequestFailed = true;
+                        // report about falure
                         cr.BytesRead = -1;
                     }
                     finally
                     {
-                        lastRequestFailed = true;
-
+                        // signal about available response to waiting caller
                         if ( ( !stopEvent.WaitOne( 0, true ) ) && ( cr.ResponseBuffer != null ) )
                         {
                             lastRequestWithReply = cr;
