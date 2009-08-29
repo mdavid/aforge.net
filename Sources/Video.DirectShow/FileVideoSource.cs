@@ -1,8 +1,9 @@
 // AForge Direct Show Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Video.DirectShow
@@ -49,8 +50,6 @@ namespace AForge.Video.DirectShow
     {
         // video file name
         private string fileName;
-        // user data associated with the video source
-        private object userData = null;
         // received frames count
         private int framesReceived;
         // recieved byte count
@@ -82,6 +81,15 @@ namespace AForge.Video.DirectShow
         /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
+
+        /// <summary>
+        /// Video playing finished event.
+        /// </summary>
+        /// 
+        /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+        /// </remarks>
+        /// 
+        public event PlayingFinishedEventHandler PlayingFinished;
 
         /// <summary>
         /// Video source.
@@ -129,18 +137,6 @@ namespace AForge.Video.DirectShow
                 bytesReceived = 0;
                 return bytes;
             }
-        }
-
-        /// <summary>
-        /// User data.
-        /// </summary>
-        /// 
-        /// <remarks>The property allows to associate user data with video source object.</remarks>
-        /// 
-        public object UserData
-        {
-            get { return userData; }
-            set { userData = value; }
         }
 
         /// <summary>
@@ -315,6 +311,8 @@ namespace AForge.Video.DirectShow
         /// 
         private void WorkerThread( )
         {
+            ReasonToFinishPlaying reasonToStop = ReasonToFinishPlaying.StoppedByUser;
+
             // grabber
             Grabber grabber = new Grabber( this );
 
@@ -330,6 +328,8 @@ namespace AForge.Video.DirectShow
             ISampleGrabber      sampleGrabber = null;
             IMediaControl       mediaControl = null;
             IFileSourceFilter   fileSource = null;
+
+            IMediaEventEx       mediaEvent = null;
 
             try
             {
@@ -407,12 +407,31 @@ namespace AForge.Video.DirectShow
                 // get media control
                 mediaControl = (IMediaControl) graphObject;
 
+                // get media events' interface
+                mediaEvent = (IMediaEventEx) graphObject;
+                int p1, p2;
+                DsEvCode code;
+
                 // run
                 mediaControl.Run( );
 
                 while ( !stopEvent.WaitOne( 0, true ) )
                 {
                     Thread.Sleep( 100 );
+
+                    if ( mediaEvent != null )
+                    {
+                        if ( mediaEvent.GetEvent( out code, out p1, out p2, 0 ) >= 0 )
+                        {
+                            mediaEvent.FreeEventParams( code, p1, p2 );
+
+                            if ( code == DsEvCode.Complete )
+                            {
+                                reasonToStop = ReasonToFinishPlaying.EndOfStreamReached;
+                                break;
+                            }
+                        }
+                    }
                 }
                 mediaControl.StopWhenReady( );
             }
@@ -433,6 +452,7 @@ namespace AForge.Video.DirectShow
                 sampleGrabber   = null;
                 mediaControl    = null;
                 fileSource      = null;
+                mediaEvent      = null;
 
                 if ( graphObject != null )
                 {
@@ -449,6 +469,11 @@ namespace AForge.Video.DirectShow
                     Marshal.ReleaseComObject( grabberObject );
                     grabberObject = null;
                 }
+            }
+
+            if ( PlayingFinished != null )
+            {
+                PlayingFinished( this, reasonToStop );
             }
         }
 

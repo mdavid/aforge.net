@@ -1,8 +1,12 @@
 // AForge Direct Show Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
+//
+// Resolution of device's video capabilities was contributed by
+// Yves Vander Haeghen 2009, based on code by Brian Low on CodeProject
 //
 
 namespace AForge.Video.DirectShow
@@ -51,8 +55,6 @@ namespace AForge.Video.DirectShow
     {
         // moniker string of video capture device
         private string deviceMoniker;
-        // user data associated with the video source
-        private object userData = null;
         // received frames count
         private int framesReceived;
         // recieved byte count
@@ -64,6 +66,8 @@ namespace AForge.Video.DirectShow
 
         private Thread thread = null;
         private ManualResetEvent stopEvent = null;
+
+        private VideoCapabilities[] videoCapabilities;
 
         /// <summary>
         /// New frame event.
@@ -86,6 +90,15 @@ namespace AForge.Video.DirectShow
         /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
+
+        /// <summary>
+        /// Video playing finished event.
+        /// </summary>
+        /// 
+        /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+        /// </remarks>
+        /// 
+        public event PlayingFinishedEventHandler PlayingFinished;
 
         /// <summary>
         /// Video source.
@@ -133,18 +146,6 @@ namespace AForge.Video.DirectShow
                 bytesReceived = 0;
                 return bytes;
             }
-        }
-
-        /// <summary>
-        /// User data.
-        /// </summary>
-        /// 
-        /// <remarks>The property allows to associate user data with video source object.</remarks>
-        /// 
-        public object UserData
-        {
-            get { return userData; }
-            set { userData = value; }
         }
 
         /// <summary>
@@ -212,6 +213,34 @@ namespace AForge.Video.DirectShow
         {
             get { return desiredFrameRate; }
             set { desiredFrameRate = value; }
+        }
+
+        /// <summary>
+        /// Capabilities of the video device.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property provides list of video device's capabilities.</para>
+        /// 
+        /// <para><note>Do not call this property immediately after <see cref="Start"/> method, since
+        /// device may not start yet and provide its information. It is better to call the property
+        /// before starting device or a bit after (but not immediately after).</note></para>
+        /// </remarks>
+        /// 
+        public VideoCapabilities[] VideoCapabilities
+        {
+            get
+            {
+                if ( videoCapabilities == null )
+                {
+                    if ( !IsRunning )
+                    {
+                        // create graph without playing, this will set the video capabilities
+                        // not very clean but it will do
+                        WorkerThread( false );
+                    }
+                }
+                return videoCapabilities;
+            }
         }
 
         /// <summary>
@@ -372,6 +401,11 @@ namespace AForge.Video.DirectShow
         /// 
         private void WorkerThread( )
         {
+            WorkerThread( true );
+        }
+
+        private void WorkerThread( bool runGraph )
+        {
             // grabber
             Grabber grabber = new Grabber( this );
 
@@ -457,6 +491,18 @@ namespace AForge.Video.DirectShow
                     {
                         IAMStreamConfig streamConfig = (IAMStreamConfig) streamConfigObject;
 
+                        if ( videoCapabilities == null )
+                        {
+                            // get all video capabilities
+                            try
+                            {
+                                videoCapabilities = AForge.Video.DirectShow.VideoCapabilities.FromStreamConfig( streamConfig );
+                            }
+                            catch
+                            {
+                            }
+                        }
+
                         // get current format
                         streamConfig.GetFormat( out mediaType );
                         VideoInfoHeader infoHeader = (VideoInfoHeader) Marshal.PtrToStructure( mediaType.FormatPtr, typeof( VideoInfoHeader ) );
@@ -464,7 +510,7 @@ namespace AForge.Video.DirectShow
                         // change frame size if required
                         if ( ( desiredFrameSize.Width != 0 ) && ( desiredFrameSize.Height != 0 ) )
                         {
-                            infoHeader.BmiHeader.Width  = desiredFrameSize.Width;
+                            infoHeader.BmiHeader.Width = desiredFrameSize.Width;
                             infoHeader.BmiHeader.Height = desiredFrameSize.Height;
                         }
                         // change frame rate if required
@@ -473,7 +519,7 @@ namespace AForge.Video.DirectShow
                             infoHeader.AverageTimePerFrame = 10000000 / desiredFrameRate;
                         }
 
-                        // Copy the media structure back
+                        // copy the media structure back
                         Marshal.StructureToPtr( infoHeader, mediaType.FormatPtr, false );
 
                         // set the new format
@@ -482,31 +528,56 @@ namespace AForge.Video.DirectShow
                         mediaType.Dispose( );
                     }
                 }
-
-                // render source device on sample grabber
-                captureGraph.RenderStream( PinCategory.Capture, MediaType.Video, sourceBase, null, grabberBase );
-
-                // get media type
-                if ( sampleGrabber.GetConnectedMediaType( mediaType ) == 0 )
+                else
                 {
-                    VideoInfoHeader vih = (VideoInfoHeader) Marshal.PtrToStructure( mediaType.FormatPtr, typeof( VideoInfoHeader ) );
+                    if ( videoCapabilities == null )
+                    {
+                        object streamConfigObject;
+                        // get stream configuration object
+                        captureGraph.FindInterface( PinCategory.Capture, MediaType.Video, sourceBase, typeof( IAMStreamConfig ).GUID, out streamConfigObject );
 
-                    grabber.Width = vih.BmiHeader.Width;
-                    grabber.Height = vih.BmiHeader.Height;
-                    mediaType.Dispose( );
+                        if ( streamConfigObject != null )
+                        {
+                            IAMStreamConfig streamConfig = (IAMStreamConfig) streamConfigObject;
+                            // get all video capabilities
+                            try
+                            {
+                                videoCapabilities = AForge.Video.DirectShow.VideoCapabilities.FromStreamConfig( streamConfig );
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
                 }
 
-                // get media control
-                mediaControl = (IMediaControl) graphObject;
-
-                // run
-                mediaControl.Run( );
-
-                while ( !stopEvent.WaitOne( 0, true ) )
+                if ( runGraph )
                 {
-                    Thread.Sleep( 100 );
+                    // render source device on sample grabber
+                    captureGraph.RenderStream( PinCategory.Capture, MediaType.Video, sourceBase, null, grabberBase );
+
+                    // get media type
+                    if ( sampleGrabber.GetConnectedMediaType( mediaType ) == 0 )
+                    {
+                        VideoInfoHeader vih = (VideoInfoHeader) Marshal.PtrToStructure( mediaType.FormatPtr, typeof( VideoInfoHeader ) );
+
+                        grabber.Width = vih.BmiHeader.Width;
+                        grabber.Height = vih.BmiHeader.Height;
+                        mediaType.Dispose( );
+                    }
+
+                    // get media control
+                    mediaControl = (IMediaControl) graphObject;
+
+                    // run
+                    mediaControl.Run( );
+
+                    while ( !stopEvent.WaitOne( 0, true ) )
+                    {
+                        Thread.Sleep( 100 );
+                    }
+                    mediaControl.StopWhenReady( );
                 }
-                mediaControl.StopWhenReady( );
             }
             catch ( Exception exception )
             {
@@ -546,6 +617,11 @@ namespace AForge.Video.DirectShow
                     Marshal.ReleaseComObject( captureGraphObject );
                     captureGraphObject = null;
                 }
+            }
+
+            if ( PlayingFinished != null )
+            {
+                PlayingFinished( this, ReasonToFinishPlaying.StoppedByUser );
             }
         }
 
