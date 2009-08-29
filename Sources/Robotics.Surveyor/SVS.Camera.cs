@@ -19,15 +19,65 @@ namespace AForge.Robotics.Surveyor
 
     public partial class SVS
     {
+        /// <summary>
+        /// Enumeration of Surveyor SVS's cameras resolutions.
+        /// </summary>
         public enum CameraResolution
         {
+            /// <summary>
+            /// 160x120
+            /// </summary>
             Tiny   = 'a',
+            /// <summary>
+            /// 320x240
+            /// </summary>
             Small  = 'b',
+            /// <summary>
+            /// 640x480
+            /// </summary>
             Medium = 'c',
+            /// <summary>
+            /// 1280x1024
+            /// </summary>
             Large  = 'd'
         }
 
-
+        /// <summary>
+        /// Provides access to video stream from Surveyor SVS camera.
+        /// </summary>
+        /// 
+        /// <remarks><para>The class allows to continuously receive video frames from
+        /// Surveyor SVS camera. It creates a background thread and periodically requests
+        /// new video frames from SVS board, which are provided to user through <see cref="NewFrame"/>
+        /// event. The video frame rate can be configured using <see cref="FrameInterval"/>
+        /// property, which sets time interval between frames.</para>
+        /// 
+        /// <para>In order to get instance of this class, use <see cref="SVS.GetLeftCamera"/>
+        /// method to get video from left SVS camera and <see cref="SVS.GetRightCamera"/> to
+        /// get video from right SVS camera.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // get SVS's left camera
+        /// SVS.Camera leftCamera = svs.GetLeftCamera( );
+        /// // set NewFrame event handler
+        /// leftCamera.NewFrame += new NewFrameEventHandler( video_NewFrame );
+        /// // start the video source
+        /// leftCamera.Start( );
+        /// // ...
+        /// // signal to stop
+        /// leftCamera.SignalToStop( );
+        /// // ...
+        /// 
+        /// private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
+        /// {
+        ///     // get new frame
+        ///     Bitmap bitmap = eventArgs.Frame;
+        ///     // process the frame
+        /// }
+        /// </code>
+        /// </remarks>
+        /// 
         public class Camera : IVideoSource
         {
             private SVSCommunicator communicator;
@@ -44,6 +94,7 @@ namespace AForge.Robotics.Surveyor
 
             // buffer size used to download JPEG image
             private const int bufferSize = 768 * 1024;
+
             /// <summary>
             /// New frame event.
             /// </summary>
@@ -65,6 +116,15 @@ namespace AForge.Robotics.Surveyor
             /// video source object, for example internal exceptions.</remarks>
             /// 
             public event VideoSourceErrorEventHandler VideoSourceError;
+
+            /// <summary>
+            /// Video playing finished event.
+            /// </summary>
+            /// 
+            /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+            /// </remarks>
+            /// 
+            public event PlayingFinishedEventHandler PlayingFinished;
 
             /// <summary>
             /// Frame interval.
@@ -92,11 +152,8 @@ namespace AForge.Robotics.Surveyor
             /// 
             public string Source
             {
-                get { return ""; }
-                set
-                {
-                    throw new NotImplementedException( "Setting the property is not allowed" );
-                }
+                get { return ( ( communicator != null ) && ( communicator.EndPoint != null ) ) ?
+                    communicator.EndPoint.ToString( ) : "unknown" ; }
             }
 
             /// <summary>
@@ -133,18 +190,6 @@ namespace AForge.Robotics.Surveyor
                     bytesReceived = 0;
                     return bytes;
                 }
-            }
-
-            /// <summary>
-            /// User data.
-            /// </summary>
-            /// 
-            /// <remarks>The property allows to associate user data with video source object.</remarks>
-            /// 
-            public object UserData
-            {
-                get { return null; }
-                set {  }
             }
 
             /// <summary>
@@ -270,6 +315,24 @@ namespace AForge.Robotics.Surveyor
                 stopEvent = null;
             }
 
+            /// <summary>
+            /// Set video quality.
+            /// </summary>
+            /// 
+            /// <param name="quality">Video quality to set, [1, 8].</param>
+            ///
+            /// <remarks><para>The method sets video quality, which is specified in [1, 8] range - 1 is
+            /// the highest quality level, 8 is the lowest quality level.</para>
+            /// 
+            /// <para><note>Setting higher quality level and <see cref="SetResolution">resolution</see>
+            /// may increase delays for other requests done using <see cref="SVS"/> class. So if
+            /// robot is used not only for video, but also for controlling servos/motors, and higher
+            /// response level is required, then do not set very high quality and resolution.
+            /// </note></para>
+            /// </remarks>
+            /// 
+            /// <exception cref="ArgumentOutOfRangeException">Invalid quality level was specified.</exception>
+            ///
             public void SetQuality( byte quality )
             {
                 if ( ( quality < 1 ) || ( quality > 8 ) )
@@ -278,6 +341,20 @@ namespace AForge.Robotics.Surveyor
                 communicator.Send( new byte[] { (byte) 'q', (byte) ( quality + (byte) '0' ) } );
             }
 
+            /// <summary>
+            /// Set video resolution.
+            /// </summary>
+            /// 
+            /// <param name="resolution">Video resolution to set.</param>
+            /// 
+            /// <remarks>
+            /// <para><note>Setting higher <see cref="SetQuality">quality level</see> and resolution
+            /// may increase delays for other requests done using <see cref="SVS"/> class. So if
+            /// robot is used not only for video, but also for controlling servos/motors, and higher
+            /// response level is required, then do not set very high quality and resolution.
+            /// </note></para>
+            /// </remarks>
+            /// 
             public void SetResolution( CameraResolution resolution )
             {
                 communicator.Send( new byte[] { (byte) resolution } );
@@ -363,12 +440,17 @@ namespace AForge.Robotics.Surveyor
                     {
                         if ( VideoSourceError != null )
                         {
-                            VideoSourceError( this, new VideoSourceErrorEventArgs( "" ) );
+                            VideoSourceError( this, new VideoSourceErrorEventArgs( "Failed receiving video frame from SVS." ) );
                         }
                     }
                 }
 
                 stopWatch.Stop( );
+
+                if ( PlayingFinished != null )
+                {
+                    PlayingFinished( this, ReasonToFinishPlaying.StoppedByUser );
+                }
             }           
         }
     }
