@@ -47,8 +47,6 @@ namespace AForge.Video.VFW
 	{
         // video file name
 		private string source;
-        // user data associated with the video source
-		private object userData = null;
         // received frames count
 		private int framesReceived;
         // frame interval in milliseconds
@@ -80,6 +78,15 @@ namespace AForge.Video.VFW
         /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
+
+        /// <summary>
+        /// Video playing finished event.
+        /// </summary>
+        /// 
+        /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+        /// </remarks>
+        /// 
+        public event PlayingFinishedEventHandler PlayingFinished;
 
         /// <summary>
         /// Frame interval.
@@ -158,18 +165,6 @@ namespace AForge.Video.VFW
         public int BytesReceived
 		{
 			get { return 0; }
-		}
-
-        /// <summary>
-        /// User data.
-        /// </summary>
-        /// 
-        /// <remarks>The property allows to associate user data with video source object.</remarks>
-        /// 
-        public object UserData
-		{
-			get { return userData; }
-			set { userData = value; }
 		}
 
         /// <summary>
@@ -315,6 +310,7 @@ namespace AForge.Video.VFW
         /// 
         private void WorkerThread( )
 		{
+            ReasonToFinishPlaying reasonToStop = ReasonToFinishPlaying.StoppedByUser;
             // AVI reader
 			AVIReader aviReader = new AVIReader( );
 
@@ -329,7 +325,7 @@ namespace AForge.Video.VFW
                 // frame interval
                 int interval = ( frameIntervalFromSource ) ? (int) ( 1000 / aviReader.FrameRate ) : frameInterval;
 
-				while ( true )
+                while ( !stopEvent.WaitOne( 0, false ) )
 				{
 					// start time
 					DateTime start = DateTime.Now;
@@ -339,10 +335,6 @@ namespace AForge.Video.VFW
 
 					framesReceived++;
 
-					// need to stop ?
-					if ( stopEvent.WaitOne( 0, false ) )
-						break;
-
 					if ( NewFrame != null )
 						NewFrame( this, new NewFrameEventArgs( bitmap ) );
 
@@ -351,7 +343,10 @@ namespace AForge.Video.VFW
 
                     // check current position
                     if ( aviReader.Position >= stopPosition )
+                    {
+                        reasonToStop = ReasonToFinishPlaying.EndOfStreamReached;
                         break;
+                    }
 
                     // wait for a while ?
                     if ( interval > 0 )
@@ -382,6 +377,11 @@ namespace AForge.Video.VFW
 
 			aviReader.Dispose( );
 			aviReader = null;
+
+            if ( PlayingFinished != null )
+            {
+                PlayingFinished( this, reasonToStop );
+            } 
 		}
 	}
 }

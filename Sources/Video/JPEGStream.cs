@@ -1,8 +1,9 @@
 // AForge Video Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Video
@@ -62,8 +63,6 @@ namespace AForge.Video
         // login and password for HTTP authentication
 		private string login = null;
 		private string password = null;
-        // user data associated with the video source
-		private object userData = null;
         // received frames count
 		private int framesReceived;
         // recieved byte count
@@ -106,6 +105,15 @@ namespace AForge.Video
         /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
+
+        /// <summary>
+        /// Video playing finished event.
+        /// </summary>
+        /// 
+        /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+        /// </remarks>
+        /// 
+        public event PlayingFinishedEventHandler PlayingFinished;
 
         /// <summary>
         /// Use or not separate connection group.
@@ -219,23 +227,12 @@ namespace AForge.Video
 		}
 
         /// <summary>
-        /// User data.
-        /// </summary>
-        /// 
-        /// <remarks>The property allows to associate user data with video source object.</remarks>
-        /// 
-        public object UserData
-		{
-			get { return userData; }
-			set { userData = value; }
-		}
-
-        /// <summary>
         /// Request timeout value.
         /// </summary>
         /// 
-        /// <remarks>The property sets timeout value in milliseconds for web requests.
-        /// Default value is 10000 milliseconds.</remarks>
+        /// <remarks><para>The property sets timeout value in milliseconds for web requests.</para>
+        /// 
+        /// <para>Default value is set <b>10000</b> milliseconds.</para></remarks>
         /// 
         public int RequestTimeout
         {
@@ -527,6 +524,11 @@ namespace AForge.Video
 				if ( stopEvent.WaitOne( 0, true ) )
 					break;
 			}
+
+            if ( PlayingFinished != null )
+            {
+                PlayingFinished( this, ReasonToFinishPlaying.StoppedByUser );
+            }
 		}
 	}
 }
