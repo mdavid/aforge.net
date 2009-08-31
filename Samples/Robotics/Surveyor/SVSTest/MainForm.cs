@@ -72,9 +72,9 @@ namespace SVSTest
         private void disconnectButton_Click( object sender, EventArgs e )
         {
             Disconnect( );
-            statusLabel.Text = "Disconnected";
-            fpsLabel.Text = string.Empty;
-            fpsLabel.Text = string.Empty;
+            statusLabel.Text  = "Disconnected";
+            fpsLabel.Text     = string.Empty;
+            versionLabel.Text = string.Empty;
         }
 
         // Connect to SVS
@@ -88,15 +88,15 @@ namespace SVSTest
 
                 // start left camera
                 SVS.Camera leftCamera = svs.GetLeftCamera( );
-//                leftCamera.SetQuality( 5 );
                 leftCameraPlayer.VideoSource = leftCamera;
                 leftCameraPlayer.Start( );
 
                 // start right camera
                 SVS.Camera rightCamera = svs.GetRightCamera( );
-//                rightCamera.SetQuality( 5 );
                 rightCameraPlayer.VideoSource = rightCamera;
                 rightCameraPlayer.Start( );
+
+                versionLabel.Text = svs.GetVersion( );
 
                 // reset statistics
                 statIndex = statReady = 0;
@@ -180,8 +180,7 @@ namespace SVSTest
 
         private void button1_Click( object sender, EventArgs e )
         {
-
-            svs.GetVersion( );
+            System.Diagnostics.Debug.WriteLine( svs.GetVersion( ) );
 
             // svs.RunningTime( );
         }
