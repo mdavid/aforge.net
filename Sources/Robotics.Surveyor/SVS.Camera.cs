@@ -229,10 +229,20 @@ namespace AForge.Robotics.Surveyor
             /// object creates background thread and notifies about new frames with the
             /// help of <see cref="NewFrame"/> event.</remarks>
             /// 
+            /// <exception cref="NotConnectedException">Not connected to SVS. Connection to SVS
+            /// was closed using <see cref="SVS.Disconnect"/> method. New <see cref="Camera"/>
+            /// instance must be obtained using <see cref="SVS.GetLeftCamera"/> or
+            /// <see cref="SVS.GetRightCamera"/> method.</exception>
+            /// 
             public void Start( )
             {
                 if ( thread == null )
                 {
+                    if ( ( communicator == null ) || ( communicator.EndPoint == null ) )
+                    {
+                        throw new NotConnectedException( "Not connected to SVS." );
+                    }
+
                     framesReceived = 0;
                     bytesReceived  = 0;
 

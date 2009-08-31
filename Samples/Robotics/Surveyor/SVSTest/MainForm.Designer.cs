@@ -45,6 +45,7 @@
             this.button1 = new System.Windows.Forms.Button( );
             this.button2 = new System.Windows.Forms.Button( );
             this.button3 = new System.Windows.Forms.Button( );
+            this.versionLabel = new System.Windows.Forms.ToolStripStatusLabel( );
             this.groupBox1.SuspendLayout( );
             this.statusStrip.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
@@ -106,6 +107,7 @@
             // 
             this.statusStrip.Items.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel,
+            this.versionLabel,
             this.fpsLabel} );
             this.statusStrip.Location = new System.Drawing.Point( 0, 459 );
             this.statusStrip.Name = "statusStrip";
@@ -131,7 +133,7 @@
                         | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom ) ) );
             this.fpsLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenInner;
             this.fpsLabel.Name = "fpsLabel";
-            this.fpsLabel.Size = new System.Drawing.Size( 743, 17 );
+            this.fpsLabel.Size = new System.Drawing.Size( 412, 17 );
             this.fpsLabel.Spring = true;
             this.fpsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -210,6 +212,17 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler( this.button3_Click );
             // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = false;
+            this.versionLabel.BorderSides = ( (System.Windows.Forms.ToolStripStatusLabelBorderSides) ( ( ( ( System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top )
+                        | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right )
+                        | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom ) ) );
+            this.versionLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenInner;
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size( 350, 17 );
+            this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
@@ -256,6 +269,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ToolStripStatusLabel versionLabel;
     }
 }
 

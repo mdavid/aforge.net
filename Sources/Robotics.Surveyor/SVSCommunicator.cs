@@ -14,6 +14,7 @@ namespace AForge.Robotics.Surveyor
     using System.Net.Sockets;
     using System.Text;
     using System.Threading;
+    using AForge;
 
     internal class SVSCommunicator
     {
@@ -78,7 +79,7 @@ namespace AForge.Robotics.Surveyor
                     endPoint = new IPEndPoint( IPAddress.Parse( ip ), Convert.ToInt16( port ) );
                     // create TCP/IP socket and set timeouts
                     socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-                    socket.ReceiveTimeout = 2000;
+                    socket.ReceiveTimeout = 5000;
                     socket.SendTimeout    = 1000;
 
                     // connect to SVS
@@ -96,7 +97,7 @@ namespace AForge.Robotics.Surveyor
                 }
                 catch ( SocketException )
                 {
-                    throw new ApplicationException( );
+                    throw new ConnectionFailedException( "Failed connecting to SVS." );
                 }
             }
         }
@@ -163,8 +164,8 @@ namespace AForge.Robotics.Surveyor
 
                 // create TCP/IP socket and set timeouts
                 socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-                socket.ReceiveTimeout = 2000;
-                socket.SendTimeout = 1000;
+                socket.ReceiveTimeout = 5000;
+                socket.SendTimeout    = 1000;
 
                 // connect to SVS
                 socket.Connect( endPoint );
@@ -178,7 +179,10 @@ namespace AForge.Robotics.Surveyor
             {
                 communicationQueue.Enqueue( new CommunicationRequest( request ) );
             }
-            requestIsAvailable.Set( );
+            if ( requestIsAvailable != null )
+            {
+                requestIsAvailable.Set( );
+            }
         }
 
         // Enqueue request and wait for reply
@@ -189,7 +193,7 @@ namespace AForge.Robotics.Surveyor
                 if ( socket == null )
                 {
                     // handle error
-                    throw new ApplicationException( );
+                    throw new NotConnectedException( "Not connected to SVS." );
                 }
 
                 lock ( communicationQueue )
@@ -211,10 +215,10 @@ namespace AForge.Robotics.Surveyor
                 // clean the last reply
                 lastRequestWithReply = null;
 
-                if ( bytesRead == -1 )
+                if ( bytesRead < 0 )
                 {
                     // handle error
-                    throw new ApplicationException( );
+                    throw new ConnectionLostException( "Connection lost or communicaton failure." );
                 }
 
                 return bytesRead;
