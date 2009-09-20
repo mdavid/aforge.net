@@ -11,6 +11,7 @@ namespace AForge.Controls
     using System.Windows.Forms;
     using System.Drawing;
     using System.Drawing.Drawing2D;
+    using System.Drawing.Imaging;
 
     /// <summary>
     /// Declares the event handler for moving sliders.
@@ -234,6 +235,23 @@ namespace AForge.Controls
                 End = end;
             }
         }
+
+        #region Private member
+        private GraphicObject[] sliders;
+        private GraphicObject[] choosedSliders;
+        private GraphicRectangle[] slidersWaste;
+        private Rectangle canvasRect;
+        private Point lastMouseLocation;
+        private bool isMouseDown;
+        private bool isAlreadyInit;
+        private bool isSliderChoosed;
+        private bool isCheckNecessary = true;
+        private int up;
+        private int down;
+        private int left;
+        private int right;
+        private float[] spaces = new float[4];
+        #endregion Private member
 
         #region public properties
 
@@ -570,21 +588,7 @@ namespace AForge.Controls
 
         #endregion public properties
 
-        private GraphicObject[] sliders;
-        private GraphicObject[] choosedSliders;
-        private GraphicRectangle[] slidersWaste;
-        private Rectangle canvasRect;
-        private Point lastMouseLocation;
-        private bool isMouseDown;
-        private bool isAlreadyInit;
-        private bool isSliderChoosed;
-        private bool isCheckNecessary = true;
-        private int up;
-        private int down;
-        private int left;
-        private int right;
-        private float[] spaces = new float[4];
-
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageCut"/> class.
         /// </summary>
@@ -624,7 +628,9 @@ namespace AForge.Controls
             scaleFactor = 1.0f;
             SetDefaultValues( );
         }
+        #endregion Constructors
 
+        #region Private methods
         // Set all values to defaults
         private void SetDefaultValues( )
         {
@@ -656,6 +662,718 @@ namespace AForge.Controls
             cursorRolloverSlider = Cursors.Cross;
         }
 
+        /// <summary>
+        /// Moves a slider directly.
+        /// </summary>
+        /// <param name="slider">The slider.</param>
+        /// <param name="moveX">The move X.</param>
+        /// <param name="moveY">The move Y.</param>
+        /// <param name="isDirectMove">if set to <c>true</c> [is direct move].</param>
+        private void MovingDirectly(GraphicObject slider, int moveX, int moveY, bool isDirectMove)
+        {
+            switch (slider.AllowedCourse)
+            {
+                case Course.Horicontal:
+                    slider.Move(0, moveY);
+                    CheckSlidersExceedsBorder(slider.Start.X, slider.Start.Y);
+                    if (sliders[(byte)Slider.Bottom].Start.Y - sliders[(byte)Slider.Top].Start.Y <
+                        (byte)((float)minSizeOfImage / scaleFactor))
+                    {
+                        slider.Move(0, -moveY);
+                        return;
+                    }
+                    else
+                    {
+                        if (isDirectMove)
+                        {
+                            actualHeight = (int)((float)ActualHeightInternal * scaleFactor);
+                            //Check, if there is a rounding error
+                            //if (ActualHeight > OriginalHeight)
+                            //    moveSelectedHorizontalSlider(-(ActualHeight - OriginalHeight));
+
+                            upPosition = (int)((float)UpPositionInternal * scaleFactor);
+
+                            //Check, if there is a rounding error
+                            if (upPosition + ActualHeight > OriginalHeight)
+                                actualHeight = OriginalHeight - upPosition;
+
+                            spaces[(int)Slider.Top] = 0.0f;
+                            spaces[(int)Slider.Bottom] = 0.0f;
+                            FireSliderMovedEvent();
+                        }
+                    }
+                    break;
+                case Course.Vertical:
+                    slider.Move(moveX, 0);
+                    CheckSlidersExceedsBorder(slider.Start.X, slider.Start.Y);
+                    if (sliders[(byte)Slider.Right].Start.X - sliders[(byte)Slider.Left].Start.X <
+                        (byte)((float)minSizeOfImage / scaleFactor))
+                    {
+                        slider.Move(-moveX, 0);
+                        return;
+                    }
+                    else
+                    {
+                        if (isDirectMove)
+                        {
+                            actualWidth = (int)((float)ActualWidthInternal * scaleFactor);
+                            //Check, if there is a rounding error
+                            //if (ActualWidth > OriginalWidth)
+                            //    moveSelectedVerticalSlider(-(ActualWidth - OriginalWidth));                               
+
+                            leftPosition = (int)((float)LeftPositionInternal * scaleFactor);
+
+                            //Check, if there is a rounding error
+                            if (leftPosition + ActualWidth > OriginalWidth)
+                                actualWidth = OriginalWidth - leftPosition;
+
+                            spaces[(int)Slider.Left] = 0.0f;
+                            spaces[(int)Slider.Right] = 0.0f;
+                            FireSliderMovedEvent();
+                        }
+                    }
+                    break;
+            }
+
+            SetSlidersSpace();
+            this.Invalidate();
+        }
+
+        /// <summary>
+        /// Moves a slider indirectly.
+        /// </summary>
+        /// <param name="slider">The slider.</param>
+        /// <param name="moveValue">The move value.</param>
+        private void MovingInDirectly(GraphicObject slider, int moveValue)
+        {
+            float move = (float)moveValue / scaleFactor;
+            int index = GetSliderIndex(slider, sliders);
+            spaces[index] = spaces[index] + move;
+            int intNumber = (int)spaces[index];
+            spaces[index] -= (float)intNumber;
+
+            if (index == (int)Slider.Left || index == (int)Slider.Right)
+            {
+                MovingDirectly(slider, intNumber, 0, false);
+                if (index == (int)Slider.Left)//pSlider == mSliders[(byte)SLIDERS.LEFT]) -> DOES NOT WORK!
+                {
+                    leftPosition += moveValue;
+                    actualWidth -= moveValue;
+                }
+                else
+                    actualWidth += moveValue;
+            }
+            else
+            {
+                MovingDirectly(slider, 0, intNumber, false);
+                if (index == (int)Slider.Top)//pSlider == mSliders[(byte)SLIDERS.UP]) -> DOES NOT WORK!
+                {
+                    upPosition += moveValue;
+                    actualHeight -= moveValue;
+                }
+                else
+                    actualHeight += moveValue;
+            }
+
+            CheckValues();
+            if (isCheckNecessary)
+                CheckRatio();
+            FireSliderMovedEvent();
+        }
+
+        /// <summary>
+        /// Fires the slider moved event.
+        /// </summary>
+        private void FireSliderMovedEvent()
+        {
+            //fire the event now
+            if (this.OnSliderMoved != null) //is there a EventHandler?
+            {
+                this.OnSliderMoved.Invoke(); //calls its EventHandler                
+            }
+            else { } //if not, ignore
+        }
+
+        /// <summary>
+        /// Handles the MouseMove event of the ImageCut control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
+        private void ImageCut_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.Focus();
+        }
+
+        /// <summary>
+        /// Checks the values of the pictures sizes.
+        /// </summary>
+        private void CheckValues()
+        {
+            if (leftPosition == -1)
+            {
+                leftPosition += 1;
+                actualWidth -= 1;
+            }
+            if (actualWidth > originalPicture.Width)
+                actualWidth = originalPicture.Width;
+            else if (actualWidth < minSizeOfImage)
+                actualWidth = minSizeOfImage;
+
+            if (upPosition == -1)
+            {
+                upPosition += 1;
+                actualHeight -= 1;
+            }
+
+            if (actualHeight > originalPicture.Height)
+                actualHeight = originalPicture.Height;
+            else if (actualHeight < minSizeOfImage)
+                actualHeight = minSizeOfImage;
+        }
+
+        /// <summary>
+        /// Checks, if there is a ratio constraint. If yes the sliders will be 
+        /// set on the correct positions to conform the ratio constraint.
+        /// </summary>
+        private void CheckRatio()
+        {
+            isCheckNecessary = false;
+            if (ratio != 0.0f)
+            {
+                float tempRatio = (float)ActualHeight /
+                               (float)ActualWidth;
+                if ((tempRatio + 0.01f) < ratio)
+                {
+                    float tempNewWidth = (float)ActualHeight / ratio;
+                    float tempDiff = (float)ActualWidth - tempNewWidth;
+                    MoveSlider((int)(tempDiff / 2.0f), Slider.Left);
+                    MoveSlider((int)(-tempDiff / 2.0f), Slider.Right);
+                }
+                else if ((tempRatio + 0.01f) > ratio)
+                {
+                    float tempNewHeight = (float)ActualWidth * ratio;
+                    float tempDiff = (float)ActualHeight - tempNewHeight;
+                    MoveSlider((int)(tempDiff / 2.0f), Slider.Top);
+                    MoveSlider((int)(-tempDiff / 2.0f), Slider.Bottom);
+                }
+
+            }
+            isCheckNecessary = true;
+        }
+
+        /// <summary>
+        /// Creates an adapted image, which is not bigger than the given maximum values. 
+        /// </summary>
+        /// 
+        /// <param name="maxWidth">The biggest allowed width of the image.</param>
+        /// <param name="maxHeight">The biggest allowed height of the image.</param>
+        /// 
+        /// <remarks>
+        /// <para>It sets the <see cref="AdaptedPicture"/> and the <see cref="ScaleFactor"/>.</para>
+        /// 
+        /// <para><note>It also sets the original image, it is not necessary to set it manual.</note></para>
+        /// 
+        /// <para><note>If the original image is smaller than the given values, the adapted
+        /// image is just a clone of the original image.</note></para>
+        /// </remarks>
+        /// 
+        private void AdaptPicture(float maxWidth, float maxHeight)
+        {
+            Size adaptedSize;
+            float screenRatio = maxWidth / maxHeight;
+            float picRatio = (float)originalPicture.Width / (float)originalPicture.Height;
+
+            if ((maxWidth < originalPicture.Width) || (maxHeight < originalPicture.Height))
+            {
+                if (screenRatio < picRatio)
+                    adaptedSize = new Size((int)maxWidth, (int)(maxWidth / picRatio));
+                else
+                    adaptedSize = new Size((int)(maxHeight * picRatio), (int)maxHeight);
+            }
+            else
+            {
+                adaptedSize = new Size(originalPicture.Width, originalPicture.Height);
+            }
+            //the ratio original size and adapted size (as average of widht and height ratio)
+            scaleFactor = ((float)originalPicture.Size.Width / (float)adaptedSize.Width +
+                            (float)originalPicture.Size.Height / (float)adaptedSize.Height) / 2.0f;
+            AdaptedPicture = new Bitmap(originalPicture, adaptedSize);
+        }
+
+        /// <summary>
+        /// Inits the border values.
+        /// </summary>
+        private void InitBorderValues()
+        {
+            up = distanceToImage / 2;// -mLineStrength;
+            down = Size.Height - distanceToImage / 2;// -mLineStrength;
+            left = distanceToImage / 2;// -2;
+            right = Size.Width - distanceToImage / 2;// -1;
+        }
+
+        /// <summary>
+        /// Sets the transparent area behind a slider.
+        /// These areas represent the cut offed image areas.
+        /// </summary>
+        private void SetSlidersSpace()
+        {
+            slidersWaste[(byte)Slider.Left] = (new GraphicRectangle(
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
+                                new Rectangle(left,
+                                                up,
+                                                sliders[(byte)Slider.Left].Start.X - left - (lineStrength - 1),
+                                                down - up)));
+
+            slidersWaste[(byte)Slider.Right] = (new GraphicRectangle(
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
+                                new Rectangle(sliders[(byte)Slider.Right].Start.X + (lineStrength - 1),
+                                                up,
+                                                right - sliders[(byte)Slider.Right].Start.X,
+                                                down - up)));
+
+            slidersWaste[(byte)Slider.Top] = (new GraphicRectangle(
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
+                                new Rectangle(sliders[(byte)Slider.Left].Start.X,
+                                                up,
+                                                sliders[(byte)Slider.Right].Start.X - sliders[(byte)Slider.Left].Start.X + (lineStrength - 1),
+                                                sliders[(byte)Slider.Top].Start.Y - up - (lineStrength - 1))));
+
+            slidersWaste[(byte)Slider.Bottom] = (new GraphicRectangle(
+                                new Pen(Color.FromArgb(transparency, colorSliderSpace), lineStrength),
+                                new Rectangle(sliders[(byte)Slider.Left].Start.X,
+                                                sliders[(byte)Slider.Bottom].Start.Y + (lineStrength - 1),
+                                                sliders[(byte)Slider.Right].Start.X - sliders[(byte)Slider.Left].Start.X + (lineStrength - 1),
+                                                down - sliders[(byte)Slider.Bottom].Start.Y)));
+        }
+
+        /// <summary>
+        /// Inits the sliders with its original positions and the slider color.
+        /// Is called only one time in the init()-fct.
+        /// </summary>
+        private void InitSliders()
+        {
+            sliders[(byte)Slider.Left] = (new GraphicLine(
+                                new Pen(colorSliders, lineStrength),
+                                new Point(left, distanceToImage / 2),
+                                new Point(left, Size.Height - distanceToImage / 2 - 1),
+                                Course.Vertical));
+
+            sliders[(byte)Slider.Right] = (new GraphicLine(
+                                new Pen(colorSliders, lineStrength),
+                                new Point(right, distanceToImage / 2),
+                                new Point(right, Size.Height - distanceToImage / 2 - 1),
+                                Course.Vertical));
+
+            sliders[(byte)Slider.Top] = (new GraphicLine(
+                                new Pen(colorSliders, lineStrength),
+                                new Point(distanceToImage / 2, up),
+                                new Point(Size.Width - distanceToImage / 2 - 1, up),
+                                Course.Horicontal));
+
+            sliders[(byte)Slider.Bottom] = (new GraphicLine(
+                                new Pen(colorSliders, lineStrength),
+                                new Point(distanceToImage / 2, down),
+                                new Point(Size.Width - distanceToImage / 2 - 1, down),
+                                Course.Horicontal));
+        }
+
+        /// <summary>
+        /// Checks after a Slider- or window display - moving, if a slider
+        /// exceeds a limit (border).
+        /// </summary>
+        /// <remarks>
+        /// <para>The mouse cursor moves a slider, so the cursor location is important for 
+        /// the check.</para>
+        /// </remarks>
+        /// <param name="x">X-coord of mouse</param>
+        /// <param name="y">Y-coord of mouse</param>
+        private void CheckSlidersExceedsBorder(int x, int y)
+        {
+            bool choosed1 = false;
+            bool choosed2 = false;
+            if (x < left)
+            {
+                if (GetSliderIndex(choosedSliders[0], sliders) == (int)Slider.Left)
+                    choosed1 = true;
+                else if (GetSliderIndex(choosedSliders[1], sliders) == (int)Slider.Left)
+                    choosed2 = true;
+                sliders[(byte)Slider.Left] = (new GraphicLine(
+                                    new Pen(colorRolloverSlider, lineStrength),
+                                    new Point(left, distanceToImage / 2),
+                                    new Point(left, Size.Height - distanceToImage / 2 - 1),
+                                    Course.Vertical));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Slider.Left];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Slider.Left];
+            }
+
+            choosed1 = false;
+            choosed2 = false;
+            if (x > right)
+            {
+                if (GetSliderIndex(choosedSliders[0], sliders) == (int)Slider.Right)
+                    choosed1 = true;
+                else if (GetSliderIndex(choosedSliders[1], sliders) == (int)Slider.Right)
+                    choosed2 = true;
+                sliders[(byte)Slider.Right] = (new GraphicLine(
+                                    new Pen(colorRolloverSlider, lineStrength),
+                                    new Point(right, distanceToImage / 2),
+                                    new Point(right, Size.Height - distanceToImage / 2 - 1),
+                                    Course.Vertical));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Slider.Right];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Slider.Right];
+            }
+
+            choosed1 = false;
+            choosed2 = false;
+            if (y < up)
+            {
+                if (GetSliderIndex(choosedSliders[0], sliders) == (int)Slider.Top)
+                    choosed1 = true;
+                else if (GetSliderIndex(choosedSliders[1], sliders) == (int)Slider.Top)
+                    choosed2 = true;
+                sliders[(byte)Slider.Top] = (new GraphicLine(
+                                    new Pen(colorRolloverSlider, lineStrength),
+                                    new Point(distanceToImage / 2, up),
+                                    new Point(Size.Width - distanceToImage / 2 - 1, up),
+                                    Course.Horicontal));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Slider.Top];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Slider.Top];
+            }
+
+            choosed1 = false;
+            choosed2 = false;
+            if (y > down)
+            {
+                if (GetSliderIndex(choosedSliders[0], sliders) == (int)Slider.Bottom)
+                    choosed1 = true;
+                else if (GetSliderIndex(choosedSliders[1], sliders) == (int)Slider.Bottom)
+                    choosed2 = true;
+                sliders[(byte)Slider.Bottom] = (new GraphicLine(
+                                    new Pen(colorRolloverSlider, lineStrength),
+                                    new Point(distanceToImage / 2, down),
+                                    new Point(Size.Width - distanceToImage / 2 - 1, down),
+                                    Course.Horicontal));
+                if (choosed1)
+                    choosedSliders[0] = sliders[(byte)Slider.Bottom];
+                else if (choosed2)
+                    choosedSliders[1] = sliders[(byte)Slider.Bottom];
+            }
+        }
+
+        /// <summary>
+        /// Checks, if the mouse cursor is over the image. 
+        /// If yes, set the cursor for moving the display window over the image.
+        /// Otherwise, set the default cursor icon.
+        /// </summary>
+        /// <param name="x">X-coord of mouse</param>
+        /// <param name="y">Y-coord of mouse</param>
+        private void SetMoveDisplayWindowCursor(int x, int y)
+        {
+            if (sliders[(byte)Slider.Bottom].Start.Y > y &&
+                sliders[(byte)Slider.Top].Start.Y < y &&
+                sliders[(byte)Slider.Left].Start.X < x &&
+                sliders[(byte)Slider.Right].Start.X > x)
+                this.Cursor = cursorMoveDisplayWindow;
+
+            else
+                this.Cursor = cursorDefault;
+        }
+
+        /// <summary>
+        /// Sets the cursor icon which represents a cursor, that rollover a slider.
+        /// </summary>
+        private void SetRollOverCursor()
+        {
+            this.Cursor = cursorRolloverSlider;
+        }
+
+        /// <summary>
+        /// Moves the display window, which is located over the image.
+        /// </summary>
+        /// <param name="x">X-coord of mouse</param>
+        /// <param name="y">Y-coord of mouse</param>
+        private void MoveDisplayWindow(int x, int y)
+        {
+            if ((sliders[(byte)Slider.Bottom].Start.Y < down || y < lastMouseLocation.Y) &&
+                (sliders[(byte)Slider.Top].Start.Y > up || y > lastMouseLocation.Y))
+            {
+                MovingDirectly(sliders[(byte)Slider.Bottom], 0, y - lastMouseLocation.Y, true);
+                MovingDirectly(sliders[(byte)Slider.Top], 0, y - lastMouseLocation.Y, true);
+            }
+            if ((sliders[(byte)Slider.Left].Start.X > left || x > lastMouseLocation.X) &&
+                (sliders[(byte)Slider.Right].Start.X < right || x < lastMouseLocation.X))
+            {
+                MovingDirectly(sliders[(byte)Slider.Left], x - lastMouseLocation.X, 0, true);
+                MovingDirectly(sliders[(byte)Slider.Right], x - lastMouseLocation.X, 0, true);
+            }
+        }
+
+        /// <summary>
+        /// Deletes the choosed sliders.
+        /// </summary>
+        private void ResetChoosedSliders()
+        {
+            //Draw all Sliders black
+            for (byte i = 0; i < 4; i++)
+                sliders[i].ColorOfPen = colorSliders;
+            //Erase choosed Sliders
+            choosedSliders[0] = null;
+            choosedSliders[1] = null;
+        }
+
+        /// <summary>
+        /// Determines whether [is rollovered any slider] at [the specified position].
+        /// </summary>
+        /// <param name="position">The mouse position.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is rollovered any slider] [the specified position]; otherwise, <c>false</c>.
+        /// </returns>
+        private bool IsRolloveredAnySlider(Point position)
+        {
+            bool choosed = false;
+            if (!(choosed = IsRolloveredVerticalSlider(sliders[(byte)Slider.Left], position)))
+                if (!(choosed = IsRolloveredVerticalSlider(sliders[(byte)Slider.Right], position)))
+                    if (!(choosed = IsRolloveredHoricontalSlider(sliders[(byte)Slider.Top], position)))
+                        choosed = IsRolloveredHoricontalSlider(sliders[(byte)Slider.Bottom], position);
+
+            return choosed;
+        }
+
+        /// <summary>
+        /// Checks, if the given <see cref="GraphicObject"/>is a
+        /// rollovered vertical slider.
+        /// </summary>
+        /// <param name="verticalSlider">The vertical slider.</param>
+        /// <param name="location">The location.</param>
+        /// <returns>true - if it is a rollovered vertical slider.</returns>
+        private bool IsRolloveredVerticalSlider(GraphicObject verticalSlider, Point location)
+        {
+            if (verticalSlider.Hit(location))
+            {
+                ResetChoosedSliders();
+                verticalSlider.ColorOfPen = colorRolloverSlider;
+                choosedSliders[0] = verticalSlider;
+                if (Math.Abs(sliders[(byte)Slider.Top].Start.Y - location.Y) <= neighbourTolerance)
+                {
+                    sliders[(byte)Slider.Top].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte)Slider.Top];
+                    SetRollOverCursor();
+                    return true;
+                }
+                if (Math.Abs(sliders[(byte)Slider.Bottom].Start.Y - location.Y) <= neighbourTolerance)
+                {
+                    sliders[(byte)Slider.Bottom].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte)Slider.Bottom];
+                }
+                SetRollOverCursor();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks, if the given <see cref="GraphicObject"/>is a
+        /// rollovered horizontal slider.
+        /// </summary>
+        /// <param name="horizontalSlider">The horizontal slider.</param>
+        /// <param name="location">The location.</param>
+        /// <returns>true - if it is a rollovered horizontal slider.</returns>
+        private bool IsRolloveredHoricontalSlider(GraphicObject horizontalSlider, Point location)
+        {
+            if (horizontalSlider.Hit(location))
+            {
+                ResetChoosedSliders();
+                horizontalSlider.ColorOfPen = colorRolloverSlider;
+                choosedSliders[0] = horizontalSlider;
+                if (Math.Abs(sliders[(byte)Slider.Left].Start.X - location.X) <= neighbourTolerance)
+                {
+                    sliders[(byte)Slider.Left].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte)Slider.Left];
+                    SetRollOverCursor();
+                    return true;
+                }
+                if (Math.Abs(sliders[(byte)Slider.Right].Start.X - location.X) <= neighbourTolerance)
+                {
+                    sliders[(byte)Slider.Right].ColorOfPen = colorRolloverSlider;
+                    choosedSliders[1] = sliders[(byte)Slider.Right];
+                }
+                SetRollOverCursor();
+                return true;
+            }
+            return false;
+        }
+
+        #region Static helper functions
+        /// <summary>
+        /// Static function, gets the id of the given slider.
+        /// </summary>
+        /// <param name="choosedSlider">The choosed slider.</param>
+        /// <param name="allSliders">All sliders.</param>
+        /// <returns></returns>
+        private static int GetSliderIndex(GraphicObject choosedSlider,
+                                          GraphicObject[] allSliders)
+        {
+            if (choosedSlider == allSliders[(byte)Slider.Left])
+                return (int)Slider.Left;
+            else if (choosedSlider == allSliders[(byte)Slider.Right])
+                return (int)Slider.Right;
+            if (choosedSlider == allSliders[(byte)Slider.Top])
+                return (int)Slider.Top;
+            else //if (pChoosedSlider == pAllSliders[(byte)SLIDERS.DOWN])
+                return (int)Slider.Bottom;
+        }
+
+        /// <summary>
+        /// Extracts the image format from a given raw image format.
+        /// </summary>
+        /// <param name="rawFormat">The given raw image format.</param>
+        /// <returns>The extracted image format.</returns>
+        private static ImageFormat GetImageFormatFromRaw(ImageFormat rawFormat)
+        {
+            if (rawFormat.Equals(ImageFormat.Bmp))
+                return ImageFormat.Bmp;
+            if (rawFormat.Equals(ImageFormat.Emf))
+                return ImageFormat.Emf;
+            if (rawFormat.Equals(ImageFormat.Exif))
+                return ImageFormat.Exif;
+            if (rawFormat.Equals(ImageFormat.Gif))
+                return ImageFormat.Gif;
+            if (rawFormat.Equals(ImageFormat.Icon))
+                return ImageFormat.Icon;
+            if (rawFormat.Equals(ImageFormat.Jpeg))
+                return ImageFormat.Jpeg;
+            if (rawFormat.Equals(ImageFormat.MemoryBmp))
+                return ImageFormat.MemoryBmp;
+            if (rawFormat.Equals(ImageFormat.Png))
+                return ImageFormat.Png;
+            if (rawFormat.Equals(ImageFormat.Tiff))
+                return ImageFormat.Tiff;
+            if (rawFormat.Equals(ImageFormat.Wmf))
+                return ImageFormat.Wmf;
+
+            throw new FormatException("No valid image format detected.");
+            //return null;
+        }
+        #endregion Static helper functions
+        #endregion Private methods
+
+        #region Protected methods
+        /// <summary>
+        /// Fires the <see cref="E:System.Windows.Forms.Control.Paint"/>-Event.
+        /// </summary>
+        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.PaintEventArgs"/>.</param>
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if (!isAlreadyInit)
+            {
+                MessageBox.Show("You have to call the 'init()'-function before using the ImageCuttingPanel.");
+                Application.Exit();
+                return;
+            }
+            base.OnPaint(e);
+            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            // Only draw new the area of clip, objects outside of clip will be cutted.
+            Region clip = new Region(canvasRect);
+            clip.Intersect(e.Graphics.Clip);
+            e.Graphics.Clip = clip;
+            //e.Graphics.Clear(Color.White);
+            foreach (GraphicObject go in sliders)
+            {
+                go.Draw(e.Graphics);
+            }
+            foreach (GraphicRectangle go in slidersWaste)
+            {
+                go.Fill(e.Graphics);
+            }
+        }
+
+        /// <summary>
+        /// Fires the <see cref="E:System.Windows.Forms.Control.MouseDown"/>-Event.
+        /// </summary>
+        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            isMouseDown = true;
+            lastMouseLocation = e.Location;
+            if (!IsRolloveredAnySlider(e.Location))
+                ResetChoosedSliders();
+        }
+
+        /// <summary>
+        /// Fires the <see cref="E:System.Windows.Forms.Control.MouseMove"/>-Event.
+        /// </summary>
+        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (isMouseDown)
+            {
+                if (this.Cursor == cursorMoveDisplayWindow && !isSliderChoosed)
+                {
+                    ResetChoosedSliders();
+                    MoveDisplayWindow(e.X, e.Y);
+                }
+                else
+                {
+                    // Wenn gerade ein Objekt verschoben werden soll, wird die Differenz zur letzten
+                    // Mausposition ausgerechnet und das Objekt um diese verschoben,
+                    //in Abhängigkeit seines Verlaufs (horizontale Linie, ...).
+                    int number = choosedSliders[1] != null ? 2 : choosedSliders[0] != null ? 1 : 0;
+                    int mouseX = e.X - lastMouseLocation.X;
+                    int mouseY = e.Y - lastMouseLocation.Y;
+                    for (byte i = 0; i < number; i++)
+                        MovingDirectly(choosedSliders[i], mouseX, mouseY, true);
+                }
+                lastMouseLocation = e.Location;
+            }
+            else
+            {
+                SetMoveDisplayWindowCursor(e.X, e.Y);
+                // the flag 'isSliderChoosed' will set FALSE
+                isSliderChoosed = false;
+                // Check all Sliders for cursor-rollovering, if a Slider is rollovered,
+                // set the flag 'mIsSliderChoosed' TRUE
+                isSliderChoosed = IsRolloveredAnySlider(e.Location);
+                //if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], e.Location)))
+                //    if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], e.Location)))
+                //        if (!(isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], e.Location)))
+                //            isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], e.Location);
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Fires the <see cref="E:System.Windows.Forms.Control.MouseUp"/>-Event.
+        /// </summary>
+        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            isMouseDown = false;
+        }
+
+        /// <summary>
+        /// Fires the <see cref="E:System.Windows.Forms.Control.SizeChanged"/>-Event.
+        /// </summary>
+        /// <param name="e">An instance of <see cref="T:System.EventArgs"/>.</param>
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            // Wenn sich die Größe des Fensters ändert, wird die Größe der Zeichenfläche angepasst.
+            canvasRect = new Rectangle(new Point(0, 0),
+                new Size(this.ClientSize.Width, this.ClientSize.Height));
+            this.Invalidate();
+        }
+        #endregion Protected methods
+
         /// <summary>      
         /// Finalizes the initialization of the control.
         /// </summary>
@@ -669,9 +1387,9 @@ namespace AForge.Controls
             this.Size = new Size( AdaptedPicture.Width + distanceToImage, AdaptedPicture.Height + distanceToImage );
             this.BackgroundImageLayout = ImageLayout.Center;
 
-            initBorderValues( );
-            initSliders( );
-            setSlidersSpace( );
+            InitBorderValues( );
+            InitSliders( );
+            SetSlidersSpace( );
 
             this.DoubleBuffered = true;
         }
@@ -697,10 +1415,10 @@ namespace AForge.Controls
             Initialize( );
 
             // puts back the sliders in its old position
-            movingInDirectly( sliders[(byte) Slider.Left], leftPos );
-            movingInDirectly( sliders[(byte) Slider.Right], -( originalPicture.Width - rightPos ) );
-            movingInDirectly( sliders[(byte) Slider.Top], topPos );
-            movingInDirectly( sliders[(byte) Slider.Bottom], -( originalPicture.Height - bottomPos ) );
+            MovingInDirectly( sliders[(byte) Slider.Left], leftPos );
+            MovingInDirectly( sliders[(byte) Slider.Right], -( originalPicture.Width - rightPos ) );
+            MovingInDirectly( sliders[(byte) Slider.Top], topPos );
+            MovingInDirectly( sliders[(byte) Slider.Bottom], -( originalPicture.Height - bottomPos ) );
 
             base.Refresh( );
 
@@ -715,10 +1433,10 @@ namespace AForge.Controls
         /// 
         public void MoveSlider( int moveValue, Slider slider )
         {
-            resetChoosedSliders( );
+            ResetChoosedSliders( );
             choosedSliders[0] = sliders[(byte) slider];
             sliders[(byte) slider].ColorOfPen = colorRolloverSlider;
-            movingInDirectly( sliders[(byte) slider], moveValue );
+            MovingInDirectly( sliders[(byte) slider], moveValue );
         }
 
         /// <summary>
@@ -737,23 +1455,23 @@ namespace AForge.Controls
         {
             if ( choosedSliders[0] == sliders[(byte) Slider.Left] )
             {
-                movingInDirectly( choosedSliders[0], moveValue );
+                MovingInDirectly( choosedSliders[0], moveValue );
                 //Has to be copied back, otherwise the selection of the slider is damaged
                 choosedSliders[0] = sliders[(byte) Slider.Left];
             }
             else if ( choosedSliders[0] == sliders[(byte) Slider.Right] )
             {
-                movingInDirectly( choosedSliders[0], moveValue );
+                MovingInDirectly( choosedSliders[0], moveValue );
                 choosedSliders[0] = sliders[(byte) Slider.Right];
             }
             else if ( choosedSliders[1] == sliders[(byte) Slider.Left] )
             {
-                movingInDirectly( choosedSliders[1], moveValue );
+                MovingInDirectly( choosedSliders[1], moveValue );
                 choosedSliders[1] = sliders[(byte) Slider.Left];
             }
             else if ( choosedSliders[1] == sliders[(byte) Slider.Right] )
             {
-                movingInDirectly( choosedSliders[1], moveValue );
+                MovingInDirectly( choosedSliders[1], moveValue );
                 choosedSliders[1] = sliders[(byte) Slider.Right];
             }
         }
@@ -774,23 +1492,23 @@ namespace AForge.Controls
         {
             if ( choosedSliders[0] == sliders[(byte) Slider.Top] )
             {
-                movingInDirectly( choosedSliders[0], moveValue );
+                MovingInDirectly( choosedSliders[0], moveValue );
                 //Has to be copied back, otherwise the selection of the slider is damaged
                 choosedSliders[0] = sliders[(byte) Slider.Top];
             }
             else if ( choosedSliders[0] == sliders[(byte) Slider.Bottom] )
             {
-                movingInDirectly( choosedSliders[0], moveValue );
+                MovingInDirectly( choosedSliders[0], moveValue );
                 choosedSliders[0] = sliders[(byte) Slider.Bottom];
             }
             else if ( choosedSliders[1] == sliders[(byte) Slider.Top] )
             {
-                movingInDirectly( choosedSliders[1], moveValue );
+                MovingInDirectly( choosedSliders[1], moveValue );
                 choosedSliders[1] = sliders[(byte) Slider.Top];
             }
             else if ( choosedSliders[1] == sliders[(byte) Slider.Bottom] )
             {
-                movingInDirectly( choosedSliders[1], moveValue );
+                MovingInDirectly( choosedSliders[1], moveValue );
                 choosedSliders[1] = sliders[(byte) Slider.Bottom];
             }
         }
@@ -799,8 +1517,12 @@ namespace AForge.Controls
         /// Gets the cutted picture in <seealso cref="Bitmap"/> format.
         /// </summary>
         /// <returns>The cutted Image (in <seealso cref="Bitmap"/> format)</returns>
-        public Bitmap getCuttedImage( )
+        public Bitmap GetCuttedImage( )
         {
+            //Store the original EXIF infos
+            PropertyItem[] items = originalPicture.PropertyItems;
+            //Get the original imageformat, it will be lost by using the clone(..)-method
+            ImageFormat format = GetImageFormatFromRaw(originalPicture.RawFormat);
             int w = ActualWidthInternal;
             if ( ( LeftPositionInternal + ActualWidthInternal ) > AdaptedPicture.Width )
                 w -= ( LeftPositionInternal + ActualWidthInternal ) - AdaptedPicture.Width;
@@ -812,7 +1534,10 @@ namespace AForge.Controls
                                             UpPositionInternal,
                                             w,
                                             h );
+            
             AdaptedPicture = AdaptedPicture.Clone( tempSize, AdaptedPicture.PixelFormat );
+            //AdaptedPicture.Save(s, format);
+            //AdaptedPicture = (Bitmap)Bitmap.FromStream(s);
             Initialize( );
 
             tempSize = new Rectangle( leftPosition,
@@ -821,685 +1546,19 @@ namespace AForge.Controls
                                   actualHeight );
 
             originalPicture = (Bitmap) originalPicture.Clone( tempSize, originalPicture.PixelFormat );
+            //Before saving store in stream with original image format, this is lost by clone(..)-method
+            System.IO.MemoryStream s = new System.IO.MemoryStream();
+            originalPicture.Save(s, format);
+            originalPicture = (Bitmap)Bitmap.FromStream(s);
+
+            //Before saving, set the original EXIF infos                
+            foreach (PropertyItem item in items)
+                originalPicture.SetPropertyItem(item);
+
             //would make a 32 bit BMP smaller to 24 bit
             //originalPicture = originalPicture.Clone(new Rectangle(0, 0, originalPicture.Width, 
             //originalPicture.Height), PixelFormat.Format24bppRgb);
             return originalPicture;
-        }
-
-        /// <summary>
-        /// Moves a slider directly.
-        /// </summary>
-        /// <param name="slider">The slider.</param>
-        /// <param name="moveX">The move X.</param>
-        /// <param name="moveY">The move Y.</param>
-        /// <param name="isDirectMove">if set to <c>true</c> [is direct move].</param>
-        private void movingDirectly( GraphicObject slider, int moveX, int moveY, bool isDirectMove )
-        {
-            switch ( slider.AllowedCourse )
-            {
-                case Course.Horicontal:
-                    slider.Move( 0, moveY );
-                    checkSlidersExceedsBorder( slider.Start.X, slider.Start.Y );
-                    if ( sliders[(byte) Slider.Bottom].Start.Y - sliders[(byte) Slider.Top].Start.Y <
-                        (byte) ( (float) minSizeOfImage / scaleFactor ) )
-                    {
-                        slider.Move( 0, -moveY );
-                        return;
-                    }
-                    else
-                    {
-                        if ( isDirectMove )
-                        {
-                            actualHeight = (int) ( (float) ActualHeightInternal * scaleFactor );
-                            //Check, if there is a rounding error
-                            //if (ActualHeight > OriginalHeight)
-                            //    moveSelectedHorizontalSlider(-(ActualHeight - OriginalHeight));
-
-                            upPosition = (int) ( (float) UpPositionInternal * scaleFactor );
-
-                            //Check, if there is a rounding error
-                            if ( upPosition + ActualHeight > OriginalHeight )
-                                actualHeight = OriginalHeight - upPosition;
-
-                            spaces[(int) Slider.Top] = 0.0f;
-                            spaces[(int) Slider.Bottom] = 0.0f;
-                            fireSliderMovedEvent( );
-                        }
-                    }
-                    break;
-                case Course.Vertical:
-                    slider.Move( moveX, 0 );
-                    checkSlidersExceedsBorder( slider.Start.X, slider.Start.Y );
-                    if ( sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X <
-                        (byte) ( (float) minSizeOfImage / scaleFactor ) )
-                    {
-                        slider.Move( -moveX, 0 );
-                        return;
-                    }
-                    else
-                    {
-                        if ( isDirectMove )
-                        {
-                            actualWidth = (int) ( (float) ActualWidthInternal * scaleFactor );
-                            //Check, if there is a rounding error
-                            //if (ActualWidth > OriginalWidth)
-                            //    moveSelectedVerticalSlider(-(ActualWidth - OriginalWidth));                               
-
-                            leftPosition = (int) ( (float) LeftPositionInternal * scaleFactor );
-
-                            //Check, if there is a rounding error
-                            if ( leftPosition + ActualWidth > OriginalWidth )
-                                actualWidth = OriginalWidth - leftPosition;
-
-                            spaces[(int) Slider.Left] = 0.0f;
-                            spaces[(int) Slider.Right] = 0.0f;
-                            fireSliderMovedEvent( );
-                        }
-                    }
-                    break;
-            }
-
-            setSlidersSpace( );
-            this.Invalidate( );
-        }
-
-        /// <summary>
-        /// Moves a slider indirectly.
-        /// </summary>
-        /// <param name="slider">The slider.</param>
-        /// <param name="moveValue">The move value.</param>
-        private void movingInDirectly( GraphicObject slider, int moveValue )
-        {
-            float move = (float) moveValue / scaleFactor;
-            int index = getSliderIndex( slider, sliders );
-            spaces[index] = spaces[index] + move;
-            int intNumber = (int) spaces[index];
-            spaces[index] -= (float) intNumber;
-
-            if ( index == (int) Slider.Left || index == (int) Slider.Right )
-            {
-                movingDirectly( slider, intNumber, 0, false );
-                if ( index == (int) Slider.Left )//pSlider == mSliders[(byte)SLIDERS.LEFT]) -> DOES NOT WORK!
-                {
-                    leftPosition += moveValue;
-                    actualWidth -= moveValue;
-                }
-                else
-                    actualWidth += moveValue;
-            }
-            else
-            {
-                movingDirectly( slider, 0, intNumber, false );
-                if ( index == (int) Slider.Top )//pSlider == mSliders[(byte)SLIDERS.UP]) -> DOES NOT WORK!
-                {
-                    upPosition += moveValue;
-                    actualHeight -= moveValue;
-                }
-                else
-                    actualHeight += moveValue;
-            }
-
-            checkValues( );
-            if ( isCheckNecessary )
-                checkRatio( );
-            fireSliderMovedEvent( );
-        }
-
-        /// <summary>
-        /// Fires the slider moved event.
-        /// </summary>
-        private void fireSliderMovedEvent( )
-        {
-            //fire the event now
-            if ( this.OnSliderMoved != null ) //is there a EventHandler?
-            {
-                this.OnSliderMoved.Invoke( ); //calls its EventHandler                
-            }
-            else { } //if not, ignore
-        }
-
-        /// <summary>
-        /// Handles the MouseMove event of the ImageCut control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
-        private void ImageCut_MouseMove( object sender, MouseEventArgs e )
-        {
-            this.Focus( );
-        }
-
-        /// <summary>
-        /// Checks the values of the pictures sizes.
-        /// </summary>
-        private void checkValues( )
-        {
-            if ( leftPosition == -1 )
-            {
-                leftPosition += 1;
-                actualWidth -= 1;
-            }
-            if ( actualWidth > originalPicture.Width )
-                actualWidth = originalPicture.Width;
-            else if ( actualWidth < minSizeOfImage )
-                actualWidth = minSizeOfImage;
-
-            if ( upPosition == -1 )
-            {
-                upPosition += 1;
-                actualHeight -= 1;
-            }
-
-            if ( actualHeight > originalPicture.Height )
-                actualHeight = originalPicture.Height;
-            else if ( actualHeight < minSizeOfImage )
-                actualHeight = minSizeOfImage;
-        }
-
-        /// <summary>
-        /// Checks, if there is a ratio constraint. If yes the sliders will be 
-        /// set on the correct positions to conform the ratio constraint.
-        /// </summary>
-        private void checkRatio( )
-        {
-            isCheckNecessary = false;
-            if ( ratio != 0.0f )
-            {
-                float tempRatio = (float) ActualHeight /
-                               (float) ActualWidth;
-                if ( ( tempRatio + 0.01f ) < ratio )
-                {
-                    float tempNewWidth = (float) ActualHeight / ratio;
-                    float tempDiff = (float) ActualWidth - tempNewWidth;
-                    MoveSlider( (int) ( tempDiff / 2.0f ), Slider.Left );
-                    MoveSlider( (int) ( -tempDiff / 2.0f ), Slider.Right );
-                }
-                else if ( ( tempRatio + 0.01f ) > ratio )
-                {
-                    float tempNewHeight = (float) ActualWidth * ratio;
-                    float tempDiff = (float) ActualHeight - tempNewHeight;
-                    MoveSlider( (int) ( tempDiff / 2.0f ), Slider.Top );
-                    MoveSlider( (int) ( -tempDiff / 2.0f ), Slider.Bottom );
-                }
-
-            }
-            isCheckNecessary = true;
-        }
-
-        /// <summary>
-        /// Creates an adapted image, which is not bigger than the given maximum values. 
-        /// </summary>
-        /// 
-        /// <param name="maxWidth">The biggest allowed width of the image.</param>
-        /// <param name="maxHeight">The biggest allowed height of the image.</param>
-        /// 
-        /// <remarks>
-        /// <para>It sets the <see cref="AdaptedPicture"/> and the <see cref="ScaleFactor"/>.</para>
-        /// 
-        /// <para><note>It also sets the original image, it is not necessary to set it manual.</note></para>
-        /// 
-        /// <para><note>If the original image is smaller than the given values, the adapted
-        /// image is just a clone of the original image.</note></para>
-        /// </remarks>
-        /// 
-        private void AdaptPicture( float maxWidth, float maxHeight )
-        {
-            Size adaptedSize;
-            float screenRatio = maxWidth / maxHeight;
-            float picRatio = (float) originalPicture.Width / (float) originalPicture.Height;
-
-            if ( ( maxWidth < originalPicture.Width ) || ( maxHeight < originalPicture.Height ) )
-            {
-                if ( screenRatio < picRatio )
-                    adaptedSize = new Size( (int) maxWidth, (int) ( maxWidth / picRatio ) );
-                else
-                    adaptedSize = new Size( (int) ( maxHeight * picRatio ), (int) maxHeight );
-            }
-            else
-            {
-                adaptedSize = new Size( originalPicture.Width, originalPicture.Height );
-            }
-            //the ratio original size and adapted size (as average of widht and height ratio)
-            scaleFactor = ( (float) originalPicture.Size.Width / (float) adaptedSize.Width +
-                            (float) originalPicture.Size.Height / (float) adaptedSize.Height ) / 2.0f;
-            AdaptedPicture = new Bitmap( originalPicture, adaptedSize );
-        }
-
-        /// <summary>
-        /// Inits the border values.
-        /// </summary>
-        private void initBorderValues( )
-        {
-            up = distanceToImage / 2;// -mLineStrength;
-            down = Size.Height - distanceToImage / 2;// -mLineStrength;
-            left = distanceToImage / 2;// -2;
-            right = Size.Width - distanceToImage / 2;// -1;
-        }
-
-        /// <summary>
-        /// Sets the transparent area behind a slider.
-        /// These areas represent the cut offed image areas.
-        /// </summary>
-        private void setSlidersSpace( )
-        {
-            slidersWaste[(byte) Slider.Left] = ( new GraphicRectangle(
-                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
-                                new Rectangle( left,
-                                                up,
-                                                sliders[(byte) Slider.Left].Start.X - left - ( lineStrength - 1 ),
-                                                down - up ) ) );
-
-            slidersWaste[(byte) Slider.Right] = ( new GraphicRectangle(
-                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
-                                new Rectangle( sliders[(byte) Slider.Right].Start.X + ( lineStrength - 1 ),
-                                                up,
-                                                right - sliders[(byte) Slider.Right].Start.X,
-                                                down - up ) ) );
-
-            slidersWaste[(byte) Slider.Top] = ( new GraphicRectangle(
-                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
-                                new Rectangle( sliders[(byte) Slider.Left].Start.X,
-                                                up,
-                                                sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X + ( lineStrength - 1 ),
-                                                sliders[(byte) Slider.Top].Start.Y - up - ( lineStrength - 1 ) ) ) );
-
-            slidersWaste[(byte) Slider.Bottom] = ( new GraphicRectangle(
-                                new Pen( Color.FromArgb( transparency, colorSliderSpace ), lineStrength ),
-                                new Rectangle( sliders[(byte) Slider.Left].Start.X,
-                                                sliders[(byte) Slider.Bottom].Start.Y + ( lineStrength - 1 ),
-                                                sliders[(byte) Slider.Right].Start.X - sliders[(byte) Slider.Left].Start.X + ( lineStrength - 1 ),
-                                                down - sliders[(byte) Slider.Bottom].Start.Y ) ) );
-        }
-
-        /// <summary>
-        /// Inits the sliders with its original positions and the slider color.
-        /// Is called only one time in the init()-fct.
-        /// </summary>
-        private void initSliders( )
-        {
-            sliders[(byte) Slider.Left] = ( new GraphicLine(
-                                new Pen( colorSliders, lineStrength ),
-                                new Point( left, distanceToImage / 2 ),
-                                new Point( left, Size.Height - distanceToImage / 2 - 1 ),
-                                Course.Vertical ) );
-
-            sliders[(byte) Slider.Right] = ( new GraphicLine(
-                                new Pen( colorSliders, lineStrength ),
-                                new Point( right, distanceToImage / 2 ),
-                                new Point( right, Size.Height - distanceToImage / 2 - 1 ),
-                                Course.Vertical ) );
-
-            sliders[(byte) Slider.Top] = ( new GraphicLine(
-                                new Pen( colorSliders, lineStrength ),
-                                new Point( distanceToImage / 2, up ),
-                                new Point( Size.Width - distanceToImage / 2 - 1, up ),
-                                Course.Horicontal ) );
-
-            sliders[(byte) Slider.Bottom] = ( new GraphicLine(
-                                new Pen( colorSliders, lineStrength ),
-                                new Point( distanceToImage / 2, down ),
-                                new Point( Size.Width - distanceToImage / 2 - 1, down ),
-                                Course.Horicontal ) );
-        }
-
-        /// <summary>
-        /// Checks after a Slider- or window display - moving, if a slider
-        /// exceeds a limit (border).
-        /// </summary>
-        /// <remarks>
-        /// <para>The mouse cursor moves a slider, so the cursor location is important for 
-        /// the check.</para>
-        /// </remarks>
-        /// <param name="x">X-coord of mouse</param>
-        /// <param name="y">Y-coord of mouse</param>
-        private void checkSlidersExceedsBorder( int x, int y )
-        {
-            bool choosed1 = false;
-            bool choosed2 = false;
-            if ( x < left )
-            {
-                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Left )
-                    choosed1 = true;
-                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Left )
-                    choosed2 = true;
-                sliders[(byte) Slider.Left] = ( new GraphicLine(
-                                    new Pen( colorRolloverSlider, lineStrength ),
-                                    new Point( left, distanceToImage / 2 ),
-                                    new Point( left, Size.Height - distanceToImage / 2 - 1 ),
-                                    Course.Vertical ) );
-                if ( choosed1 )
-                    choosedSliders[0] = sliders[(byte) Slider.Left];
-                else if ( choosed2 )
-                    choosedSliders[1] = sliders[(byte) Slider.Left];
-            }
-
-            choosed1 = false;
-            choosed2 = false;
-            if ( x > right )
-            {
-                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Right )
-                    choosed1 = true;
-                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Right )
-                    choosed2 = true;
-                sliders[(byte) Slider.Right] = ( new GraphicLine(
-                                    new Pen( colorRolloverSlider, lineStrength ),
-                                    new Point( right, distanceToImage / 2 ),
-                                    new Point( right, Size.Height - distanceToImage / 2 - 1 ),
-                                    Course.Vertical ) );
-                if ( choosed1 )
-                    choosedSliders[0] = sliders[(byte) Slider.Right];
-                else if ( choosed2 )
-                    choosedSliders[1] = sliders[(byte) Slider.Right];
-            }
-
-            choosed1 = false;
-            choosed2 = false;
-            if ( y < up )
-            {
-                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Top )
-                    choosed1 = true;
-                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Top )
-                    choosed2 = true;
-                sliders[(byte) Slider.Top] = ( new GraphicLine(
-                                    new Pen( colorRolloverSlider, lineStrength ),
-                                    new Point( distanceToImage / 2, up ),
-                                    new Point( Size.Width - distanceToImage / 2 - 1, up ),
-                                    Course.Horicontal ) );
-                if ( choosed1 )
-                    choosedSliders[0] = sliders[(byte) Slider.Top];
-                else if ( choosed2 )
-                    choosedSliders[1] = sliders[(byte) Slider.Top];
-            }
-
-            choosed1 = false;
-            choosed2 = false;
-            if ( y > down )
-            {
-                if ( getSliderIndex( choosedSliders[0], sliders ) == (int) Slider.Bottom )
-                    choosed1 = true;
-                else if ( getSliderIndex( choosedSliders[1], sliders ) == (int) Slider.Bottom )
-                    choosed2 = true;
-                sliders[(byte) Slider.Bottom] = ( new GraphicLine(
-                                    new Pen( colorRolloverSlider, lineStrength ),
-                                    new Point( distanceToImage / 2, down ),
-                                    new Point( Size.Width - distanceToImage / 2 - 1, down ),
-                                    Course.Horicontal ) );
-                if ( choosed1 )
-                    choosedSliders[0] = sliders[(byte) Slider.Bottom];
-                else if ( choosed2 )
-                    choosedSliders[1] = sliders[(byte) Slider.Bottom];
-            }
-        }
-
-        /// <summary>
-        /// Checks, if the mouse cursor is over the image. 
-        /// If yes, set the cursor for moving the display window over the image.
-        /// Otherwise, set the default cursor icon.
-        /// </summary>
-        /// <param name="x">X-coord of mouse</param>
-        /// <param name="y">Y-coord of mouse</param>
-        private void setMoveDisplayWindowCursor( int x, int y )
-        {
-            if ( sliders[(byte) Slider.Bottom].Start.Y > y &&
-                sliders[(byte) Slider.Top].Start.Y < y &&
-                sliders[(byte) Slider.Left].Start.X < x &&
-                sliders[(byte) Slider.Right].Start.X > x )
-                this.Cursor = cursorMoveDisplayWindow;
-
-            else
-                this.Cursor = cursorDefault;
-        }
-
-        /// <summary>
-        /// Sets the cursor icon which represents a cursor, that rollover a slider.
-        /// </summary>
-        private void setRollOverCursor( )
-        {
-            this.Cursor = cursorRolloverSlider;
-        }
-
-        /// <summary>
-        /// Moves the display window, which is located over the image.
-        /// </summary>
-        /// <param name="x">X-coord of mouse</param>
-        /// <param name="y">Y-coord of mouse</param>
-        private void moveDisplayWindow( int x, int y )
-        {
-            if ( ( sliders[(byte) Slider.Bottom].Start.Y < down || y < lastMouseLocation.Y ) &&
-                ( sliders[(byte) Slider.Top].Start.Y > up || y > lastMouseLocation.Y ) )
-            {
-                movingDirectly( sliders[(byte) Slider.Bottom], 0, y - lastMouseLocation.Y, true );
-                movingDirectly( sliders[(byte) Slider.Top], 0, y - lastMouseLocation.Y, true );
-            }
-            if ( ( sliders[(byte) Slider.Left].Start.X > left || x > lastMouseLocation.X ) &&
-                ( sliders[(byte) Slider.Right].Start.X < right || x < lastMouseLocation.X ) )
-            {
-                movingDirectly( sliders[(byte) Slider.Left], x - lastMouseLocation.X, 0, true );
-                movingDirectly( sliders[(byte) Slider.Right], x - lastMouseLocation.X, 0, true );
-            }
-        }
-
-        /// <summary>
-        /// Deletes the choosed sliders.
-        /// </summary>
-        private void resetChoosedSliders( )
-        {
-            //Draw all Sliders black
-            for ( byte i = 0; i < 4; i++ )
-                sliders[i].ColorOfPen = colorSliders;
-            //Erase choosed Sliders
-            choosedSliders[0] = null;
-            choosedSliders[1] = null;
-        }
-
-        /// <summary>
-        /// Determines whether [is rollovered any slider] at [the specified position].
-        /// </summary>
-        /// <param name="position">The mouse position.</param>
-        /// <returns>
-        /// 	<c>true</c> if [is rollovered any slider] [the specified position]; otherwise, <c>false</c>.
-        /// </returns>
-        private bool isRolloveredAnySlider( Point position )
-        {
-            bool choosed = false;
-            if ( !( choosed = isRolloveredVerticalSlider( sliders[(byte) Slider.Left], position ) ) )
-                if ( !( choosed = isRolloveredVerticalSlider( sliders[(byte) Slider.Right], position ) ) )
-                    if ( !( choosed = isRolloveredHoricontalSlider( sliders[(byte) Slider.Top], position ) ) )
-                        choosed = isRolloveredHoricontalSlider( sliders[(byte) Slider.Bottom], position );
-
-            return choosed;
-        }
-
-        /// <summary>
-        /// Checks, if the given <see cref="GraphicObject"/>is a
-        /// rollovered vertical slider.
-        /// </summary>
-        /// <param name="verticalSlider">The vertical slider.</param>
-        /// <param name="location">The location.</param>
-        /// <returns>true - if it is a rollovered vertical slider.</returns>
-        private bool isRolloveredVerticalSlider( GraphicObject verticalSlider, Point location )
-        {
-            if ( verticalSlider.Hit( location ) )
-            {
-                resetChoosedSliders( );
-                verticalSlider.ColorOfPen = colorRolloverSlider;
-                choosedSliders[0] = verticalSlider;
-                if ( Math.Abs( sliders[(byte) Slider.Top].Start.Y - location.Y ) <= neighbourTolerance )
-                {
-                    sliders[(byte) Slider.Top].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte) Slider.Top];
-                    setRollOverCursor( );
-                    return true;
-                }
-                if ( Math.Abs( sliders[(byte) Slider.Bottom].Start.Y - location.Y ) <= neighbourTolerance )
-                {
-                    sliders[(byte) Slider.Bottom].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte) Slider.Bottom];
-                }
-                setRollOverCursor( );
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Checks, if the given <see cref="GraphicObject"/>is a
-        /// rollovered horizontal slider.
-        /// </summary>
-        /// <param name="horizontalSlider">The horizontal slider.</param>
-        /// <param name="location">The location.</param>
-        /// <returns>true - if it is a rollovered horizontal slider.</returns>
-        private bool isRolloveredHoricontalSlider( GraphicObject horizontalSlider, Point location )
-        {
-            if ( horizontalSlider.Hit( location ) )
-            {
-                resetChoosedSliders( );
-                horizontalSlider.ColorOfPen = colorRolloverSlider;
-                choosedSliders[0] = horizontalSlider;
-                if ( Math.Abs( sliders[(byte) Slider.Left].Start.X - location.X ) <= neighbourTolerance )
-                {
-                    sliders[(byte) Slider.Left].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte) Slider.Left];
-                    setRollOverCursor( );
-                    return true;
-                }
-                if ( Math.Abs( sliders[(byte) Slider.Right].Start.X - location.X ) <= neighbourTolerance )
-                {
-                    sliders[(byte) Slider.Right].ColorOfPen = colorRolloverSlider;
-                    choosedSliders[1] = sliders[(byte) Slider.Right];
-                }
-                setRollOverCursor( );
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Fires the <see cref="E:System.Windows.Forms.Control.Paint"/>-Event.
-        /// </summary>
-        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.PaintEventArgs"/>.</param>
-        protected override void OnPaint( PaintEventArgs e )
-        {
-            if ( !isAlreadyInit )
-            {
-                MessageBox.Show( "You have to call the 'init()'-function before using the ImageCuttingPanel." );
-                Application.Exit( );
-                return;
-            }
-            base.OnPaint( e );
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            // Only draw new the area of clip, objects outside of clip will be cutted.
-            Region clip = new Region( canvasRect );
-            clip.Intersect( e.Graphics.Clip );
-            e.Graphics.Clip = clip;
-            //e.Graphics.Clear(Color.White);
-            foreach ( GraphicObject go in sliders )
-            {
-                go.Draw( e.Graphics );
-            }
-            foreach ( GraphicRectangle go in slidersWaste )
-            {
-                go.Fill( e.Graphics );
-            }
-        }
-
-        /// <summary>
-        /// Fires the <see cref="E:System.Windows.Forms.Control.MouseDown"/>-Event.
-        /// </summary>
-        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
-        protected override void OnMouseDown( MouseEventArgs e )
-        {
-            base.OnMouseDown( e );
-            isMouseDown = true;
-            lastMouseLocation = e.Location;
-            if ( !isRolloveredAnySlider( e.Location ) )
-                resetChoosedSliders( );
-        }
-
-        /// <summary>
-        /// Fires the <see cref="E:System.Windows.Forms.Control.MouseMove"/>-Event.
-        /// </summary>
-        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
-        protected override void OnMouseMove( MouseEventArgs e )
-        {
-            base.OnMouseMove( e );
-
-            if ( isMouseDown )
-            {
-                if ( this.Cursor == cursorMoveDisplayWindow && !isSliderChoosed )
-                {
-                    resetChoosedSliders( );
-                    moveDisplayWindow( e.X, e.Y );
-                }
-                else
-                {
-                    // Wenn gerade ein Objekt verschoben werden soll, wird die Differenz zur letzten
-                    // Mausposition ausgerechnet und das Objekt um diese verschoben,
-                    //in Abhängigkeit seines Verlaufs (horizontale Linie, ...).
-                    int number = choosedSliders[1] != null ? 2 : choosedSliders[0] != null ? 1 : 0;
-                    int mouseX = e.X - lastMouseLocation.X;
-                    int mouseY = e.Y - lastMouseLocation.Y;
-                    for ( byte i = 0; i < number; i++ )
-                        movingDirectly( choosedSliders[i], mouseX, mouseY, true );
-                }
-                lastMouseLocation = e.Location;
-            }
-            else
-            {
-                setMoveDisplayWindowCursor( e.X, e.Y );
-                // the flag 'isSliderChoosed' will set FALSE
-                isSliderChoosed = false;
-                // Check all Sliders for cursor-rollovering, if a Slider is rollovered,
-                // set the flag 'mIsSliderChoosed' TRUE
-                isSliderChoosed = isRolloveredAnySlider( e.Location );
-                //if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Left], e.Location)))
-                //    if (!(isSliderChoosed = isRolloveredVerticalSlider(sliders[(byte)Sliders.Right], e.Location)))
-                //        if (!(isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Up], e.Location)))
-                //            isSliderChoosed = isRolloveredHoricontalSlider(sliders[(byte)Sliders.Down], e.Location);
-                this.Invalidate( );
-            }
-        }
-
-        /// <summary>
-        /// Fires the <see cref="E:System.Windows.Forms.Control.MouseUp"/>-Event.
-        /// </summary>
-        /// <param name="e">An instance of <see cref="T:System.Windows.Forms.MouseEventArgs"/>.</param>
-        protected override void OnMouseUp( MouseEventArgs e )
-        {
-            base.OnMouseUp( e );
-            isMouseDown = false;
-        }
-
-        /// <summary>
-        /// Fires the <see cref="E:System.Windows.Forms.Control.SizeChanged"/>-Event.
-        /// </summary>
-        /// <param name="e">An instance of <see cref="T:System.EventArgs"/>.</param>
-        protected override void OnSizeChanged( EventArgs e )
-        {
-            base.OnSizeChanged( e );
-            // Wenn sich die Größe des Fensters ändert, wird die Größe der Zeichenfläche angepasst.
-            canvasRect = new Rectangle( new Point( 0, 0 ),
-                new Size( this.ClientSize.Width, this.ClientSize.Height ) );
-            this.Invalidate( );
-        }
-
-        /// <summary>
-        /// Static function, gets the id of the given slider.
-        /// </summary>
-        /// <param name="choosedSlider">The choosed slider.</param>
-        /// <param name="allSliders">All sliders.</param>
-        /// <returns></returns>
-        private static int getSliderIndex( GraphicObject choosedSlider,
-                                          GraphicObject[] allSliders )
-        {
-            if ( choosedSlider == allSliders[(byte) Slider.Left] )
-                return (int) Slider.Left;
-            else if ( choosedSlider == allSliders[(byte) Slider.Right] )
-                return (int) Slider.Right;
-            if ( choosedSlider == allSliders[(byte) Slider.Top] )
-                return (int) Slider.Top;
-            else //if (pChoosedSlider == pAllSliders[(byte)SLIDERS.DOWN])
-                return (int) Slider.Bottom;
-        }
+        }        
     }
 }
