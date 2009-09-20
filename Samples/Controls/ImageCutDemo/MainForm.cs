@@ -138,7 +138,7 @@ namespace ImageCutDemo
             //Correct possible rounding errors
             imageCut.MoveSelectedVerticalSlider(0); 
             //Get the final cutted picture
-            finalImage = imageCut.getCuttedImage();
+            finalImage = imageCut.GetCuttedImage();
             
             //Removes and disposes the imageCut-control           
             this.Controls.Remove(imageCut);
