@@ -12,24 +12,119 @@ namespace AForge.Imaging.Filters
     using System.Drawing;
     using System.Drawing.Imaging;
 
+    /// <summary>
+    /// Stereo anaglyph filter.
+    /// </summary>
+    /// 
+    /// <remarks><para>The image processing filter produces stereo anaglyph images which are
+    /// aimed to be viewed through anaglyph glasses with red filter over the left eye and
+    /// cyan over the right.</para>
+    /// 
+    /// <img src="img/imaging/anaglyph_glasses.png" width="125" height="97" />
+    /// 
+    /// <para>The stereo image is produced by combining two images of the same scene taken
+    /// from a bit different points. The right image must be provided to the filter using
+    /// <see cref="BaseInPlaceFilter2.OverlayImage"/> property, but the left image must be provided to
+    /// <see cref="IFilter.Apply(Bitmap)"/> method, which creates the anaglyph image.</para>
+    /// 
+    /// <para>The filter accepts 24 bpp color images for processing.</para>
+    /// 
+    /// <para>See <see cref="Algorithm"/> enumeration for the list of supported anaglyph algorithms.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // create filter
+    /// StereoAnaglyph filter = new StereoAnaglyph( );
+    /// // set right image as overlay
+    /// filter.Overlay = rightImage
+    /// // apply the filter (providing left image)
+    /// Bitmap resultImage = filter.Apply( leftImage );
+    /// </code>
+    /// 
+    /// <para><b>Source image (left):</b></para>
+    /// <img src="img/imaging/sample16_left.png" width="320" height="240" />
+    /// <para><b>Overlay image (right):</b></para>
+    /// <img src="img/imaging/sample16_right.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/anaglyph.png" width="320" height="240" />
+    /// 
+    /// </remarks>
+    /// 
     public class StereoAnaglyph : BaseInPlaceFilter2
     {
-        public enum Type
+        /// <summary>
+        /// Enumeration of algorithms for creating anaglyph images.
+        /// </summary>
+        /// 
+        /// <remarks><para>See <a href="http://www.3dtv.at/Knowhow/AnaglyphComparison_en.aspx">anaglyph methods comparison</a> for
+        /// descipton of different algorithms.</para>
+        /// </remarks>
+        /// 
+        public enum Algorithm
         {
+            /// <summary>
+            /// Creates anaglyph image using the below calculations:
+            /// <list type="bullet">
+            /// <item>R<sub>a</sub>=0.299*R<sub>l</sub>+0.587*G<sub>l</sub>+0.114*B<sub>l</sub>;</item>
+            /// <item>G<sub>a</sub>=0;</item>
+            /// <item>B<sub>a</sub>=0.299*R<sub>r</sub>+0.587*G<sub>r</sub>+0.114*B<sub>r</sub>.</item>
+            /// </list>
+            /// </summary>
             TrueAnaglyph,
+
+            /// <summary>
+            /// Creates anaglyph image using the below calculations:
+            /// <list type="bullet">
+            /// <item>R<sub>a</sub>=0.299*R<sub>l</sub>+0.587*G<sub>l</sub>+0.114*B<sub>l</sub>;</item>
+            /// <item>G<sub>a</sub>=0.299*R<sub>r</sub>+0.587*G<sub>r</sub>+0.114*B<sub>r</sub>;</item>
+            /// <item>B<sub>a</sub>=0.299*R<sub>r</sub>+0.587*G<sub>r</sub>+0.114*B<sub>r</sub>.</item>
+            /// </list>
+            /// </summary>
             GrayAnaglyph,
+
+            /// <summary>
+            /// Creates anaglyph image using the below calculations:
+            /// <list type="bullet">
+            /// <item>R<sub>a</sub>=R<sub>l</sub>;</item>
+            /// <item>G<sub>a</sub>=G<sub>r</sub>;</item>
+            /// <item>B<sub>a</sub>=B<sub>r</sub>.</item>
+            /// </list>
+            /// </summary>
             ColorAnaglyph,
+
+            /// <summary>
+            /// Creates anaglyph image using the below calculations:
+            /// <list type="bullet">
+            /// <item>R<sub>a</sub>=0.299*R<sub>l</sub>+0.587*G<sub>l</sub>+0.114*B<sub>l</sub>;</item>
+            /// <item>G<sub>a</sub>=G<sub>r</sub>;</item>
+            /// <item>B<sub>a</sub>=B<sub>r</sub>.</item>
+            /// </list>
+            /// </summary>
             HalfColorAnaglyph,
+
+            /// <summary>
+            /// Creates anaglyph image using the below calculations:
+            /// <list type="bullet">
+            /// <item>R<sub>a</sub>=0.7*G<sub>l</sub>+0.3*B<sub>l</sub>;</item>
+            /// <item>G<sub>a</sub>=G<sub>r</sub>;</item>
+            /// <item>B<sub>a</sub>=B<sub>r</sub>.</item>
+            /// </list>
+            /// </summary>
             OptimizedAnaglyph
         }
 
-        private Type anaglyphType = Type.ColorAnaglyph;
+        private Algorithm anaglyphAlgorithm = Algorithm.GrayAnaglyph;
 
-
-        public Type AnaglyphType
+        /// <summary>
+        /// Algorithm to use for creating anaglyph images.
+        /// </summary>
+        /// 
+        /// <remarks><para>Default value is set to <see cref="Algorithm.GrayAnaglyph"/>.</para></remarks>
+        /// 
+        public Algorithm AnaglyphAlgorithm
         {
-            get { return anaglyphType; }
-            set { anaglyphType = value; }
+            get { return anaglyphAlgorithm; }
+            set { anaglyphAlgorithm = value; }
         }
 
 
@@ -53,11 +148,23 @@ namespace AForge.Imaging.Filters
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="StereoAnaglyph"/> class.
+        /// </summary>
+        /// 
+        /// <param name="anaglyphAlgorithm">Algorithm to use for creating anaglyph images.</param>
+        /// 
+        public StereoAnaglyph( Algorithm anaglyphAlgorithm )
+            : this( )
+        {
+            this.anaglyphAlgorithm = anaglyphAlgorithm;
+        }
+
+        /// <summary>
         /// Process the filter on the specified image.
         /// </summary>
         /// 
-        /// <param name="image">Source image data.</param>
-        /// <param name="overlay">Overlay image data.</param>
+        /// <param name="image">Source image data (left image).</param>
+        /// <param name="overlay">Overlay image data (right image).</param>
         ///
         protected override unsafe void ProcessFilter( UnmanagedImage image, UnmanagedImage overlay )
         {
@@ -73,9 +180,9 @@ namespace AForge.Imaging.Filters
             byte * ptr = (byte*) image.ImageData.ToPointer( );
             byte * ovr = (byte*) overlay.ImageData.ToPointer( );
 
-            switch ( anaglyphType )
+            switch ( anaglyphAlgorithm )
             {
-                case Type.TrueAnaglyph:
+                case Algorithm.TrueAnaglyph:
                     // for each line
                     for ( int y = 0; y < height; y++ )
                     {
@@ -91,7 +198,7 @@ namespace AForge.Imaging.Filters
                     }
                     break;
 
-                case Type.GrayAnaglyph:
+                case Algorithm.GrayAnaglyph:
                     // for each line
                     for ( int y = 0; y < height; y++ )
                     {
@@ -107,7 +214,7 @@ namespace AForge.Imaging.Filters
                     }
                     break;
                 
-                case Type.ColorAnaglyph:
+                case Algorithm.ColorAnaglyph:
                     // for each line
                     for ( int y = 0; y < height; y++ )
                     {
@@ -123,7 +230,7 @@ namespace AForge.Imaging.Filters
                     }
                     break;
 
-                case Type.HalfColorAnaglyph:
+                case Algorithm.HalfColorAnaglyph:
                     // for each line
                     for ( int y = 0; y < height; y++ )
                     {
@@ -139,7 +246,7 @@ namespace AForge.Imaging.Filters
                     }
                     break;
 
-                case Type.OptimizedAnaglyph:
+                case Algorithm.OptimizedAnaglyph:
                     // for each line
                     for ( int y = 0; y < height; y++ )
                     {
