@@ -185,6 +185,7 @@
         <contentItem sourcePath="..\Imaging\Images\simple_skeletonization.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Robotics.TeRK\Images\qwerk_board.jpg" destPath="img\robotics\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\posterization.png" destPath="img\imaging\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging\Images\sample15.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\anaglyph.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\anaglyph_glasses.png" destPath="img\imaging\" excludeItems="False" />
         <contentItem sourcePath="..\Imaging\Images\sample16_left.png" destPath="img\imaging\" excludeItems="False" />
