@@ -22,7 +22,7 @@ namespace AForge.Math.Geometry
     /// <para>Sample usage:</para>
     /// <code>
     /// // create points' list
-    /// List{IntPoint} points = new List{IntPoint}( );
+    /// List&lt;IntPoint&gt; points = new List&lt;IntPoint&gt;( );
     /// points.Add( new IntPoint( 10, 10 ) );
     /// points.Add( new IntPoint( 20, 15 ) );
     /// points.Add( new IntPoint( 15, 30 ) );
