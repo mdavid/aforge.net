@@ -1,12 +1,9 @@
-// AForge Core Library
+ï»¿// AForge Core Library
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2009
+// Copyright Â© Andrew Kirillov, 2007-2009
 // andrew.kirillov@aforgenet.com
-//
-// Copyright © Fabio L. Caversan, 2008
-// fabio.caversan@gmail.com
 //
 
 namespace AForge
@@ -14,18 +11,17 @@ namespace AForge
     using System;
 
     /// <summary>
-    /// Class for representing a pair of coordinates of double type.
+    /// Structure for representing a pair of coordinates of integer type.
     /// </summary>
     /// 
-    /// <remarks><para>The class is used to store a pair of floating point
-    /// coordinates with double precision.</para>
+    /// <remarks><para>The class is used to store a pair of integer coordinates.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
     /// // assigning coordinates in the constructor
-    /// DoublePoint p1 = new DoublePoint( 10, 20 );
+    /// IntPoint p1 = new IntPoint( 10, 20 );
     /// // creating a point and assigning coordinates later
-    /// DoublePoint p2;
+    /// IntPoint p2;
     /// p2.X = 30;
     /// p2.Y = 40;
     /// // calculating distance between two points
@@ -33,28 +29,28 @@ namespace AForge
     /// </code>
     /// </remarks>
     /// 
-    public struct DoublePoint
+    public struct IntPoint
     {
         /// <summary> 
         /// X coordinate.
         /// </summary> 
         /// 
-        public double X;
+        public int X;
 
         /// <summary> 
         /// Y coordinate.
         /// </summary> 
         /// 
-        public double Y;
+        public int Y;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DoublePoint"/> structure.
+        /// Initializes a new instance of the <see cref="IntPoint"/> structure.
         /// </summary>
         /// 
         /// <param name="x">X axis coordinate.</param>
         /// <param name="y">Y axis coordinate.</param>
         /// 
-        public DoublePoint( double x, double y )
+        public IntPoint( int x, int y )
         {
             this.X = x;
             this.Y = y;
@@ -71,8 +67,8 @@ namespace AForge
         /// 
         public double DistanceTo( IntPoint anotherPoint )
         {
-            double dx = X - anotherPoint.X;
-            double dy = Y - anotherPoint.Y;
+            int dx = X - anotherPoint.X;
+            int dy = Y - anotherPoint.Y;
 
             return System.Math.Sqrt( dx * dx + dy * dy );
         }
