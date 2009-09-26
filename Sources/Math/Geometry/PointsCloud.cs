@@ -282,7 +282,8 @@ namespace AForge.Math.Geometry
         /// <param name="cloud">Collection of points to search quadrilateral for.</param>
         /// 
         /// <returns>Returns a list of 4 points, which are corners of the quadrilateral area filled
-        /// by specified collection of point.</returns>
+        /// by specified collection of point. The first point in the list is the point with lowest
+        /// X coordinate (and with lowest Y if there are several points with the same X value).</returns>
         /// 
         /// <remarks><para>The method makes an assumption that the specified collection of points
         /// form some sort of quadrilateral area. With this assumption it tries to find corners
