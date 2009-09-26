@@ -41,6 +41,21 @@ namespace AForge.Math.Geometry
     public static class PointsCloud
     {
         /// <summary>
+        /// Shift cloud by adding specified value to all points in the collection.
+        /// </summary>
+        /// 
+        /// <param name="cloud">Collection of points to shift their coordinates.</param>
+        /// <param name="shift">Point to shift by.</param>
+        /// 
+        public static void Shift( List<IntPoint> cloud, IntPoint shift )
+        {
+            for ( int i = 0, n = cloud.Count; i < n; i++ )
+            {
+                cloud[i] = cloud[i] + shift;
+            }
+        }
+
+        /// <summary>
         /// Find furhtest point from the specified point.
         /// </summary>
         /// 

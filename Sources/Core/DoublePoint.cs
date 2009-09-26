@@ -69,12 +69,42 @@ namespace AForge
         /// <returns>Returns Euclidean distance between this point and
         /// <paramref name="anotherPoint"/> points.</returns>
         /// 
-        public double DistanceTo( IntPoint anotherPoint )
+        public double DistanceTo( DoublePoint anotherPoint )
         {
             double dx = X - anotherPoint.X;
             double dy = Y - anotherPoint.Y;
 
             return System.Math.Sqrt( dx * dx + dy * dy );
+        }
+
+        /// <summary>
+        /// Addition operator - adds values of two points.
+        /// </summary>
+        /// 
+        /// <param name="p1">First point for addition.</param>
+        /// <param name="p2">Second point for addition.</param>
+        /// 
+        /// <returns>Returns new point which coordinates equal to sum of corresponding
+        /// coordinates of specified points.</returns>
+        /// 
+        public static DoublePoint operator +( DoublePoint p1, DoublePoint p2 )
+        {
+            return new DoublePoint( p1.X + p2.X, p1.Y + p2.Y );
+        }
+
+        /// <summary>
+        /// Subtraction operator - subtracts values of two points.
+        /// </summary>
+        /// 
+        /// <param name="p1">Point to subtract from.</param>
+        /// <param name="p2">Point to subtract.</param>
+        /// 
+        /// <returns>Returns new point which coordinates equal to difference of corresponding
+        /// coordinates of specified points.</returns>
+        ///
+        public static DoublePoint operator -( DoublePoint p1, DoublePoint p2 )
+        {
+            return new DoublePoint( p1.X + p2.X, p1.Y + p2.Y );
         }
     }
 }
