@@ -14,10 +14,10 @@ namespace AForge
     using System;
 
     /// <summary>
-    /// Class for representing a pair of coordinates of double type.
+    /// Structure for representing a pair of coordinates of double type.
     /// </summary>
     /// 
-    /// <remarks><para>The class is used to store a pair of floating point
+    /// <remarks><para>The structure is used to store a pair of floating point
     /// coordinates with double precision.</para>
     /// 
     /// <para>Sample usage:</para>

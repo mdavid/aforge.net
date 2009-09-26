@@ -14,7 +14,7 @@ namespace AForge
     /// Structure for representing a pair of coordinates of integer type.
     /// </summary>
     /// 
-    /// <remarks><para>The class is used to store a pair of integer coordinates.</para>
+    /// <remarks><para>The structure is used to store a pair of integer coordinates.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
