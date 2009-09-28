@@ -79,6 +79,7 @@
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter2.cs" />
+    <Compile Include="Filters\Base classes\BaseQuadrilateralTransformationFilter.cs" />
     <Compile Include="Filters\Base classes\BaseResizeFilter.cs" />
     <Compile Include="Filters\Base classes\BaseRotateFilter.cs" />
     <Compile Include="Filters\Base classes\BaseTransformationFilter.cs" />
@@ -172,6 +173,8 @@
     <Compile Include="Filters\Smooting\ConservativeSmoothing.cs" />
     <Compile Include="Filters\Smooting\Median.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
+    <Compile Include="Filters\Transform\QuadrilateralTransformationBilinear.cs" />
+    <Compile Include="Filters\Transform\QuadrilateralTransformationNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\ResizeBicubic.cs" />
     <Compile Include="Filters\Transform\ResizeBilinear.cs" />
     <Compile Include="Filters\Transform\ResizeNearestNeighbor.cs" />
