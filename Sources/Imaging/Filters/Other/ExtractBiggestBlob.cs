@@ -45,6 +45,19 @@ namespace AForge.Imaging.Filters
     public class ExtractBiggestBlob : IFilter, IFilterInformation
     {
         private Bitmap originalImage = null;
+        private IntPoint blobPosition;
+
+        /// <summary>
+        /// Position of the extracted blob.
+        /// </summary>
+        /// 
+        /// <remarks><para>After applying the filter the property keeps position of the extracted
+        /// blob in the source image.</para></remarks>
+        /// 
+        public IntPoint BlobPosition
+        {
+            get { return blobPosition; }
+        }
 
         /// <summary>
         /// Format translations dictionary.
@@ -89,6 +102,9 @@ namespace AForge.Imaging.Filters
         /// <returns>Returns image of the biggest blob.</returns>
         /// 
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the original image.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Source and original images must have the same size.</exception>
+        /// <exception cref="ArgumentException">The source image does not contain any blobs.</exception>
         ///
         public Bitmap Apply( Bitmap image )
         {
@@ -124,6 +140,7 @@ namespace AForge.Imaging.Filters
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the original image.</exception>
         /// <exception cref="InvalidImagePropertiesException">Source and original images must have the same size.</exception>
+        /// <exception cref="ArgumentException">The source image does not contain any blobs.</exception>
         ///
         public Bitmap Apply( BitmapData imageData )
         {
@@ -149,6 +166,14 @@ namespace AForge.Imaging.Filters
                     biggestBlob = blobs[i];
                 }
             }
+
+            // check if any blob was found
+            if ( biggestBlob == null )
+            {
+                throw new ArgumentException( "The source image does not contain any blobs." );
+            }
+
+            blobPosition = new IntPoint( biggestBlob.Rectangle.Left, biggestBlob.Rectangle.Top );
 
             // extract biggest blob's image
             if ( originalImage == null )
