@@ -18,13 +18,13 @@ namespace AForge.Imaging
     using AForge.Math.Geometry;
 
     /// <summary>
-    /// Searching of quadrilateral corners.
+    /// Searching of quadrilateral/triangle corners.
     /// </summary>
     ///
-    /// <remarks><para>The class searches for quadrilateral's corners on the specified image.
+    /// <remarks><para>The class searches for quadrilateral's/triangle's corners on the specified image.
     /// It first collects edge points of the object and then uses
-    /// <see cref="AForge.Math.Geometry.PointsCloud.FindQuadrilateralCorners"/> to find four
-    /// points of the quadrilateral.</para>
+    /// <see cref="AForge.Math.Geometry.PointsCloud.FindQuadrilateralCorners"/> to find corners
+    /// the quadrilateral/triangle.</para>
     /// 
     /// <para><note>The class treats all black pixels as background (none-object) and
     /// all none-black pixels as object.</note></para>
@@ -43,7 +43,7 @@ namespace AForge.Imaging
     ///     ImageLockMode.ReadWrite, image.PixelFormat );
     /// 
     /// Drawing.Polygon( data, corners, Color.Red );
-    /// for ( int i = 0; i &lt; 4; i++ )
+    /// for ( int i = 0; i &lt; corners.Count; i++ )
     /// {
     ///     Drawing.FillRectangle( data,
     ///         new Rectangle( corners[i].X - 2, corners[i].Y - 2, 5, 5 ),
@@ -62,12 +62,12 @@ namespace AForge.Imaging
     public class QuadrilateralFinder
     {
         /// <summary>
-        /// Find 4 corners of quadrilateral area in the specified image.
+        /// Find corners of quadrilateral/triangular area in the specified image.
         /// </summary>
         /// 
         /// <param name="image">Source image to search quadrilateral for.</param>
         /// 
-        /// <returns>Returns a list of 4 points, which are corners of the quadrilateral area found
+        /// <returns>Returns a list of points, which are corners of the quadrilateral/triangular area found
         /// in the specified image. The first point in the list is the point with lowest
         /// X coordinate (and with lowest Y if there are several points with the same X value).
         /// Points are in clock-wise orders (screen coordinates system).</returns>
@@ -100,12 +100,12 @@ namespace AForge.Imaging
         }
 
         /// <summary>
-        /// Find 4 corners of quadrilateral area in the specified image.
+        /// Find corners of quadrilateral/triangular area in the specified image.
         /// </summary>
         /// 
         /// <param name="imageData">Source image data to search quadrilateral for.</param>
         /// 
-        /// <returns>Returns a list of 4 points, which are corners of the quadrilateral area found
+        /// <returns>Returns a list of points, which are corners of the quadrilateral/triangular area found
         /// in the specified image. The first point in the list is the point with lowest
         /// X coordinate (and with lowest Y if there are several points with the same X value).
         /// Points are in clock-wise orders (screen coordinates system).</returns>
@@ -118,12 +118,12 @@ namespace AForge.Imaging
         }
 
         /// <summary>
-        /// Find 4 corners of quadrilateral area in the specified image.
+        /// Find corners of quadrilateral/triangular area in the specified image.
         /// </summary>
         /// 
         /// <param name="image">Source image to search quadrilateral for.</param>
         /// 
-        /// <returns>Returns a list of 4 points, which are corners of the quadrilateral area found
+        /// <returns>Returns a list of points, which are corners of the quadrilateral/triangular area found
         /// in the specified image. The first point in the list is the point with lowest
         /// X coordinate (and with lowest Y if there are several points with the same X value).
         /// Points are in clock-wise orders (screen coordinates system).</returns>

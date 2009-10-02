@@ -276,24 +276,25 @@ namespace AForge.Math.Geometry
         }
 
         /// <summary>
-        /// Find corners of quadrilateral area, which contains the specified collection of points.
+        /// Find corners of quadrilateral or triangular area, which contains the specified collection of points.
         /// </summary>
         /// 
         /// <param name="cloud">Collection of points to search quadrilateral for.</param>
         /// 
-        /// <returns>Returns a list of 4 points, which are corners of the quadrilateral area filled
-        /// by specified collection of point. The first point in the list is the point with lowest
-        /// X coordinate (and with lowest Y if there are several points with the same X value).</returns>
+        /// <returns>Returns a list of 3 or 4 points, which are corners of the quadrilateral or
+        /// triangular area filled by specified collection of point. The first point in the list
+        /// is the point with lowest X coordinate (and with lowest Y if there are several points
+        /// with the same X value).</returns>
         /// 
         /// <remarks><para>The method makes an assumption that the specified collection of points
-        /// form some sort of quadrilateral area. With this assumption it tries to find corners
-        /// of the quadrilateral area.</para>
+        /// form some sort of quadrilateral/triangular area. With this assumption it tries to find corners
+        /// of the area.</para>
         /// 
-        /// <para><note>The method does not search for <b>bounding</b> quadrilateral area, where
-        /// all specified points are <b>inside</b> of the found quadrilateral. Some of the specified
-        /// points potentially may be outside of the found quadrilateral, since the method takes
-        /// corners only from the specified collection of points, but does not calculate such to form
-        /// true bounding quadrilateral.</note></para>
+        /// <para><note>The method does not search for <b>bounding</b> quadrilateral/triangular area,
+        /// where all specified points are <b>inside</b> of the found quadrilateral/triangle. Some of the
+        /// specified points potentially may be outside of the found quadrilateral/triangle, since the
+        /// method takes corners only from the specified collection of points, but does not calculate such
+        /// to form true bounding quadrilateral/triangle.</note></para>
         /// </remarks>
         /// 
         public static List<IntPoint> FindQuadrilateralCorners( List<IntPoint> cloud )
@@ -306,6 +307,9 @@ namespace AForge.Math.Geometry
                 new IntPoint( 0, 0 ) );
             // get the furthest point from the first point
             IntPoint point2 = PointsCloud.GetFurthestPoint( cloud, point1 );
+
+            corners.Add( point1 );
+            corners.Add( point2 );
 
             // get two furthest points from line
             IntPoint point3, point4;
@@ -321,12 +325,17 @@ namespace AForge.Math.Geometry
             // connecting points 1 and 2, then it is one the same line ...
             // which means corner was not found
 
-            if ( ( distance3 < 3 ) || ( distance4 < 3 ) )
+            if ( ( distance3 >= 3 ) && ( distance4 >= 3 ) )
+            {
+                corners.Add( point3 );
+                corners.Add( point4 );
+            }
+            else
             {
                 // it seems that we deal with kind of trapezoid,
                 // where point 1 and 2 are on the same edge
 
-                IntPoint tempPoint = ( distance3 > -distance4 ) ? point3 : point4;
+                IntPoint tempPoint = ( distance3 > distance4 ) ? point3 : point4;
 
                 // try to find 3rd point
                 PointsCloud.GetFurthestPointsFromLine( cloud, point1, tempPoint,
@@ -334,64 +343,64 @@ namespace AForge.Math.Geometry
 
                 bool thirdPointIsFound = false;
 
-                if ( ( distance3 >= 3 ) && ( point3.DistanceTo( point2 ) >= 3 ) )
+                if ( ( distance3 >= 3 ) && ( distance4 >= 3 ) )
                 {
-                    thirdPointIsFound = true;
-                }
-                else if ( ( distance4 >= 3 ) && ( point4.DistanceTo( point2 ) >= 3 ) )
-                {
-                    point3 = point4;
-                    thirdPointIsFound = true;
-                }
+                    if ( point4.DistanceTo( point2 ) > point3.DistanceTo( point2 ) )
+                        point3 = point4;
 
-                if ( !thirdPointIsFound )
+                    thirdPointIsFound = true;
+                }
+                else
                 {
                     PointsCloud.GetFurthestPointsFromLine( cloud, point2, tempPoint,
                         out point3, out distance3, out point4, out distance4 );
 
-                    if ( ( distance3 < 3 ) || ( point3.DistanceTo( point1 ) < 3 ) )
+
+                    if ( ( distance3 >= 3 ) && ( distance4 >= 3 ) )
                     {
-                        point3 = point4;
+                        if ( point4.DistanceTo( point1 ) > point3.DistanceTo( point1 ) )
+                            point3 = point4;
+
+                        thirdPointIsFound = true;
                     }
                 }
 
-                // try to find 4th point
-                double tempDistance;
-
-                PointsCloud.GetFurthestPointsFromLine( cloud, point1, point3,
-                    out tempPoint, out tempDistance, out point4, out distance4 );
-
-                bool fourthPointIsFound = false;
-
-                if ( ( distance4 >= 3 ) && ( point4.DistanceTo( point2 ) >= 3 ) )
+                if ( !thirdPointIsFound )
                 {
-                    fourthPointIsFound = true;
+                    // failed to find 3rd edge point, which is away enough from the temp point.
+                    // this means that the clound looks more like triangle
+                    corners.Add( tempPoint );
                 }
-                else if ( ( tempDistance >= 3 ) && ( tempPoint.DistanceTo( point2 ) >= 3 ) )
+                else
                 {
-                    point4 = tempPoint;
-                    fourthPointIsFound = true;
-                }
+                    corners.Add( point3 );
 
-                if ( !fourthPointIsFound )
-                {
-                    PointsCloud.GetFurthestPointsFromLine( cloud, point2, point3,
+                    // try to find 4th point
+                    double tempDistance;
+
+                    PointsCloud.GetFurthestPointsFromLine( cloud, point1, point3,
                         out tempPoint, out tempDistance, out point4, out distance4 );
 
-                    if ( ( distance4 < 3 ) || ( point4.DistanceTo( point1 ) < 3 ) )
+                    if ( ( distance4 >= 3 ) && ( tempDistance >= 3 ) )
                     {
-                        point4 = tempPoint;
+                        if ( tempPoint.DistanceTo( point2 ) > point3.DistanceTo( point2 ) )
+                            point4 = tempPoint;
                     }
+                    else
+                    {
+                        PointsCloud.GetFurthestPointsFromLine( cloud, point2, point3,
+                            out tempPoint, out tempDistance, out point4, out distance4 );
+
+                        if ( tempPoint.DistanceTo( point1 ) > point3.DistanceTo( point1 ) )
+                            point4 = tempPoint;
+                    }
+
+                    corners.Add( point4 );
                 }
             }
 
-            corners.Add( point1 );
-            corners.Add( point2 );
-            corners.Add( point3 );
-            corners.Add( point4 );
-
             // put the point with lowest X as the first
-            for ( int i = 1; i < 4; i++ )
+            for ( int i = 1, n = corners.Count; i < n; i++ )
             {
                 if ( ( corners[i].X < corners[0].X ) ||
                      ( ( corners[i].X == corners[0].X ) && ( corners[i].Y < corners[0].Y ) ) )
@@ -402,6 +411,7 @@ namespace AForge.Math.Geometry
                 }
             }
 
+
             // sort other points in clock-wise order (GDI coordinates system)
             double k1 = ( corners[1].X != corners[0].X ) ?
                 ( (double) ( corners[1].Y - corners[0].Y ) / ( corners[1].X - corners[0].X ) ) :
@@ -410,10 +420,6 @@ namespace AForge.Math.Geometry
             double k2 = ( corners[2].X != corners[0].X ) ?
                 ( (double) ( corners[2].Y - corners[0].Y ) / ( corners[2].X - corners[0].X ) ) :
                 ( ( corners[2].Y > corners[0].Y ) ? double.PositiveInfinity : double.NegativeInfinity );
-
-            double k3 = ( corners[3].X != corners[0].X ) ?
-                ( (double) ( corners[3].Y - corners[0].Y ) / ( corners[3].X - corners[0].X ) ) :
-                ( ( corners[3].Y > corners[0].Y ) ? double.PositiveInfinity : double.NegativeInfinity );
 
             if ( k2 < k1 )
             {
@@ -425,25 +431,33 @@ namespace AForge.Math.Geometry
                 k1 = k2;
                 k2 = tk;
             }
-            if ( k3 < k1 )
-            {
-                IntPoint temp = corners[1];
-                corners[1] = corners[3];
-                corners[3] = temp;
 
-                double tk = k1;
-                k1 = k3;
-                k3 = tk;
-            }
-            if ( k3 < k2 )
+            if ( corners.Count == 4 )
             {
-                IntPoint temp = corners[2];
-                corners[2] = corners[3];
-                corners[3] = temp;
+                double k3 = ( corners[3].X != corners[0].X ) ?
+                    ( (double) ( corners[3].Y - corners[0].Y ) / ( corners[3].X - corners[0].X ) ) :
+                    ( ( corners[3].Y > corners[0].Y ) ? double.PositiveInfinity : double.NegativeInfinity );
 
-                double tk = k2;
-                k2 = k3;
-                k3 = tk;
+                if ( k3 < k1 )
+                {
+                    IntPoint temp = corners[1];
+                    corners[1] = corners[3];
+                    corners[3] = temp;
+
+                    double tk = k1;
+                    k1 = k3;
+                    k3 = tk;
+                }
+                if ( k3 < k2 )
+                {
+                    IntPoint temp = corners[2];
+                    corners[2] = corners[3];
+                    corners[3] = temp;
+
+                    double tk = k2;
+                    k2 = k3;
+                    k3 = tk;
+                }
             }
 
             return corners;
