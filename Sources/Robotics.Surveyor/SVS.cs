@@ -231,7 +231,7 @@ namespace AForge.Robotics.Surveyor
         }
 
         /// <summary>
-        /// Get SVS's version string.
+        /// Get SVS board's firmware version string.
         /// </summary>
         /// 
         /// <returns>Returns SVS's version string.</returns>
@@ -253,6 +253,78 @@ namespace AForge.Robotics.Surveyor
             str = str.Trim( );
 
             return str;
+        }
+
+        /// <summary>
+        /// Get SVS's board's running time.
+        /// </summary>
+        /// 
+        /// <returns>Returns SVS boards running time in milliseconds.</returns>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
+        /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
+        /// 
+        /// <exception cref="ApplicationException">Failed parsing response from SVS - the response may be corrupted.</exception>
+        /// 
+        public long GetRunningTime( )
+        {
+            byte[] response = new byte[100];
+
+            int read = SafeGetCommunicator1( ).SendAndReceive( new byte[] { (byte) 't' }, response );
+
+            string str = System.Text.ASCIIEncoding.ASCII.GetString( response, 0, read );
+
+            str = str.Replace( "##time - millisecs:", "" );
+            str = str.Trim( );
+
+            try
+            {
+                return long.Parse( str );
+            }
+            catch
+            {
+                throw new ApplicationException( "Failed parsing response from SVS." );
+            }
+        }
+
+        /// <summary>
+        /// Run motors connected to SVS board.
+        /// </summary>
+        /// 
+        /// <param name="leftSpeed">Left motor's speed, [-127, 127].</param>
+        /// <param name="rightSpeed">Right motor's speed, [-127, 127].</param>
+        /// <param name="duration">Time duration to run motors measured in number
+        /// of 10 milliseconds (0 for infinity).</param>
+        /// 
+        /// <remarks><para>The method sets specified speed to both motors connected to
+        /// SVS board. The maximum absolute speed equals to 127, but the sign specifies
+        /// direction of motor's rotation (forward or backward).
+        /// </para></remarks>
+        /// 
+        public void RunMotors( sbyte leftSpeed, sbyte rightSpeed, byte duration )
+        {
+            // check limits
+            if ( leftSpeed == -128 )
+                leftSpeed = -127;
+            if ( rightSpeed == -128 )
+                rightSpeed = -127;
+
+            SafeGetCommunicator1( ).Send(
+                new byte[] { (byte) 'M', (byte) leftSpeed, (byte) rightSpeed, duration } );
+        }
+
+        /// <summary>
+        /// Stop both motors.
+        /// </summary>
+        /// 
+        /// <remarks><para>The method stops both motors connected to SVS board by calling
+        /// <see cref="RunMotors"/> method specifying 0 for motors' speed.</para></remarks>
+        /// 
+        public void StopMotors( )
+        {
+            RunMotors( 0, 0, 0 );
         }
 
         // Get first communicator safely
