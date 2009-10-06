@@ -412,7 +412,7 @@ namespace AForge.Math.Geometry
             }
 
 
-            // sort other points in clock-wise order (GDI coordinates system)
+            // sort other points in counter clockwise order
             double k1 = ( corners[1].X != corners[0].X ) ?
                 ( (double) ( corners[1].Y - corners[0].Y ) / ( corners[1].X - corners[0].X ) ) :
                 ( ( corners[1].Y > corners[0].Y ) ? double.PositiveInfinity : double.NegativeInfinity );
