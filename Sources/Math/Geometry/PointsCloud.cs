@@ -284,7 +284,9 @@ namespace AForge.Math.Geometry
         /// <returns>Returns a list of 3 or 4 points, which are corners of the quadrilateral or
         /// triangular area filled by specified collection of point. The first point in the list
         /// is the point with lowest X coordinate (and with lowest Y if there are several points
-        /// with the same X value).</returns>
+        /// with the same X value). The corners are provided in counter clockwise order
+        /// (<a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Cartesian
+        /// coordinate system</a>).</returns>
         /// 
         /// <remarks><para>The method makes an assumption that the specified collection of points
         /// form some sort of quadrilateral/triangular area. With this assumption it tries to find corners
