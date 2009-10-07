@@ -70,7 +70,7 @@ namespace AForge.Imaging
         /// <returns>Returns a list of points, which are corners of the quadrilateral/triangular area found
         /// in the specified image. The first point in the list is the point with lowest
         /// X coordinate (and with lowest Y if there are several points with the same X value).
-        /// Points are in clock-wise orders (screen coordinates system).</returns>
+        /// Points are in clockwise order (screen coordinates system).</returns>
         ///
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
@@ -108,7 +108,7 @@ namespace AForge.Imaging
         /// <returns>Returns a list of points, which are corners of the quadrilateral/triangular area found
         /// in the specified image. The first point in the list is the point with lowest
         /// X coordinate (and with lowest Y if there are several points with the same X value).
-        /// Points are in clock-wise orders (screen coordinates system).</returns>
+        /// Points are in clockwise order (screen coordinates system).</returns>
         ///
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
@@ -126,7 +126,7 @@ namespace AForge.Imaging
         /// <returns>Returns a list of points, which are corners of the quadrilateral/triangular area found
         /// in the specified image. The first point in the list is the point with lowest
         /// X coordinate (and with lowest Y if there are several points with the same X value).
-        /// Points are in clock-wise orders (screen coordinates system).</returns>
+        /// Points are in clockwise order (screen coordinates system).</returns>
         ///
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
