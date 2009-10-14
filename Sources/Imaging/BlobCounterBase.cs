@@ -12,8 +12,10 @@
 namespace AForge.Imaging
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using AForge;
 
     /// <summary>
     /// Possible object orders.
@@ -979,6 +981,124 @@ namespace AForge.Imaging
             }
             // unlock destination image
             blob.Image.UnlockBits( dstData );
+        }
+
+        /// <summary>
+        /// Get list of points on the left and right edges of the blob.
+        /// </summary>
+        /// 
+        /// <param name="blob">Blob to collect edge points for.</param>
+        /// <param name="leftEdge">List of points on the left edge of the blob.</param>
+        /// <param name="rightEdge">List of points on the right edge of the blob.</param>
+        /// 
+        /// <remarks><para>The method scans each line of the blob and finds the most left and the
+        /// most right points for it adding them to appropriate lists. The method may be very
+        /// useful in conjunction with different routines from <see cref="AForge.Math.Geometry"/>,
+        /// which allow finding convex hull or quadrilateral's corners.</para></remarks>
+        /// 
+        /// <exception cref="ApplicationException">No image was processed before, so blob
+        /// can not be extracted.</exception>
+        /// 
+        public void GetBlobsLeftAndRightEdges( Blob blob, out List<IntPoint> leftEdge, out List<IntPoint> rightEdge )
+        {
+            // check if objects map was collected
+            if ( objectLabels == null )
+                throw new ApplicationException( "Image should be processed before to collect objects map." );
+
+            leftEdge  = new List<IntPoint>( );
+            rightEdge = new List<IntPoint>( );
+
+            int xmin = blob.Rectangle.Left;
+            int xmax = xmin + blob.Rectangle.Width - 1;
+            int ymin = blob.Rectangle.Top;
+            int ymax = ymin + blob.Rectangle.Height - 1;
+
+            int label = blob.ID;
+            
+            // for each line
+            for ( int y = ymin; y <= ymax; y++ )
+            {
+                // scan from left to right
+                int p = y * imageWidth + xmin;
+                for ( int x = xmin; x <= xmax; x++, p++ )
+                {
+                    if ( objectLabels[p] == label )
+                    {
+                        leftEdge.Add( new IntPoint( x, y ) );
+                        break;
+                    }
+                }
+
+                // scan from right to left
+                p = y * imageWidth + xmax;
+                for ( int x = xmax; x >= xmin; x--, p-- )
+                {
+                    if ( objectLabels[p] == label )
+                    {
+                        rightEdge.Add( new IntPoint( x, y ) );
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get list of points on the top and bottom edges of the blob.
+        /// </summary>
+        /// 
+        /// <param name="blob">Blob to collect edge points for.</param>
+        /// <param name="topEdge">List of points on the top edge of the blob.</param>
+        /// <param name="bottomEdge">List of points on the bottom edge of the blob.</param>
+        /// 
+        /// <remarks><para>The method scans each column of the blob and finds the most top and the
+        /// most bottom points for it adding them to appropriate lists. The method may be very
+        /// useful in conjunction with different routines from <see cref="AForge.Math.Geometry"/>,
+        /// which allow finding convex hull or quadrilateral's corners.</para></remarks>
+        /// 
+        /// <exception cref="ApplicationException">No image was processed before, so blob
+        /// can not be extracted.</exception>
+        /// 
+        public void GetBlobsTopAndBottomEdges( Blob blob, out List<IntPoint> topEdge, out List<IntPoint> bottomEdge )
+        {
+            // check if objects map was collected
+            if ( objectLabels == null )
+                throw new ApplicationException( "Image should be processed before to collect objects map." );
+
+            topEdge    = new List<IntPoint>( );
+            bottomEdge = new List<IntPoint>( );
+
+            int xmin = blob.Rectangle.Left;
+            int xmax = xmin + blob.Rectangle.Width - 1;
+            int ymin = blob.Rectangle.Top;
+            int ymax = ymin + blob.Rectangle.Height - 1;
+
+            int label = blob.ID;
+
+            // for each column
+            for ( int x = xmin; x <= xmax; x++ )
+            {
+                // scan from top to bottom
+                int p = ymin * imageWidth + x;
+                for ( int y = ymin; y <= ymax; y++, p += imageWidth )
+                {
+                    if ( objectLabels[p] == label )
+                    {
+                        topEdge.Add( new IntPoint( x, y ) );
+                        break;
+                    }
+                }
+
+                // scan from bottom to top
+                p = ymax * imageWidth + x;
+                for ( int y = ymax; y >= ymin; y--, p -= imageWidth )
+                {
+                    if ( objectLabels[p] == label )
+                    {
+                        bottomEdge.Add( new IntPoint( x, y ) );
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
