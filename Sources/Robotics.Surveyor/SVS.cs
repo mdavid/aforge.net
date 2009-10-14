@@ -25,14 +25,33 @@ namespace AForge.Robotics.Surveyor
     /// 
     public partial class SVS
     {
+        /// <summary>
+        /// Enumeration of SVS's Blackfin cameras.
+        /// </summary>
+        /// 
+        /// <remarks><para>Since SVS board consists of two SRV-1 Blackfin cameras, the enumeration
+        /// is used by different methods to specify which one to access.</para></remarks>
+        /// 
+        public enum Camera
+        {
+            /// <summary>
+            /// Left camera (default port number is 10000).
+            /// </summary>
+            Left,
+            /// <summary>
+            /// Right camera (default port number is 10001).
+            /// </summary>
+            Right
+        }
+
         // host address if connection was established
         private string hostAddress;
         // communicators used for communication with SVS
-        private SVSCommunicator communicator1 = null;
-        private SVSCommunicator communicator2 = null;
+        private SRV1 communicator1 = null;
+        private SRV1 communicator2 = null;
         // SVS cameras
-        private SVS.Camera leftCamera;
-        private SVS.Camera rightCamera;
+        private SRV1Camera leftCamera;
+        private SRV1Camera rightCamera;
 
         private string sync1 = "1";
         private string sync2 = "1";
@@ -54,7 +73,12 @@ namespace AForge.Robotics.Surveyor
         /// </summary>
         /// 
         /// <remarks><para>The property equals to <see langword="true"/> if the class is connected
-        /// to SVS board, otherwise it equals to <see langword="false"/>.</para></remarks>
+        /// to SVS board, otherwise it equals to <see langword="false"/>.</para>
+        /// 
+        /// <para><note>The property is not updated by the class, when connection was lost or
+        /// communication failure was detected (which results into <see cref="ConnectionLostException"/>
+        /// exception). The property only shows status of <see cref="Connect"/> method.</note></para>
+        /// </remarks>
         /// 
         public bool IsConnected
         {
@@ -78,7 +102,7 @@ namespace AForge.Robotics.Surveyor
         /// <remarks><para>The method establishes connection to SVS board. If it succeeds then
         /// other methods can be used to manipulate the board.</para>
         /// 
-        /// <para><note>The method call <see cref="Disconnect"/> before making any connection
+        /// <para><note>The method calls <see cref="Disconnect"/> before making any connection
         /// attempts to make sure previous connection is closed.</note></para>
         /// </remarks>
         /// 
@@ -95,13 +119,13 @@ namespace AForge.Robotics.Surveyor
                 {
                     try
                     {
-                        communicator1 = new SVSCommunicator( );
-                        communicator2 = new SVSCommunicator( );
+                        communicator1 = new SRV1( );
+                        communicator2 = new SRV1( );
 
                         communicator1.Connect( ipAddress, 10001 );
                         communicator2.Connect( ipAddress, 10002 );
 
-                        hostAddress = null;
+                        hostAddress = ipAddress;
                     }
                     catch
                     {
@@ -119,9 +143,9 @@ namespace AForge.Robotics.Surveyor
         /// 
         /// <remarks><para>The method disconnects from SVS board making all other methods
         /// unavailable (except <see cref="Connect"/> method). In the case if user
-        /// obtained instance of left or right camera using <see cref="GetLeftCamera"/> or
-        /// <see cref="GetRightCamera"/> method, the video will be stopped automatically
-        /// (and those <see cref="Camera"/> instances should be discarded).
+        /// obtained instance of left or right camera using <see cref="GetCamera"/>
+        /// method, the video will be stopped automatically (and those <see cref="SRV1Camera"/>
+        /// instances should be discarded).
         /// </para></remarks>
         /// 
         public void Disconnect( )
@@ -187,47 +211,99 @@ namespace AForge.Robotics.Surveyor
         }
 
         /// <summary>
-        /// Get left camera of SVS board the object is connected to.
+        /// Get SVS's camera.
         /// </summary>
         /// 
-        /// <returns>Returns <see cref="Camera"/> object, which is connected to SVS's left camera.
-        /// Use <see cref="Camera.Start"/> method to start the camera and start receiving new video
-        /// frames.</returns>
+        /// <returns>Returns <see cref="SRV1Camera"/> object, which is connected to SVS's Blackfin camera.
+        /// Use <see cref="SRV1Camera.Start"/> method to start the camera and start receiving video
+        /// frames from it.</returns>
+        /// 
+        /// <remarks><para>The method provides an instance of <see cref="SRV1Camera"/>, which can be used
+        /// for receiving continuous video frames from the SVS board.
+        /// In the case if only one image is required, the <see cref="GetImage"/> method can be used.</para>
+        /// 
+        /// <para>Sample usage:</para>
+        /// <code>
+        /// // get SRV-1 camera
+        /// SRV1Camera camera = svs.GetCamera( SVS.Camera.Left );
+        /// // set NewFrame event handler
+        /// camera.NewFrame += new NewFrameEventHandler( video_NewFrame );
+        /// // start the video source
+        /// camera.Start( );
+        /// // ...
+        /// 
+        /// private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
+        /// {
+        ///     // get new frame
+        ///     Bitmap bitmap = eventArgs.Frame;
+        ///     // process the frame
+        /// }
+        /// </code>
+        /// </remarks>
         /// 
         /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
         /// this method.</exception>
         /// 
-        /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
-        /// 
-        public SVS.Camera GetLeftCamera( )
+        public SRV1Camera GetCamera( Camera camera )
         {
-            if ( leftCamera == null )
+            if ( camera == Camera.Left )
             {
-                leftCamera = new Camera( SafeGetCommunicator1( ) );
+                if ( leftCamera == null )
+                {
+                    leftCamera = SafeGetCommunicator1( ).GetCamera( );
+                }
+                return leftCamera;
             }
-            return leftCamera;
+
+            if ( rightCamera == null )
+            {
+                rightCamera = SafeGetCommunicator2( ).GetCamera( );
+            }
+            return rightCamera;
         }
 
         /// <summary>
-        /// Get right camera of SVS board the object is connected to.
+        /// Get single image from the SVS board.
         /// </summary>
         /// 
-        /// <returns>Returns <see cref="Camera"/> object, which is connected to SVS's right camera.
-        /// Use <see cref="Camera.Start"/> method to start the camera and start receiving new video
-        /// frames.</returns>
+        /// <param name="camera">Camera to get image from.</param>
+        /// 
+        /// <returns>Returns image received from the specified camera of the SVS board or
+        /// <see langword="null"/> if failed decoding provided response.</returns>
+        /// 
+        /// <remarks><para>The method provides single video frame retrieved from the specified SVS's
+        /// camera. However in many cases it is required to receive video frames one after another, so
+        /// the <see cref="GetCamera"/> method is more preferred for continuous video frames.</para></remarks>
+        ///
+        /// <exception cref="NotConnectedException">Not connected to SRV-1. Connect to SRV-1 before using
+        /// this method.</exception>
+        /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
+        /// 
+        public Bitmap GetImage( Camera camera )
+        {
+            return ( camera == Camera.Left ) ?
+                SafeGetCommunicator1( ).GetImage( ) : SafeGetCommunicator2( ).GetImage( );
+        }
+
+        /// <summary>
+        /// Get direct access to one of the SVS's SRV-1 Blackfin cameras.
+        /// </summary>
+        /// 
+        /// <param name="camera">SRV-1 Blackfin to get direct access to.</param>
+        /// 
+        /// <returns>Returns <see cref="SRV1"/> object connected to the requested
+        /// SRV-1 Blackfin camera.</returns>
+        /// 
+        /// <remarks><para>The method provides direct access to one of the SVS's SRV-1
+        /// Blackfin cameras, so it could be possible to send some direct commands to it
+        /// using <see cref="SRV1.Send"/> and <see cref="SRV1.SendAndReceive"/> methods.</para></remarks>
         /// 
         /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
         /// this method.</exception>
-        /// 
-        /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
-        /// 
-        public SVS.Camera GetRightCamera( )
+        ///
+        public SRV1 GetDirectAccessToSRV1( Camera camera )
         {
-            if ( rightCamera == null )
-            {
-                rightCamera = new Camera( SafeGetCommunicator2( ) );
-            }
-            return rightCamera;
+            return ( camera == Camera.Left ) ? SafeGetCommunicator1( ) : SafeGetCommunicator2( );
         }
 
         /// <summary>
@@ -238,19 +314,21 @@ namespace AForge.Robotics.Surveyor
         /// 
         /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
         /// this method.</exception>
-        /// 
         /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
         /// 
         public string GetVersion( )
         {
-            byte[] response = new byte[100];
-
-            int read = SafeGetCommunicator1( ).SendAndReceive( new byte[] { (byte) 'V' }, response );
-
-            string str = System.Text.ASCIIEncoding.ASCII.GetString( response, 0, read );
+            string str = SafeGetCommunicator1( ).GetVersion( );
 
             str = str.Replace( "##Version -", "" );
             str = str.Trim( );
+
+            // remove "(stereo master)" or (stereo slave)" string
+            int specificInfoPos = str.IndexOf( " (stereo " );
+            if ( specificInfoPos != -1 )
+            {
+                str = str.Substring( 0, specificInfoPos );
+            }
 
             return str;
         }
@@ -263,34 +341,16 @@ namespace AForge.Robotics.Surveyor
         /// 
         /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
         /// this method.</exception>
-        /// 
         /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
-        /// 
-        /// <exception cref="ApplicationException">Failed parsing response from SVS - the response may be corrupted.</exception>
+        /// <exception cref="ApplicationException">Failed parsing response from SVS.</exception>
         /// 
         public long GetRunningTime( )
         {
-            byte[] response = new byte[100];
-
-            int read = SafeGetCommunicator1( ).SendAndReceive( new byte[] { (byte) 't' }, response );
-
-            string str = System.Text.ASCIIEncoding.ASCII.GetString( response, 0, read );
-
-            str = str.Replace( "##time - millisecs:", "" );
-            str = str.Trim( );
-
-            try
-            {
-                return long.Parse( str );
-            }
-            catch
-            {
-                throw new ApplicationException( "Failed parsing response from SVS." );
-            }
+            return SafeGetCommunicator1( ).GetRunningTime( );
         }
 
         /// <summary>
-        /// Run motors connected to SVS board.
+        /// Run motors connected to the SVS board.
         /// </summary>
         /// 
         /// <param name="leftSpeed">Left motor's speed, [-127, 127].</param>
@@ -299,36 +359,53 @@ namespace AForge.Robotics.Surveyor
         /// of 10 milliseconds (0 for infinity).</param>
         /// 
         /// <remarks><para>The method sets specified speed to both motors connected to
-        /// SVS board. The maximum absolute speed equals to 127, but the sign specifies
+        /// the SVS board. The maximum absolute speed equals to 127, but the sign specifies
         /// direction of motor's rotation (forward or backward).
         /// </para></remarks>
         /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
         public void RunMotors( sbyte leftSpeed, sbyte rightSpeed, byte duration )
         {
-            // check limits
-            if ( leftSpeed == -128 )
-                leftSpeed = -127;
-            if ( rightSpeed == -128 )
-                rightSpeed = -127;
-
-            SafeGetCommunicator1( ).Send(
-                new byte[] { (byte) 'M', (byte) leftSpeed, (byte) rightSpeed, duration } );
+            SafeGetCommunicator1( ).RunMotors( leftSpeed, rightSpeed, duration );
         }
 
         /// <summary>
         /// Stop both motors.
         /// </summary>
         /// 
-        /// <remarks><para>The method stops both motors connected to SVS board by calling
+        /// <remarks><para>The method stops both motors connected to the SVS board by calling
         /// <see cref="RunMotors"/> method specifying 0 for motors' speed.</para></remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
         /// 
         public void StopMotors( )
         {
             RunMotors( 0, 0, 0 );
         }
 
+        /// <summary>
+        /// Control motors connected to SVS board using predefined commands.
+        /// </summary>
+        /// 
+        /// <param name="command">Motor command to send to the SVS board.</param>
+        /// 
+        /// <remarks><para><note>Controlling SVS motors with this method is only available
+        /// after at least one direct motor command is sent, which is done using <see cref="StopMotors"/> or
+        /// <see cref="RunMotors"/> methods.</note></para></remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
+        public void ControlMotors( SRV1.MotorCommand command )
+        {
+            SafeGetCommunicator1( ).ControlMotors( command );
+        }
+
         // Get first communicator safely
-        private SVSCommunicator SafeGetCommunicator1( )
+        private SRV1 SafeGetCommunicator1( )
         {
             lock ( sync1 )
             {
@@ -341,7 +418,7 @@ namespace AForge.Robotics.Surveyor
         }
 
         // Get second communicator safely
-        private SVSCommunicator SafeGetCommunicator2( )
+        private SRV1 SafeGetCommunicator2( )
         {
             lock ( sync2 )
             {
