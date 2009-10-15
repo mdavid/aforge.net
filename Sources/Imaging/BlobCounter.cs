@@ -1,5 +1,6 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
 // Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
@@ -12,11 +13,11 @@ namespace AForge.Imaging
     using System.Drawing.Imaging;
 
     /// <summary>
-    /// Blob counter - counts objects in binrary image.
+    /// Blob counter - counts objects in image, which are separated by black background.
     /// </summary>
     /// 
     /// <remarks><para>The class counts and extracts stand alone objects in
-    /// binary images using connected components labeling algorithm.</para>
+    /// images using connected components labeling algorithm.</para>
     /// 
     /// <para><note>The algorithm treats all black pixels as background, but not an object.
     /// This means that all objects, which could be located by the algorithm, must have other
@@ -86,7 +87,7 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Unmanaged image to process.</param>
         /// 
-        /// <remarks>The method supports only 8 bpp indexed grayscale image.</remarks>
+        /// <remarks>The method supports 8 bpp indexed grayscale images and 24/32 bpp color images.</remarks>
         /// 
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
