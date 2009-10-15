@@ -19,10 +19,11 @@ namespace AForge.Imaging
     /// binary images using connected components labeling algorithm.</para>
     /// 
     /// <para><note>The algorithm treats all black pixels as background, but not an object.
-    /// This means that all objects, which could be located by the algorithm, should have other
+    /// This means that all objects, which could be located by the algorithm, must have other
     /// than black color.</note></para>
     /// 
-    /// <para>For blobs' searching the class supports only 8 bpp indexed grayscale images. 
+    /// <para>For blobs' searching the class supports 8 bpp indexed grayscale images and
+    /// 24/32 bpp color images. 
     /// See documentation about <see cref="BlobCounterBase"/> for information about which
     /// pixel formats are supported for extraction of blobs.</para>
     /// 
@@ -59,7 +60,7 @@ namespace AForge.Imaging
         /// Initializes a new instance of the <see cref="BlobCounter"/> class.
         /// </summary>
         /// 
-        /// <param name="image">Binary image to look for objects in.</param>
+        /// <param name="image">Image to look for objects in.</param>
         /// 
         public BlobCounter( Bitmap image ) : base( image ) { }
 
@@ -67,7 +68,7 @@ namespace AForge.Imaging
         /// Initializes a new instance of the <see cref="BlobCounter"/> class.
         /// </summary>
         /// 
-        /// <param name="imageData">Binary image data to look for objects in.</param>
+        /// <param name="imageData">Image data to look for objects in.</param>
         /// 
         public BlobCounter( BitmapData imageData ) : base( imageData ) { }
 
@@ -75,7 +76,7 @@ namespace AForge.Imaging
         /// Initializes a new instance of the <see cref="BlobCounter"/> class.
         /// </summary>
         /// 
-        /// <param name="image">Binary unmanaged image to look for objects in.</param>
+        /// <param name="image">Unmanaged image to look for objects in.</param>
         /// 
         public BlobCounter( UnmanagedImage image ) : base( image ) { }
 
@@ -92,10 +93,12 @@ namespace AForge.Imaging
         protected override void BuildObjectsMap( UnmanagedImage image )
         {
             int stride = image.Stride;
-            int offset = stride - imageWidth;
 
             // check pixel format
-            if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
+            if ( ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
+                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                 ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
+                 ( image.PixelFormat != PixelFormat.Format32bppPArgb ) )
             {
                 throw new UnsupportedImageFormatException( "Unsupported pixel format of the source image." );
             }
@@ -125,66 +128,150 @@ namespace AForge.Imaging
                 byte* src = (byte*) image.ImageData.ToPointer( );
                 int p = 0;
 
-                // 1 - for pixels of the first row
-                if ( *src != 0 )
+                if ( image.PixelFormat == PixelFormat.Format8bppIndexed )
                 {
-                    objectLabels[p] = ++labelsCount;
-                }
-                ++src;
-                ++p;
+                    int offset = stride - imageWidth;
 
-                // process the rest of the first row
-                for ( int x = 1; x < imageWidth; x++, src++, p++ )
-                {
-                    // check if we need to label current pixel
+                    // 1 - for pixels of the first row
                     if ( *src != 0 )
                     {
-                        // check if the previous pixel already was labeled
-                        if ( src[-1] != 0 )
-                        {
-                            // label current pixel, as the previous
-                            objectLabels[p] = objectLabels[p - 1];
-                        }
-                        else
-                        {
-                            // create new label
-                            objectLabels[p] = ++labelsCount;
-                        }
-                    }
-                }
-                src += offset;
-
-                // 2 - for other rows
-                // for each row
-                for ( int y = 1; y < imageHeight; y++ )
-                {
-                    // for the first pixel of the row, we need to check
-                    // only upper and upper-right pixels
-                    if ( *src != 0 )
-                    {
-                        // check surrounding pixels
-                        if ( src[-stride] != 0 )
-                        {
-                            // label current pixel, as the above
-                            objectLabels[p] = objectLabels[p - imageWidth];
-                        }
-                        else if ( src[1 - stride] != 0 )
-                        {
-                            // label current pixel, as the above right
-                            objectLabels[p] = objectLabels[p + 1 - imageWidth];
-                        }
-                        else
-                        {
-                            // create new label
-                            objectLabels[p] = ++labelsCount;
-                        }
+                        objectLabels[p] = ++labelsCount;
                     }
                     ++src;
                     ++p;
 
-                    // check left pixel and three upper pixels for the rest of pixels
-                    for ( int x = 1; x < imageWidth - 1; x++, src++, p++ )
+                    // process the rest of the first row
+                    for ( int x = 1; x < imageWidth; x++, src++, p++ )
                     {
+                        // check if we need to label current pixel
+                        if ( *src != 0 )
+                        {
+                            // check if the previous pixel already was labeled
+                            if ( src[-1] != 0 )
+                            {
+                                // label current pixel, as the previous
+                                objectLabels[p] = objectLabels[p - 1];
+                            }
+                            else
+                            {
+                                // create new label
+                                objectLabels[p] = ++labelsCount;
+                            }
+                        }
+                    }
+                    src += offset;
+
+                    // 2 - for other rows
+                    // for each row
+                    for ( int y = 1; y < imageHeight; y++ )
+                    {
+                        // for the first pixel of the row, we need to check
+                        // only upper and upper-right pixels
+                        if ( *src != 0 )
+                        {
+                            // check surrounding pixels
+                            if ( src[-stride] != 0 )
+                            {
+                                // label current pixel, as the above
+                                objectLabels[p] = objectLabels[p - imageWidth];
+                            }
+                            else if ( src[1 - stride] != 0 )
+                            {
+                                // label current pixel, as the above right
+                                objectLabels[p] = objectLabels[p + 1 - imageWidth];
+                            }
+                            else
+                            {
+                                // create new label
+                                objectLabels[p] = ++labelsCount;
+                            }
+                        }
+                        ++src;
+                        ++p;
+
+                        // check left pixel and three upper pixels for the rest of pixels
+                        for ( int x = 1; x < imageWidth - 1; x++, src++, p++ )
+                        {
+                            if ( *src != 0 )
+                            {
+                                // check surrounding pixels
+                                if ( src[-1] != 0 )
+                                {
+                                    // label current pixel, as the left
+                                    objectLabels[p] = objectLabels[p - 1];
+                                }
+                                else if ( src[-1 - stride] != 0 )
+                                {
+                                    // label current pixel, as the above left
+                                    objectLabels[p] = objectLabels[p - 1 - imageWidth];
+                                }
+                                else if ( src[-stride] != 0 )
+                                {
+                                    // label current pixel, as the above
+                                    objectLabels[p] = objectLabels[p - imageWidth];
+                                }
+
+                                if ( src[1 - stride] != 0 )
+                                {
+                                    if ( objectLabels[p] == 0 )
+                                    {
+                                        // label current pixel, as the above right
+                                        objectLabels[p] = objectLabels[p + 1 - imageWidth];
+                                    }
+                                    else
+                                    {
+                                        int l1 = objectLabels[p];
+                                        int l2 = objectLabels[p + 1 - imageWidth];
+
+                                        if ( ( l1 != l2 ) && ( map[l1] != map[l2] ) )
+                                        {
+                                            // merge
+                                            if ( map[l1] == l1 )
+                                            {
+                                                // map left value to the right
+                                                map[l1] = map[l2];
+                                            }
+                                            else if ( map[l2] == l2 )
+                                            {
+                                                // map right value to the left
+                                                map[l2] = map[l1];
+                                            }
+                                            else
+                                            {
+                                                // both values already mapped
+                                                map[map[l1]] = map[l2];
+                                                map[l1] = map[l2];
+                                            }
+
+                                            // reindex
+                                            for ( int i = 1; i <= labelsCount; i++ )
+                                            {
+                                                if ( map[i] != i )
+                                                {
+                                                    // reindex
+                                                    int j = map[i];
+                                                    while ( j != map[j] )
+                                                    {
+                                                        j = map[j];
+                                                    }
+                                                    map[i] = j;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // label the object if it is not yet
+                                if ( objectLabels[p] == 0 )
+                                {
+                                    // create new label
+                                    objectLabels[p] = ++labelsCount;
+                                }
+                            }
+                        }
+
+                        // for the last pixel of the row, we need to check
+                        // only upper and upper-left pixels
                         if ( *src != 0 )
                         {
                             // check surrounding pixels
@@ -203,96 +290,204 @@ namespace AForge.Imaging
                                 // label current pixel, as the above
                                 objectLabels[p] = objectLabels[p - imageWidth];
                             }
-
-                            if ( src[1 - stride] != 0 )
+                            else
                             {
-                                if ( objectLabels[p] == 0 )
-                                {
-                                    // label current pixel, as the above right
-                                    objectLabels[p] = objectLabels[p + 1 - imageWidth];
-                                }
-                                else
-                                {
-                                    int l1 = objectLabels[p];
-                                    int l2 = objectLabels[p + 1 - imageWidth];
-
-                                    if ( ( l1 != l2 ) && ( map[l1] != map[l2] ) )
-                                    {
-                                        // merge
-                                        if ( map[l1] == l1 )
-                                        {
-                                            // map left value to the right
-                                            map[l1] = map[l2];
-                                        }
-                                        else if ( map[l2] == l2 )
-                                        {
-                                            // map right value to the left
-                                            map[l2] = map[l1];
-                                        }
-                                        else
-                                        {
-                                            // both values already mapped
-                                            map[map[l1]] = map[l2];
-                                            map[l1] = map[l2];
-                                        }
-
-                                        // reindex
-                                        for ( int i = 1; i <= labelsCount; i++ )
-                                        {
-                                            if ( map[i] != i )
-                                            {
-                                                // reindex
-                                                int j = map[i];
-                                                while ( j != map[j] )
-                                                {
-                                                    j = map[j];
-                                                }
-                                                map[i] = j;
-                                            }
-                                        }
-                                    }
-                                }
+                                // create new label
+                                objectLabels[p] = ++labelsCount;
                             }
+                        }
+                        ++src;
+                        ++p;
 
-                            // label the object if it is not yet
-                            if ( objectLabels[p] == 0 )
+                        src += offset;
+                    }
+                }
+                else
+                {
+                    // color images
+                    int pixelSize = Bitmap.GetPixelFormatSize( image.PixelFormat ) / 8;
+                    int offset = stride - imageWidth * pixelSize;
+
+                    int strideM1 = stride - pixelSize;
+                    int strideP1 = stride + pixelSize;
+
+                    // 1 - for pixels of the first row
+                    if ( ( src[RGB.R] | src[RGB.G] | src[RGB.B] ) != 0 )
+                    {
+                        objectLabels[p] = ++labelsCount;
+                    }
+                    src += pixelSize;
+                    ++p;
+
+                    // process the rest of the first row
+                    for ( int x = 1; x < imageWidth; x++, src += pixelSize, p++ )
+                    {
+                        // check if we need to label current pixel
+                        if ( ( src[RGB.R] | src[RGB.G] | src[RGB.B] ) != 0 )
+                        {
+                            // check if the previous pixel already was labeled
+                            if ( ( src[RGB.R - pixelSize] | src[RGB.G - pixelSize] | src[RGB.B - pixelSize] ) != 0 )
+                            {
+                                // label current pixel, as the previous
+                                objectLabels[p] = objectLabels[p - 1];
+                            }
+                            else
                             {
                                 // create new label
                                 objectLabels[p] = ++labelsCount;
                             }
                         }
                     }
-
-                    // for the last pixel of the row, we need to check
-                    // only upper and upper-left pixels
-                    if ( *src != 0 )
-                    {
-                        // check surrounding pixels
-                        if ( src[-1] != 0 )
-                        {
-                            // label current pixel, as the left
-                            objectLabels[p] = objectLabels[p - 1];
-                        }
-                        else if ( src[-1 - stride] != 0 )
-                        {
-                            // label current pixel, as the above left
-                            objectLabels[p] = objectLabels[p - 1 - imageWidth];
-                        }
-                        else if ( src[-stride] != 0 )
-                        {
-                            // label current pixel, as the above
-                            objectLabels[p] = objectLabels[p - imageWidth];
-                        }
-                        else
-                        {
-                            // create new label
-                            objectLabels[p] = ++labelsCount;
-                        }
-                    }
-                    ++src;
-                    ++p;
-
                     src += offset;
+
+                    // 2 - for other rows
+                    // for each row
+                    for ( int y = 1; y < imageHeight; y++ )
+                    {
+                        // for the first pixel of the row, we need to check
+                        // only upper and upper-right pixels
+                        if ( ( src[RGB.R] | src[RGB.G] | src[RGB.B] ) != 0 )
+                        {
+                            // check surrounding pixels
+                            if ( ( src[RGB.R - stride] | src[RGB.G - stride] | src[RGB.B - stride] ) != 0 )
+                            {
+                                // label current pixel, as the above
+                                objectLabels[p] = objectLabels[p - imageWidth];
+                            }
+                            else if ( ( src[RGB.R - strideM1] |
+                                        src[RGB.G - strideM1] |
+                                        src[RGB.B - strideM1] ) != 0 )
+                            {
+                                // label current pixel, as the above right
+                                objectLabels[p] = objectLabels[p + 1 - imageWidth];
+                            }
+                            else
+                            {
+                                // create new label
+                                objectLabels[p] = ++labelsCount;
+                            }
+                        }
+                        src += pixelSize;
+                        ++p;
+
+                        // check left pixel and three upper pixels for the rest of pixels
+                        for ( int x = 1; x < imageWidth - 1; x++, src += pixelSize, p++ )
+                        {
+                            if ( ( src[RGB.R] | src[RGB.G] | src[RGB.B] ) != 0 )
+                            {
+                                // check surrounding pixels
+                                if ( ( src[RGB.R - pixelSize] | src[RGB.G - pixelSize] | src[RGB.B - pixelSize] ) != 0 )
+                                {
+                                    // label current pixel, as the left
+                                    objectLabels[p] = objectLabels[p - 1];
+                                }
+                                else if ( ( src[RGB.R - strideP1] |
+                                            src[RGB.G - strideP1] |
+                                            src[RGB.B - strideP1] ) != 0 )
+                                {
+                                    // label current pixel, as the above left
+                                    objectLabels[p] = objectLabels[p - 1 - imageWidth];
+                                }
+                                else if ( ( src[RGB.R - stride] | src[RGB.G - stride] | src[RGB.B - stride] ) != 0 )
+                                {
+                                    // label current pixel, as the above
+                                    objectLabels[p] = objectLabels[p - imageWidth];
+                                }
+
+                                if ( ( src[RGB.R - strideM1] |
+                                       src[RGB.G - strideM1] |
+                                       src[RGB.B - strideM1] ) != 0 )
+                                {
+                                    if ( objectLabels[p] == 0 )
+                                    {
+                                        // label current pixel, as the above right
+                                        objectLabels[p] = objectLabels[p + 1 - imageWidth];
+                                    }
+                                    else
+                                    {
+                                        int l1 = objectLabels[p];
+                                        int l2 = objectLabels[p + 1 - imageWidth];
+
+                                        if ( ( l1 != l2 ) && ( map[l1] != map[l2] ) )
+                                        {
+                                            // merge
+                                            if ( map[l1] == l1 )
+                                            {
+                                                // map left value to the right
+                                                map[l1] = map[l2];
+                                            }
+                                            else if ( map[l2] == l2 )
+                                            {
+                                                // map right value to the left
+                                                map[l2] = map[l1];
+                                            }
+                                            else
+                                            {
+                                                // both values already mapped
+                                                map[map[l1]] = map[l2];
+                                                map[l1] = map[l2];
+                                            }
+
+                                            // reindex
+                                            for ( int i = 1; i <= labelsCount; i++ )
+                                            {
+                                                if ( map[i] != i )
+                                                {
+                                                    // reindex
+                                                    int j = map[i];
+                                                    while ( j != map[j] )
+                                                    {
+                                                        j = map[j];
+                                                    }
+                                                    map[i] = j;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // label the object if it is not yet
+                                if ( objectLabels[p] == 0 )
+                                {
+                                    // create new label
+                                    objectLabels[p] = ++labelsCount;
+                                }
+                            }
+                        }
+
+                        // for the last pixel of the row, we need to check
+                        // only upper and upper-left pixels
+                        if ( ( src[RGB.R] | src[RGB.G] | src[RGB.B] ) != 0 )
+                        {
+                            // check surrounding pixels
+                            if ( ( src[RGB.R - pixelSize] | src[RGB.G - pixelSize] | src[RGB.B - pixelSize] ) != 0 )
+                            {
+                                // label current pixel, as the left
+                                objectLabels[p] = objectLabels[p - 1];
+                            }
+                            else if ( ( src[RGB.R - strideP1] |
+                                        src[RGB.G - strideP1] |
+                                        src[RGB.B - strideP1] ) != 0 )
+                            {
+                                // label current pixel, as the above left
+                                objectLabels[p] = objectLabels[p - 1 - imageWidth];
+                            }
+                            else if ( ( src[RGB.R - stride] | src[RGB.G - stride] | src[RGB.B - stride] ) != 0 )
+                            {
+                                // label current pixel, as the above
+                                objectLabels[p] = objectLabels[p - imageWidth];
+                            }
+                            else
+                            {
+                                // create new label
+                                objectLabels[p] = ++labelsCount;
+                            }
+                        }
+                        src += pixelSize;
+                        ++p;
+
+                        src += offset;
+                    }
                 }
             }
 
