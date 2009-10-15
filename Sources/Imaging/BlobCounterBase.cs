@@ -60,7 +60,7 @@ namespace AForge.Imaging
     /// <para>For blobs' searcing usually all inherited classes accept binary images, which are actually
     /// grayscale thresholded images. But the exact supported format should be checked in particular class,
     /// inheriting from the base class. For blobs' extraction the class supports grayscale (8 bpp indexed)
-    /// and color images (24 bpp).</para>
+    /// and color images (24 and 32 bpp).</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -704,7 +704,9 @@ namespace AForge.Imaging
 
             if (
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
-                ( image.PixelFormat != PixelFormat.Format8bppIndexed )
+                ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppPArgb )
                 )
                 throw new UnsupportedImageFormatException( "Unsupported pixel format of the provided image." );
 
@@ -716,7 +718,7 @@ namespace AForge.Imaging
             int width  = image.Width;
             int height = image.Height;
             int srcStride = image.Stride;
-            int pixelSize = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
+            int pixelSize = Bitmap.GetPixelFormatSize( image.PixelFormat ) / 8;
 
             Blob[] objects = new Blob[objectsCount];
 
@@ -739,7 +741,7 @@ namespace AForge.Imaging
                 // create new image
                 Bitmap dstImg = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ?
                     AForge.Imaging.Image.CreateGrayscaleImage( blobImageWidth, blobImageHeight ) :
-                    new Bitmap( blobImageWidth, blobImageHeight, PixelFormat.Format24bppRgb );
+                    new Bitmap( blobImageWidth, blobImageHeight, image.PixelFormat );
 
                 // lock destination bitmap data
                 BitmapData dstData = dstImg.LockBits(
@@ -778,6 +780,11 @@ namespace AForge.Imaging
                                 {
                                     dst[1] = src[1];
                                     dst[2] = src[2];
+
+                                    if ( pixelSize > 3 )
+                                    {
+                                        dst[3] = src[3];
+                                    }
                                 }
                             }
                         }
@@ -905,7 +912,9 @@ namespace AForge.Imaging
 
             if (
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
-                ( image.PixelFormat != PixelFormat.Format8bppIndexed )
+                ( image.PixelFormat != PixelFormat.Format8bppIndexed ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppPArgb )
                 )
                 throw new UnsupportedImageFormatException( "Unsupported pixel format of the provided image." );
 
@@ -913,7 +922,7 @@ namespace AForge.Imaging
             int width  = image.Width;
             int height = image.Height;
             int srcStride = image.Stride;
-            int pixelSize = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ? 1 : 3;
+            int pixelSize = Bitmap.GetPixelFormatSize( image.PixelFormat ) / 8;
 
             int objectWidth  = blob.Rectangle.Width;
             int objectHeight = blob.Rectangle.Height;
@@ -931,7 +940,7 @@ namespace AForge.Imaging
             // create new image
             blob.Image = ( image.PixelFormat == PixelFormat.Format8bppIndexed ) ?
                 AForge.Imaging.Image.CreateGrayscaleImage( blobImageWidth, blobImageHeight ) :
-                new Bitmap( blobImageWidth, blobImageHeight, PixelFormat.Format24bppRgb );
+                new Bitmap( blobImageWidth, blobImageHeight, image.PixelFormat );
             blob.OriginalSize = extractInOriginalSize;
 
             // lock destination bitmap data
@@ -971,6 +980,11 @@ namespace AForge.Imaging
                             {
                                 dst[1] = src[1];
                                 dst[2] = src[2];
+
+                                if ( pixelSize > 3 )
+                                {
+                                    dst[3] = src[3];
+                                }
                             }
                         }
                     }
