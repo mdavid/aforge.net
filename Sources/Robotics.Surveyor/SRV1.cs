@@ -85,24 +85,26 @@ namespace AForge.Robotics.Surveyor
             /// Robot rotate right 20 degrees.
             /// </summary>
             RotateRight = '.',
-            /*
+            
             /// <summary>
             /// Increase motors' speed.
             /// </summary>
+            /// 
+            /// <remarks><note>The command does not have any effect unless another driving
+            /// command is sent. In other words, it does not increase speed of current operation,
+            /// but it affects speed of all following commands.</note></remarks>
+            ///
             IncreaseSpeed = '+',
+
             /// <summary>
             /// Decrease motors' speed.
             /// </summary>
+            /// 
+            /// <remarks><note>The command does not have any effect unless another driving
+            /// command is sent. In other words, it does not decrease speed of current operation,
+            /// but it affects speed of all following commands.</note></remarks>
+            ///
             DecreaseSpeed = '-',
-            /// <summary>
-            /// Trim motor balance toward left.
-            /// </summary>
-            BalanceTowardLeft = '<',
-            /// <summary>
-            /// Trim motor balance toward right.
-            /// </summary>
-            BalanceTowardRight = '>'
-            */
         }
 
         private IPEndPoint endPoint = null;
@@ -706,10 +708,8 @@ namespace AForge.Robotics.Surveyor
                             lastRequestFailed = false;
                         }
 
-
-                        // System.Diagnostics.Debug.WriteLine( ">> " +
-                        //    System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
-
+                        System.Diagnostics.Debug.WriteLine( ">> " +
+                            System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
 
                         // send request
                         socket.Send( cr.Request );
@@ -766,8 +766,8 @@ namespace AForge.Robotics.Surveyor
                             }
 
 
-                            // System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
-                            //     System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
+                            System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
+                                 System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
                         }
                         else
                         {
@@ -788,7 +788,7 @@ namespace AForge.Robotics.Surveyor
                     finally
                     {
                         // signal about available response to the waiting caller
-                        if ( ( !stopEvent.WaitOne( 0, true ) ) && ( cr.ResponseBuffer != null ) )
+                        if ( ( !stopEvent.WaitOne( 0, true ) ) && ( cr != null ) && ( cr.ResponseBuffer != null ) )
                         {
                             lastRequestWithReply = cr;
                             replyIsAvailable.Set( );
@@ -806,8 +806,11 @@ namespace AForge.Robotics.Surveyor
             {
                 int read = socket.Receive( buffer, 0, 100, SocketFlags.None );
 
-                if ( ( read < 100 ) && ( socket.Available == 0 ) )
+                if ( ( read < 100 ) || ( socket.Available == 0 ) )
                 {
+                    System.Diagnostics.Debug.WriteLine( "<< (" + read + ") " +
+                         System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, Math.Min( 5, read ) ) );
+
                     break;
                 }
             }
