@@ -387,6 +387,41 @@ namespace AForge.Robotics.Surveyor
         }
 
         /// <summary>
+        /// Enables fail safe mode - setting motors' speed after timeout.
+        /// </summary>
+        /// 
+        /// <param name="leftSpeed">Left motor's speed, [-127, 127].</param>
+        /// <param name="rightSpeed">Right motor's speed, [-127, 127].</param>
+        /// 
+        /// <remarks><para>In the case if fail safe mode is enabled and no commands are sent
+        /// to SRV-1 robot, motors' speed will be set to the specified values. The command
+        /// is very useful to instruct robot to stop if no other commands were sent
+        /// within 2 seconds (probably lost connection).</para></remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
+        public void EnableFailsafeMode( sbyte leftSpeed, sbyte rightSpeed )
+        {
+            SafeGetCommunicator1( ).EnableFailsafeMode( leftSpeed, rightSpeed );
+        }
+
+        /// <summary>
+        /// Disable fail safe mode.
+        /// </summary>
+        /// 
+        /// <remarks><para>The method disable fail safe mode, which was set using
+        /// <see cref="EnableFailsafeMode"/> method.</para></remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
+        public void DisableFailsafeMode( )
+        {
+            SafeGetCommunicator1( ).DisableFailsafeMode( );
+        }
+
+        /// <summary>
         /// Control motors connected to SVS board using predefined commands.
         /// </summary>
         /// 
