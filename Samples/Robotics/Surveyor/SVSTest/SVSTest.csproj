@@ -37,6 +37,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Release\AForge.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="AForge.Imaging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Release\AForge.Imaging.dll</HintPath>
+    </Reference>
     <Reference Include="AForge.Video, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Release\AForge.Video.dll</HintPath>
@@ -65,6 +69,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="StereoViewForm.resx">
+      <DependentUpon>StereoViewForm.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -77,6 +84,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="StereoViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StereoViewForm.Designer.cs">
+      <DependentUpon>StereoViewForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
