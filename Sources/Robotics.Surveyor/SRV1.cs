@@ -631,7 +631,7 @@ namespace AForge.Robotics.Surveyor
         /// equals to 127, but the sign specifies direction of motor's rotation (forward or backward).
         /// </para>
         /// 
-        /// <para><note>The method sends Mabc SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
+        /// <para><note>The method sends "Mabc" SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
         /// Control Protocol</a>), which uses 2<sup>nd</sup> and 3<sup>rd</sup> timers for
         /// controlling motors/servos.</note></para>
         /// </remarks>
@@ -657,6 +657,41 @@ namespace AForge.Robotics.Surveyor
         public void StopMotors( )
         {
             RunMotors( 0, 0, 0 );
+        }
+
+        /// <summary>
+        /// Enables fail safe mode - setting motors' speed after timeout.
+        /// </summary>
+        /// 
+        /// <param name="leftSpeed">Left motor's speed, [-127, 127].</param>
+        /// <param name="rightSpeed">Right motor's speed, [-127, 127].</param>
+        /// 
+        /// <remarks><para>In the case if fail safe mode is enabled and no commands are sent
+        /// to SRV-1 robot, motors' speed will be set to the specified values. The command
+        /// is very useful to instruct robot to stop if no other commands were sent
+        /// within 2 seconds (probably lost connection).</para></remarks>
+        ///
+        public void EnableFailsafeMode( sbyte leftSpeed, sbyte rightSpeed )
+        {
+            // check limits
+            if ( leftSpeed == -128 )
+                leftSpeed = -127;
+            if ( rightSpeed == -128 )
+                rightSpeed = -127;
+
+            Send( new byte[] { (byte) 'F', (byte) leftSpeed, (byte) rightSpeed } );
+        }
+
+        /// <summary>
+        /// Disable fail safe mode.
+        /// </summary>
+        /// 
+        /// <remarks><para>The method disable fail safe mode, which was set using
+        /// <see cref="EnableFailsafeMode"/> method.</para></remarks>
+        /// 
+        public void DisableFailsafeMode( )
+        {
+            Send( new byte[] { (byte) 'f' } );
         }
 
         /// <summary>
