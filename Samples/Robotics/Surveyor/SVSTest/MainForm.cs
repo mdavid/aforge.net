@@ -15,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using AForge.Video;
+using AForge.Controls;
 using AForge.Robotics.Surveyor;
 
 namespace SVSTest
@@ -22,6 +23,8 @@ namespace SVSTest
     public partial class MainForm : Form
     {
         private SVS svs = new SVS( );
+
+        private StereoViewForm stereoViewForm;
 
         // statistics length
         private const int statLength = 15;
@@ -44,6 +47,11 @@ namespace SVSTest
         // On form closing
         private void MainForm_FormClosing( object sender, FormClosingEventArgs e )
         {
+            if ( stereoViewForm != null )
+            {
+                stereoViewForm.Close( );
+
+            }
             Disconnect( );
         }
 
@@ -87,12 +95,14 @@ namespace SVSTest
                 svs.Connect( host );
 
                 // start left camera
-                SVS.Camera leftCamera = svs.GetLeftCamera( );
+                SRV1Camera leftCamera = svs.GetCamera( SVS.Camera.Left );
+                leftCamera.SetResolution( SRV1Camera.Resolution.Small );
                 leftCameraPlayer.VideoSource = leftCamera;
                 leftCameraPlayer.Start( );
 
                 // start right camera
-                SVS.Camera rightCamera = svs.GetRightCamera( );
+                SRV1Camera rightCamera = svs.GetCamera( SVS.Camera.Right );
+                rightCamera.SetResolution( SRV1Camera.Resolution.Small );
                 rightCameraPlayer.VideoSource = rightCamera;
                 rightCameraPlayer.Start( );
 
@@ -107,15 +117,16 @@ namespace SVSTest
             catch
             {
                 result = false;
+                Disconnect( );
             }
 
             return result;
         }
 
-        // Disconnect from Qwerk
+        // Disconnect from SVS
         private void Disconnect( )
         {
-            // if (  )
+            if ( svs.IsConnected )
             {
                 timer.Stop( );
 
@@ -180,31 +191,86 @@ namespace SVSTest
 
         private void button1_Click( object sender, EventArgs e )
         {
-            System.Diagnostics.Debug.WriteLine( svs.GetVersion( ) );
+            System.Diagnostics.Debug.WriteLine( "Version 1: " +
+                svs.GetDirectAccessToSRV1( SVS.Camera.Left ).GetVersion( ) );
+            System.Diagnostics.Debug.WriteLine( "Version 2: " +
+                svs.GetDirectAccessToSRV1( SVS.Camera.Right ).GetVersion( ) );
+
+            long runTimeInSeconds = svs.GetDirectAccessToSRV1( SVS.Camera.Left ).GetRunningTime( ) / 1000;
+            System.Diagnostics.Debug.WriteLine( "Running time 1 (mm:ss): " + ( (int) runTimeInSeconds / 60 ) + ":" + runTimeInSeconds % 60 );
+            runTimeInSeconds = svs.GetDirectAccessToSRV1( SVS.Camera.Right ).GetRunningTime( ) / 1000;
+            System.Diagnostics.Debug.WriteLine( "Running time 2 (mm:ss): " + ( (int) runTimeInSeconds / 60 ) + ":" + runTimeInSeconds % 60 );
 
             // svs.RunningTime( );
         }
 
         private void button2_Click( object sender, EventArgs e )
         {
-            if ( leftCameraPlayer.VideoSource != null )
-            {
-                SVS.Camera camera = (SVS.Camera) leftCameraPlayer.VideoSource;
-
-                camera.SetQuality( 1 );
-                camera.SetResolution( SVS.CameraResolution.Large );
-            }
+            svs.RunMotors( 70, 70, 0 );
         }
 
         private void button3_Click( object sender, EventArgs e )
         {
-            if ( leftCameraPlayer.VideoSource != null )
-            {
-                SVS.Camera camera = (SVS.Camera) leftCameraPlayer.VideoSource;
+            svs.StopMotors( );
+        }
 
-                camera.SetQuality( 5 );
-                camera.SetResolution( SVS.CameraResolution.Small );
+        private void showStereoButton_Click( object sender, EventArgs e )
+        {
+            if ( stereoViewForm == null )
+            {
+                stereoViewForm = new StereoViewForm( );
+                stereoViewForm.FormClosing += new FormClosingEventHandler( stereoViewForm_OnFormClosing );
+
+                leftCameraPlayer.NewFrame  += new VideoSourcePlayer.NewFrameHandler( stereoViewForm.OnNewLeftFrame );
+                rightCameraPlayer.NewFrame += new VideoSourcePlayer.NewFrameHandler( stereoViewForm.OnNewRightFrame );
             }
+
+            stereoViewForm.Show( );
+
+            stereoViewForm.BringToFront( );
+        }
+
+        private void stereoViewForm_OnFormClosing( object sender, FormClosingEventArgs eventArgs )
+        {
+            leftCameraPlayer.NewFrame  -= new VideoSourcePlayer.NewFrameHandler( stereoViewForm.OnNewLeftFrame );
+            rightCameraPlayer.NewFrame -= new VideoSourcePlayer.NewFrameHandler( stereoViewForm.OnNewRightFrame );
+
+            stereoViewForm.FormClosing -= new FormClosingEventHandler( stereoViewForm_OnFormClosing );
+            stereoViewForm = null;
+        }
+
+        private void button4_Click( object sender, EventArgs e )
+        {
+            // svs.ServoControl( 0x10, 0x40 );
+        }
+
+        private void button5_Click( object sender, EventArgs e )
+        {
+            svs.ControlMotors( SRV1.MotorCommand.DriveForward );
+        }
+
+        private void button6_Click( object sender, EventArgs e )
+        {
+            svs.ControlMotors( SRV1.MotorCommand.DriveBack );
+        }
+
+        private void button7_Click( object sender, EventArgs e )
+        {
+            pictureBox1.Image = svs.GetDirectAccessToSRV1( SVS.Camera.Left ).GetImage( );
+            pictureBox1.Invalidate( );
+
+            System.Diagnostics.Debug.WriteLine( "Done" );
+        }
+
+        private void button8_Click( object sender, EventArgs e )
+        {
+            //svs.ControlMotors( SRV1.MotorCommand.BalanceTowardLeft );
+        }
+
+        private void button9_Click( object sender, EventArgs e )
+        {
+            //svs.ControlMotors( SRV1.MotorCommand.BalanceTowardRight );
+
         }
     }
 }
