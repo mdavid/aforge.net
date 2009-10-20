@@ -71,29 +71,6 @@ namespace AForge.Robotics.Surveyor
         private const int bufferSize = 768 * 1024;
 
         /// <summary>
-        /// Enumeration of Surveyor SRV-1 Blackfin cameras resolutions.
-        /// </summary>
-        public enum Resolution
-        {
-            /// <summary>
-            /// 160x120
-            /// </summary>
-            Tiny = 'a',
-            /// <summary>
-            /// 320x240
-            /// </summary>
-            Small = 'b',
-            /// <summary>
-            /// 640x480
-            /// </summary>
-            Medium = 'c',
-            /// <summary>
-            /// 1280x1024
-            /// </summary>
-            Large = 'd'
-        }
-
-        /// <summary>
         /// New frame event.
         /// </summary>
         /// 
@@ -344,10 +321,7 @@ namespace AForge.Robotics.Surveyor
         ///
         public void SetQuality( byte quality )
         {
-            if ( ( quality < 1 ) || ( quality > 8 ) )
-                throw new ArgumentOutOfRangeException( "Invalid quality level was specified." );
-
-            communicator.Send( new byte[] { (byte) 'q', (byte) ( quality + (byte) '0' ) } );
+            communicator.SetQuality( quality );
         }
 
         /// <summary>
@@ -364,9 +338,21 @@ namespace AForge.Robotics.Surveyor
         /// </note></para>
         /// </remarks>
         /// 
-        public void SetResolution( Resolution resolution )
+        public void SetResolution( SRV1.VideoResolution resolution )
         {
-            communicator.Send( new byte[] { (byte) resolution } );
+            communicator.SetResolution( resolution );
+        }
+
+        /// <summary>
+        /// Flip video capture or not (for use with upside-down camera).
+        /// </summary>
+        /// 
+        /// <param name="isFlipped">Specifies if video should be flipped (<see langword="true"/>),
+        /// or not (<see langword="false"/>).</param>
+        /// 
+        public void FlipVideo( bool isFlipped )
+        {
+            communicator.FlipVideo( isFlipped );
         }
 
         /// <summary>

@@ -107,6 +107,29 @@ namespace AForge.Robotics.Surveyor
             DecreaseSpeed = '-',
         }
 
+        /// <summary>
+        /// Enumeration of Surveyor SRV-1 Blackfin cameras resolutions.
+        /// </summary>
+        public enum VideoResolution
+        {
+            /// <summary>
+            /// 160x120
+            /// </summary>
+            Tiny = 'a',
+            /// <summary>
+            /// 320x240
+            /// </summary>
+            Small = 'b',
+            /// <summary>
+            /// 640x480
+            /// </summary>
+            Medium = 'c',
+            /// <summary>
+            /// 1280x1024
+            /// </summary>
+            Large = 'd'
+        }
+
         private IPEndPoint endPoint = null;
 
         // Connecton end-point
@@ -618,7 +641,7 @@ namespace AForge.Robotics.Surveyor
         }
 
         /// <summary>
-        /// Run motors connected to the SRV-1 robot.
+        /// Run motors connected to SRV-1 robot.
         /// </summary>
         /// 
         /// <param name="leftSpeed">Left motor's speed, [-127, 127].</param>
@@ -695,6 +718,33 @@ namespace AForge.Robotics.Surveyor
         }
 
         /// <summary>
+        /// Direct servo control of SRV-1 robot.
+        /// </summary>
+        /// 
+        /// <param name="leftServo">Left servo setting, [0, 100].</param>
+        /// <param name="rightServo">Right servo setting, [0, 100].</param>
+        /// 
+        /// <remarks><para>Servo settings represent timing pulse widths ranging
+        /// from 1ms to 2ms. 0 corresponds to a 1ms pulse, 100 corresponds to a 2ms pulse,
+        /// and 50 is midrange with a 1.5ms pulse.</para>
+        /// 
+        /// <para><note>The method sends "sab" SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
+        /// Control Protocol</a>), which controls 2<sup>nd</sup> bank of servos
+        /// using 6<sup>th</sup> and 7<sup>th</sup> timers.</note></para>
+        /// </remarks>
+        /// 
+        public void ServoControl( byte leftServo, byte rightServo )
+        {
+            // check limts
+            if ( leftServo > 100 )
+                leftServo = 100;
+            if ( rightServo > 100 )
+                rightServo = 100;
+
+            Send( new byte[] { (byte) 's', leftServo, rightServo } );
+        }
+
+        /// <summary>
         /// Control SRV-1 robot's motors using predefined commands.
         /// </summary>
         /// 
@@ -707,6 +757,63 @@ namespace AForge.Robotics.Surveyor
         public void ControlMotors( MotorCommand command )
         {
             Send( new byte[] { (byte) command } );
+        }
+
+        /// <summary>
+        /// Set video quality.
+        /// </summary>
+        /// 
+        /// <param name="quality">Video quality to set, [1, 8].</param>
+        ///
+        /// <remarks><para>The method sets video quality, which is specified in [1, 8] range - 1 is
+        /// the highest quality level, 8 is the lowest quality level.</para>
+        /// 
+        /// <para><note>Setting higher quality level and <see cref="SetResolution">resolution</see>
+        /// may increase delays for other requests sent to SRV-1. So if
+        /// robot is used not only for video, but also for controlling servos/motors, and higher
+        /// response level is required, then do not set very high quality and resolution.
+        /// </note></para>
+        /// </remarks>
+        /// 
+        /// <exception cref="ArgumentOutOfRangeException">Invalid quality level was specified.</exception>
+        ///
+        public void SetQuality( byte quality )
+        {
+            if ( ( quality < 1 ) || ( quality > 8 ) )
+                throw new ArgumentOutOfRangeException( "Invalid quality level was specified." );
+
+            Send( new byte[] { (byte) 'q', (byte) ( quality + (byte) '0' ) } );
+        }
+
+        /// <summary>
+        /// Set video resolution.
+        /// </summary>
+        /// 
+        /// <param name="resolution">Video resolution to set.</param>
+        /// 
+        /// <remarks>
+        /// <para><note>Setting higher <see cref="SetQuality">quality level</see> and resolution
+        /// may increase delays for other requests sent to SRV-1. So if
+        /// robot is used not only for video, but also for controlling servos/motors, and higher
+        /// response level is required, then do not set very high quality and resolution.
+        /// </note></para>
+        /// </remarks>
+        /// 
+        public void SetResolution( VideoResolution resolution )
+        {
+            Send( new byte[] { (byte) resolution } );
+        }
+
+        /// <summary>
+        /// Flip video capture or not (for use with upside-down camera).
+        /// </summary>
+        /// 
+        /// <param name="isFlipped">Specifies if video should be flipped (<see langword="true"/>),
+        /// or not (<see langword="false"/>).</param>
+        /// 
+        public void FlipVideo( bool isFlipped )
+        {
+            Send( new byte[] { (byte) ( ( isFlipped ) ? 'y' : 'Y' ) } );
         }
 
         // portion size to read at once
@@ -743,8 +850,8 @@ namespace AForge.Robotics.Surveyor
                             lastRequestFailed = false;
                         }
 
-                        System.Diagnostics.Debug.WriteLine( ">> " +
-                            System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
+                        //System.Diagnostics.Debug.WriteLine( ">> " +
+                        //    System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
 
                         // send request
                         socket.Send( cr.Request );
@@ -801,8 +908,8 @@ namespace AForge.Robotics.Surveyor
                             }
 
 
-                            System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
-                                 System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
+                            //System.Diagnostics.Debug.WriteLine( "<< (" + cr.BytesRead + ") " +
+                            //     System.Text.ASCIIEncoding.ASCII.GetString( cr.ResponseBuffer, 0, Math.Min( 5, cr.BytesRead ) ) );
                         }
                         else
                         {
@@ -843,8 +950,8 @@ namespace AForge.Robotics.Surveyor
 
                 if ( ( read < 100 ) || ( socket.Available == 0 ) )
                 {
-                    System.Diagnostics.Debug.WriteLine( "<< (" + read + ") " +
-                         System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, Math.Min( 5, read ) ) );
+                    //System.Diagnostics.Debug.WriteLine( "<< (" + read + ") " +
+                    //     System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, Math.Min( 5, read ) ) );
 
                     break;
                 }
