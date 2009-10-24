@@ -1,5 +1,5 @@
-// AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
 // Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
@@ -27,7 +27,7 @@ namespace AForge.Imaging
     {
         // blob's image
         private Bitmap image;
-        // blob's size - as original image or not
+        // blob's image size - as original image or not
         private bool originalSize = false;
 
         // blob's rectangle in the original image
@@ -67,6 +67,10 @@ namespace AForge.Imaging
         /// <summary>
         /// Blob's rectangle in the original image.
         /// </summary>
+        /// 
+        /// <remarks><para>The property specifies position of the blob in the original image
+        /// and its size.</para></remarks>
+        /// 
         public Rectangle Rectangle
         {
             get { return rect; }
@@ -78,6 +82,7 @@ namespace AForge.Imaging
         public int ID
         {
             get { return id; }
+            internal set { id = value; }
         }
 
         /// <summary>
@@ -91,29 +96,18 @@ namespace AForge.Imaging
         /// image may be extracted later using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob, bool )"/>
         /// or <see cref="BlobCounterBase.ExtractBlobsImage( BitmapData, Blob, bool )"/> method.</para></remarks>
         /// 
-        public Blob( int id, Rectangle rect )
+        internal Blob( int id, Rectangle rect )
         {
             this.id   = id;
             this.rect = rect;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Blob"/> class.
-        /// </summary>
-        /// 
-        /// <param name="id">Blob's ID in the original image.</param>
-        /// <param name="rect">Blob's rectangle on the original image.</param>
-        /// <param name="image">Blob's image.</param>
-        /// <param name="originalSize">Specifies blob's <paramref name="image"/> size:
-        /// <see langword="true"/> size of original image, <see langword="false"/> size of
-        /// blob only.</param>
-        /// 
-        public Blob( int id, Rectangle rect, Bitmap image, bool originalSize )
+        // Copy constructur
+        internal Blob( Blob source )
         {
-            this.id    = id;
-            this.rect  = rect;
-            this.image = image;
-            this.originalSize = originalSize;
+            // copy everything except image
+            id   = source.id;
+            rect = source.rect;
         }
     }
 }
