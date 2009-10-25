@@ -1,3 +1,4 @@
+// AForge Image Processing Library
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
