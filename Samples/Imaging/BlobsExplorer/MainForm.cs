@@ -1,10 +1,20 @@
-﻿using System;
+﻿// Blobs Browser sample application
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
+//
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Resources;
+using System.Reflection;
 
 using AForge.Imaging;
 
@@ -15,6 +25,15 @@ namespace BlobsExplorer
         public MainForm( )
         {
             InitializeComponent( );
+
+            highlightTypeCombo.SelectedIndex = 0;
+            showRectangleAroundSelectionCheck.Checked = blobsBrowser.ShowRectangleAroundSelection;
+        }
+
+        // On loading of the form
+        private void MainForm_Load( object sender, EventArgs e )
+        {
+            LoadDemo( );
         }
 
         // Exit from application
@@ -52,6 +71,39 @@ namespace BlobsExplorer
         {
             propertyGrid.SelectedObject = blob;
             propertyGrid.ExpandAllGridItems( );
+        }
+
+        // Load demo image
+        private void loaddemoImageToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            LoadDemo( );
+        }
+
+        private void LoadDemo( )
+        {
+            // load arrow bitmap
+            Assembly assembly = this.GetType( ).Assembly;
+            Bitmap image = new Bitmap( assembly.GetManifestResourceStream( "BlobsExplorer.demo.png" ) );
+            ProcessImage( image );
+        }
+
+        // Show about for,
+        private void aboutToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            AboutForm form = new AboutForm( );
+
+            form.ShowDialog( );
+        }
+
+        // Change type of blobs' highlighting
+        private void highlightTypeCombo_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            blobsBrowser.Highlighting = (BlobsBrowser.HightlightType) highlightTypeCombo.SelectedIndex;
+        }
+
+        private void showRectangleAroundSelectionCheck_CheckedChanged( object sender, EventArgs e )
+        {
+            blobsBrowser.ShowRectangleAroundSelection = showRectangleAroundSelectionCheck.Checked;
         }
     }
 }
