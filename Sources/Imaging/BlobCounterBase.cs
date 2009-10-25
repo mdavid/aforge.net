@@ -133,6 +133,10 @@ namespace AForge.Imaging
         /// <summary>
         /// Objects count.
         /// </summary>
+        /// 
+        /// <remarks><para>Number of objects (blobs) found by <see cref="ProcessImage(Bitmap)"/> method.
+        /// </para></remarks>
+        /// 
         public int ObjectsCount
         {
             get { return objectsCount; }
