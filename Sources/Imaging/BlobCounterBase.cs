@@ -33,9 +33,15 @@ namespace AForge.Imaging
         None,
 
         /// <summary>
-        /// Objects are sorted by size in descending order (big objects go first).
+        /// Objects are sorted by size in descending order (bigger objects go first).
+        /// Size is calculated as <b>Width * Height</b>.
         /// </summary>
         Size,
+
+        /// <summary>
+        /// Objects are sorted by area in descending order (bigger objects go first).
+        /// </summary>
+        Area,
 
         /// <summary>
         /// Objects are sorted by Y coordinate, then by X coordinate in ascending order
@@ -1094,6 +1100,10 @@ namespace AForge.Imaging
             int[] x2 = new int[objectsCount + 1];
             int[] y2 = new int[objectsCount + 1];
 
+            int[] area = new int[objectsCount + 1];
+            int[] xc = new int[objectsCount + 1];
+            int[] yc = new int[objectsCount + 1];
+
             for ( int j = 1; j <= objectsCount; j++ )
             {
                 x1[j] = imageWidth;
@@ -1130,6 +1140,10 @@ namespace AForge.Imaging
                     {
                         y2[label] = y;
                     }
+
+                    area[label]++;
+                    xc[label] += x;
+                    yc[label] += y;
                 }
             }
 
@@ -1138,7 +1152,12 @@ namespace AForge.Imaging
 
             for ( int j = 1; j <= objectsCount; j++ )
             {
-                blobs.Add( new Blob( j, new Rectangle( x1[j], y1[j], x2[j] - x1[j] + 1, y2[j] - y1[j] + 1 ) ) );
+                Blob blob = new Blob( j, new Rectangle( x1[j], y1[j], x2[j] - x1[j] + 1, y2[j] - y1[j] + 1 ) );
+                blob.Area = area[j];
+                blob.Fullness = (double) area[j] / ( ( x2[j] - x1[j] + 1 ) * ( y2[j] - y1[j] + 1 ) );
+                blob.CenterOfGravity = new IntPoint( xc[j] / area[j], yc[j] / area[j] );
+
+                blobs.Add( blob );
             }
         }
 
@@ -1152,25 +1171,28 @@ namespace AForge.Imaging
                 this.order = order;
             }
 
-            public int Compare( Blob x, Blob y )
+            public int Compare( Blob a, Blob b )
             {
-                Rectangle xRect = x.Rectangle;
-                Rectangle yRect = y.Rectangle;
+                Rectangle aRect = a.Rectangle;
+                Rectangle bRect = b.Rectangle;
 
                 switch ( order )
                 {
                     case ObjectsOrder.Size: // sort by size
 
                         // the order is changed to descending
-                        return ( yRect.Width * yRect.Height - xRect.Width * xRect.Height );
+                        return ( bRect.Width * bRect.Height - aRect.Width * aRect.Height );
+
+                    case ObjectsOrder.Area: // sort by area
+                        return b.Area - a.Area;
 
                     case ObjectsOrder.YX:   // YX order
 
-                        return ( ( xRect.Y * 100000 + xRect.X ) - ( yRect.Y * 100000 + yRect.X ) );
+                        return ( ( aRect.Y * 100000 + aRect.X ) - ( bRect.Y * 100000 + bRect.X ) );
 
                     case ObjectsOrder.XY:   // XY order
 
-                        return ( ( xRect.X * 100000 + xRect.Y ) - ( yRect.X * 100000 + yRect.Y ) );
+                        return ( ( aRect.X * 100000 + aRect.Y ) - ( bRect.X * 100000 + bRect.Y ) );
                 }
                 return 0;
             }
