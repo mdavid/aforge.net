@@ -10,6 +10,7 @@ namespace AForge.Imaging
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using AForge;
 
     /// <summary>
     /// Image's blob.
@@ -34,6 +35,12 @@ namespace AForge.Imaging
         private Rectangle rect;
         // blob's ID in the original image
         private int id;
+        // area of the blob
+        private int area;
+        // center of gravity
+        private IntPoint cog;
+        // fullness of the blob ( area / ( width * height ) )
+        private double fullness;
 
         /// <summary>
         /// Blob's image.
@@ -86,6 +93,49 @@ namespace AForge.Imaging
         }
 
         /// <summary>
+        /// Blob's area.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property equals to blob's area measured in number of pixels
+        /// contained by the blob.</para></remarks>
+        /// 
+        public int Area
+        {
+            get { return area; }
+            internal set { area = value; }
+        }
+
+        /// <summary>
+        /// Blob's fullness, [0, 1].
+        /// </summary>
+        /// 
+        /// <remarks><para>The property equals to blob's fullness, which is calculated
+        /// as <b>Area / ( Width * Height )</b>. If it equals to <b>1</b>, then
+        /// it means that entire blob's rectangle is filled by blob's pixel (no
+        /// blank areas), which is true only for rectangles. If it equals to <b>0.5</b>,
+        /// for example, then it means that only half of the bounding rectangle is filled
+        /// by blob's pixels.</para></remarks>
+        /// 
+        public double Fullness
+        {
+            get { return fullness; }
+            internal set { fullness = value; }
+        }
+
+        /// <summary>
+        /// Blob's center of gravity point.
+        /// </summary>
+        /// 
+        /// <remarks><para>The property keeps center of gravity point, which is calculated as
+        /// mean value of X and Y coordinates of blob's points.</para></remarks>
+        /// 
+        public IntPoint CenterOfGravity
+        {
+            get { return cog; }
+            internal set { cog = value; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Blob"/> class.
         /// </summary>
         /// 
@@ -108,6 +158,9 @@ namespace AForge.Imaging
             // copy everything except image
             id   = source.id;
             rect = source.rect;
+            cog  = source.cog;
+            area = source.area;
+            fullness = source.fullness;
         }
     }
 }
