@@ -106,5 +106,16 @@ namespace AForge
         {
             return new DoublePoint( p1.X + p2.X, p1.Y + p2.Y );
         }
+
+        /// <summary>
+        /// Get string representation of the class.
+        /// </summary>
+        /// 
+        /// <returns>Returns string, which contains values of the point in readable form.</returns>
+        ///
+        public override string ToString( )
+        {
+            return string.Format( "{0}, {1}", X, Y );
+        }
     }
 }
