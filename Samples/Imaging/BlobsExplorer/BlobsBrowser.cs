@@ -1,4 +1,12 @@
-﻿using System;
+﻿// Blobs Browser sample application
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
+//
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -41,12 +49,13 @@ namespace BlobsExplorer
         public enum HightlightType
         {
             ConvexHull,
-            Quadrilateral,
             LeftAndRightEdges,
-            TopAndBottomEdges
+            TopAndBottomEdges,
+            Quadrilateral
         }
 
-        public HightlightType highlighting = HightlightType.Quadrilateral;
+        private HightlightType highlighting = HightlightType.Quadrilateral;
+        private bool showRectangleAroundSelection = false;
 
         public HightlightType Highlighting
         {
@@ -54,6 +63,16 @@ namespace BlobsExplorer
             set
             {
                 highlighting = value;
+                Invalidate( );
+            }
+        }
+
+        public bool ShowRectangleAroundSelection
+        {
+            get { return showRectangleAroundSelection; }
+            set
+            {
+                showRectangleAroundSelection = value;
                 Invalidate( );
             }
         }
@@ -70,6 +89,13 @@ namespace BlobsExplorer
         // Set image to display by the control
         public int SetImage( Bitmap image )
         {
+            leftEdges.Clear( );
+            rightEdges.Clear( );
+            topEdges.Clear( );
+            bottomEdges.Clear( );
+            hulls.Clear( );
+            quadrilaterals.Clear( );
+
             this.image  = AForge.Imaging.Image.Clone( image, PixelFormat.Format24bppRgb );
             imageWidth  = this.image.Width;
             imageHeight = this.image.Height;
@@ -146,7 +172,7 @@ namespace BlobsExplorer
                 {
                     Pen pen = ( blob.ID == selectedBlobID ) ? highlightPenBold : highlightPen;
 
-                    if ( blob.ID == selectedBlobID )
+                    if ( ( showRectangleAroundSelection ) && ( blob.ID == selectedBlobID ) )
                     {
                         g.DrawRectangle( rectPen, blob.Rectangle );
                     }
