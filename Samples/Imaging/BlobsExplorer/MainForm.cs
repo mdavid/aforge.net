@@ -64,6 +64,7 @@ namespace BlobsExplorer
             int foundBlobsCount = blobsBrowser.SetImage( image );
 
             blobsCountLabel.Text = string.Format( "Found blobs' count: {0}", foundBlobsCount );
+            propertyGrid.SelectedObject = null;
         }
 
         // Blob was selected - display its information
@@ -87,7 +88,7 @@ namespace BlobsExplorer
             ProcessImage( image );
         }
 
-        // Show about for,
+        // Show about form
         private void aboutToolStripMenuItem_Click( object sender, EventArgs e )
         {
             AboutForm form = new AboutForm( );
@@ -101,6 +102,7 @@ namespace BlobsExplorer
             blobsBrowser.Highlighting = (BlobsBrowser.HightlightType) highlightTypeCombo.SelectedIndex;
         }
 
+        // Toggle displaying of rectangle around selection
         private void showRectangleAroundSelectionCheck_CheckedChanged( object sender, EventArgs e )
         {
             blobsBrowser.ShowRectangleAroundSelection = showRectangleAroundSelectionCheck.Checked;

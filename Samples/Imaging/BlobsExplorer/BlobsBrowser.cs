@@ -27,7 +27,6 @@ namespace BlobsExplorer
     {
         private Bitmap image = null;
         private int imageWidth, imageHeight;
-        // parent of the control
         private Control parent = null;
 
         private BlobCounter blobCounter = new BlobCounter( );
@@ -45,7 +44,7 @@ namespace BlobsExplorer
         // Event to notify about selected blob
         public event BlobSelectionHandler BlobSelected;
 
-        // Blobs' highlight type
+        // Blobs' highlight types enumeration
         public enum HightlightType
         {
             ConvexHull,
@@ -57,6 +56,7 @@ namespace BlobsExplorer
         private HightlightType highlighting = HightlightType.Quadrilateral;
         private bool showRectangleAroundSelection = false;
 
+        // Blobs' highlight type
         public HightlightType Highlighting
         {
             get { return highlighting; }
@@ -67,6 +67,7 @@ namespace BlobsExplorer
             }
         }
 
+        // Show rectangle around selection or not
         public bool ShowRectangleAroundSelection
         {
             get { return showRectangleAroundSelection; }
@@ -95,6 +96,8 @@ namespace BlobsExplorer
             bottomEdges.Clear( );
             hulls.Clear( );
             quadrilaterals.Clear( );
+
+            selectedBlobID = 0;
 
             this.image  = AForge.Imaging.Image.Clone( image, PixelFormat.Format24bppRgb );
             imageWidth  = this.image.Width;
@@ -298,6 +301,7 @@ namespace BlobsExplorer
             }
         }
 
+        // Convert list of AForge.NET's IntPoint to array of .NET's Point
         private Point[] PointsListToArray( List<IntPoint> list )
         {
             Point[] array = new Point[list.Count];
