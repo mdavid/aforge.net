@@ -44,6 +44,30 @@ namespace AForge.Robotics.Surveyor
             Right
         }
 
+        /// <summary>
+        /// Enumeration of SVS's servos' banks.
+        /// </summary>
+        public enum ServosBank
+        {
+            /// <summary>
+            /// Second bank of the first (<see cref="Camera.Left"/>) SRV-1 Blackfin camera,
+            /// timers 6 and 7 (marked as TMR6-1 and TMR7-1 on the SVS board).
+            /// </summary>
+            Bank1,
+
+            /// <summary>
+            /// First bank of the second (<see cref="Camera.Right"/>) SRV-1 Blackfin camera,
+            /// timers 2 and 3 (marked as TMR2-2 and TMR3-2 on the SVS board).
+            /// </summary>
+            Bank2,
+
+            /// <summary>
+            /// Second bank of the second (<see cref="Camera.Right"/>) SRV-1 Blackfin camera,
+            /// timers 6 and 7 (marked as TMR6-2 and TMR7-2 on the SVS board).
+            /// </summary>
+            Bank3
+        }
+
         // host address if connection was established
         private string hostAddress;
         // communicators used for communication with SVS
@@ -437,6 +461,130 @@ namespace AForge.Robotics.Surveyor
         public void ControlMotors( SRV1.MotorCommand command )
         {
             SafeGetCommunicator1( ).ControlMotors( command );
+        }
+
+        /// <summary>
+        /// Direct servos control of the SVS board.
+        /// </summary>
+        /// 
+        /// <param name="servosBank">SVS's servo bank to control.</param>
+        /// <param name="leftServo">Left servo setting, [0, 100].</param>
+        /// <param name="rightServo">Right servo setting, [0, 100].</param>
+        /// 
+        /// <remarks><para>The method performs servos control of the SVS board.
+        /// For <see cref="ServosBank.Bank1"/> and <see cref="ServosBank.Bank3"/>
+        /// banks it calls <see cref="SRV1.ControlServos"/> method for the corresponding
+        /// SRV-1 Blackfin camera. In the case of <see cref="ServosBank.Bank2"/>,
+        /// the method sends 'Sab' SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
+        /// Control Protocol</a>) to the second SRV-1 Blackfin camera (<see cref="Camera.Right"/>).</para>
+        /// </remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
+        public void ControlServos( ServosBank servosBank, byte leftServo, byte rightServo )
+        {
+            switch ( servosBank )
+            {
+                case ServosBank.Bank1:
+                    SafeGetCommunicator1( ).ControlServos( leftServo, rightServo );
+                    break;
+
+                case ServosBank.Bank2:
+                    // check limts
+                    if ( leftServo > 100 )
+                        leftServo = 100;
+                    if ( rightServo > 100 )
+                        rightServo = 100;
+
+                    SafeGetCommunicator2( ).Send( new byte[] { (byte) 'S', leftServo, rightServo } );
+                    break;
+
+                case ServosBank.Bank3:
+                    SafeGetCommunicator2( ).ControlServos( leftServo, rightServo );
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Ping ultrasonic ranging modules.
+        /// </summary>
+        /// 
+        /// <param name="camera">SRV-1 Blackfin camera to check ultrasonic modules values.</param>
+        /// 
+        /// <returns>Returns array of ranges (distances) obtained from ultrasonic sensors. The ranges
+        /// are measured in inches.</returns>
+        /// 
+        /// <remarks><para>The method calls <see cref="SRV1.UltrasonicPing"/> for the specified
+        /// SRV-1 Blackfin camera.</para></remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
+        /// <exception cref="ApplicationException">Failed parsing response from SVS.</exception>
+        /// 
+        public float[] UltrasonicPing( Camera camera )
+        {
+            return GetDirectAccessToSRV1( camera ).UltrasonicPing( );
+        }
+
+        /// <summary>
+        /// Set video quality for both cameras.
+        /// </summary>
+        /// 
+        /// <param name="quality">Video quality to set, [1, 8].</param>
+        ///
+        /// <remarks><para>The method sets video quality for both SVS cameras, which is specified in [1, 8] range - 1 is
+        /// the highest quality level, 8 is the lowest quality level.</para>
+        /// 
+        /// <para><note>Setting higher quality level and <see cref="SetResolution">resolution</see>
+        /// may increase delays for other requests sent to SVS. So if
+        /// robot is used not only for video, but also for controlling servos/motors, and higher
+        /// response level is required, then do not set very high quality and resolution.
+        /// </note></para>
+        /// </remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Invalid quality level was specified.</exception>
+        ///
+        public void SetQuality( byte quality )
+        {
+            SafeGetCommunicator1( ).SetQuality( quality );
+            SafeGetCommunicator2( ).SetQuality( quality );
+        }
+
+        /// <summary>
+        /// Set video resolution for both cameras.
+        /// </summary>
+        /// 
+        /// <param name="resolution">Video resolution to set.</param>
+        /// 
+        /// <remarks>
+        /// <para><note>Setting higher <see cref="SetQuality">quality level</see> and resolution
+        /// may increase delays for other requests sent to SVS. So if
+        /// robot is used not only for video, but also for controlling servos/motors, and higher
+        /// response level is required, then do not set very high quality and resolution.
+        /// </note></para>
+        /// </remarks>
+        /// 
+        public void SetResolution( SRV1.VideoResolution resolution )
+        {
+            SafeGetCommunicator1( ).SetResolution( resolution );
+            SafeGetCommunicator2( ).SetResolution( resolution );
+        }
+
+        /// <summary>
+        /// Flip video capture for both cameras or not (for use with upside-down camera).
+        /// </summary>
+        /// 
+        /// <param name="isFlipped">Specifies if video should be flipped (<see langword="true"/>),
+        /// or not (<see langword="false"/>).</param>
+        /// 
+        public void FlipVideo( bool isFlipped )
+        {
+            SafeGetCommunicator1( ).FlipVideo( isFlipped );
+            SafeGetCommunicator2( ).FlipVideo( isFlipped );
         }
 
         // Get first communicator safely
