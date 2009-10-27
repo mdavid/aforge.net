@@ -238,6 +238,8 @@ namespace AForge.Robotics.Surveyor
         /// Get SVS's camera.
         /// </summary>
         /// 
+        /// <param name="camera">SVS camera to get.</param>
+        /// 
         /// <returns>Returns <see cref="SRV1Camera"/> object, which is connected to SVS's Blackfin camera.
         /// Use <see cref="SRV1Camera.Start"/> method to start the camera and start receiving video
         /// frames from it.</returns>
@@ -568,6 +570,9 @@ namespace AForge.Robotics.Surveyor
         /// </note></para>
         /// </remarks>
         /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
+        /// 
         public void SetResolution( SRV1.VideoResolution resolution )
         {
             SafeGetCommunicator1( ).SetResolution( resolution );
@@ -580,6 +585,9 @@ namespace AForge.Robotics.Surveyor
         /// 
         /// <param name="isFlipped">Specifies if video should be flipped (<see langword="true"/>),
         /// or not (<see langword="false"/>).</param>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SVS. Connect to SVS board before using
+        /// this method.</exception>
         /// 
         public void FlipVideo( bool isFlipped )
         {

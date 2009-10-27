@@ -718,7 +718,7 @@ namespace AForge.Robotics.Surveyor
         }
 
         /// <summary>
-        /// Direct servo control of SRV-1 robot.
+        /// Direct servos control of SRV-1 robot.
         /// </summary>
         /// 
         /// <param name="leftServo">Left servo setting, [0, 100].</param>
