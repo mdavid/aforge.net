@@ -434,7 +434,7 @@ namespace AForge.Robotics.Surveyor
                 {
                     if ( VideoSourceError != null )
                     {
-                        VideoSourceError( this, new VideoSourceErrorEventArgs( "Failed receiving video frame from SVS." ) );
+                        VideoSourceError( this, new VideoSourceErrorEventArgs( "Failed receiving video frame from SRV-1." ) );
                     }
                 }
             }

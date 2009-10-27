@@ -654,7 +654,7 @@ namespace AForge.Robotics.Surveyor
         /// equals to 127, but the sign specifies direction of motor's rotation (forward or backward).
         /// </para>
         /// 
-        /// <para><note>The method sends "Mabc" SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
+        /// <para><note>The method sends 'Mabc' SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
         /// Control Protocol</a>), which uses 2<sup>nd</sup> and 3<sup>rd</sup> timers for
         /// controlling motors/servos.</note></para>
         /// </remarks>
@@ -728,12 +728,12 @@ namespace AForge.Robotics.Surveyor
         /// from 1ms to 2ms. 0 corresponds to a 1ms pulse, 100 corresponds to a 2ms pulse,
         /// and 50 is midrange with a 1.5ms pulse.</para>
         /// 
-        /// <para><note>The method sends "sab" SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
+        /// <para><note>The method sends 'sab' SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
         /// Control Protocol</a>), which controls 2<sup>nd</sup> bank of servos
         /// using 6<sup>th</sup> and 7<sup>th</sup> timers.</note></para>
         /// </remarks>
         /// 
-        public void ServoControl( byte leftServo, byte rightServo )
+        public void ControlServos( byte leftServo, byte rightServo )
         {
             // check limts
             if ( leftServo > 100 )
@@ -814,6 +814,53 @@ namespace AForge.Robotics.Surveyor
         public void FlipVideo( bool isFlipped )
         {
             Send( new byte[] { (byte) ( ( isFlipped ) ? 'y' : 'Y' ) } );
+        }
+
+        /// <summary>
+        /// Ping ultrasonic ranging modules.
+        /// </summary>
+        /// 
+        /// <returns>Returns array of ranges (distances) obtained from ultrasonic sensors. The ranges
+        /// are measured in inches.</returns>
+        /// 
+        /// <remarks><para>The method sends 'p' SRV-1 command (see <a href="http://www.surveyor.com/SRV_protocol.html">SRV-1
+        /// Control Protocol</a>), which gets values from ultrasonic ranging modules attached to
+        /// pins 27, 28, 29, 30 with trigger on pin 18. Supports Maxbotics EZ0 and EZ1 ultrasonic modules.
+        /// </para></remarks>
+        /// 
+        /// <exception cref="NotConnectedException">Not connected to SRV-1. Connect to SRV-1 before using
+        /// this method.</exception>
+        /// <exception cref="ConnectionLostException">Connection lost or communicaton failure. Try to reconnect.</exception>
+        /// <exception cref="ApplicationException">Failed parsing response from SRV-1.</exception>
+        /// 
+        public float[] UltrasonicPing( )
+        {
+            byte[] response = new byte[100];
+
+            int    read = SendAndReceive( new byte[] { (byte) 'p' }, response );
+            string str = System.Text.ASCIIEncoding.ASCII.GetString( response, 0, read );
+
+            str = str.Replace( "##ping ", "" );
+            str = str.Trim( );
+
+            // split string into separate values
+            string[] strs = str.Split( ' ' );
+
+            try
+            {
+                float[] distance = new float[4];
+
+                for ( int i = 0; i < 4; i++ )
+                {
+                    distance[i] = (float) int.Parse( strs[i] ) / 100f;
+                }
+
+                return distance;
+            }
+            catch
+            {
+                throw new ApplicationException( "Failed parsing response from SRV-1." );
+            }
         }
 
         // portion size to read at once
@@ -924,13 +971,19 @@ namespace AForge.Robotics.Surveyor
                     }
                     catch
                     {
+                        if ( lastRequestFailed )
+                        {
+                            // wait a bit if we have 2 consequent failures
+                            Thread.Sleep( 500 );
+                        }
+
                         lastRequestFailed = true;
                         cr.BytesRead = -1; // communication failure
                     }
                     finally
                     {
                         // signal about available response to the waiting caller
-                        if ( ( !stopEvent.WaitOne( 0, true ) ) && ( cr != null ) && ( cr.ResponseBuffer != null ) )
+                        if ( ( !stopEvent.WaitOne( 0, true ) ) && ( cr.ResponseBuffer != null ) )
                         {
                             lastRequestWithReply = cr;
                             replyIsAvailable.Set( );
