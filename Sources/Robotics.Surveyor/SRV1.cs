@@ -23,7 +23,44 @@ namespace AForge.Robotics.Surveyor
     /// </summary>
     ///
     /// <remarks>
+    /// <para>The class allows to manipulate with <a href="http://www.surveyor.com/SRV_info.html">Surveyor SRV-1 Blackfin Robot</a>
+    /// - getting video from its camera, manipulating motors and servos,
+    /// reading ultrasonic modules' values, sending direct commands, etc.</para>
+    /// 
+    /// <para><img src="img/robotics/srv1-robot.jpg" width="240" height="216" /></para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// SRV1 srv = new SRV1( );
+    /// // connect to SRV-1 robot
+    /// srv.Connect( "169.254.0.10", 10001 );
+    /// // stop motors
+    /// srv.StopMotors( );
+    /// // set video resolution and quality
+    /// srv.SetQuality( 7 );
+    /// srv.SetResolution( SRV1.VideoResolution.Small );
+    /// // get version string
+    /// string version = srv.GetVersion( );
+    /// 
+    /// // get robot's camera
+    /// SRV1Camera camera = srv.GetCamera( );
+    /// 
+    /// // set NewFrame event handler
+    /// camera.NewFrame += new NewFrameEventHandler( video_NewFrame );
+    /// // start the video source
+    /// camera.Start( );
+    /// // ...
+    /// 
+    /// private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
+    /// {
+    ///     // get new frame
+    ///     Bitmap bitmap = eventArgs.Frame;
+    ///     // process the frame
+    /// }
+    /// </code>
     /// </remarks>
+    /// 
+    /// <seealso cref="SRV1Camera"/>
     ///
     public class SRV1
     {

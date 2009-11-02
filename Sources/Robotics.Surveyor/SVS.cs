@@ -20,8 +20,48 @@ namespace AForge.Robotics.Surveyor
     /// </summary>
     /// 
     /// <remarks>
+    /// <para>The class allows to manipulate with <a href="http://www.surveyor.com/stereo/stereo_info.html">Surveyor SVS</a>
+    /// board (stereo vision system) - getting video from both cameras, manipulating motors and servos,
+    /// reading ultrasonic modules' values, sending direct commands, etc.</para>
     /// 
+    /// <para><img src="img/robotics/svs.jpg" width="320" height="189" /></para>
+    /// 
+    /// <para>This class essentially creates to instances of <see cref="SRV1"/> class to communicate
+    /// with both SVS's cameras (ports 10001 and 10002 are used) and directs all calls through them.</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// SVS svs = new SVS( );
+    /// // connect to SVS board
+    /// svs.Connect( "169.254.0.10" );
+    /// // stop motors
+    /// svs.StopMotors( );
+    /// // set video resolution and quality
+    /// svs.SetQuality( 7 );
+    /// svs.SetResolution( SRV1.VideoResolution.Small );
+    /// // get version string
+    /// string version = svs.GetVersion( );
+    /// 
+    /// // get left camera
+    /// SRV1Camera camera = svs.GetCamera( SVS.Camera.Left );
+    /// 
+    /// // set NewFrame event handler
+    /// camera.NewFrame += new NewFrameEventHandler( video_NewFrame );
+    /// // start the video source
+    /// camera.Start( );
+    /// // ...
+    /// 
+    /// private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
+    /// {
+    ///     // get new frame
+    ///     Bitmap bitmap = eventArgs.Frame;
+    ///     // process the frame
+    /// }
+    /// </code>
     /// </remarks>
+    /// 
+    /// <seealso cref="SRV1Camera"/>
+    /// <seealso cref="SRV1"/>
     /// 
     public partial class SVS
     {
