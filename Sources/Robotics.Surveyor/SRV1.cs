@@ -949,37 +949,70 @@ namespace AForge.Robotics.Surveyor
                             cr.BytesRead = socket.Receive( cr.ResponseBuffer, 0, bytesToRead, SocketFlags.None );
 
                             // check if response contains image
-                            if ( cr.BytesRead > 10 )
+                            if ( ( cr.BytesRead > 10 ) &&
+                                 ( cr.ResponseBuffer[0] == (byte) '#' ) &&
+                                 ( cr.ResponseBuffer[1] == (byte) '#' ) &&
+                                 ( cr.ResponseBuffer[2] == (byte) 'I' ) &&
+                                 ( cr.ResponseBuffer[3] == (byte) 'M' ) &&
+                                 ( cr.ResponseBuffer[4] == (byte) 'J' ) )
                             {
-                                if (
-                                    ( cr.ResponseBuffer[0] == (byte) '#' ) &&
-                                    ( cr.ResponseBuffer[1] == (byte) '#' ) &&
-                                    ( cr.ResponseBuffer[2] == (byte) 'I' ) &&
-                                    ( cr.ResponseBuffer[3] == (byte) 'M' ) &&
-                                    ( cr.ResponseBuffer[4] == (byte) 'J' ) )
+                                // extract image size
+                                int imageSize = System.BitConverter.ToInt32( cr.ResponseBuffer, 6 );
+
+                                bytesToRead = imageSize + 10 - cr.BytesRead;
+
+                                if ( bytesToRead > cr.ResponseBuffer.Length - cr.BytesRead )
                                 {
-                                    // extract image size
-                                    int imageSize = System.BitConverter.ToInt32( cr.ResponseBuffer, 6 );
+                                    // response buffer is too small
+                                    throw new IndexOutOfRangeException( );
+                                }
 
-                                    bytesToRead = imageSize + 10 - cr.BytesRead;
+                                // read the rest
+                                while ( !stopEvent.WaitOne( 0, true ) )
+                                {
+                                    int read = socket.Receive( cr.ResponseBuffer, cr.BytesRead,
+                                        Math.Min( readSize, bytesToRead ), SocketFlags.None );
 
-                                    if ( bytesToRead > cr.ResponseBuffer.Length - cr.BytesRead )
+                                    cr.BytesRead += read;
+                                    bytesToRead  -= read;
+
+                                    if ( bytesToRead == 0 )
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                if ( ( cr.BytesRead >= 2 ) &&
+                                     ( cr.ResponseBuffer[0] == (byte) '#' ) &&
+                                     ( cr.ResponseBuffer[1] == (byte) '#' ) )
+                                {
+                                    int bytesChecked = 2;
+
+                                    while ( cr.BytesRead != cr.ResponseBuffer.Length )
                                     {
-                                        // response buffer is too small
-                                        throw new IndexOutOfRangeException( );
-                                    }
+                                        // ensure we got end of line for variable length replies
+                                        bool endLineWasFound = false;
 
-                                    // read the rest
-                                    while ( !stopEvent.WaitOne( 0, true ) )
-                                    {
-                                        int read = socket.Receive( cr.ResponseBuffer, cr.BytesRead,
-                                            Math.Min( readSize, bytesToRead ), SocketFlags.None );
+                                        for ( int n = cr.BytesRead - 1; bytesChecked < n; bytesChecked++ )
+                                        {
+                                            if ( ( ( cr.ResponseBuffer[bytesChecked]     == '\n' ) &&
+                                                   ( cr.ResponseBuffer[bytesChecked + 1] == '\r' ) ) ||
+                                                 ( ( cr.ResponseBuffer[bytesChecked]     == '\r' ) &&
+                                                   ( cr.ResponseBuffer[bytesChecked + 1] == '\n' ) ) )
+                                            {
+                                                endLineWasFound = true;
+                                                break;
+                                            }
+                                        }
 
-                                        cr.BytesRead += read;
-                                        bytesToRead  -= read;
-
-                                        if ( bytesToRead == 0 )
+                                        if ( ( endLineWasFound ) || stopEvent.WaitOne( 0, true ) )
                                             break;
+
+                                        // read more
+                                        bytesToRead = Math.Min( readSize, cr.ResponseBuffer.Length - cr.BytesRead );
+
+                                        cr.BytesRead += socket.Receive( cr.ResponseBuffer, cr.BytesRead,
+                                            readSize, SocketFlags.None );
                                     }
                                 }
                             }
@@ -1038,7 +1071,7 @@ namespace AForge.Robotics.Surveyor
             {
                 int read = socket.Receive( buffer, 0, 100, SocketFlags.None );
 
-                if ( ( read < 100 ) || ( socket.Available == 0 ) )
+                if ( socket.Available == 0 )
                 {
                     //System.Diagnostics.Debug.WriteLine( "<< (" + read + ") " +
                     //     System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, Math.Min( 5, read ) ) );
