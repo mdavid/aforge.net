@@ -814,7 +814,7 @@ namespace AForge.Robotics.Surveyor
         /// 
         /// <exception cref="ArgumentOutOfRangeException">Invalid quality level was specified.</exception>
         ///
-        public void SetQuality( byte quality )
+        public void SetQuality( int quality )
         {
             if ( ( quality < 1 ) || ( quality > 8 ) )
                 throw new ArgumentOutOfRangeException( "Invalid quality level was specified." );
@@ -836,8 +836,15 @@ namespace AForge.Robotics.Surveyor
         /// </note></para>
         /// </remarks>
         /// 
+        /// <exception cref="ArgumentOutOfRangeException">Invalid resolution was specified.</exception>
+        ///
         public void SetResolution( VideoResolution resolution )
         {
+            if ( !Enum.IsDefined( typeof( VideoResolution ), resolution ) )
+            {
+                throw new ArgumentException( "Invalid resolution was specified." );
+            }
+
             Send( new byte[] { (byte) resolution } );
         }
 
@@ -934,8 +941,11 @@ namespace AForge.Robotics.Surveyor
                             lastRequestFailed = false;
                         }
 
-                        //System.Diagnostics.Debug.WriteLine( ">> " +
-                        //    System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
+                        if ( cr.Request[0] != (byte) 'I' )
+                        {
+                            System.Diagnostics.Debug.WriteLine( ">> " +
+                                System.Text.ASCIIEncoding.ASCII.GetString( cr.Request ) );
+                        }
 
                         // send request
                         socket.Send( cr.Request );
@@ -1073,8 +1083,8 @@ namespace AForge.Robotics.Surveyor
 
                 if ( socket.Available == 0 )
                 {
-                    //System.Diagnostics.Debug.WriteLine( "<< (" + read + ") " +
-                    //     System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, Math.Min( 5, read ) ) );
+                    System.Diagnostics.Debug.WriteLine( "<< (" + read + ") " +
+                         System.Text.ASCIIEncoding.ASCII.GetString( buffer, 0, Math.Min( 100, read ) ) );
 
                     break;
                 }
