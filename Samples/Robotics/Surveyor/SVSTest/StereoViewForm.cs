@@ -1,4 +1,12 @@
-﻿using System;
+﻿// Surveyor SVS test application
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
+//
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,7 +31,7 @@ namespace SVSTest
 
         private StereoAnaglyph stereoFilter = new StereoAnaglyph( );
 
-        bool needToExit = false;
+        private bool needToExit = false;
 
         public StereoViewForm( )
         {
@@ -47,6 +55,7 @@ namespace SVSTest
             backgroundThread.Join( );
         }
 
+        // New left frame has arrived
         public void OnNewLeftFrame( object sender, ref Bitmap image )
         {
             lock ( this )
@@ -60,6 +69,7 @@ namespace SVSTest
             }
         }
 
+        // New right frame has arrived
         public void OnNewRightFrame( object sender, ref Bitmap image )
         {
             lock ( this )
@@ -83,25 +93,51 @@ namespace SVSTest
                 if ( needToExit )
                     break;
 
+                if ( ( leftFrame.Width  != pictureBox.Width - 2 ) ||
+                     ( leftFrame.Height != pictureBox.Height - 2 ) )
+                {
+                    UpdateWindowSize( );
+                }
+
                 lock ( this )
                 {
-                    //leftFrame.Save( "d:\\l.bmp", System.Drawing.Imaging.ImageFormat.Bmp );
-                    //rightFrame.Save( "d:\\r.bmp", System.Drawing.Imaging.ImageFormat.Bmp );
-
-                    Image old = pictureBox.Image;
-
-                    stereoFilter.OverlayImage = rightFrame;
-                    pictureBox.Image = stereoFilter.Apply( leftFrame );
-                    pictureBox.Invalidate( );
-
-                    if ( old != null )
+                    try
                     {
-                        old.Dispose( );
+                        Image old = pictureBox.Image;
+
+                        // build stereo anaglyph
+                        stereoFilter.OverlayImage = rightFrame;
+                        pictureBox.Image = stereoFilter.Apply( leftFrame );
+                        pictureBox.Invalidate( );
+
+                        if ( old != null )
+                        {
+                            old.Dispose( );
+                        }
+                    }
+                    catch
+                    {
                     }
                 }
 
                 leftFrameIsAvailable.Reset( );
                 rightFrameIsAvailable.Reset( );
+            }
+        }
+
+        private delegate void UpdateWindowSizeCallback( );
+
+        // Update size of the window, so it shows pictures without rescaling
+        private void UpdateWindowSize( )
+        {
+            if ( InvokeRequired )
+            {
+                Invoke( new UpdateWindowSizeCallback( UpdateWindowSize ) );
+            }
+            else
+            {
+                this.Size = new Size( leftFrame.Width + 30, rightFrame.Height + 48 );
+                pictureBox.Size = new Size( leftFrame.Width + 2, rightFrame.Height + 2 );
             }
         }
     }

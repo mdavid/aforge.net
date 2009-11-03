@@ -590,7 +590,7 @@ namespace AForge.Robotics.Surveyor
         /// this method.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Invalid quality level was specified.</exception>
         ///
-        public void SetQuality( byte quality )
+        public void SetQuality( int quality )
         {
             SafeGetCommunicator1( ).SetQuality( quality );
             SafeGetCommunicator2( ).SetQuality( quality );

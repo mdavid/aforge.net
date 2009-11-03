@@ -43,22 +43,20 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox( );
             this.rightCameraPlayer = new AForge.Controls.VideoSourcePlayer( );
             this.timer = new System.Windows.Forms.Timer( this.components );
-            this.button1 = new System.Windows.Forms.Button( );
-            this.button2 = new System.Windows.Forms.Button( );
-            this.button3 = new System.Windows.Forms.Button( );
             this.showStereoButton = new System.Windows.Forms.Button( );
-            this.button4 = new System.Windows.Forms.Button( );
-            this.button5 = new System.Windows.Forms.Button( );
-            this.button6 = new System.Windows.Forms.Button( );
-            this.pictureBox1 = new System.Windows.Forms.PictureBox( );
-            this.button7 = new System.Windows.Forms.Button( );
-            this.button8 = new System.Windows.Forms.Button( );
-            this.button9 = new System.Windows.Forms.Button( );
+            this.groupBox4 = new System.Windows.Forms.GroupBox( );
+            this.resolutionCombo = new System.Windows.Forms.ComboBox( );
+            this.label3 = new System.Windows.Forms.Label( );
+            this.qualityCombo = new System.Windows.Forms.ComboBox( );
+            this.label2 = new System.Windows.Forms.Label( );
+            this.groupBox5 = new System.Windows.Forms.GroupBox( );
+            this.srvDriverControl = new SVSTest.SrvDriverControl( );
             this.groupBox1.SuspendLayout( );
             this.statusStrip.SuspendLayout( );
             this.groupBox2.SuspendLayout( );
             this.groupBox3.SuspendLayout( );
-            ( (System.ComponentModel.ISupportInitialize) ( this.pictureBox1 ) ).BeginInit( );
+            this.groupBox4.SuspendLayout( );
+            this.groupBox5.SuspendLayout( );
             this.SuspendLayout( );
             // 
             // groupBox1
@@ -118,9 +116,9 @@
             this.statusLabel,
             this.versionLabel,
             this.fpsLabel} );
-            this.statusStrip.Location = new System.Drawing.Point( 0, 459 );
+            this.statusStrip.Location = new System.Drawing.Point( 0, 362 );
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size( 858, 22 );
+            this.statusStrip.Size = new System.Drawing.Size( 1032, 22 );
             this.statusStrip.TabIndex = 3;
             // 
             // statusLabel
@@ -153,7 +151,7 @@
                         | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom ) ) );
             this.fpsLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenInner;
             this.fpsLabel.Name = "fpsLabel";
-            this.fpsLabel.Size = new System.Drawing.Size( 393, 17 );
+            this.fpsLabel.Size = new System.Drawing.Size( 567, 17 );
             this.fpsLabel.Spring = true;
             this.fpsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -162,7 +160,7 @@
             this.groupBox2.Controls.Add( this.leftCameraPlayer );
             this.groupBox2.Location = new System.Drawing.Point( 10, 75 );
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size( 342, 272 );
+            this.groupBox2.Size = new System.Drawing.Size( 342, 275 );
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Left Camera View";
@@ -182,7 +180,7 @@
             this.groupBox3.Controls.Add( this.rightCameraPlayer );
             this.groupBox3.Location = new System.Drawing.Point( 360, 75 );
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size( 342, 272 );
+            this.groupBox3.Size = new System.Drawing.Size( 342, 275 );
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Right Camera View";
@@ -202,130 +200,106 @@
             this.timer.Interval = 1000;
             this.timer.Tick += new System.EventHandler( this.timer_Tick );
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point( 302, 374 );
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size( 75, 23 );
-            this.button1.TabIndex = 6;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler( this.button1_Click );
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point( 16, 374 );
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size( 75, 23 );
-            this.button2.TabIndex = 7;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler( this.button2_Click );
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point( 110, 374 );
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size( 75, 23 );
-            this.button3.TabIndex = 8;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler( this.button3_Click );
-            // 
             // showStereoButton
             // 
-            this.showStereoButton.Location = new System.Drawing.Point( 360, 32 );
+            this.showStereoButton.Location = new System.Drawing.Point( 275, 24 );
             this.showStereoButton.Name = "showStereoButton";
-            this.showStereoButton.Size = new System.Drawing.Size( 152, 23 );
+            this.showStereoButton.Size = new System.Drawing.Size( 55, 23 );
             this.showStereoButton.TabIndex = 9;
-            this.showStereoButton.Text = "Show &Stereo Anaglyph";
+            this.showStereoButton.Text = "&Stereo";
             this.showStereoButton.UseVisualStyleBackColor = true;
             this.showStereoButton.Click += new System.EventHandler( this.showStereoButton_Click );
             // 
-            // button4
+            // groupBox4
             // 
-            this.button4.Location = new System.Drawing.Point( 492, 374 );
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size( 75, 23 );
-            this.button4.TabIndex = 10;
-            this.button4.Text = "button4";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler( this.button4_Click );
+            this.groupBox4.Controls.Add( this.resolutionCombo );
+            this.groupBox4.Controls.Add( this.showStereoButton );
+            this.groupBox4.Controls.Add( this.label3 );
+            this.groupBox4.Controls.Add( this.qualityCombo );
+            this.groupBox4.Controls.Add( this.label2 );
+            this.groupBox4.Location = new System.Drawing.Point( 360, 10 );
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size( 342, 60 );
+            this.groupBox4.TabIndex = 10;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Video settings";
             // 
-            // button5
+            // resolutionCombo
             // 
-            this.button5.Location = new System.Drawing.Point( 16, 415 );
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size( 75, 23 );
-            this.button5.TabIndex = 11;
-            this.button5.Text = "Forward";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler( this.button5_Click );
+            this.resolutionCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.resolutionCombo.FormattingEnabled = true;
+            this.resolutionCombo.Items.AddRange( new object[] {
+            "160x120",
+            "320x240",
+            "640x480"} );
+            this.resolutionCombo.Location = new System.Drawing.Point( 195, 25 );
+            this.resolutionCombo.Name = "resolutionCombo";
+            this.resolutionCombo.Size = new System.Drawing.Size( 70, 21 );
+            this.resolutionCombo.TabIndex = 3;
+            this.resolutionCombo.SelectedIndexChanged += new System.EventHandler( this.resolutionCombo_SelectedIndexChanged );
             // 
-            // button6
+            // label3
             // 
-            this.button6.Location = new System.Drawing.Point( 110, 415 );
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size( 75, 23 );
-            this.button6.TabIndex = 12;
-            this.button6.Text = "Backward";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler( this.button6_Click );
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point( 135, 28 );
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size( 60, 13 );
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Resolution:";
             // 
-            // pictureBox1
+            // qualityCombo
             // 
-            this.pictureBox1.Location = new System.Drawing.Point( 635, 374 );
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size( 189, 64 );
-            this.pictureBox1.TabIndex = 13;
-            this.pictureBox1.TabStop = false;
+            this.qualityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.qualityCombo.FormattingEnabled = true;
+            this.qualityCombo.Items.AddRange( new object[] {
+            "1 - Best",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8 - Worst"} );
+            this.qualityCombo.Location = new System.Drawing.Point( 55, 25 );
+            this.qualityCombo.Name = "qualityCombo";
+            this.qualityCombo.Size = new System.Drawing.Size( 70, 21 );
+            this.qualityCombo.TabIndex = 1;
+            this.qualityCombo.SelectedIndexChanged += new System.EventHandler( this.qualityCombo_SelectedIndexChanged );
             // 
-            // button7
+            // label2
             // 
-            this.button7.Location = new System.Drawing.Point( 472, 415 );
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size( 75, 23 );
-            this.button7.TabIndex = 14;
-            this.button7.Text = "button7";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler( this.button7_Click );
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point( 10, 28 );
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size( 42, 13 );
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Quality:";
             // 
-            // button8
+            // groupBox5
             // 
-            this.button8.Location = new System.Drawing.Point( 208, 415 );
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size( 34, 23 );
-            this.button8.TabIndex = 15;
-            this.button8.Text = "+";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler( this.button8_Click );
+            this.groupBox5.Controls.Add( this.srvDriverControl );
+            this.groupBox5.Location = new System.Drawing.Point( 710, 75 );
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size( 313, 275 );
+            this.groupBox5.TabIndex = 11;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Driving control";
             // 
-            // button9
+            // srvDriverControl
             // 
-            this.button9.Location = new System.Drawing.Point( 248, 415 );
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size( 34, 23 );
-            this.button9.TabIndex = 16;
-            this.button9.Text = "-";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler( this.button9_Click );
+            this.srvDriverControl.Location = new System.Drawing.Point( 10, 20 );
+            this.srvDriverControl.Name = "srvDriverControl";
+            this.srvDriverControl.Size = new System.Drawing.Size( 291, 200 );
+            this.srvDriverControl.TabIndex = 0;
+            this.srvDriverControl.SrvDrivingCommand += new SVSTest.SrvDrivingCommandHandler( this.srvDriverControl_SrvDrivingCommand );
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size( 858, 481 );
-            this.Controls.Add( this.button9 );
-            this.Controls.Add( this.button8 );
-            this.Controls.Add( this.button7 );
-            this.Controls.Add( this.pictureBox1 );
-            this.Controls.Add( this.button6 );
-            this.Controls.Add( this.button5 );
-            this.Controls.Add( this.button4 );
-            this.Controls.Add( this.showStereoButton );
-            this.Controls.Add( this.button3 );
-            this.Controls.Add( this.button2 );
-            this.Controls.Add( this.button1 );
+            this.ClientSize = new System.Drawing.Size( 1032, 384 );
+            this.Controls.Add( this.groupBox5 );
+            this.Controls.Add( this.groupBox4 );
             this.Controls.Add( this.groupBox3 );
             this.Controls.Add( this.groupBox2 );
             this.Controls.Add( this.statusStrip );
@@ -341,7 +315,9 @@
             this.statusStrip.PerformLayout( );
             this.groupBox2.ResumeLayout( false );
             this.groupBox3.ResumeLayout( false );
-            ( (System.ComponentModel.ISupportInitialize) ( this.pictureBox1 ) ).EndInit( );
+            this.groupBox4.ResumeLayout( false );
+            this.groupBox4.PerformLayout( );
+            this.groupBox5.ResumeLayout( false );
             this.ResumeLayout( false );
             this.PerformLayout( );
 
@@ -362,18 +338,15 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private AForge.Controls.VideoSourcePlayer rightCameraPlayer;
         private System.Windows.Forms.Timer timer;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ToolStripStatusLabel versionLabel;
         private System.Windows.Forms.Button showStereoButton;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox resolutionCombo;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox qualityCombo;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private SrvDriverControl srvDriverControl;
     }
 }
 

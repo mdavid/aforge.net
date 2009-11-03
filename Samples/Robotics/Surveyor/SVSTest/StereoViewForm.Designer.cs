@@ -36,7 +36,7 @@
             // 
             this.pictureBox.BackColor = System.Drawing.SystemColors.ControlDark;
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox.Location = new System.Drawing.Point( 10, 10 );
+            this.pictureBox.Location = new System.Drawing.Point( 11, 11 );
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size( 322, 242 );
             this.pictureBox.TabIndex = 0;
