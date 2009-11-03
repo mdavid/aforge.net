@@ -114,13 +114,29 @@ namespace AForge.Robotics.Surveyor
             /// Robot drive back and left.
             /// </summary>
             DriveBackLeft = '1',
+
             /// <summary>
             /// Robot rotate left 20 degrees.
             /// </summary>
+            /// 
+            /// <remarks><para>The command may be useful only for the original
+            /// <a href="http://www.surveyor.com/SRV_info.html">Surveyor SRV-1 Blackfin Robot</a>.
+            /// For most of other robots, which may have different motors and moving base, the command
+            /// will not be accurate – will not rotate for 20 degrees.
+            /// </para></remarks>
+            /// 
             RotateLeft = '0',
+
             /// <summary>
             /// Robot rotate right 20 degrees.
             /// </summary>
+            /// 
+            /// <remarks><para>The command may be useful only for the original
+            /// <a href="http://www.surveyor.com/SRV_info.html">Surveyor SRV-1 Blackfin Robot</a>.
+            /// For most of other robots, which may have different motors and moving base, the command
+            /// will not be accurate – will not rotate for 20 degrees.
+            /// </para></remarks>
+            /// 
             RotateRight = '.',
             
             /// <summary>

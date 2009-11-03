@@ -58,6 +58,7 @@ namespace SVSTest
             disconnectButton.Enabled = enable;
             qualityCombo.Enabled     = enable;
             resolutionCombo.Enabled  = enable;
+            srvDriverControl.Enabled = enable;
         }
 
         // On "Connect" button click

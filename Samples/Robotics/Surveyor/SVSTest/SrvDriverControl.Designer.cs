@@ -37,8 +37,6 @@
             this.leftDriftButton = new System.Windows.Forms.Button( );
             this.rightButton = new System.Windows.Forms.Button( );
             this.rightDriftButton = new System.Windows.Forms.Button( );
-            this.rotateLeftButton = new System.Windows.Forms.Button( );
-            this.rotateRightButton = new System.Windows.Forms.Button( );
             this.speedUpButton = new System.Windows.Forms.Button( );
             this.slowDownButton = new System.Windows.Forms.Button( );
             this.SuspendLayout( );
@@ -49,7 +47,7 @@
             this.stopButton.Location = new System.Drawing.Point( 100, 40 );
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size( 90, 30 );
-            this.stopButton.TabIndex = 0;
+            this.stopButton.TabIndex = 4;
             this.stopButton.Text = "&Stop";
             this.stopButton.UseVisualStyleBackColor = false;
             this.stopButton.Click += new System.EventHandler( this.stopButton_Click );
@@ -69,7 +67,7 @@
             this.backwardButton.Location = new System.Drawing.Point( 100, 80 );
             this.backwardButton.Name = "backwardButton";
             this.backwardButton.Size = new System.Drawing.Size( 90, 30 );
-            this.backwardButton.TabIndex = 2;
+            this.backwardButton.TabIndex = 7;
             this.backwardButton.Text = "&Backward";
             this.backwardButton.UseVisualStyleBackColor = true;
             this.backwardButton.Click += new System.EventHandler( this.backwardButton_Click );
@@ -79,7 +77,7 @@
             this.leftButton.Location = new System.Drawing.Point( 0, 0 );
             this.leftButton.Name = "leftButton";
             this.leftButton.Size = new System.Drawing.Size( 90, 30 );
-            this.leftButton.TabIndex = 3;
+            this.leftButton.TabIndex = 0;
             this.leftButton.Text = "&Left";
             this.leftButton.UseVisualStyleBackColor = true;
             this.leftButton.Click += new System.EventHandler( this.leftButton_Click );
@@ -89,7 +87,7 @@
             this.leftBackwardButton.Location = new System.Drawing.Point( 0, 80 );
             this.leftBackwardButton.Name = "leftBackwardButton";
             this.leftBackwardButton.Size = new System.Drawing.Size( 90, 30 );
-            this.leftBackwardButton.TabIndex = 5;
+            this.leftBackwardButton.TabIndex = 6;
             this.leftBackwardButton.Text = "Left backword";
             this.leftBackwardButton.UseVisualStyleBackColor = true;
             this.leftBackwardButton.Click += new System.EventHandler( this.leftBackwardButton_Click );
@@ -99,7 +97,7 @@
             this.rightBackwardButton.Location = new System.Drawing.Point( 200, 80 );
             this.rightBackwardButton.Name = "rightBackwardButton";
             this.rightBackwardButton.Size = new System.Drawing.Size( 90, 30 );
-            this.rightBackwardButton.TabIndex = 6;
+            this.rightBackwardButton.TabIndex = 8;
             this.rightBackwardButton.Text = "Right backword";
             this.rightBackwardButton.UseVisualStyleBackColor = true;
             this.rightBackwardButton.Click += new System.EventHandler( this.rightBackwardButton_Click );
@@ -109,7 +107,7 @@
             this.leftDriftButton.Location = new System.Drawing.Point( 0, 40 );
             this.leftDriftButton.Name = "leftDriftButton";
             this.leftDriftButton.Size = new System.Drawing.Size( 90, 30 );
-            this.leftDriftButton.TabIndex = 7;
+            this.leftDriftButton.TabIndex = 3;
             this.leftDriftButton.Text = "Left drift";
             this.leftDriftButton.UseVisualStyleBackColor = true;
             this.leftDriftButton.Click += new System.EventHandler( this.leftDriftButton_Click );
@@ -119,7 +117,7 @@
             this.rightButton.Location = new System.Drawing.Point( 200, 0 );
             this.rightButton.Name = "rightButton";
             this.rightButton.Size = new System.Drawing.Size( 90, 30 );
-            this.rightButton.TabIndex = 4;
+            this.rightButton.TabIndex = 2;
             this.rightButton.Text = "&Right";
             this.rightButton.UseVisualStyleBackColor = true;
             this.rightButton.Click += new System.EventHandler( this.rightButton_Click );
@@ -129,47 +127,27 @@
             this.rightDriftButton.Location = new System.Drawing.Point( 200, 40 );
             this.rightDriftButton.Name = "rightDriftButton";
             this.rightDriftButton.Size = new System.Drawing.Size( 90, 30 );
-            this.rightDriftButton.TabIndex = 8;
+            this.rightDriftButton.TabIndex = 5;
             this.rightDriftButton.Text = "Right drift";
             this.rightDriftButton.UseVisualStyleBackColor = true;
             this.rightDriftButton.Click += new System.EventHandler( this.rightDriftButton_Click );
             // 
-            // rotateLeftButton
-            // 
-            this.rotateLeftButton.Location = new System.Drawing.Point( 0, 130 );
-            this.rotateLeftButton.Name = "rotateLeftButton";
-            this.rotateLeftButton.Size = new System.Drawing.Size( 90, 30 );
-            this.rotateLeftButton.TabIndex = 9;
-            this.rotateLeftButton.Text = "Rotate left";
-            this.rotateLeftButton.UseVisualStyleBackColor = true;
-            this.rotateLeftButton.Click += new System.EventHandler( this.rotateLeftButton_Click );
-            // 
-            // rotateRightButton
-            // 
-            this.rotateRightButton.Location = new System.Drawing.Point( 200, 130 );
-            this.rotateRightButton.Name = "rotateRightButton";
-            this.rotateRightButton.Size = new System.Drawing.Size( 90, 30 );
-            this.rotateRightButton.TabIndex = 10;
-            this.rotateRightButton.Text = "Rotate right";
-            this.rotateRightButton.UseVisualStyleBackColor = true;
-            this.rotateRightButton.Click += new System.EventHandler( this.rotateRightButton_Click );
-            // 
             // speedUpButton
             // 
-            this.speedUpButton.Location = new System.Drawing.Point( 100, 130 );
+            this.speedUpButton.Location = new System.Drawing.Point( 0, 130 );
             this.speedUpButton.Name = "speedUpButton";
             this.speedUpButton.Size = new System.Drawing.Size( 90, 30 );
-            this.speedUpButton.TabIndex = 11;
+            this.speedUpButton.TabIndex = 9;
             this.speedUpButton.Text = "Speed up";
             this.speedUpButton.UseVisualStyleBackColor = true;
             this.speedUpButton.Click += new System.EventHandler( this.speedUpButton_Click );
             // 
             // slowDownButton
             // 
-            this.slowDownButton.Location = new System.Drawing.Point( 100, 170 );
+            this.slowDownButton.Location = new System.Drawing.Point( 200, 130 );
             this.slowDownButton.Name = "slowDownButton";
             this.slowDownButton.Size = new System.Drawing.Size( 90, 30 );
-            this.slowDownButton.TabIndex = 12;
+            this.slowDownButton.TabIndex = 10;
             this.slowDownButton.Text = "Slow down";
             this.slowDownButton.UseVisualStyleBackColor = true;
             this.slowDownButton.Click += new System.EventHandler( this.slowDownButton_Click );
@@ -180,8 +158,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add( this.slowDownButton );
             this.Controls.Add( this.speedUpButton );
-            this.Controls.Add( this.rotateRightButton );
-            this.Controls.Add( this.rotateLeftButton );
             this.Controls.Add( this.rightDriftButton );
             this.Controls.Add( this.leftDriftButton );
             this.Controls.Add( this.rightBackwardButton );
@@ -192,7 +168,7 @@
             this.Controls.Add( this.forwardButton );
             this.Controls.Add( this.stopButton );
             this.Name = "SrvDriverControl";
-            this.Size = new System.Drawing.Size( 290, 200 );
+            this.Size = new System.Drawing.Size( 290, 160 );
             this.ResumeLayout( false );
 
         }
@@ -208,8 +184,6 @@
         private System.Windows.Forms.Button leftDriftButton;
         private System.Windows.Forms.Button rightButton;
         private System.Windows.Forms.Button rightDriftButton;
-        private System.Windows.Forms.Button rotateLeftButton;
-        private System.Windows.Forms.Button rotateRightButton;
         private System.Windows.Forms.Button speedUpButton;
         private System.Windows.Forms.Button slowDownButton;
     }

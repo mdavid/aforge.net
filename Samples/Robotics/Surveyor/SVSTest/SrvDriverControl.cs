@@ -82,19 +82,9 @@ namespace SVSTest
             DispatchCommand( SRV1.MotorCommand.DriveBackRight );
         }
 
-        private void rotateLeftButton_Click( object sender, EventArgs e )
-        {
-            DispatchCommand( SRV1.MotorCommand.RotateLeft );
-        }
-
         private void speedUpButton_Click( object sender, EventArgs e )
         {
             DispatchCommand( SRV1.MotorCommand.IncreaseSpeed );
-        }
-
-        private void rotateRightButton_Click( object sender, EventArgs e )
-        {
-            DispatchCommand( SRV1.MotorCommand.RotateRight );
         }
 
         private void slowDownButton_Click( object sender, EventArgs e )
