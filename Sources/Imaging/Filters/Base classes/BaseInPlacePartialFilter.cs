@@ -1,8 +1,9 @@
 ﻿// AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -49,7 +50,7 @@ namespace AForge.Imaging.Filters
         /// <remarks>The method keeps the source image unchanged and returns the
         /// the result of image processing filter as new image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public Bitmap Apply( Bitmap image )
         {
@@ -87,7 +88,7 @@ namespace AForge.Imaging.Filters
         /// of image processing filter as new image. The source image data are kept
         /// unchanged.</remarks>
         ///
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public Bitmap Apply( BitmapData imageData )
         {
@@ -114,11 +115,16 @@ namespace AForge.Imaging.Filters
             // copy image
             AForge.SystemTools.CopyUnmanagedMemory( dstData.Scan0, imageData.Scan0, imageData.Stride * height );
 
-            // process the filter
-            ProcessFilter( new UnmanagedImage( dstData ), new Rectangle( 0, 0, width, height ) );
-
-            // unlock destination images
-            dstImage.UnlockBits( dstData );
+            try
+            {
+                // process the filter
+                ProcessFilter( new UnmanagedImage( dstData ), new Rectangle( 0, 0, width, height ) );
+            }
+            finally
+            {
+                // unlock destination images
+                dstImage.UnlockBits( dstData );
+            }
 
             return dstImage;
         }
@@ -135,7 +141,7 @@ namespace AForge.Imaging.Filters
         /// <remarks>The method keeps the source image unchanged and returns the
         /// the result of image processing filter as new image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public UnmanagedImage Apply( UnmanagedImage image )
         {
@@ -165,9 +171,9 @@ namespace AForge.Imaging.Filters
         /// <see cref="FormatTransalations"/> property for information about pixel format conversions).</note></para>
         /// </remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
-        /// <exception cref="ArgumentException">Incorrect destination pixel format.</exception>
-        /// <exception cref="ArgumentException">Destination image has wrong width and/or height.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Incorrect destination pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Destination image has wrong width and/or height.</exception>
         ///
         public void Apply( UnmanagedImage sourceImage, UnmanagedImage destinationImage )
         {
@@ -177,13 +183,13 @@ namespace AForge.Imaging.Filters
             // ensure destination image has correct format
             if ( destinationImage.PixelFormat != sourceImage.PixelFormat )
             {
-                throw new ArgumentException( "Destination pixel format must be the same as pixel format of source image." );
+                throw new InvalidImagePropertiesException( "Destination pixel format must be the same as pixel format of source image." );
             }
 
             // ensure destination image has correct size
             if ( ( destinationImage.Width != sourceImage.Width ) || ( destinationImage.Height != sourceImage.Height ) )
             {
-                throw new ArgumentException( "Destination image must have the same width and height as source image." );
+                throw new InvalidImagePropertiesException( "Destination image must have the same width and height as source image." );
             }
 
             // usually stride will be the same for 2 images of the size size/format,
@@ -218,7 +224,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ApplyInPlace( Bitmap image )
         {
@@ -234,7 +240,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public void ApplyInPlace( BitmapData imageData )
         {
@@ -253,7 +259,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source unmanaged image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public void ApplyInPlace( UnmanagedImage image )
         {
@@ -273,7 +279,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ApplyInPlace( Bitmap image, Rectangle rect )
         {
@@ -303,7 +309,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public void ApplyInPlace( BitmapData imageData, Rectangle rect )
         {
@@ -320,7 +326,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ApplyInPlace( UnmanagedImage image, Rectangle rect )
         {
@@ -348,7 +354,7 @@ namespace AForge.Imaging.Filters
         private void CheckSourceFormat( PixelFormat pixelFormat )
         {
             if ( !FormatTransalations.ContainsKey( pixelFormat ) )
-                throw new ArgumentException( "Source pixel format is not supported by the filter." );
+                throw new UnsupportedImageFormatException( "Source pixel format is not supported by the filter." );
         }
     }
 }

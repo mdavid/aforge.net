@@ -1,8 +1,9 @@
 // AForge Video for Windows Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
 //
 namespace AForge.Video.VFW
 {
@@ -15,7 +16,7 @@ namespace AForge.Video.VFW
     /// 
     /// <remarks>The class provides Video for Windows and some other Win32 functions and structurs.</remarks>
     /// 
-    internal class Win32
+    internal static class Win32
     {
         /// <summary>
         /// Copy a block of memory.

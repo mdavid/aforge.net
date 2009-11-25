@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -18,16 +19,17 @@ namespace AForge.Imaging.Filters
     /// 
     /// <remarks><para>The filter assigns minimum value of surrounding pixels to each pixel of
     /// the result image. Surrounding pixels, which should be processed, are specified by
-    /// structuring element: 1 - to process the neighbor, 0 - to skip it.</para>
+    /// structuring element: 1 - to process the neighbor, -1 - to skip it.</para>
     /// 
     /// <para>The filter especially useful for binary image processing, where it removes pixels, which
     /// are not surrounded by specified amount of neighbors. It gives ability to remove noisy pixels
     /// (stand-alone pixels) or shrink objects.</para>
     /// 
+    /// <para>For processing image with 3x3 structuring element, there are different optimizations
+    /// available, like <see cref="Erosion3x3"/> and <see cref="BinaryErosion3x3"/>.</para>
+    /// 
     /// <para>The filter accepts 8 and 16 bpp grayscale images and 24 and 48 bpp
     /// color images for processing.</para>
-    /// 
-    /// <para><note>Parallelism is used – the class uses <see cref="AForge.Parallel"/> class for paralleling computations on multiple CPUs/cores. </note></para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -38,14 +40,16 @@ namespace AForge.Imaging.Filters
     /// </code>
     /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
     /// <para><b>Result image:</b></para>
-    /// <img src="img/imaging/erosion.jpg" width="480" height="361" />
+    /// <img src="img/imaging/erosion.png" width="320" height="240" />
     /// </remarks>
     /// 
     /// <seealso cref="Dilatation"/>
     /// <seealso cref="Closing"/>
     /// <seealso cref="Opening"/>
+    /// <seealso cref="Erosion3x3"/>
+    /// <seealso cref="BinaryErosion3x3"/>
     /// 
     public class Erosion : BaseUsingCopyPartialFilter
     {
@@ -145,8 +149,8 @@ namespace AForge.Imaging.Filters
                 {
                     // grayscale image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
                         byte* src = baseSrc + y * srcStride;
                         byte* dst = baseDst + y * dstStride;
@@ -198,14 +202,14 @@ namespace AForge.Imaging.Filters
                             // result pixel
                             *dst = min;
                         }
-                    } );
+                    }
                 }
                 else
                 {
                     // 24 bpp color image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
                         byte* src = baseSrc + y * srcStride;
                         byte* dst = baseDst + y * dstStride;
@@ -273,7 +277,7 @@ namespace AForge.Imaging.Filters
                             dst[RGB.G] = minG;
                             dst[RGB.B] = minB;
                         }
-                    } );
+                    }
                 }
             }
             else
@@ -295,8 +299,8 @@ namespace AForge.Imaging.Filters
                 {
                     // 16 bpp grayscale image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
                         ushort* src = baseSrc + y * srcStride;
                         ushort* dst = baseDst + y * dstStride;
@@ -348,14 +352,14 @@ namespace AForge.Imaging.Filters
                             // result pixel
                             *dst = min;
                         }
-                    } );
+                    }
                 }
                 else
                 {
                     // 48 bpp color image
 
-                    // compute each line in parallel
-                    AForge.Parallel.For( startY, stopY, delegate( int y )
+                    // compute each line
+                    for ( int y = startY; y < stopY; y++ )
                     {
                         ushort* src = baseSrc + y * srcStride;
                         ushort* dst = baseDst + y * dstStride;
@@ -423,7 +427,7 @@ namespace AForge.Imaging.Filters
                             dst[RGB.G] = minG;
                             dst[RGB.B] = minB;
                         }
-                    } );
+                    }
                 }
             }
         }

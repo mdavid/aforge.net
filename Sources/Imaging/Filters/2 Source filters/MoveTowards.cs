@@ -145,6 +145,7 @@ namespace AForge.Imaging.Filters
         {
             formatTransalations[PixelFormat.Format8bppIndexed]    = PixelFormat.Format8bppIndexed;
             formatTransalations[PixelFormat.Format24bppRgb]       = PixelFormat.Format24bppRgb;
+            formatTransalations[PixelFormat.Format32bppRgb]       = PixelFormat.Format32bppRgb;
             formatTransalations[PixelFormat.Format32bppArgb]      = PixelFormat.Format32bppArgb;
             formatTransalations[PixelFormat.Format16bppGrayScale] = PixelFormat.Format16bppGrayScale;
             formatTransalations[PixelFormat.Format48bppRgb]       = PixelFormat.Format48bppRgb;
@@ -170,6 +171,7 @@ namespace AForge.Imaging.Filters
             if (
                 ( pixelFormat == PixelFormat.Format8bppIndexed ) ||
                 ( pixelFormat == PixelFormat.Format24bppRgb ) ||
+                ( pixelFormat == PixelFormat.Format32bppRgb ) ||
                 ( pixelFormat == PixelFormat.Format32bppArgb ) )
             {
                 // initialize other variables
@@ -177,7 +179,7 @@ namespace AForge.Imaging.Filters
                     ( pixelFormat == PixelFormat.Format24bppRgb ) ? 3 : 4;
                 int lineSize  = width * pixelSize;
                 int srcOffset = image.Stride - lineSize;
-                int ovrOffser = overlay.Stride - lineSize;
+                int ovrOffset = overlay.Stride - lineSize;
 
                 // do the job
                 byte * ptr = (byte*) image.ImageData.ToPointer( );
@@ -201,7 +203,7 @@ namespace AForge.Imaging.Filters
                         }
                     }
                     ptr += srcOffset;
-                    ovr += ovrOffser;
+                    ovr += ovrOffset;
                 }
             }
             else

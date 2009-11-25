@@ -1,8 +1,9 @@
 ﻿// AForge Core Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
 //
 // Copyright © Israel Lot, 2008
 // israel.lot@gmail.com
@@ -170,6 +171,7 @@ namespace AForge
                 threadIdle[i]   = new ManualResetEvent( true );
 
                 threads[i] = new Thread( new ParameterizedThreadStart( WorkerThread ) );
+                threads[i].Name = "AForge.Parallel";
                 threads[i].IsBackground = true;
                 threads[i].Start( i );
             }

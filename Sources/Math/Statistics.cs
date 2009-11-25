@@ -1,8 +1,9 @@
 // AForge Math Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Math
@@ -17,11 +18,8 @@ namespace AForge.Math
     /// <remarks>The class represents collection of simple functions used
     /// in statistics.</remarks>
     /// 
-    public class Statistics
+    public static class Statistics
     {
-        // Private constructor to avoid instantiation
-        private Statistics( ) { }
-
         /// <summary>
         /// Calculate mean value.
         /// </summary>

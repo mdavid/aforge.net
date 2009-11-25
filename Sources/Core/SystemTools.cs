@@ -1,8 +1,9 @@
 ﻿// AForge Core Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge
@@ -19,11 +20,8 @@ namespace AForge
     /// implementation is different on different platform, like .NET and Mono.</para>
     /// </remarks>
     /// 
-    public class SystemTools
+    public static class SystemTools
     {
-        // Private constructor to avoid class instantiation
-        private SystemTools( ) { }
-
         /// <summary>
         /// Copy block of unmanaged memory.
         /// </summary>
@@ -32,7 +30,7 @@ namespace AForge
         /// <param name="src">Source pointer.</param>
         /// <param name="count">Memory block's length to copy.</param>
         /// 
-        /// <returns>Return's the value of <b>dst</b> - pointer to destination.</returns>
+        /// <returns>Return's value of <paramref name="dst"/> - pointer to destination.</returns>
         /// 
         /// <remarks><para>This function is required because of the fact that .NET does
         /// not provide any way to copy unmanaged blocks, but provides only methods to
@@ -55,7 +53,7 @@ namespace AForge
         /// <param name="src">Source pointer.</param>
         /// <param name="count">Memory block's length to copy.</param>
         /// 
-        /// <returns>Return's the value of <b>dst</b> - pointer to destination.</returns>
+        /// <returns>Return's value of <paramref name="dst"/> - pointer to destination.</returns>
         /// 
         /// <remarks><para>This function is required because of the fact that .NET does
         /// not provide any way to copy unmanaged blocks, but provides only methods to
@@ -88,6 +86,65 @@ namespace AForge
 #endif
         }
 
+        /// <summary>
+        /// Fill memory region with specified value.
+        /// </summary>
+        /// 
+        /// <param name="dst">Destination pointer.</param>
+        /// <param name="filler">Filler byte's value.</param>
+        /// <param name="count">Memory block's length to fill.</param>
+        /// 
+        /// <returns>Return's value of <paramref name="dst"/> - pointer to destination.</returns>
+        /// 
+        public static IntPtr SetUnmanagedMemory( IntPtr dst, int filler, int count )
+        {
+            unsafe
+            {
+                SetUnmanagedMemory( (byte*) dst.ToPointer( ), filler, count );
+            }
+            return dst;
+        }
+
+        /// <summary>
+        /// Fill memory region with specified value.
+        /// </summary>
+        /// 
+        /// <param name="dst">Destination pointer.</param>
+        /// <param name="filler">Filler byte's value.</param>
+        /// <param name="count">Memory block's length to fill.</param>
+        /// 
+        /// <returns>Return's value of <paramref name="dst"/> - pointer to destination.</returns>
+        /// 
+        public static unsafe byte* SetUnmanagedMemory( byte* dst, int filler, int count )
+        {
+#if !MONO
+            return memset( dst, filler, count );
+#else
+            int countUint = count >> 2;
+            int countByte = count & 3;
+
+            byte fillerByte = (byte) filler;
+            uint fiilerUint = (uint) filler | ( (uint) filler << 8 ) |
+                                              ( (uint) filler << 16 );// |
+                                              //( (uint) filler << 24 );
+
+            uint* dstUint = (uint*) dst;
+
+            while ( countUint-- != 0 )
+            {
+                *dstUint++ = fiilerUint;
+            }
+
+            byte* dstByte = (byte*) dstUint;
+
+            while ( countByte-- != 0 )
+            {
+                *dstByte++ = fillerByte;
+            }
+            return dst;
+#endif
+        }
+
 
 #if !MONO
         // Win32 memory copy function
@@ -95,6 +152,12 @@ namespace AForge
         private static unsafe extern byte* memcpy(
             byte* dst,
             byte* src,
+            int count );
+        // Win32 memory set function
+        [DllImport( "ntdll.dll" )]
+        private static unsafe extern byte* memset(
+            byte* dst,
+            int filler,
             int count );
 #endif
     }

@@ -85,7 +85,7 @@ namespace AForge.Fuzzy
     /// ...
     /// // inference section
     /// 
-    /// // Setting inputs
+    /// // setting inputs
     /// IS.SetInput( "FrontalDistance", 20 );
     /// 
     /// // getting outputs

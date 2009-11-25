@@ -1,8 +1,9 @@
 // AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -19,7 +20,7 @@ namespace AForge.Imaging
     /// caching. Caching means that memory blocks may be not freed on request, but
     /// kept for later reuse.</para></remarks>
     /// 
-    public class MemoryManager
+    public static class MemoryManager
     {
         // maximum memory blocks to cache
         private static int maximumCacheSize = 3;
@@ -163,9 +164,6 @@ namespace AForge.Imaging
             get { return minSizeToCache; }
             set { minSizeToCache = value; }
         }
-
-        // Private constructor to avoid instantiation.
-        private MemoryManager( ) { }
 
         /// <summary>
         /// Allocate unmanaged memory.

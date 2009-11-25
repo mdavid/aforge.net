@@ -37,6 +37,11 @@ namespace AForge.Imaging
         public const short B = 0;
 
         /// <summary>
+        /// Index of alpha component for ARGB images.
+        /// </summary>
+        public const short A = 3;
+
+        /// <summary>
         /// Red component.
         /// </summary>
         public byte Red;
@@ -97,7 +102,7 @@ namespace AForge.Imaging
             this.Green = color.G;
             this.Blue  = color.B;
         }
-    };
+    }
 
     /// <summary>
     /// HSL components.
@@ -150,7 +155,143 @@ namespace AForge.Imaging
             this.Saturation = saturation;
             this.Luminance  = luminance;
         }
-    };
+
+        /// <summary>
+        /// Convert from RGB to HSL color space.
+        /// </summary>
+        /// 
+        /// <param name="rgb">Source color in <b>RGB</b> color space.</param>
+        /// <param name="hsl">Destination color in <b>HSL</b> color space.</param>
+        /// 
+        /// <remarks><para>See <a href="http://en.wikipedia.org/wiki/HSI_color_space#Conversion_from_RGB_to_HSL_or_HSV">HSL and HSV Wiki</a>
+        /// for information about the algorithm to convert from RGB to HSL.</para></remarks>
+        /// 
+        public static void FromRGB( RGB rgb, HSL hsl )
+        {
+            double r = ( rgb.Red / 255.0 );
+            double g = ( rgb.Green / 255.0 );
+            double b = ( rgb.Blue / 255.0 );
+
+            double min = Math.Min( Math.Min( r, g ), b );
+            double max = Math.Max( Math.Max( r, g ), b );
+            double delta = max - min;
+
+            // get luminance value
+            hsl.Luminance = ( max + min ) / 2;
+
+            if ( delta == 0 )
+            {
+                // gray color
+                hsl.Hue = 0;
+                hsl.Saturation = 0.0;
+            }
+            else
+            {
+                // get saturation value
+                hsl.Saturation = ( hsl.Luminance <= 0.5 ) ? ( delta / ( max + min ) ) : ( delta / ( 2 - max - min ) );
+
+                // get hue value
+                double hue;
+
+                if ( r == max )
+                {
+                    hue = ( ( g - b ) / 6 ) / delta;
+                }
+                else if ( g == max )
+                {
+                    hue = ( 1.0 / 3 ) + ( ( b - r ) / 6 ) / delta; 
+                }
+                else
+                {
+                    hue = ( 2.0 / 3 ) + ( ( r - g ) / 6 ) / delta;
+                }
+
+                // correct hue if needed
+                if ( hue < 0 )
+                    hue += 1;
+                if ( hue > 1 )
+                    hue -= 1;
+
+                hsl.Hue = (int) ( hue * 360 );
+            }
+        }
+
+        /// <summary>
+        /// Convert from RGB to HSL color space.
+        /// </summary>
+        /// 
+        /// <param name="rgb">Source color in <b>RGB</b> color space.</param>
+        /// 
+        /// <returns>Returns <see cref="HSL"/> instance, which represents converted color value.</returns>
+        /// 
+        public static HSL FromRGB( RGB rgb )
+        {
+            HSL hsl = new HSL( );
+            FromRGB( rgb, hsl );
+            return hsl;
+        }
+
+        /// <summary>
+        /// Convert from HSL to RGB color space.
+        /// </summary>
+        /// 
+        /// <param name="hsl">Source color in <b>HSL</b> color space.</param>
+        /// <param name="rgb">Destination color in <b>RGB</b> color space.</param>
+        /// 
+        public static void ToRGB( HSL hsl, RGB rgb )
+        {
+            if ( hsl.Saturation == 0 )
+            {
+                // gray values
+                rgb.Red = rgb.Green = rgb.Blue = (byte) ( hsl.Luminance * 255 );
+            }
+            else
+            {
+                double v1, v2;
+                double hue = (double) hsl.Hue / 360;
+
+                v2 = ( hsl.Luminance < 0.5 ) ?
+                    ( hsl.Luminance * ( 1 + hsl.Saturation ) ) :
+                    ( ( hsl.Luminance + hsl.Saturation ) - ( hsl.Luminance * hsl.Saturation ) );
+                v1 = 2 * hsl.Luminance - v2;
+
+                rgb.Red   = (byte) ( 255 * Hue_2_RGB( v1, v2, hue + ( 1.0 / 3 ) ) );
+                rgb.Green = (byte) ( 255 * Hue_2_RGB( v1, v2, hue ) );
+                rgb.Blue  = (byte) ( 255 * Hue_2_RGB( v1, v2, hue - ( 1.0 / 3 ) ) );
+            }
+        }
+
+        /// <summary>
+        /// Convert the color to <b>RGB</b> color space.
+        /// </summary>
+        /// 
+        /// <returns>Returns <see cref="RGB"/> instance, which represents converted color value.</returns>
+        /// 
+        public RGB ToRGB( )
+        {
+            RGB rgb = new RGB( );
+            ToRGB( this, rgb );
+            return rgb;
+        }
+
+        #region Private members
+        // HSL to RGB helper routine
+        private static double Hue_2_RGB( double v1, double v2, double vH )
+        {
+            if ( vH < 0 )
+                vH += 1;
+            if ( vH > 1 )
+                vH -= 1;
+            if ( ( 6 * vH ) < 1 )
+                return ( v1 + ( v2 - v1 ) * 6 * vH );
+            if ( ( 2 * vH ) < 1 )
+                return v2;
+            if ( ( 3 * vH ) < 2 )
+                return ( v1 + ( v2 - v1 ) * ( ( 2.0 / 3 ) - vH ) * 6 );
+            return v1;
+        }
+        #endregion
+    }
 
     /// <summary>
     /// YCbCr components.
@@ -209,104 +350,6 @@ namespace AForge.Imaging
             this.Cb = Math.Max( -0.5, Math.Min( 0.5, cb ) );
             this.Cr = Math.Max( -0.5, Math.Min( 0.5, cr ) );
         }
-    }
-
-
-    /// <summary>
-    /// Converts colors from different color spaces.
-    /// </summary>
-    /// 
-    /// <remarks>The class provides static methods, which implement conversation
-    /// between <b>RGB</b> and other color spaces.</remarks>
-    /// 
-    public sealed class ColorConverter
-    {
-        // Avoid class instantiation
-        private ColorConverter( ) { }
-
-        /// <summary>
-        /// Convert from RGB to HSL color space.
-        /// </summary>
-        /// 
-        /// <param name="rgb">Source color in <b>RGB</b> color space.</param>
-        /// <param name="hsl">Destination color in <b>HSL</b> color space.</param>
-        /// 
-        public static void RGB2HSL( RGB rgb, HSL hsl )
-        {
-            double r = ( rgb.Red / 255.0 );
-            double g = ( rgb.Green / 255.0 );
-            double b = ( rgb.Blue / 255.0 );
-
-            double min = Math.Min( Math.Min( r, g ), b );
-            double max = Math.Max( Math.Max( r, g ), b );
-            double delta = max - min;
-
-            // get luminance value
-            hsl.Luminance = ( max + min ) / 2;
-
-            if ( delta == 0 )
-            {
-                // gray color
-                hsl.Hue = 0;
-                hsl.Saturation = 0.0;
-            }
-            else
-            {
-                // get saturation value
-                hsl.Saturation = ( hsl.Luminance < 0.5 ) ? ( delta / ( max + min ) ) : ( delta / ( 2 - max - min ) );
-
-                // get hue value
-                double del_r = ( ( ( max - r ) / 6 ) + ( delta / 2 ) ) / delta;
-                double del_g = ( ( ( max - g ) / 6 ) + ( delta / 2 ) ) / delta;
-                double del_b = ( ( ( max - b ) / 6 ) + ( delta / 2 ) ) / delta;
-                double hue;
-
-                if ( r == max )
-                    hue = del_b - del_g;
-                else if ( g == max )
-                    hue = ( 1.0 / 3 ) + del_r - del_b;
-                else
-                    hue = ( 2.0 / 3 ) + del_g - del_r;
-
-                // correct hue if needed
-                if ( hue < 0 )
-                    hue += 1;
-                if ( hue > 1 )
-                    hue -= 1;
-
-                hsl.Hue = (int) ( hue * 360 );
-            }
-        }
-
-        /// <summary>
-        /// Convert from HSL to RGB color space.
-        /// </summary>
-        /// 
-        /// <param name="hsl">Source color in <b>HSL</b> color space.</param>
-        /// <param name="rgb">Destination color in <b>RGB</b> color space.</param>
-        /// 
-        public static void HSL2RGB( HSL hsl, RGB rgb )
-        {
-            if ( hsl.Saturation == 0 )
-            {
-                // gray values
-                rgb.Red = rgb.Green = rgb.Blue = (byte) ( hsl.Luminance * 255 );
-            }
-            else
-            {
-                double v1, v2;
-                double hue = (double) hsl.Hue / 360;
-
-                v2 = ( hsl.Luminance < 0.5 ) ?
-                    ( hsl.Luminance * ( 1 + hsl.Saturation ) ) :
-                    ( ( hsl.Luminance + hsl.Saturation ) - ( hsl.Luminance * hsl.Saturation ) );
-                v1 = 2 * hsl.Luminance - v2;
-
-                rgb.Red   = (byte) ( 255 * Hue_2_RGB( v1, v2, hue + ( 1.0 / 3 ) ) );
-                rgb.Green = (byte) ( 255 * Hue_2_RGB( v1, v2, hue ) );
-                rgb.Blue  = (byte) ( 255 * Hue_2_RGB( v1, v2, hue - ( 1.0 / 3 ) ) );
-            }
-        }
 
         /// <summary>
         /// Convert from RGB to YCbCr color space (Rec 601-1 specification). 
@@ -315,7 +358,7 @@ namespace AForge.Imaging
         /// <param name="rgb">Source color in <b>RGB</b> color space.</param>
         /// <param name="ycbcr">Destination color in <b>YCbCr</b> color space.</param>
         /// 
-        public static void RGB2YCbCr( RGB rgb, YCbCr ycbcr )
+        public static void FromRGB( RGB rgb, YCbCr ycbcr )
         {
             double r = (double) rgb.Red / 255;
             double g = (double) rgb.Green / 255;
@@ -327,13 +370,28 @@ namespace AForge.Imaging
         }
 
         /// <summary>
+        /// Convert from RGB to YCbCr color space (Rec 601-1 specification).
+        /// </summary>
+        /// 
+        /// <param name="rgb">Source color in <b>RGB</b> color space.</param>
+        /// 
+        /// <returns>Returns <see cref="YCbCr"/> instance, which represents converted color value.</returns>
+        /// 
+        public static YCbCr FromRGB( RGB rgb )
+        {
+            YCbCr ycbcr = new YCbCr( );
+            FromRGB( rgb, ycbcr );
+            return ycbcr;
+        }
+
+        /// <summary>
         /// Convert from YCbCr to RGB color space.
         /// </summary>
         /// 
         /// <param name="ycbcr">Source color in <b>YCbCr</b> color space.</param>
         /// <param name="rgb">Destination color in <b>RGB</b> color spacs.</param>
         /// 
-        public static void YCbCr2RGB( YCbCr ycbcr, RGB rgb )
+        public static void ToRGB( YCbCr ycbcr, RGB rgb )
         {
             // don't warry about zeros. compiler will remove them
             double r = Math.Max( 0.0, Math.Min( 1.0, ycbcr.Y + 0.0000 * ycbcr.Cb + 1.4022 * ycbcr.Cr ) );
@@ -345,22 +403,17 @@ namespace AForge.Imaging
             rgb.Blue  = (byte) ( b * 255 );
         }
 
-        #region Private members
-        // HSL to RGB helper routine
-        private static double Hue_2_RGB( double v1, double v2, double vH )
+        /// <summary>
+        /// Convert the color to <b>RGB</b> color space.
+        /// </summary>
+        /// 
+        /// <returns>Returns <see cref="RGB"/> instance, which represents converted color value.</returns>
+        /// 
+        public RGB ToRGB( )
         {
-            if ( vH < 0 )
-                vH += 1;
-            if ( vH > 1 )
-                vH -= 1;
-            if ( ( 6 * vH ) < 1 )
-                return ( v1 + ( v2 - v1 ) * 6 * vH );
-            if ( ( 2 * vH ) < 1 )
-                return v2;
-            if ( ( 3 * vH ) < 2 )
-                return ( v1 + ( v2 - v1 ) * ( ( 2.0 / 3 ) - vH ) * 6 );
-            return v1;
+            RGB rgb = new RGB( );
+            ToRGB( this, rgb );
+            return rgb;
         }
-        #endregion
     }
 }

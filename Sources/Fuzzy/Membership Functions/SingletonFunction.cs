@@ -18,8 +18,8 @@ namespace AForge.Fuzzy
     /// </summary>
     /// 
     /// <remarks><para>Sometimes it is needed to represent crisp (classical) number in the fuzzy domain. Several approaches 
-    /// can be used, like adding some uncertain (fuzziness) in the original number (the number one, for instance, can be seen as a <see cref="TrapezoidalFunction">
-    /// with -0.5, 1.0 and 0.5 parameters). Another approach is to declare fuzzy singletons: fuzzy sets with only one point returning a none zero membership. </para>
+    /// can be used, like adding some uncertain (fuzziness) in the original number (the number one, for instance, can be seen as a <see cref="TrapezoidalFunction"/>
+    /// with -0.5, 1.0 and 0.5 parameters). Another approach is to declare fuzzy singletons: fuzzy sets with only one point returning a none zero membership.</para>
     /// 
     /// <para>While trapezoidal and half trapezoidal are classic functions used in fuzzy functions, this class supports any function
     /// or approximation that can be represented as a sequence of lines.</para>

@@ -75,8 +75,11 @@ namespace NXTTest
                 resetMotorButton.Enabled    = true;
                 setMotorStateButton.Enabled = true;
                 getMotorStateButton.Enabled = true;
-                getInputButton.Enabled = true;
-                setInputModeButton.Enabled = true;
+                getInputButton.Enabled      = true;
+                setInputModeButton.Enabled  = true;
+
+                connectButton.Enabled    = false;
+                disconnectButton.Enabled = true;
             }
             else
             {
@@ -115,8 +118,11 @@ namespace NXTTest
             resetMotorButton.Enabled    = false;
             setMotorStateButton.Enabled = false;
             getMotorStateButton.Enabled = false;
-            getInputButton.Enabled = false;
-            setInputModeButton.Enabled = false;
+            getInputButton.Enabled      = false;
+            setInputModeButton.Enabled  = false;
+
+            connectButton.Enabled    = true;
+            disconnectButton.Enabled = false;
         }
 
         // Collect information about Lego NXT brick

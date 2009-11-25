@@ -19,6 +19,10 @@ namespace AForge.Imaging.Filters
     /// <remarks><para>Opening morphology operator equals to <see cref="Erosion">erosion</see> followed
     /// by <see cref="Dilatation">dilatation</see>.</para>
     /// 
+    /// <para>Applied to binary image, the filter may be used for removing small object keeping big objects
+    /// unchanged. Since erosion is used first, it removes all small objects. Then dilatation restores big
+    /// objects, which were not removed by erosion.</para>
+    /// 
     /// <para>See documentation to <see cref="Erosion"/> and <see cref="Dilatation"/> classes for more
     /// information and list of supported pixel formats.</para>
     /// 
@@ -29,8 +33,13 @@ namespace AForge.Imaging.Filters
     /// // apply the filter
     /// filter.Apply( image );
     /// </code>
-    /// </remarks>
     /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample12.png" width="320" height="240" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/opening.png" width="320" height="240" />
+    /// </remarks>
+    ///
     /// <seealso cref="Erosion"/>
     /// <seealso cref="Dilatation"/>
     /// <seealso cref="Closing"/>
@@ -86,7 +95,7 @@ namespace AForge.Imaging.Filters
         /// <remarks>The method keeps the source image unchanged and returns the
         /// the result of image processing filter as new image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public Bitmap Apply( Bitmap image )
         {
@@ -133,7 +142,7 @@ namespace AForge.Imaging.Filters
         /// <remarks>The method keeps the source image unchanged and returns the
         /// the result of image processing filter as new image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public UnmanagedImage Apply( UnmanagedImage image )
         {
@@ -158,9 +167,9 @@ namespace AForge.Imaging.Filters
         /// <see cref="FormatTransalations"/> property for information about pixel format conversions).</note></para>
         /// </remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
-        /// <exception cref="ArgumentException">Incorrect destination pixel format.</exception>
-        /// <exception cref="ArgumentException">Destination image has wrong width and/or height.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Incorrect destination pixel format.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Destination image has wrong width and/or height.</exception>
         ///
         public void Apply( UnmanagedImage sourceImage, UnmanagedImage destinationImage )
         {
@@ -176,7 +185,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///  
         public void ApplyInPlace( Bitmap image )
         {
@@ -192,7 +201,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public void ApplyInPlace( BitmapData imageData )
         {
@@ -208,7 +217,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source unmanaged image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public void ApplyInPlace( UnmanagedImage image )
         {
@@ -225,7 +234,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///  
         public void ApplyInPlace( Bitmap image, Rectangle rect )
         {
@@ -242,7 +251,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         ///
         public void ApplyInPlace( BitmapData imageData, Rectangle rect )
         {
@@ -259,7 +268,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <remarks>The method applies the filter directly to the provided source image.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Unsupported pixel format of the source image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of the source image.</exception>
         /// 
         public void ApplyInPlace( UnmanagedImage image, Rectangle rect )
         {

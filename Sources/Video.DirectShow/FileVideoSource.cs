@@ -1,8 +1,9 @@
 // AForge Direct Show Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Video.DirectShow
@@ -35,6 +36,7 @@ namespace AForge.Video.DirectShow
     /// videoSource.SignalToStop( );
     /// // ...
     /// 
+    /// // New frame event handler, which is invoked on each new available video frame
     /// private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
     /// {
     ///     // get new frame
@@ -48,8 +50,6 @@ namespace AForge.Video.DirectShow
     {
         // video file name
         private string fileName;
-        // user data associated with the video source
-        private object userData = null;
         // received frames count
         private int framesReceived;
         // recieved byte count
@@ -81,6 +81,15 @@ namespace AForge.Video.DirectShow
         /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
+
+        /// <summary>
+        /// Video playing finished event.
+        /// </summary>
+        /// 
+        /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+        /// </remarks>
+        /// 
+        public event PlayingFinishedEventHandler PlayingFinished;
 
         /// <summary>
         /// Video source.
@@ -128,18 +137,6 @@ namespace AForge.Video.DirectShow
                 bytesReceived = 0;
                 return bytes;
             }
-        }
-
-        /// <summary>
-        /// User data.
-        /// </summary>
-        /// 
-        /// <remarks>The property allows to associate user data with video source object.</remarks>
-        /// 
-        public object UserData
-        {
-            get { return userData; }
-            set { userData = value; }
         }
 
         /// <summary>
@@ -278,7 +275,13 @@ namespace AForge.Video.DirectShow
         /// Stop video source.
         /// </summary>
         /// 
-        /// <remarks>Stops video source aborting its thread.</remarks>
+        /// <remarks><para>Stops video source aborting its thread.</para>
+        /// 
+        /// <para><note>Since the method aborts background thread, its usage is highly not preferred
+        /// and should be done only if there are no other options. The correct way of stopping camera
+        /// is <see cref="SignalToStop">signaling it stop</see> and then
+        /// <see cref="WaitForStop">waiting</see> for background thread's completion.</note></para>
+        /// </remarks>
         /// 
         public void Stop( )
         {
@@ -308,6 +311,8 @@ namespace AForge.Video.DirectShow
         /// 
         private void WorkerThread( )
         {
+            ReasonToFinishPlaying reasonToStop = ReasonToFinishPlaying.StoppedByUser;
+
             // grabber
             Grabber grabber = new Grabber( this );
 
@@ -323,6 +328,8 @@ namespace AForge.Video.DirectShow
             ISampleGrabber      sampleGrabber = null;
             IMediaControl       mediaControl = null;
             IFileSourceFilter   fileSource = null;
+
+            IMediaEventEx       mediaEvent = null;
 
             try
             {
@@ -400,12 +407,31 @@ namespace AForge.Video.DirectShow
                 // get media control
                 mediaControl = (IMediaControl) graphObject;
 
+                // get media events' interface
+                mediaEvent = (IMediaEventEx) graphObject;
+                int p1, p2;
+                DsEvCode code;
+
                 // run
                 mediaControl.Run( );
 
                 while ( !stopEvent.WaitOne( 0, true ) )
                 {
                     Thread.Sleep( 100 );
+
+                    if ( mediaEvent != null )
+                    {
+                        if ( mediaEvent.GetEvent( out code, out p1, out p2, 0 ) >= 0 )
+                        {
+                            mediaEvent.FreeEventParams( code, p1, p2 );
+
+                            if ( code == DsEvCode.Complete )
+                            {
+                                reasonToStop = ReasonToFinishPlaying.EndOfStreamReached;
+                                break;
+                            }
+                        }
+                    }
                 }
                 mediaControl.StopWhenReady( );
             }
@@ -426,6 +452,7 @@ namespace AForge.Video.DirectShow
                 sampleGrabber   = null;
                 mediaControl    = null;
                 fileSource      = null;
+                mediaEvent      = null;
 
                 if ( graphObject != null )
                 {
@@ -442,6 +469,11 @@ namespace AForge.Video.DirectShow
                     Marshal.ReleaseComObject( grabberObject );
                     grabberObject = null;
                 }
+            }
+
+            if ( PlayingFinished != null )
+            {
+                PlayingFinished( this, reasonToStop );
             }
         }
 
@@ -494,37 +526,40 @@ namespace AForge.Video.DirectShow
             // Callback method that receives a pointer to the sample buffer
             public int BufferCB( double sampleTime, IntPtr buffer, int bufferLen )
             {
-                // create new image
-                System.Drawing.Bitmap image = new Bitmap( width, height, PixelFormat.Format24bppRgb );
-
-                // lock bitmap data
-                BitmapData imageData = image.LockBits(
-                    new Rectangle( 0, 0, width, height ),
-                    ImageLockMode.ReadWrite,
-                    PixelFormat.Format24bppRgb );
-
-                // copy image data
-                int srcStride = imageData.Stride;
-                int dstStride = imageData.Stride;
-
-                int dst = imageData.Scan0.ToInt32( ) + dstStride * ( height - 1 );
-                int src = buffer.ToInt32( );
-
-                for ( int y = 0; y < height; y++ )
+                if ( parent.NewFrame != null )
                 {
-                    Win32.memcpy( dst, src, srcStride );
-                    dst -= dstStride;
-                    src += srcStride;
+                    // create new image
+                    System.Drawing.Bitmap image = new Bitmap( width, height, PixelFormat.Format24bppRgb );
+
+                    // lock bitmap data
+                    BitmapData imageData = image.LockBits(
+                        new Rectangle( 0, 0, width, height ),
+                        ImageLockMode.ReadWrite,
+                        PixelFormat.Format24bppRgb );
+
+                    // copy image data
+                    int srcStride = imageData.Stride;
+                    int dstStride = imageData.Stride;
+
+                    int dst = imageData.Scan0.ToInt32( ) + dstStride * ( height - 1 );
+                    int src = buffer.ToInt32( );
+
+                    for ( int y = 0; y < height; y++ )
+                    {
+                        Win32.memcpy( dst, src, srcStride );
+                        dst -= dstStride;
+                        src += srcStride;
+                    }
+
+                    // unlock bitmap data
+                    image.UnlockBits( imageData );
+
+                    // notify parent
+                    parent.OnNewFrame( image );
+
+                    // release the image
+                    image.Dispose( );
                 }
-
-                // unlock bitmap data
-                image.UnlockBits( imageData );
-
-                // notify parent
-                parent.OnNewFrame( image );
-
-                // release the image
-                image.Dispose( );
 
                 return 0;
             }

@@ -12,6 +12,7 @@ namespace AForge.Imaging.Formats
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Text;
+    using System.ComponentModel;
 
     /// <summary>
     /// Information about FITS image's frame.
@@ -21,6 +22,10 @@ namespace AForge.Imaging.Formats
         private int originalBitsPerPixl;
         private double minDataValue;
         private double maxDataValue;
+        private string telescope;
+        private string acquiredObject;
+        private string observer;
+        private string instrument;
 
         /// <summary>
         /// Original bits per pixel.
@@ -31,6 +36,7 @@ namespace AForge.Imaging.Formats
         /// type for pixel encoding), -64 (64 bit image with double data type for pixel encoding).
         /// </para></remarks>
         /// 
+        [Category( "FITS Info" )]
         public int OriginalBitsPerPixl
         {
             get { return originalBitsPerPixl; }
@@ -45,6 +51,7 @@ namespace AForge.Imaging.Formats
         /// them from <see cref="OriginalBitsPerPixl">original bits per pixel</see> format to
         /// <see cref="ImageInfo.BitsPerPixel">supported bits per pixel</see> format.</para></remarks>
         /// 
+        [Category( "FITS Info" )]
         public double MinDataValue
         {
             get { return minDataValue; }
@@ -59,10 +66,51 @@ namespace AForge.Imaging.Formats
         /// them from <see cref="OriginalBitsPerPixl">original bits per pixel</see> format to
         /// <see cref="ImageInfo.BitsPerPixel">supported bits per pixel</see> format.</para></remarks>
         /// 
+        [Category( "FITS Info" )]
         public double MaxDataValue
         {
             get { return maxDataValue; }
             set { maxDataValue = value; }
+        }
+
+        /// <summary>
+        /// Telescope used for object's observation.
+        /// </summary>
+        [Category( "FITS Info" )]
+        public string Telescope
+        {
+            get { return telescope; }
+            set { telescope = value; }
+        }
+
+        /// <summary>
+        /// Object acquired during observation.
+        /// </summary>
+        [Category( "FITS Info" )]
+        public string Object
+        {
+            get { return acquiredObject; }
+            set { acquiredObject = value; }
+        }
+
+        /// <summary>
+        /// Observer doing object's acquiring.
+        /// </summary>
+        [Category( "FITS Info" )]
+        public string Observer
+        {
+            get { return observer; }
+            set { observer = value; }
+        }
+
+        /// <summary>
+        /// Instrument used for observation.
+        /// </summary>
+        [Category( "FITS Info" )]
+        public string Instrument
+        {
+            get { return instrument; }
+            set { instrument = value; }
         }
 
         /// <summary>
@@ -97,6 +145,10 @@ namespace AForge.Imaging.Formats
             clone.originalBitsPerPixl = originalBitsPerPixl;
             clone.minDataValue = minDataValue;
             clone.maxDataValue = maxDataValue;
+            clone.telescope = telescope;
+            clone.acquiredObject = acquiredObject;
+            clone.observer = observer;
+            clone.instrument = instrument;
 
             return clone;
         }
@@ -348,6 +400,22 @@ namespace AForge.Imaging.Formats
                                 imageInfo.TotalFrames = value;
                                 break;
                         }
+                    }
+                    else if ( keyword == "TELESCOP" )
+                    {
+                        imageInfo.Telescope = ExtractStringValue( strValue );
+                    }
+                    else if ( keyword == "OBJECT  " )
+                    {
+                        imageInfo.Object = ExtractStringValue( strValue );
+                    }
+                    else if ( keyword == "OBSERVER" )
+                    {
+                        imageInfo.Observer = ExtractStringValue( strValue );
+                    }
+                    else if ( keyword == "INSTRUME" )
+                    {
+                        imageInfo.Instrument = ExtractStringValue( strValue );
                     }
 
                     // --- for debugging ---
@@ -617,6 +685,15 @@ namespace AForge.Imaging.Formats
             {
                 throw new ArgumentException( "The stream does not contain valid FITS image." );
             }
+        }
+
+        // Extract string value
+        private string ExtractStringValue( string strValue )
+        {
+            // split value from comment
+            string[] strs = strValue.Split( '/' );
+
+            return strs[0].Replace( "''", "``" ).Replace( "'", "" ).Replace( "''", "``" ).Trim( );
         }
     }
 }
