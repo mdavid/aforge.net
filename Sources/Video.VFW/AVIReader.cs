@@ -1,8 +1,9 @@
 // AForge Video for Windows Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2007-2009
+// andrew.kirillov@aforgenet.com
 //
 namespace AForge.Video.VFW
 {
@@ -63,6 +64,9 @@ namespace AForge.Video.VFW
         /// Width of video frames.
         /// </summary>
         /// 
+        /// <remarks><para>The property specifies the width of video frames within the opened video
+        /// file.</para></remarks>
+        /// 
         public int Width
         {
             get { return width; }
@@ -71,6 +75,9 @@ namespace AForge.Video.VFW
         /// <summary>
         /// Height of video frames.
         /// </summary>
+        /// 
+        /// <remarks><para>The property specifies the height of video frames within the opened video
+        /// file.</para></remarks>
         /// 
         public int Height
         {
@@ -111,6 +118,9 @@ namespace AForge.Video.VFW
         /// Desired playing frame rate.
         /// </summary>
         /// 
+        /// <remarks><para>The property specifies the frame rate, which should be used to play the opened video
+        /// file.</para></remarks>
+        /// 
         public float FrameRate
         {
             get { return rate; }
@@ -119,6 +129,8 @@ namespace AForge.Video.VFW
         /// <summary>
         /// Codec used for video compression.
         /// </summary>
+        /// 
+        /// <remarks><para>The property tells about which codec was used to encode the opened video file.</para></remarks>
         /// 
         public string Codec
         {
@@ -183,8 +195,12 @@ namespace AForge.Video.VFW
         /// 
         /// <param name="fileName">AVI file name to open.</param>
         /// 
-        /// <remarks>This method throws <see cref="System.ApplicationException"/> in the case
-        /// of failure.</remarks>
+        /// <remarks><para>The method opens a video file and prepares the stream and decoder for
+        /// reading video frames with the help of <see cref="GetNextFrame"/> method.</para>
+        /// </remarks>
+        /// 
+        /// <exception cref="ApplicationException">Failure of opening video files (the exception message
+        /// specifies the issues).</exception>
         /// 
         public void Open( string fileName )
         {
@@ -271,8 +287,11 @@ namespace AForge.Video.VFW
         /// 
         /// <returns>Returns next frame as a bitmap.</returns>
         /// 
-        /// <remarks>This method throws <see cref="System.ApplicationException"/> in the case
-        /// of failure.</remarks>
+        /// <remarks><para>The method reads and returns the next video frame in the opened video stream
+        /// at the position, which is set in <see cref="Position"/> property.</para></remarks>
+        /// 
+        /// <exception cref="ApplicationException">Failure of opening video files (the exception message
+        /// specifies the issues).</exception>
         /// 
         public Bitmap GetNextFrame( )
         {

@@ -1,8 +1,9 @@
 ﻿// AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging.Filters
@@ -126,7 +127,7 @@ namespace AForge.Imaging.Filters
         /// 
         /// <param name="image">Source image data.</param>
         ///
-        /// <exception cref="ArgumentException">Source and overlay images have different pixel formats and/or size.</exception>
+        /// <exception cref="InvalidImagePropertiesException">Source and overlay images have different pixel formats and/or size.</exception>
         /// <exception cref="NullReferenceException">Overlay image is not set.</exception>
         ///
         protected override unsafe void ProcessFilter( UnmanagedImage image )
@@ -141,31 +142,36 @@ namespace AForge.Imaging.Filters
             {
                 // source image and overlay must have same pixel format
                 if ( pixelFormat != overlayImage.PixelFormat )
-                    throw new ArgumentException( "Source and overlay images must have same pixel format." );
+                    throw new InvalidImagePropertiesException( "Source and overlay images must have same pixel format." );
 
                 // check overlay image size
                 if ( ( width != overlayImage.Width ) || ( height != overlayImage.Height ) )
-                    throw new ArgumentException( "Overlay image size must be equal to source image size." );
+                    throw new InvalidImagePropertiesException( "Overlay image size must be equal to source image size." );
 
                 // lock overlay image
                 BitmapData ovrData = overlayImage.LockBits(
                     new Rectangle( 0, 0, width, height ),
                     ImageLockMode.ReadOnly, pixelFormat );
 
-                ProcessFilter( image, new UnmanagedImage( ovrData ) );
-
-                // unlock overlay image
-                overlayImage.UnlockBits( ovrData );
+                try
+                {
+                    ProcessFilter( image, new UnmanagedImage( ovrData ) );
+                }
+                finally
+                {
+                    // unlock overlay image
+                    overlayImage.UnlockBits( ovrData );
+                }
             }
             else if ( unmanagedOverlayImage != null )
             {
                 // source image and overlay must have same pixel format
                 if ( pixelFormat != unmanagedOverlayImage.PixelFormat )
-                    throw new ArgumentException( "Source and overlay images must have same pixel format." );
+                    throw new InvalidImagePropertiesException( "Source and overlay images must have same pixel format." );
 
                 // check overlay image size
                 if ( ( width != unmanagedOverlayImage.Width ) || ( height != unmanagedOverlayImage.Height ) )
-                    throw new ArgumentException( "Overlay image size must be equal to source image size." );
+                    throw new InvalidImagePropertiesException( "Overlay image size must be equal to source image size." );
 
                 ProcessFilter( image, unmanagedOverlayImage );
             }

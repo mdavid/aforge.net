@@ -41,6 +41,8 @@
             this.videoSourcePlayer = new AForge.Controls.VideoSourcePlayer( );
             this.timer = new System.Windows.Forms.Timer( this.components );
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog( );
+            this.openJPEGURLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
+            this.openMJPEGURLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem( );
             this.mainMenuStrip.SuspendLayout( );
             this.statusStrip.SuspendLayout( );
             this.mainPanel.SuspendLayout( );
@@ -61,6 +63,8 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.localVideoCaptureDeviceToolStripMenuItem,
             this.openVideofileusingDirectShowToolStripMenuItem,
+            this.openJPEGURLToolStripMenuItem,
+            this.openMJPEGURLToolStripMenuItem,
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem} );
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -141,6 +145,20 @@
             this.openFileDialog.Filter = "AVI files (*.avi)|*.avi|All files (*.*)|*.*";
             this.openFileDialog.Title = "Opem movie";
             // 
+            // openJPEGURLToolStripMenuItem
+            // 
+            this.openJPEGURLToolStripMenuItem.Name = "openJPEGURLToolStripMenuItem";
+            this.openJPEGURLToolStripMenuItem.Size = new System.Drawing.Size( 257, 22 );
+            this.openJPEGURLToolStripMenuItem.Text = "Open JPEG &URL";
+            this.openJPEGURLToolStripMenuItem.Click += new System.EventHandler( this.openJPEGURLToolStripMenuItem_Click );
+            // 
+            // openMJPEGURLToolStripMenuItem
+            // 
+            this.openMJPEGURLToolStripMenuItem.Name = "openMJPEGURLToolStripMenuItem";
+            this.openMJPEGURLToolStripMenuItem.Size = new System.Drawing.Size( 257, 22 );
+            this.openMJPEGURLToolStripMenuItem.Text = "Open &MJPEG URL";
+            this.openMJPEGURLToolStripMenuItem.Click += new System.EventHandler( this.openMJPEGURLToolStripMenuItem_Click );
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
@@ -177,6 +195,8 @@
         private System.Windows.Forms.ToolStripStatusLabel fpsLabel;
         private System.Windows.Forms.ToolStripMenuItem openVideofileusingDirectShowToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.ToolStripMenuItem openJPEGURLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openMJPEGURLToolStripMenuItem;
     }
 }
 

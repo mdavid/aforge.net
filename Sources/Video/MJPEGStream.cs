@@ -1,8 +1,9 @@
 // AForge Video Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2007-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Video
@@ -56,8 +57,6 @@ namespace AForge.Video
         // login and password for HTTP authentication
         private string login = null;
 		private string password = null;
-        // user data associated with the video source
-        private object userData = null;
         // received frames count
         private int framesReceived;
         // recieved byte count
@@ -75,6 +74,8 @@ namespace AForge.Video
 		private Thread	thread = null;
 		private ManualResetEvent stopEvent = null;
 		private ManualResetEvent reloadEvent = null;
+
+        private string userAgent = "Mozilla/5.0";
 
         /// <summary>
         /// New frame event.
@@ -97,6 +98,15 @@ namespace AForge.Video
         /// video source object, for example internal exceptions.</remarks>
         /// 
         public event VideoSourceErrorEventHandler VideoSourceError;
+
+        /// <summary>
+        /// Video playing finished event.
+        /// </summary>
+        /// 
+        /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+        /// </remarks>
+        /// 
+        public event PlayingFinishedEventHandler PlayingFinished;
 
         /// <summary>
         /// Use or not separate connection group.
@@ -153,6 +163,25 @@ namespace AForge.Video
 		}
 
         /// <summary>
+        /// User agent to specify in HTTP request header.
+        /// </summary>
+        /// 
+        /// <remarks><para>Some IP cameras check what is the requesting user agent and depending
+        /// on it they provide video in different formats or do not provide it at all. The property
+        /// sets the value of user agent string, which is sent to camera in request header.
+        /// </para>
+        /// 
+        /// <para>Default value is set to "Mozilla/5.0". If the value is set to <see langword="null"/>,
+        /// the user agent string is not sent in request header.</para>
+        /// </remarks>
+        /// 
+        public string HttpUserAgent
+        {
+            get { return userAgent; }
+            set { userAgent = value; }
+        }
+
+        /// <summary>
         /// Received frames count.
         /// </summary>
         /// 
@@ -186,18 +215,6 @@ namespace AForge.Video
 				bytesReceived = 0;
 				return bytes;
 			}
-		}
-
-        /// <summary>
-        /// User data.
-        /// </summary>
-        /// 
-        /// <remarks>The property allows to associate user data with video source object.</remarks>
-        /// 
-        public object UserData
-		{
-			get { return userData; }
-			set { userData = value; }
 		}
 
         /// <summary>
@@ -261,13 +278,15 @@ namespace AForge.Video
         /// object creates background thread and notifies about new frames with the
         /// help of <see cref="NewFrame"/> event.</remarks>
         /// 
+        /// <exception cref="ArgumentException">Video source is not specified.</exception>
+        /// 
         public void Start( )
 		{
 			if ( thread == null )
 			{
                 // check source
                 if ( ( source == null ) || ( source == string.Empty ) )
-                    throw new ArgumentException( "Video source is not specified" );
+                    throw new ArgumentException( "Video source is not specified." );
                 
                 framesReceived = 0;
 				bytesReceived = 0;
@@ -322,7 +341,13 @@ namespace AForge.Video
         /// Stop video source.
         /// </summary>
         /// 
-        /// <remarks>Stops video source aborting its thread.</remarks>
+        /// <remarks><para>Stops video source aborting its thread.</para>
+        /// 
+        /// <para><note>Since the method aborts background thread, its usage is highly not preferred
+        /// and should be done only if there are no other options. The correct way of stopping camera
+        /// is <see cref="SignalToStop">signaling it stop</see> and then
+        /// <see cref="WaitForStop">waiting</see> for background thread's completion.</note></para>
+        /// </remarks>
         /// 
         public void Stop( )
 		{
@@ -387,6 +412,11 @@ namespace AForge.Video
 				{
 					// create request
                     request = (HttpWebRequest) WebRequest.Create( source );
+                    // set user agent
+                    if ( userAgent != null )
+                    {
+                        request.UserAgent = userAgent;
+                    }
                     // set timeout value for the request
                     request.Timeout = requestTimeout;
                     // set login and password
@@ -550,6 +580,11 @@ namespace AForge.Video
 				if ( stopEvent.WaitOne( 0, true ) )
 					break;
 			}
+
+            if ( PlayingFinished != null )
+            {
+                PlayingFinished( this, ReasonToFinishPlaying.StoppedByUser );
+            }
 		}
 	}
 }

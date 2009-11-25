@@ -21,7 +21,8 @@ namespace AForge.Robotics.Lego
     /// values and performing some other manipulations.</para>
     /// <para><img src="img/robotics/rcx.jpg" width="312" height="251" /></para>
     /// 
-    /// <para><note>Only communication through USB IR tower is supported at this point.</note></para>
+    /// <para><note>The class supports both types of IR towers - USB and serial (see
+    /// <see cref="RCXBrick.IRTowerType"/>).</note></para>
     /// 
     /// <para><note>The class uses GhostAPI to communicate with Lego RCX device, so its
     /// libraries (GhostAPI.dll, PbkComm32.dll and PbkUsbPort.dll) should be placed into applications folder.</note></para>
@@ -31,7 +32,7 @@ namespace AForge.Robotics.Lego
     /// // create an instance of RCX brick
     /// RCXBrick rcx = new RCXBrick( );
     /// // connect to the device
-    /// if ( rcx.Connect( ) )
+    /// if ( rcx.Connect( RCXBrick.IRTowerType.USB ) )
     /// {
     ///     // set forward direction of motor A
     ///     rcx.SetMotorDirection( RCXBrick.Motor.A, true );
@@ -59,6 +60,21 @@ namespace AForge.Robotics.Lego
     public class RCXBrick
     {
         #region Embedded types
+
+        /// <summary>
+        /// Type of IR tower used for communication with RCX.
+        /// </summary>
+        public enum IRTowerType
+        {
+            /// <summary>
+            /// USB IR tower.
+            /// </summary>
+            USB,
+            /// <summary>
+            /// RS232 IR tower.
+            /// </summary>
+            Serial
+        }
 
         /// <summary>
         /// Enumeration of sound type playable by Lego RCX brick.
@@ -113,6 +129,9 @@ namespace AForge.Robotics.Lego
         /// <summary>
         /// Enumeration of RCX brick sensor types.
         /// </summary>
+        /// 
+        /// <remarks><para>Use <see cref="SetSensorType"/> method to set RCX sensor's type.</para></remarks>
+        /// 
         public enum SensorType
         {
             /// <summary>
@@ -140,6 +159,9 @@ namespace AForge.Robotics.Lego
         /// <summary>
         /// Enumeration of RCX brick sensor modes.
         /// </summary>
+        /// 
+        /// <remarks><para>Use <see cref="SetSensorMode"/> method to set RCX sensor's mode.</para></remarks>
+        /// 
         public enum SensorMode
         {
             /// <summary>
@@ -257,6 +279,8 @@ namespace AForge.Robotics.Lego
         /// Connect to Lego RCX brick.
         /// </summary>
         /// 
+        /// <param name="towerType">Type of IR tower to use for communication with RCX brick.</param>
+        /// 
         /// <returns>Returns <b>true</b> on successful connection or <b>false</b>
         /// otherwise.</returns>
         /// 
@@ -264,7 +288,7 @@ namespace AForge.Robotics.Lego
         /// If it is required to force reconnection, then <see cref="Disconnect"/> method should be called before.
         /// </remarks>
         /// 
-        public bool Connect( )
+        public bool Connect( IRTowerType towerType )
         {
             lock ( this )
             {
@@ -276,7 +300,7 @@ namespace AForge.Robotics.Lego
 
                 // create stack
                 status = GhostAPI.GhCreateStack(
-                    "LEGO.Pbk.CommStack.Port.USB",
+                    ( towerType == IRTowerType.USB ) ? "LEGO.Pbk.CommStack.Port.USB" : "LEGO.Pbk.CommStack.Port.RS232",
                     "LEGO.Pbk.CommStack.Protocol.IR",
                     "LEGO.Pbk.CommStack.Session",
                     out stack );
@@ -452,7 +476,7 @@ namespace AForge.Robotics.Lego
         /// 
         /// <param name="sensor">Sensor to get value of.</param>
         /// <param name="value">Retrieved sensor's value (units depend on current
-        /// sensor's type and mode).</param>
+        /// <see cref="SensorType">sensor's type</see> and <see cref="SensorMode">mode</see>).</param>
         /// 
         /// <returns>Returns <b>true</b> if command was executed successfully or <b>false</b> otherwise.</returns>
         /// 

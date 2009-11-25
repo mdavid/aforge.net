@@ -78,12 +78,60 @@ namespace Player
             }
         }
 
+        // Open JPEG URL
+        private void openJPEGURLToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            URLForm form = new URLForm( );
+
+            form.Description = "Enter URL of an updating JPEG from a web camera:";
+            form.URLs = new string[]
+				{
+					"http://195.243.185.195/axis-cgi/jpg/image.cgi?camera=1",
+				};
+
+            if ( form.ShowDialog( this ) == DialogResult.OK )
+            {
+                // create video source
+                JPEGStream jpegSource = new JPEGStream( form.URL );
+
+                // open it
+                OpenVideoSource( jpegSource );
+            }
+        }
+
+        // Open MJPEG URL
+        private void openMJPEGURLToolStripMenuItem_Click( object sender, EventArgs e )
+        {
+            URLForm form = new URLForm( );
+
+            form.Description = "Enter URL of an MJPEG video stream:";
+            form.URLs = new string[]
+				{
+					"http://195.243.185.195/axis-cgi/mjpg/video.cgi?camera=4",
+					"http://195.243.185.195/axis-cgi/mjpg/video.cgi?camera=3",
+				};
+
+            if ( form.ShowDialog( this ) == DialogResult.OK )
+            {
+                // create video source
+                MJPEGStream mjpegSource = new MJPEGStream( form.URL );
+
+                // open it
+                OpenVideoSource( mjpegSource );
+            }
+        }
+
         // Open video source
         private void OpenVideoSource( IVideoSource source )
         {
             // set busy cursor
             this.Cursor = Cursors.WaitCursor;
 
+            // stop current video source
+            videoSourcePlayer.SignalToStop( );
+            videoSourcePlayer.WaitForStop( );
+
+            // start new video source
             videoSourcePlayer.VideoSource = source;
             videoSourcePlayer.Start( );
 

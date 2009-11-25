@@ -19,11 +19,8 @@ namespace AForge.Imaging
     /// <remarks>All methods of this class are static and represent general routines
     /// used by different image processing classes.</remarks>
     /// 
-    public sealed class Image
+    public static class Image
     {
-        // Avoid class instantiation
-        private Image( ) { }
-
         /// <summary>
         /// Check if specified 8 bpp image is grayscale.
         /// </summary>
@@ -96,13 +93,13 @@ namespace AForge.Imaging
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format8bppIndexed</see>
         /// image with 256 gradients of gray color.</remarks>
         /// 
-        /// <exception cref="ArgumentException">Provided image is not 8 bpp indexed image.</exception>
+        /// <exception cref="UnsupportedImageFormatException">Provided image is not 8 bpp indexed image.</exception>
         /// 
         public static void SetGrayscalePalette( Bitmap image )
         {
             // check pixel format
             if ( image.PixelFormat != PixelFormat.Format8bppIndexed )
-                throw new ArgumentException( "Source image is not 8 bpp image" );
+                throw new UnsupportedImageFormatException( "Source image is not 8 bpp image." );
 
             // get palette
             ColorPalette cp = image.Palette;
@@ -239,6 +236,7 @@ namespace AForge.Imaging
         /// by the <b>AForge.Imaging</b> library. The image is left untouched in the
         /// case if it is already of
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format24bppRgb</see> or
+        /// <see cref="System.Drawing.Imaging.PixelFormat">Format32bppRgb</see> or
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format32bppArgb</see> or
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format48bppRgb</see> or
         /// <see cref="System.Drawing.Imaging.PixelFormat">Format64bppArgb</see>
@@ -250,6 +248,7 @@ namespace AForge.Imaging
         {
             if (
                 ( image.PixelFormat != PixelFormat.Format24bppRgb ) &&
+                ( image.PixelFormat != PixelFormat.Format32bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format32bppArgb ) &&
                 ( image.PixelFormat != PixelFormat.Format48bppRgb ) &&
                 ( image.PixelFormat != PixelFormat.Format64bppArgb ) &&

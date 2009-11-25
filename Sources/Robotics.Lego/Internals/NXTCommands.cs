@@ -21,7 +21,7 @@ namespace AForge.Robotics.Lego.Internals
         DirectCommand = 0x00,
 
         /// <summary>
-        /// System command, which requies reply.
+        /// System command, which requires reply.
         /// </summary>
         SystemCommand = 0x01,
 
@@ -108,6 +108,21 @@ namespace AForge.Robotics.Lego.Internals
         /// Get input values.
         /// </summary>
         GetInputValues = 0x07,
+
+        /// <summary>
+        /// Get status of the Low Speed bus.
+        /// </summary>
+        LsGetStatus = 0x0E,
+
+        /// <summary>
+        /// Write to the Low Speed bus.
+        /// </summary>
+        LsWrite = 0x0F,
+
+        /// <summary>
+        /// Read from the Low Speed bus.
+        /// </summary>
+        LsRead = 0x10,
 
         /// <summary>
         /// Reset input scaled value.
