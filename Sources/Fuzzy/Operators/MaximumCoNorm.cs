@@ -22,7 +22,7 @@ namespace AForge.Fuzzy
     /// 
     /// <para>Sample usage:</para>
     /// <code>
-    /// // creating 2 fuzzy sets to represent Cool (Temperatura) and Near (Distance)
+    /// // creating 2 fuzzy sets to represent Cool (Temperature) and Near (Distance)
     /// TrapezoidalFunction function1 = new TrapezoidalFunction( 13, 18, 23, 28 );
     /// FuzzySet fsCool = new FuzzySet( "Cool", function1 );
     /// TrapezoidalFunction function2 = new TrapezoidalFunction( 23, 28, 33, 38 );
