@@ -2,10 +2,10 @@
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2008-2009
+// Copyright © Andrew Kirillov, 2008-2010
 // andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008-2009
+// Copyright © Fabio L. Caversan, 2008-2010
 // fabio.caversan@gmail.com
 //
 
@@ -173,7 +173,7 @@ namespace AForge.Fuzzy
             this.database       = fuzzyDatabase;
             this.normOperator   = normOperator;
             this.conormOperator = coNormOperator;
-            this.notOperator    = new NotOperator();
+            this.notOperator    = new NotOperator( );
 
             // parsing the rule to obtain RPN of the expression
             ParseRule( );
@@ -234,9 +234,10 @@ namespace AForge.Fuzzy
         /// 
         private int Priority( string Operator )
         {
-            // If its unary
-            if (unaryOperators.IndexOf(Operator) >= 0)
+            // if its unary
+            if ( unaryOperators.IndexOf( Operator ) >= 0 )
                 return 4;
+
             switch ( Operator )
             {
                 case "(": return 1;
@@ -255,7 +256,7 @@ namespace AForge.Fuzzy
         {
             // flag to incicate we are on consequent state
             bool consequent = false;
-            
+
             // tokens like IF and THEN will be searched always in upper case
             string upRule = rule.ToUpper( );
 
@@ -336,12 +337,12 @@ namespace AForge.Fuzzy
                         lastToken = upToken;
                     }
                     // operators
-                    else if ( upToken == "AND" || upToken == "OR" || unaryOperators.IndexOf(upToken) >= 0 )
+                    else if ( upToken == "AND" || upToken == "OR" || unaryOperators.IndexOf( upToken ) >= 0 )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
                             throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
-                        
+
                         // pop all the higher priority operators until the stack is empty 
                         while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( upToken ) ) )
                             rpnTokenList.Add( s.Pop( ) );
@@ -399,18 +400,22 @@ namespace AForge.Fuzzy
         /// Performs a preprocessing on the rule, placing unary operators in proper position and breaking the string 
         /// space separated tokens.
         /// </summary>
+        /// 
         /// <param name="rule">Rule in string format.</param>
-        /// <returns>A array of string with the tokens of the rule.</returns>
-        private string[] GetRuleTokens(string rule)
+        /// 
+        /// <returns>An array of strings with tokens of the rule.</returns>
+        /// 
+        private string[] GetRuleTokens( string rule )
         {
             // breaking in tokens
-            string[] tokens = rule.Split(' ');
+            string[] tokens = rule.Split( ' ' );
 
             // looking for unary operators
-            for (int i = 0; i < tokens.Length; i++)
+            for ( int i = 0; i < tokens.Length; i++ )
             {
                 // if its unary and there is an "IS" token before, we must change positions
-                if (unaryOperators.IndexOf(tokens[i].ToUpper()) >= 0 && i > 1 && tokens[i - 1].ToUpper() == "IS")
+                if ( ( unaryOperators.IndexOf( tokens[i].ToUpper( ) ) >= 0 ) &&
+                     ( i > 1 ) && ( tokens[i - 1].ToUpper( ) == "IS" ) )
                 {
                     // placing VAR name
                     tokens[i - 1] = tokens[i - 2];
@@ -438,36 +443,36 @@ namespace AForge.Fuzzy
             foreach ( object o in rpnTokenList )
             {
                 // if its a clause, then its value must be calculated and pushed
-                if (o.GetType() == typeof(Clause))
+                if ( o.GetType( ) == typeof( Clause ) )
                 {
                     Clause c = o as Clause;
-                    s.Push(c.Evaluate());
+                    s.Push( c.Evaluate( ) );
                 }
                 // if its an operator (AND / OR) the operation is performed and the result 
                 // returns to the stack
                 else
                 {
-                    double y = s.Pop();
+                    double y = s.Pop( );
                     double x = 0;
-                    // Unary pops only one value
-                    if (unaryOperators.IndexOf(o.ToString()) < 0)
-                        x = s.Pop();
-                    // Operation
-                    switch (o.ToString())
+
+                    // unary pops only one value
+                    if ( unaryOperators.IndexOf( o.ToString( ) ) < 0 )
+                        x = s.Pop( );
+
+                    // operation
+                    switch ( o.ToString( ) )
                     {
                         case "AND":
-                            s.Push(normOperator.Evaluate(x, y));
+                            s.Push( normOperator.Evaluate( x, y ) );
                             break;
                         case "OR":
-                            s.Push(conormOperator.Evaluate(x, y));
+                            s.Push( conormOperator.Evaluate( x, y ) );
                             break;
                         case "NOT":
-                            s.Push(notOperator.Evaluate(y));
+                            s.Push( notOperator.Evaluate( y ) );
                             break;
                     }
-
                 }
-
             }
 
             // result on the top of stack
