@@ -22,9 +22,9 @@ namespace AForge.Imaging.Filters
     /// 
     /// <remarks><para>The class implements simple <a href="http://en.wikipedia.org/wiki/Posterization">posterization</a> of an image by splitting
     /// each color plane into adjacent areas of the <see cref="PosterizationInterval">specified size</see>. After the process
-    /// is done, each color plane will contain maximum of 256/<see cref="PosterizationInterval">PosterizationInterval</see> colors.
+    /// is done, each color plane will contain maximum of 256/<see cref="PosterizationInterval">PosterizationInterval</see> levels.
     /// For example, if grayscale image is posterized with posterization interval equal to 64,
-    /// then result image will contain maximum of 4 tones. If color image is posterized with
+    /// then result image will contain maximum of 4 tones. If color image is posterized with the
     /// same posterization interval, then it will contain maximum of 4<sup>3</sup>=64 colors.
     /// See <see cref="FillingType"/> property to get information about the way how to control
     /// color used to fill posterization areas.</para>
@@ -37,7 +37,7 @@ namespace AForge.Imaging.Filters
     /// <para>Sample usage:</para>
     /// <code>
     /// // create filter
-    /// SimplePosterization filter = new SimplePosterization( );
+    /// Posterization filter = new Posterization( );
     /// // process image
     /// filter.ApplyInPlace( sourceImage );
     /// </code>
@@ -127,15 +127,9 @@ namespace AForge.Imaging.Filters
         {
             // initialize format translation dictionary
             formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
-            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format24bppRgb;
-            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format32bppRgb;
-            formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format32bppArgb;
-
-            // #### Wrong, isn't it? ####
-            //formatTransalations[PixelFormat.Format8bppIndexed] = PixelFormat.Format8bppIndexed;
-            //formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format8bppIndexed;
-            //formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format8bppIndexed;
-            //formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format24bppRgb]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppRgb]    = PixelFormat.Format8bppIndexed;
+            formatTransalations[PixelFormat.Format32bppArgb]   = PixelFormat.Format8bppIndexed;
         }
 
         /// <summary>
@@ -172,6 +166,14 @@ namespace AForge.Imaging.Filters
                 0 : ( ( fillingType == PosterizationFillingType.Max ) ?
                 posterizationInterval - 1 : posterizationInterval / 2 );
 
+            // calculate mapping array
+            byte[] map = new byte[256];
+
+            for ( int i = 0; i < 256; i++ )
+            {
+                map[i] = (byte) Math.Min( 255, ( i / posterizationInterval ) * posterizationInterval + posterizationOffset );
+            }
+
             // do the job
             byte* ptr = (byte*) image.ImageData.ToPointer( );
 
@@ -187,7 +189,7 @@ namespace AForge.Imaging.Filters
                     // for each pixel in line
                     for ( int x = startX; x < stopX; x++, ptr++ )
                     {
-                        *ptr = (byte) ( ( *ptr / posterizationInterval ) * posterizationInterval + posterizationOffset );
+                        *ptr = map[*ptr];
                     }
                     ptr += offset;
                 }
@@ -200,9 +202,9 @@ namespace AForge.Imaging.Filters
                     // for each pixel in line
                     for ( int x = startX; x < stopX; x++, ptr += pixelSize )
                     {
-                        ptr[RGB.R] = (byte) ( ( ptr[RGB.R] / posterizationInterval ) * posterizationInterval + posterizationOffset );
-                        ptr[RGB.G] = (byte) ( ( ptr[RGB.G] / posterizationInterval ) * posterizationInterval + posterizationOffset );
-                        ptr[RGB.B] = (byte) ( ( ptr[RGB.B] / posterizationInterval ) * posterizationInterval + posterizationOffset );
+                        ptr[RGB.R] = map[ptr[RGB.R]];
+                        ptr[RGB.G] = map[ptr[RGB.G]];
+                        ptr[RGB.B] = map[ptr[RGB.B]];
                     }
                     ptr += offset;
                 }

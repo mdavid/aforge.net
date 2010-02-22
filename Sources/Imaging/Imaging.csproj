@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C6A8B9AE-0749-41C7-8FF9-02C156696F45}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -70,6 +70,7 @@
     <Compile Include="Filters\2 Source filters\Merge.cs" />
     <Compile Include="Filters\2 Source filters\Morph.cs" />
     <Compile Include="Filters\2 Source filters\MoveTowards.cs" />
+    <Compile Include="Filters\2 Source filters\StereoAnaglyph.cs" />
     <Compile Include="Filters\2 Source filters\Subtract.cs" />
     <Compile Include="Filters\Adaptive Binarization\IterativeThreshold.cs" />
     <Compile Include="Filters\Adaptive Binarization\OtsuThreshold.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Filters\Base classes\BaseInPlaceFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlacePartialFilter.cs" />
     <Compile Include="Filters\Base classes\BaseInPlaceFilter2.cs" />
+    <Compile Include="Filters\Base classes\BaseQuadrilateralTransformationFilter.cs" />
     <Compile Include="Filters\Base classes\BaseResizeFilter.cs" />
     <Compile Include="Filters\Base classes\BaseRotateFilter.cs" />
     <Compile Include="Filters\Base classes\BaseTransformationFilter.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Filters\Color Filters\ReplaceChannel.cs" />
     <Compile Include="Filters\Color Filters\RotateChannels.cs" />
     <Compile Include="Filters\Color Filters\Sepia.cs" />
+    <Compile Include="Filters\Color Segmentation\SimplePosterization.cs" />
     <Compile Include="Filters\Convolution\Blur.cs" />
     <Compile Include="Filters\Convolution\Convolution.cs" />
     <Compile Include="Filters\Convolution\Edges.cs" />
@@ -149,6 +152,7 @@
     <Compile Include="Filters\Morphology\TopHat.cs" />
     <Compile Include="Filters\Noise generation\AdditiveNoise.cs" />
     <Compile Include="Filters\Noise generation\SaltAndPepperNoise.cs" />
+    <Compile Include="Filters\Normalized RGB\ExtractNormalizedRGBChannel.cs" />
     <Compile Include="Filters\Other\BlobsFiltering.cs" />
     <Compile Include="Filters\Other\CanvasCrop.cs" />
     <Compile Include="Filters\Other\CanvasFill.cs" />
@@ -169,6 +173,8 @@
     <Compile Include="Filters\Smooting\ConservativeSmoothing.cs" />
     <Compile Include="Filters\Smooting\Median.cs" />
     <Compile Include="Filters\Transform\Crop.cs" />
+    <Compile Include="Filters\Transform\QuadrilateralTransformationBilinear.cs" />
+    <Compile Include="Filters\Transform\QuadrilateralTransformationNearestNeighbor.cs" />
     <Compile Include="Filters\Transform\ResizeBicubic.cs" />
     <Compile Include="Filters\Transform\ResizeBilinear.cs" />
     <Compile Include="Filters\Transform\ResizeNearestNeighbor.cs" />
@@ -191,16 +197,12 @@
     <Compile Include="ImageStatisticsYCbCr.cs" />
     <Compile Include="IntegralImage.cs" />
     <Compile Include="Interpolation.cs" />
-    <Compile Include="ISegmentsDetector.cs" />
     <Compile Include="ITemplateMatching.cs" />
     <Compile Include="MemoryManager.cs" />
     <Compile Include="MoravecCornersDetector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuadrilateralFinder.cs" />
     <Compile Include="RecursiveBlobCounter.cs" />
-    <Compile Include="Segment.cs" />
-    <Compile Include="Filters\Flood Fillers\SimpleFloodFill.cs" />
-    <Compile Include="Filters\Color Segmentation\SimplePosterization.cs" />
-    <Compile Include="SimpleColorSegmentsDetector.cs" />
     <Compile Include="SusanCornersDetector.cs" />
     <Compile Include="TemplateMatch.cs" />
     <Compile Include="Textures\CloudsTexture.cs" />

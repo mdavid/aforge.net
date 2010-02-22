@@ -5,7 +5,7 @@
 // Copyright © Andrew Kirillov, 2005-2009
 // andrew.kirillov@aforgenet.com
 //
-// Copyright © Frank Nagl, 2008
+// Copyright © Frank Nagl, 2007
 // admin@franknagl.de
 //
 namespace AForge.Imaging
@@ -52,9 +52,9 @@ namespace AForge.Imaging
     /// // create corners detector's instance
     /// SusanCornersDetector scd = new SusanCornersDetector( );
     /// // process image searching for corners
-    /// Point[] corners = scd.ProcessImage( image );
+    /// List&lt;IntPoint&gt; corners = scd.ProcessImage( image );
     /// // process points
-    /// foreach ( Point corner in corners )
+    /// foreach ( IntPoint corner in corners )
     /// {
     ///     // ... 
     /// }
@@ -79,7 +79,7 @@ namespace AForge.Imaging
         /// pixel (nucleus) and surrounding pixel is not higher than difference threshold,
         /// then that pixel becomes part of USAN.</para>
         /// 
-        /// <para>Increasing this value increases the amount of detected corners.</para>
+        /// <para>Increasing this value decreases the amount of detected corners.</para>
         /// 
         /// <para>Default value is set to <b>25</b>.</para>
         /// </remarks>
@@ -139,11 +139,11 @@ namespace AForge.Imaging
         /// 
         /// <param name="image">Source image to process.</param>
         /// 
-        /// <returns>Returns array of found corners (X-Y coordinates).</returns>
+        /// <returns>Returns list of found corners (X-Y coordinates).</returns>
         /// 
         /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
         /// 
-        public Point[] ProcessImage( Bitmap image )
+        public List<IntPoint> ProcessImage( Bitmap image )
         {
             // check image format
             if (
@@ -161,7 +161,7 @@ namespace AForge.Imaging
                 new Rectangle( 0, 0, image.Width, image.Height ),
                 ImageLockMode.ReadOnly, image.PixelFormat );
 
-            Point[] corners;
+            List<IntPoint> corners;
 
             try
             {
@@ -183,11 +183,11 @@ namespace AForge.Imaging
         /// 
         /// <param name="imageData">Source image data to process.</param>
         /// 
-        /// <returns>Returns array of found corners (X-Y coordinates).</returns>
+        /// <returns>Returns list of found corners (X-Y coordinates).</returns>
         /// 
         /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
         /// 
-        public Point[] ProcessImage( BitmapData imageData )
+        public List<IntPoint> ProcessImage( BitmapData imageData )
         {
             return ProcessImage( new UnmanagedImage( imageData ) );
         }
@@ -202,7 +202,7 @@ namespace AForge.Imaging
         ///
         /// <exception cref="UnsupportedImageFormatException">The source image has incorrect pixel format.</exception>
         /// 
-        public Point[] ProcessImage( UnmanagedImage image )
+        public List<IntPoint> ProcessImage( UnmanagedImage image )
         {
             // check image format
             if (
@@ -229,8 +229,7 @@ namespace AForge.Imaging
             else
             {
                 // create temporary grayscale image
-                GrayscaleBT709 grayFilter = new GrayscaleBT709( );
-                grayImage = grayFilter.Apply( image );
+                grayImage = Grayscale.CommonAlgorithms.BT709.Apply( image );
             }
 
             int[,] susanMap = new int[height, width];
@@ -312,7 +311,7 @@ namespace AForge.Imaging
             grayImage.Dispose( );
 
             // collect interesting points - only those points, which are local maximums
-            List<Point> cornersList = new List<Point>( );
+            List<IntPoint> cornersList = new List<IntPoint>( );
 
             // for each row
             for ( int y = 2, maxY = height - 2; y < maxY; y++ )
@@ -339,16 +338,12 @@ namespace AForge.Imaging
                     // check if this point is really interesting
                     if ( currentValue != 0 )
                     {
-                        cornersList.Add( new Point( x, y ) );
+                        cornersList.Add( new IntPoint( x, y ) );
                     }
                 }
             }
 
-            // convert list to array
-            Point[] corners = new Point[cornersList.Count];
-            cornersList.CopyTo( corners );
-
-            return corners;
+            return cornersList;
         }
     }
 }

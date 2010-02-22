@@ -2,10 +2,10 @@
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2008-2009
+// Copyright © Andrew Kirillov, 2008-2010
 // andrew.kirillov@aforgenet.com
 //
-// Copyright © Fabio L. Caversan, 2008-2009
+// Copyright © Fabio L. Caversan, 2008-2010
 // fabio.caversan@gmail.com
 //
 
@@ -27,10 +27,14 @@ namespace AForge.Fuzzy
     /// <para><b>IF <i>antecedent</i> THEN <i>consequent</i></b></para>
     /// 
     /// <para>The antecedent is composed by a set of fuzzy clauses (see <see cref="Clause"/>) connected
-    /// by fuzzy operations, like <b>AND</b> or <b>OR</b>: </para>
+    /// by fuzzy operations, like <b>AND</b> or <b>OR</b>. The operator <b>NOT</b> can be used to negate expressions: </para>
     /// 
-    /// <para><b>...<i>Clause1</i> AND (<i>Clause2</i> OR <i>Clause3</i>) ...</b></para>
+    /// <para><b>...<i>Clause1</i> AND (<i>Clause2</i> OR <i>Clause3</i>) AND NOT <i>Clause4</i> ...</b></para>
     ///     
+    /// <para> Fuzzy clauses are written in form <i>Variable IS Value</i>. The NOT operator can be used to negate linguistic values as well: 
+    /// 
+    /// <para><b>...<i>Variable1 IS Value1</i> AND <i>Variable2 IS NOT Value2</i> ...</b></para>
+    ///
     /// <para>The consequent is a single of fuzzy clauses (<see cref="Clause"/>). To perform the
     /// linguistic computing, the <see cref="Rule"/> evaluates the clauses and then applies the fuzzy
     /// operators. Once this is done a value representing the confidence in the antecedent being
@@ -69,20 +73,38 @@ namespace AForge.Fuzzy
     /// lvStove.AddLabel( fsWarm );
     /// lvStove.AddLabel( fsHot );
     /// 
+    /// // create the linguistic labels (fuzzy sets) that compose the pressure
+    /// TrapezoidalFunction function5 = new TrapezoidalFunction(
+    ///     20, 40, TrapezoidalFunction.EdgeType.Right );
+    /// FuzzySet fsLow = new FuzzySet( "Low", function5 );
+    /// TrapezoidalFunction function6 = new TrapezoidalFunction( 20, 40, 60, 80 );
+    /// FuzzySet fsMedium = new FuzzySet( "Medium", function6 );
+    /// TrapezoidalFunction function7 = new TrapezoidalFunction(
+    ///     60, 80, TrapezoidalFunction.EdgeType.Left );
+    /// FuzzySet fsHigh = new FuzzySet( "High", function7 );
+    /// // create a linguistic variable to represent pressure
+    /// LinguisticVariable lvPressure = new LinguisticVariable( "Pressure", 0, 100 );
+    /// // adding labels to the variable
+    /// lvPressure.AddLabel( fsLow );
+    /// lvPressure.AddLabel( fsMedium );
+    /// lvPressure.AddLabel( fsHigh );
+    /// 
     /// // create a linguistic variable database
     /// Database db = new Database( );
     /// db.AddVariable( lvSteel );
     /// db.AddVariable( lvStove );
+    /// db.AddVariable( lvPressure );
     /// 
     /// // sample rules just to test the expression parsing
-    /// Rule r1 = new Rule( db, "Test1", "IF Steel is Cold and Stove is Hot then Pressure is Low" );
-    /// Rule r2 = new Rule( db, "Test2", "IF Steel is Cold and (Stove is Warm or Stove is Hot) then Pressure is Medium" );
+    /// Rule r1 = new Rule( db, "Test1", "IF Steel is not Cold and Stove is Hot then Pressure is Low" );
+    /// Rule r2 = new Rule( db, "Test2", "IF Steel is Cold and not (Stove is Warm or Stove is Hot) then Pressure is Medium" );
     /// Rule r3 = new Rule( db, "Test3", "IF Steel is Cold and Stove is Warm or Stove is Hot then Pressure is High" );
     /// 
     /// // testing the firing strength
     /// lvSteel.NumericInput = 12;
     /// lvStove.NumericInput = 35;
-    /// double result r1.EvaluateFiringStrength( );
+    /// double result = r1.EvaluateFiringStrength( );
+    /// Console.WriteLine( result.ToString( ) );
     /// </code>    
     /// </remarks>
     /// 
@@ -102,6 +124,10 @@ namespace AForge.Fuzzy
         private INorm normOperator;
         // the conorm operator
         private ICoNorm conormOperator;
+        // the complement operator
+        private IUnaryOperator notOperator;
+        // the unary operators that the rule parser supports
+        private string unaryOperators = "NOT;VERY";
 
         /// <summary>
         /// The name of the fuzzy rule.
@@ -151,6 +177,7 @@ namespace AForge.Fuzzy
             this.database       = fuzzyDatabase;
             this.normOperator   = normOperator;
             this.conormOperator = coNormOperator;
+            this.notOperator    = new NotOperator( );
 
             // parsing the rule to obtain RPN of the expression
             ParseRule( );
@@ -211,10 +238,15 @@ namespace AForge.Fuzzy
         /// 
         private int Priority( string Operator )
         {
+            // if its unary
+            if ( unaryOperators.IndexOf( Operator ) >= 0 )
+                return 4;
+
             switch ( Operator )
             {
-                case "OR": return 1;
-                case "AND": return 2;
+                case "(": return 1;
+                case "OR": return 2;
+                case "AND": return 3;
             }
             return 0;
         }
@@ -228,7 +260,7 @@ namespace AForge.Fuzzy
         {
             // flag to incicate we are on consequent state
             bool consequent = false;
-            
+
             // tokens like IF and THEN will be searched always in upper case
             string upRule = rule.ToUpper( );
 
@@ -240,7 +272,8 @@ namespace AForge.Fuzzy
 
             // building a list with all the expression (rule) string tokens
             string spacedRule = rule.Replace( "(", " ( " ).Replace( ")", " ) " );
-            string [] tokensList = spacedRule.Split( ' ' );
+            // getting the tokens list
+            string[] tokensList = GetRuleTokens( spacedRule );
 
             // stack to convert to RPN
             Stack<string> s = new Stack<string>( );
@@ -308,12 +341,12 @@ namespace AForge.Fuzzy
                         lastToken = upToken;
                     }
                     // operators
-                    else if ( upToken == "AND" || upToken == "OR" )
+                    else if ( upToken == "AND" || upToken == "OR" || unaryOperators.IndexOf( upToken ) >= 0 )
                     {
                         // if we are on consequent, only variables can be found
                         if ( consequent )
                             throw new ArgumentException( "Linguistic variable expected after a THEN statement." );
-                        
+
                         // pop all the higher priority operators until the stack is empty 
                         while ( ( s.Count > 0 ) && ( Priority( s.Peek( ) ) > Priority( upToken ) ) )
                             rpnTokenList.Add( s.Pop( ) );
@@ -368,6 +401,37 @@ namespace AForge.Fuzzy
         }
 
         /// <summary>
+        /// Performs a preprocessing on the rule, placing unary operators in proper position and breaking the string 
+        /// space separated tokens.
+        /// </summary>
+        /// 
+        /// <param name="rule">Rule in string format.</param>
+        /// 
+        /// <returns>An array of strings with tokens of the rule.</returns>
+        /// 
+        private string[] GetRuleTokens( string rule )
+        {
+            // breaking in tokens
+            string[] tokens = rule.Split( ' ' );
+
+            // looking for unary operators
+            for ( int i = 0; i < tokens.Length; i++ )
+            {
+                // if its unary and there is an "IS" token before, we must change positions
+                if ( ( unaryOperators.IndexOf( tokens[i].ToUpper( ) ) >= 0 ) &&
+                     ( i > 1 ) && ( tokens[i - 1].ToUpper( ) == "IS" ) )
+                {
+                    // placing VAR name
+                    tokens[i - 1] = tokens[i - 2];
+                    tokens[i - 2] = tokens[i];
+                    tokens[i] = "IS";
+                }
+            }
+
+            return tokens;
+        }
+
+        /// <summary>
         /// Evaluates the firing strength of the Rule, the degree of confidence that the consequent of this Rule
         /// must be executed.
         /// </summary>
@@ -392,10 +456,14 @@ namespace AForge.Fuzzy
                 // returns to the stack
                 else
                 {
-                    // Operands
                     double y = s.Pop( );
-                    double x = s.Pop( );
-                    // Operation
+                    double x = 0;
+
+                    // unary pops only one value
+                    if ( unaryOperators.IndexOf( o.ToString( ) ) < 0 )
+                        x = s.Pop( );
+
+                    // operation
                     switch ( o.ToString( ) )
                     {
                         case "AND":
@@ -404,9 +472,11 @@ namespace AForge.Fuzzy
                         case "OR":
                             s.Push( conormOperator.Evaluate( x, y ) );
                             break;
+                        case "NOT":
+                            s.Push( notOperator.Evaluate( y ) );
+                            break;
                     }
                 }
-
             }
 
             // result on the top of stack

@@ -2,13 +2,13 @@
 
 [Setup]
 AppName=AForge.NET Framework
-AppVerName=AForge.NET Framework 2.0.0 BETA
+AppVerName=AForge.NET Framework 2.1.1
 AppPublisher=AForge.NET
 AppPublisherURL=http://www.aforgenet.com/framework/
 AppSupportURL=http://www.aforgenet.com/framework/
 AppUpdatesURL=http://www.aforgenet.com/framework/
-DefaultDirName={pf}\AForge.NET Framework
-DefaultGroupName=AForge.NET Framework
+DefaultDirName={pf}\AForge.NET\Framework
+DefaultGroupName=AForge.NET\Framework
 AllowNoIcons=yes
 OutputBaseFilename=setup
 Compression=lzma
@@ -34,6 +34,9 @@ Source: "Files\Docs\*"; DestDir: "{app}\Docs"; Components: docs
 Source: "Files\Sources\*"; DestDir: "{app}\Sources"; Components: sources; Flags: recursesubdirs
 Source: "Files\Samples\*"; DestDir: "{app}\Samples"; Components: samples; Flags: recursesubdirs
 Source: "Files\Externals\*"; DestDir: "{app}\Externals"; Components: samples; Flags: recursesubdirs
+
+[Registry]
+Root: HKLM; Subkey: "Software\Microsoft\.NETFramework\AssemblyFolders\AForge.NET"; Flags: uninsdeletekey; ValueType: string; ValueData: "{app}\Release"
 
 [Icons]
 Name: "{group}\Documentation"; Filename: "{app}\Docs\AForge.NET.chm"

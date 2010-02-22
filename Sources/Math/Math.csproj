@@ -35,7 +35,9 @@
     <DocumentationFile>AForge.Math.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL" />
+    <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
   </ItemGroup>
@@ -44,6 +46,9 @@
     <Compile Include="ContinuousHistogram.cs" />
     <Compile Include="FourierTransform.cs" />
     <Compile Include="Gaussian.cs" />
+    <Compile Include="Geometry\GrahamConvexHull.cs" />
+    <Compile Include="Geometry\IConvexHullAlgorithm.cs" />
+    <Compile Include="Geometry\PointsCloud.cs" />
     <Compile Include="Histogram.cs" />
     <Compile Include="PerlinNoise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

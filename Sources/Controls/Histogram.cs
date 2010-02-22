@@ -169,11 +169,13 @@ namespace AForge.Controls
         /// Logarithmic view or not.
         /// </summary>
         /// 
-        /// <remarks>In the case if logarihmic view is selected, then the control
-        /// will display base 10 logarithm of values.</remarks>
+        /// <remarks><para>In the case if logarihmic view is selected, then the control
+        /// will display base 10 logarithm of values.</para>
+        /// 
+        /// <para>By default the property is set to <b>false</b> - none logarithmic view.</para></remarks>
         /// 
         [DefaultValue( false )]
-        public bool LogarithmicView
+        public bool IsLogarithmicView
         {
             get { return logarithmic; }
             set
@@ -193,7 +195,7 @@ namespace AForge.Controls
         /// <para>By default the property is set to <b>false</b> - horizontal view.</para></remarks>
         ///
         [DefaultValue( false )]
-        public bool Vertical
+        public bool IsVertical
         {
             get { return vertical; }
             set
@@ -350,37 +352,40 @@ namespace AForge.Controls
                     brush.Dispose( );
                 }
 
-                // scaling factor
-                double factor = (double) ( ( vertical ) ? width : height ) /
-                    ( ( logarithmic ) ? maxLogarithmic : max );
-
-                // draw histogram
-                for ( int i = 0, len = ( vertical ) ? height : width; i < len; i++ )
+                if ( max != 0 )
                 {
-                    if ( logarithmic )
-                    {
-                        value = ( values[i] == 0 ) ? 0 : (int) ( Math.Log10( values[i] ) * factor );
-                    }
-                    else
-                    {
-                        value = (int) ( values[i] * factor );
-                    }
+                    // scaling factor
+                    double factor = (double) ( ( vertical ) ? width : height ) /
+                        ( ( logarithmic ) ? maxLogarithmic : max );
 
-                    if ( value != 0 )
+                    // draw histogram
+                    for ( int i = 0, len = ( vertical ) ? height : width; i < len; i++ )
                     {
-                        if ( vertical )
+                        if ( logarithmic )
                         {
-                            g.DrawLine( ( ( tracking ) && ( i >= start ) && ( i <= stop ) ) ? whitePen : drawPen,
-                                new Point( x, y + i ),
-                                new Point( x + value, y + i )
-                                );
+                            value = ( values[i] == 0 ) ? 0 : (int) ( Math.Log10( values[i] ) * factor );
                         }
                         else
                         {
-                            g.DrawLine( ( ( tracking ) && ( i >= start ) && ( i <= stop ) ) ? whitePen : drawPen,
-                                new Point( x + i, y + height - 1 ),
-                                new Point( x + i, y + height - value )
-                                );
+                            value = (int) ( values[i] * factor );
+                        }
+
+                        if ( value != 0 )
+                        {
+                            if ( vertical )
+                            {
+                                g.DrawLine( ( ( tracking ) && ( i >= start ) && ( i <= stop ) ) ? whitePen : drawPen,
+                                    new Point( x, y + i ),
+                                    new Point( x + value, y + i )
+                                    );
+                            }
+                            else
+                            {
+                                g.DrawLine( ( ( tracking ) && ( i >= start ) && ( i <= stop ) ) ? whitePen : drawPen,
+                                    new Point( x + i, y + height - 1 ),
+                                    new Point( x + i, y + height - value )
+                                    );
+                            }
                         }
                     }
                 }

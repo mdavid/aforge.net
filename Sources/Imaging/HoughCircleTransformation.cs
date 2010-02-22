@@ -2,7 +2,7 @@
 // AForge.NET framework
 // http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2009
+// Copyright © Andrew Kirillov, 2005-2010
 // andrew.kirillov@aforgenet.com
 //
 
@@ -369,15 +369,12 @@ namespace AForge.Imaging
         /// <param name="count">Amount of circles to get.</param>
         /// 
         /// <returns>Returns arrary of most intesive circles. If there are no circles detected,
-        /// <b>null</b> is returned.</returns>
+        /// the returned array has zero length.</returns>
         /// 
         public HoughCircle[] GetMostIntensiveCircles( int count )
         {
             // lines count
             int n = Math.Min( count, circles.Count );
-
-            if ( n == 0 )
-                return null;
 
             // result array
             HoughCircle[] dst = new HoughCircle[n];
@@ -392,8 +389,8 @@ namespace AForge.Imaging
         /// 
         /// <param name="minRelativeIntensity">Minimum relative intesity of circles.</param>
         /// 
-        /// <returns>Returns array of circles. If there are no circles detected,
-        /// <b>null</b> is returned.</returns>
+        /// <returns>Returns arrary of most intesive circles. If there are no circles detected,
+        /// the returned array has zero length.</returns>
         /// 
         public HoughCircle[] GetCirclesByRelativeIntensity( double minRelativeIntensity )
         {
@@ -479,7 +476,7 @@ namespace AForge.Imaging
             int y = radiusToDetect;
             int p = ( 5 - radiusToDetect * 4 ) / 4;
 
-            SetHough—irclePoints( xCenter, yCenter, x, y );
+            SetHoughCirclePoints( xCenter, yCenter, x, y );
 
             while ( x < y )
             {
@@ -493,12 +490,12 @@ namespace AForge.Imaging
                     y--;
                     p += 2 * ( x - y ) + 1;
                 }
-                SetHough—irclePoints( xCenter, yCenter, x, y );
+                SetHoughCirclePoints( xCenter, yCenter, x, y );
             }
         }
 
         // Set circle points
-        private void SetHough—irclePoints( int cx, int cy, int x, int y )
+        private void SetHoughCirclePoints( int cx, int cy, int x, int y )
         {
             if ( x == 0 )
             {

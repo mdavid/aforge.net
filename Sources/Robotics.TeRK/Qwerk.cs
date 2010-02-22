@@ -11,6 +11,7 @@ using TeRKIceLib = TeRK;
 namespace AForge.Robotics.TeRK
 {
     using System;
+    using AForge;
 
     /// <summary>
     /// Manipulation of Qwerk robotics board.
@@ -24,6 +25,10 @@ namespace AForge.Robotics.TeRK
     /// motors and servos, analog inputs, on-board LEDs, video camera, etc.</para>
     /// 
     /// <para><img src="img/robotics/qwerk_board.jpg" width="192" height="201" /></para>
+    /// 
+    /// <para><note>Since TeRK project, which is the software core of Qwerk board, is
+    /// based on <a href="http://www.zeroc.com/ice.html">Internet Communication Engine (ICE)</a>,
+    /// the ICE runtime should be installed in order to use Qwerk classes.</note></para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -52,6 +57,9 @@ namespace AForge.Robotics.TeRK
 
         // host address if connection was established
         private string hostAddress;
+
+        // connection timeout
+        internal const int TimeOut = 2500;
 
         /// <summary>
         /// Qwerk's host address.
@@ -91,7 +99,7 @@ namespace AForge.Robotics.TeRK
         /// 
         /// <param name="hostAddress">Qwerk's address or host name to connect to.</param>
         /// 
-        /// <exception cref="ConnectFailedException">Failed connecting to Qwerk.</exception>
+        /// <exception cref="ConnectionFailedException">Failed connecting to Qwerk.</exception>
         /// <exception cref="ServiceAccessFailedException">Failed accessing to the requested service,
         /// which may be due to the fact that something is wrong with Qwerk device or connection
         /// was initiated not with Qwerk.</exception>
@@ -105,9 +113,11 @@ namespace AForge.Robotics.TeRK
             {
                 // initialize ICE communication
                 iceCommunicator = Ice.Util.initialize( );
+                
 
                 // get Qwerk object
                 Ice.ObjectPrx obj = iceCommunicator.stringToProxy( "'::TeRK::TerkUser':tcp -h " + hostAddress + " -p 10101" );
+                obj = obj.ice_timeout( TimeOut );
                 qwerk = TeRKIceLib.QwerkPrxHelper.checkedCast( obj );
 
             }
@@ -115,7 +125,7 @@ namespace AForge.Robotics.TeRK
             {
                 Disconnect( );
 
-                throw new ConnectFailedException( "Failed connecting to the requested service." );
+                throw new ConnectionFailedException( "Failed connecting to the requested service." );
             }
 
             // check if qwerk's object was obtained successfully
