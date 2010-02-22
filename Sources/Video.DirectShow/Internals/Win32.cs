@@ -15,7 +15,7 @@ namespace AForge.Video.DirectShow.Internals
     /// Some Win32 API used internally.
     /// </summary>
     /// 
-    internal class Win32
+    internal static class Win32
     {
         /// <summary>
         /// Supplies a pointer to an implementation of <b>IBindCtx</b> (a bind context object).
@@ -83,7 +83,7 @@ namespace AForge.Video.DirectShow.Internals
         /// 
         /// <returns>Returns <b>S_OK</b> on success.</returns>
         /// 
-        [DllImport( "olepro32.dll" )]
+        [DllImport( "oleaut32.dll" )]
         public static extern int OleCreatePropertyFrame(
             IntPtr hwndOwner,
             int x,

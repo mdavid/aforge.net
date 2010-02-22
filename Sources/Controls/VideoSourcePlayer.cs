@@ -59,7 +59,7 @@ namespace AForge.Controls
         // last received frame from the video source
         private Bitmap currentFrame = null;
         // last error message provided by video source
-        private string lastErrorMessage = null;
+        private string lastMessage = null;
         // controls border color
         private Color borderColor = Color.Black;
 
@@ -137,12 +137,15 @@ namespace AForge.Controls
                     // detach events
                     if ( videoSource != null )
                     {
-                        if ( videoSource.IsRunning )
-                        {
-                            throw new Exception( "Can not change video source while current is running." );
-                        }
                         videoSource.NewFrame -= new NewFrameEventHandler( videoSource_NewFrame );
                         videoSource.VideoSourceError -= new VideoSourceErrorEventHandler( videoSource_VideoSourceError );
+                        videoSource.PlayingFinished -= new PlayingFinishedEventHandler( videoSource_PlayingFinished );
+                    }
+
+                    if ( currentFrame != null )
+                    {
+                        currentFrame.Dispose( );
+                        currentFrame = null;
                     }
 
                     videoSource = value;
@@ -152,8 +155,10 @@ namespace AForge.Controls
                     {
                         videoSource.NewFrame += new NewFrameEventHandler( videoSource_NewFrame );
                         videoSource.VideoSourceError += new VideoSourceErrorEventHandler( videoSource_VideoSourceError );
+                        videoSource.PlayingFinished += new PlayingFinishedEventHandler( videoSource_PlayingFinished );
                     }
 
+                    lastMessage = null;
                     needSizeUpdate = true;
                     firstFrameNotProcessed = true;
                     // update the control
@@ -304,6 +309,23 @@ namespace AForge.Controls
             }
         }
 
+        /// <summary>
+        /// Get clone of current video frame displayed by the control.
+        /// </summary>
+        /// 
+        /// <returns>Returns clone of the video frame, which is currently displayed
+        /// by the control - the last video frame received from video source. If the
+        /// control did not receive any video frames yet, then the method returns
+        /// <see langword="null"/>.</returns>
+        /// 
+        public Bitmap GetCurrentVideoFrame( )
+        {
+            lock ( this )
+            {
+                return ( currentFrame == null ) ? null : (Bitmap) currentFrame.Clone( );
+            }
+        }
+
         // Paing control
         private void VideoSourcePlayer_Paint( object sender, PaintEventArgs e )
         {
@@ -325,7 +347,7 @@ namespace AForge.Controls
 
                 if ( videoSource != null )
                 {
-                    if ( ( currentFrame != null ) && ( lastErrorMessage == null ) )
+                    if ( ( currentFrame != null ) && ( lastMessage == null ) )
                     {
                         // draw current frame
                         g.DrawImage( currentFrame, rect.X + 1, rect.Y + 1, rect.Width - 2, rect.Height - 2 );
@@ -333,17 +355,13 @@ namespace AForge.Controls
                     }
                     else
                     {
-                        // display status string only in the case if video source is runnning
-                        if ( videoSource.IsRunning )
-                        {
-                            // create font and brush
-                            SolidBrush drawBrush = new SolidBrush( this.ForeColor );
+                        // create font and brush
+                        SolidBrush drawBrush = new SolidBrush( this.ForeColor );
 
-                            g.DrawString( ( lastErrorMessage == null ) ? "Connecting ..." : lastErrorMessage,
-                                this.Font, drawBrush, new PointF( 5, 5 ) );
+                        g.DrawString( ( lastMessage == null ) ? "Connecting ..." : lastMessage,
+                            this.Font, drawBrush, new PointF( 5, 5 ) );
 
-                            drawBrush.Dispose( );
-                        }
+                        drawBrush.Dispose( );
                     }
                 }
 
@@ -391,7 +409,7 @@ namespace AForge.Controls
                 }
 
                 currentFrame = (Bitmap) eventArgs.Frame.Clone( );
-                lastErrorMessage = null;
+                lastMessage = null;
 
                 // notify about the new frame
                 if ( NewFrame != null )
@@ -407,7 +425,28 @@ namespace AForge.Controls
         // Error occured in video source
         private void videoSource_VideoSourceError( object sender, VideoSourceErrorEventArgs eventArgs )
         {
-            lastErrorMessage = eventArgs.Description;
+            lastMessage = eventArgs.Description;
+            Invalidate( );
+        }
+
+        // Video source has finished playing video
+        private void videoSource_PlayingFinished( object sender, ReasonToFinishPlaying reason )
+        {
+            switch ( reason )
+            {
+                case ReasonToFinishPlaying.EndOfStreamReached:
+                    lastMessage = "Video has finished";
+                    break;
+
+                case ReasonToFinishPlaying.StoppedByUser:
+                    lastMessage = "Video was stopped";
+                    break;
+
+                default:
+                    lastMessage = "Video has finished for unknown reason";
+                    break;
+            }
+            Invalidate( );
         }
 
         // Parent Changed event handler

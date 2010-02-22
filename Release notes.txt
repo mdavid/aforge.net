@@ -1,3 +1,294 @@
+AForge.NET Framework 2.1.1 release notes
+----------------------------------------
+24.01.2010.
+
+
+Version updates and fixes:
+
+* Fixed registered issues/requests:
+  - Issue 113: DisplayPropertyPage in directshow in vista/Windows 7 fails  
+  - Issue 114: Division by zero  
+  - Issue 115: Otsu thresholding enhancement  
+  - Issue 116: DoublePoint  
+  - Issue 118: Crash due to missing olepro32.dll  
+  - Issue 121: RotateBilinear optimization  
+
+
+* General
+  - Updating titles of all assemblies, so they look nice if they are registered on the .NET page of "Add Reference"
+    dialog in VS.NET.
+  - Updating install script - after installation of AForge.NET Framework its assemblies will be seen on .NET page
+    of "Add Reference" dialog in VS.NET
+    
+
+* AForge
+  - Fixed operator- for DoublePoint and IntPoint classes.
+  
+
+* AForge.Imaging
+  - Added Image.FromFile() method to workaround the issue of standard .NET method, which locks file until image
+    object is disposed.
+
+  - Added CalculateThreshold() method into 3 adaptive thresholding classes, which allows to calculate threshold
+    only without applying it to image.
+    
+  - Some optimizations are done for RotateBilinear by putting some calculations outside of the x-loop.
+    
+
+* AForge.Robotics.Surveyor
+  - Adding method to access I2C devices connected to SRV-1/SVS robots.
+  
+  - Removing new line check for replies which start with '##'. The SRV-1 protocol is real pain to work with.
+  
+  
+* AForge.Video.DirectShow
+  - Replacing interop usage of olepro32.dll to oleaut32.dll for OleCreatePropertyFrame() API call, so accessing
+    this API call works correctly on Windows 64-bit version.
+
+
+* AForge.Controls
+  - Added check for max equals to zero to avoid painting histogram when there is nothing to paint actually.
+
+  
+
+
+AForge.NET Framework 2.1.0 release notes
+----------------------------------------
+05.11.2009.
+
+
+Version updates and fixes:
+
+* Fixed registered issues/requests:
+  - Issue 106: DisplayPropertyPage problem - Filter can't create twice
+  - Issue 113: DisplayPropertyPage in directshow in vista/Windows 7 fails
+
+
+* General
+  - Added new AForge.Robotics.Surveyor namespace containing classes to manipulate Surveyor's
+    SRV-1 Blackfin robot and SVS (Stereo Vision System) board.
+    
+  - Added new AForge.Math.Geometry namespace containing some geometry related.
+
+
+* AForge
+  - Adding IntPoint structure as alternative to .NET's System.Drawing.Point. DoublePoint is updated
+    to be similar to IntPoint.
+  
+  
+* AForge.Imaging
+  - Added StereoAnaglyph image processing filter to create anaglyph images from 2 images of the
+    same scene taken from a bit different points.
+
+  - Adding Drawing.Polygon() and Drawing.Polyline() for drawing polygons and polylines on unmanaged images.
+  
+  - Added BlobPosition property to ExtractBiggestBlob filter, which tells position of the extracted blob.
+  
+  - Added QuadrilateralFinder class to search for corners of quadrilateral area in the specified image.
+
+  - Added QuadrilateralTransformationNearestNeighbor and QuadrilateralTransformationBilinear classes, which perform
+    quadrilateral area transformation to rectangular.
+    
+  - BlobCounterBase class is extended with GetBlobsLeftAndRightEdges() and GetBlobsTopAndBottomEdges() methods, which
+    provide edge points of a blob. These routines are very useful with new AForge.Math.Geometry routines, which allow
+    finding convex hull and quadrilateral corners.
+    
+  - BlobCounter and RecursiveBlobCounter are updated to be able to process color images as well (24 and 32 bpp).
+   
+  - BlobsFiltering, ExtractBiggestBlob and ConnectedComponentsLabeling classes were updated to support color images.
+  
+  - Added new properties for Blob class: Area, Fullness, CenterOfGravity.
+  
+  - BlobCounterBase is updated to provide sorting by Area.
+  
+   
+* AForge.Math.Geometry
+  - Added PointsCloud tool class, which includes set of method to work with collection of points ("clouds").
+    These methods include: getting furthest point from a reference point; getting furthest point from
+    specified line; finding quadrilateral corners for the specified set of points.
+    
+  - Added Graham scan algorithm for searching convex hull of the specfied set of points.
+
+
+* AForge.Robotics.Surveyor
+  - Added SRV1 class - allows to manipulate Surveyor's SRV-1 Blackfin robot.
+  
+  - Added SVS class - allows to manipulate Surveyor's SVS bard.
+  
+  - Added SRV1Camera class - allows to get continuous video feeds from SRV-1 and SVS robots.
+  
+
+* AForge.Video
+  - Added possibility to configure HTTP User Agent for MJPEG requests. By default it is set
+    to "Mozilla/5.0".
+    
+
+* AForge.Video.DirectShow
+  - In the case if camera's driver does not allow several copies of video source object, we pass the request
+    for displaying property page to background thread, which deals with video capture. Otherwise we create second
+    source object and use it as before. (fixing 106 and 113)
+
+
+* Samples
+  - Added SVS Test sample application, which allows to get video from Surveyor's SVS board,
+    show stereo anaglyphs for it and drive the robot.
+    
+  - Added SRV-1 Test sample application, which allows to get robot's video and drive it.
+  
+  - Added Blobs Explorer sample application, which demonstrates the process of finding separate
+    blobs, getting their properties, convex hull, etc.
+    
+  - Fixed build issue of TSP sample demonstrating Genetic Algorithms.
+
+
+
+
+AForge.NET Framework 2.0.1 release notes
+----------------------------------------
+19.09.2009.
+
+
+Version updates and fixes:
+
+* Fixed registered issues/requests:
+  - Issue 56: Changing activation functions
+  - Issue 97: Request: Missing an event for when clip is done running
+  - Issue 109: Comments for Hough line transform
+  - Issue 110: GetMostIntensiveLines(count) returns null
+  - Issue 112: Provide binaries as a .zip file
+  
+  
+* AForge
+  - Added zero initialization of allocated unmanaged images, since Marshal.AllocHGlobal() does not
+    care about it.
+    
+  - Moving exceptions, which are related to connections to device, from AForge.Robotics.TeRK to AForge namespace,
+    so they could be reused in other namespaces as well.
+    
+    
+* AForge.Imaging
+  - Fixed UnmanagedImage.FromManagedImage() method - it was allocating unmanaged image, but was not
+    copying managed image to it.
+
+  - Added documentation to UnmanagedImage to clarify its purpose.
+  
+  - Bug fix in SimplePosterization image processing filter.
+  
+  - Added black rectangle drawing in CannyEdgeDetector to remove unprocessed pixels. This is required in
+    the case if the filter is applied in-place.
+    
+  - Created set of predefined common grayscaling algorithms, which are available as read only instances of
+    Grayscale class. These predefined instances are available in Grayscale.CommonAlgorithms class. Old
+    classes like GrayscaleBT709, GrayscaleRMY, GrayscaleY are marked as obsolete.
+    
+  - Both GetMostIntensiveLines() and GetLinesByRelativeIntensity() methods in HoughLineTransformation class
+    were updated to return array of zero length instead of null in the case when there are no lines to return.
+    
+  - Updated documentation to HoughLineTransformation and HoughLine clarifying different aspects of Hough Line
+    transformation. Provided sample code to highlight detected lines. Provided sample image with annotation
+    to clarify meaning of Theta and Radius values of detected Hough lines.
+
+
+* AForge.Imaging.Formats
+  - Added registration of PPM extension as valid image in PNM format.
+  
+  - Added sample images for testing of AForge.Imaging.Formats namespace.
+  
+
+* AForge.Neuro
+  - Added ability to change activation function of neuron/layer/network.
+  
+
+* AForge.Robotics.Lego
+  - Added GetUltrasonicSensorsValue() method for NXT brick to read values of ultrasonic distance sensor.
+  
+
+* AForge.Robotics.TeRK
+  - Added 2500 ms connection timeout to Qwerk classes. QwerkStart sample update to handle lost connection.
+  
+
+* AForge.Video
+  - Added PlayingFinished event to IVideoSource interface. The event is fired in the case video
+    stops by reaching end of video stream or by canceling by user.
+  
+  
+* AForge.Video.DirectShow
+  - Added VideoCapabilities property to VideoCaptureDevice class, which can be used to resolve supported
+    frame sizes and maximum frame rates.
+
+
+* AForge.Vision
+  - MillisecondsPerBackgroundUpdate property is introduced in SimpleBackgroundModelingDetector, which
+    allows to control background update on the base of time intervals, but not on the base of frames'
+    counter. This allows to control background update in the way, which is not affected by variable frame
+    rates. Also the method better handles those case, when video source has very low frame rate (where
+    FramesPerBackgroundUpdate would not perform very well causing very long time to update background).
+    
+    
+* Samples
+  - Fixing FilterDemo application - added grayscaling before edge detectors (all edge detectors
+    require grayscaling).
+
+
+
+
+AForge.NET Framework 2.0.0 (final) release notes
+---------------------------------------------
+22.07.2009.
+
+
+Version updates and fixes:
+
+* Fixed registered issues/requests:
+  - Issue 40: Motion detector using predefined background image  
+  - Issue 50: Separating motion frame extraction with its further processing  
+  - Issue 92: Check for subscribers to VideoCaptureDevice.NewFrame event before copying bitmap data  
+  - Issue 94: Request to add Offset to Convolution filter  
+  - Issue 95: Error in AForge.Imaging.Filters.Crop.ProcessFilter()  
+
+
+* AForge.Fuzzy
+  - New class SingletonFunction: new kind of membership function, to represent classical numerical numbers in fuzzy domain.
+
+  - Inference System was modified to allow the user to access the fuzzy output before defuzzyfing.
+
+  - Some other minor updates caused by received feedback.
+
+
+* AForge.Imaging
+  - All exceptions classes, which were introduced in BETA versions, are renamed to have Exception ending.
+
+  - Added Threshold property to the Convolution filter, which allows to set value to be added to weighted sum of pixels.
+
+  - Crop filter bug is fixed (the filter was calculating pixel size incorrectly).
+
+  - Fixed pixel size calculation in ContrastStretch filter.
+
+  - ExtractChannel and ReplaceChannel filters are extended to support extraction of alpha channel in addition to RGB channels.
+
+  - Added image processing filter to extract normalized RGB channels.
+
+  - Added SimplePosterization filter.
+
+
+* AForge.Video.DirectShow
+  - Video classes are updated to skip preparing new video frame, if nobody is subscribed for NewFrame
+    event (decreases CPU usage if no subscribed clients).
+
+
+* AForge.Vison
+  - The namespace was completely redesigned to introduce motion detection and motion processing algorithms.
+    In the past both these algorithms were part of each motion detection class, which was not flexible, not reusable
+    and not extendable.
+
+
+* Samples
+  - Motion Detection sample application is updated to use new classes of the redesigned AForge.Vision namespace.
+    Also added feature to show motion history.
+
+
+
+
 AForge.NET Framework 2.0.0 BETA release notes
 ---------------------------------------------
 20.03.2009.

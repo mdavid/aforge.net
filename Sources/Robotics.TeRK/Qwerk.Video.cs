@@ -14,6 +14,7 @@ namespace AForge.Robotics.TeRK
     using System.Drawing;
     using System.IO;
     using System.Threading;
+    using AForge;
     using AForge.Video;
 
     public partial class Qwerk
@@ -88,6 +89,15 @@ namespace AForge.Robotics.TeRK
             public event VideoSourceErrorEventHandler VideoSourceError;
 
             /// <summary>
+            /// Video playing finished event.
+            /// </summary>
+            /// 
+            /// <remarks><para>This event is used to notify clients that the video playing has finished.</para>
+            /// </remarks>
+            /// 
+            public event PlayingFinishedEventHandler PlayingFinished;
+
+            /// <summary>
             /// Frame interval.
             /// </summary>
             /// 
@@ -107,10 +117,7 @@ namespace AForge.Robotics.TeRK
             /// Video source string.
             /// </summary>
             /// 
-            /// <remarks><para><note>The property is available only for reading. Trying to set it
-            /// will generate <see cref="NotImplementedException"/> exception. It exists only to
-            /// implement <see cref="IVideoSource"/> interface</note>.</para>
-            /// 
+            /// <remarks>
             /// <para>The property keeps connection string, which is used to connect to TeRK's video
             /// streaming service.</para>
             /// </remarks>
@@ -118,10 +125,6 @@ namespace AForge.Robotics.TeRK
             public string Source
             {
                 get { return source; }
-                set
-                {
-                    throw new NotImplementedException( "Setting the property is not allowed" );
-                }
             }
 
             /// <summary>
@@ -161,18 +164,6 @@ namespace AForge.Robotics.TeRK
             }
 
             /// <summary>
-            /// User data.
-            /// </summary>
-            /// 
-            /// <remarks>The property allows to associate user data with video source object.</remarks>
-            /// 
-            public object UserData
-            {
-                get { return null; }
-                set { }
-            }
-
-            /// <summary>
             /// State of the video source.
             /// </summary>
             /// 
@@ -203,7 +194,7 @@ namespace AForge.Robotics.TeRK
             /// 
             /// <exception cref="NotConnectedException">The passed reference to <see cref="Qwerk"/> object is not connected to
             /// Qwerk board.</exception>
-            /// <exception cref="ConnectFailedException">Failed connecting to the requested service.</exception>
+            /// <exception cref="ConnectionFailedException">Failed connecting to the requested service.</exception>
             /// <exception cref="ServiceAccessFailedException">Failed accessing to the requested service.</exception>
             /// 
             public Video( Qwerk qwerk )
@@ -219,6 +210,7 @@ namespace AForge.Robotics.TeRK
                         source = "'::TeRK::VideoStreamerServer':tcp -h " + hostAddress + " -p 10101";
 
                         Ice.ObjectPrx obj = qwerk.iceCommunicator.stringToProxy( source );
+                        obj = obj.ice_timeout( Qwerk.TimeOut );
                         videoStreamer = TeRKIceLib.VideoStreamerServerPrxHelper.checkedCast( obj );
                     }
                     catch ( Ice.ObjectNotExistException )
@@ -228,7 +220,7 @@ namespace AForge.Robotics.TeRK
                     }
                     catch
                     {
-                        throw new ConnectFailedException( "Failed connecting to the requested service." );
+                        throw new ConnectionFailedException( "Failed connecting to the requested service." );
                     }
 
                     if ( videoStreamer == null )
@@ -419,6 +411,11 @@ namespace AForge.Robotics.TeRK
                         }
                     }
                 }
+
+                if ( PlayingFinished != null )
+                {
+                    PlayingFinished( this, ReasonToFinishPlaying.StoppedByUser );
+                } 
             }
         }
     }

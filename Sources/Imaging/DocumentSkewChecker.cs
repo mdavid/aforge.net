@@ -20,13 +20,17 @@ namespace AForge.Imaging
     /// Skew angle checker for scanned documents.
     /// </summary>
     ///
-    /// <remarks><para>The class implements document's skew checker, which is based
+    /// <remarks><para>The class implements document's skew checking algorithm, which is based
     /// on <see cref="HoughLineTransformation">Hough line transformation</see>. The algorithm
-    /// is based of searching for text base lines - black line of  text lines' bottoms followed
+    /// is based on searching for text base lines - black line of text bottoms' followed
     /// by white line below.</para>
     /// 
     /// <para><note>The routine supposes that a white-background document is provided
-    /// with black letters.</note></para>
+    /// with black letters. The algorithm is not supposed for any type of objects, but for
+    /// document images with text.</note></para>
+    /// 
+    /// <para>The range of angles to detect is controlled by <see cref="MinBeta"/> and
+    /// <see cref="MaxBeta"/> properties.</para>
     /// 
     /// <para>The filter accepts 8 bpp grayscale images for processing.</para>
     /// 
@@ -37,7 +41,8 @@ namespace AForge.Imaging
     /// // get documents skew angle
     /// double angle = skewChecker.GetSkewAngle( documentImage );
     /// // create rotation filter
-    /// RotateBilinear rotationFilter = RotateBilinear( -angle );
+    /// RotateBilinear rotationFilter = new RotateBilinear( -angle );
+    /// rotationFilter.FillColor = Color.White;
     /// // rotate image applying the filter
     /// Bitmap rotatedImage = rotationFilter.Apply( documentImage );
     /// </code>

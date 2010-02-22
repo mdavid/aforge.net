@@ -1,8 +1,9 @@
 ﻿// AForge Image Processing Library
 // AForge.NET framework
+// http://www.aforgenet.com/framework/
 //
-// Copyright © Andrew Kirillov, 2005-2008
-// andrew.kirillov@gmail.com
+// Copyright © Andrew Kirillov, 2005-2009
+// andrew.kirillov@aforgenet.com
 //
 
 namespace AForge.Imaging
@@ -19,6 +20,43 @@ namespace AForge.Imaging
     /// <para>The class represents wrapper of an image in unmanaged memory. Using this class
     /// it is possible as to allocate new image in unmanaged memory, as to just wrap provided
     /// pointer to unmanaged memory, where an image is stored.</para>
+    /// 
+    /// <para>Usage of unmanaged images is mostly beneficial when it is required to apply <b>multiple</b>
+    /// image processing routines to a single image. In such scenario usage of .NET managed images 
+    /// usually leads to worse performance, because each routine needs to lock managed image
+    /// before image processing is done and then unlock it after image processing is done. Without
+    /// these lock/unlock there is no way to get direct access to managed image's data, which means
+    /// there is no way to do fast image processing. So, usage of managed images lead to overhead, which
+    /// is caused by locks/unlock. Unmanaged images are represented internally using unmanaged memory
+    /// buffer. This means that it is not required to do any locks/unlocks in order to get access to image
+    /// data (no overhead).</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    /// // sample 1 - wrapping .NET image into unmanaged without
+    /// // making extra copy of image in memory
+    /// BitmapData imageData = image.LockBits(
+    ///     new Rectangle( 0, 0, image.Width, image.Height ),
+    ///     ImageLockMode.ReadWrite, image.PixelFormat );
+    /// 
+    /// try
+    /// {
+    ///     UnmanagedImage unmanagedImage = new UnmanagedImage( imageData ) );
+    ///     // apply several routines to the unmanaged image
+    /// }
+    /// finally
+    /// {
+    ///     image.UnlockBits( imageData );
+    /// }
+    /// 
+    /// 
+    /// // sample 2 - converting .NET image into unmanaged
+    /// UnmanagedImage unmanagedImage = UnmanagedImage.FromManagedImage( image );
+    /// // apply several routines to the unmanaged image
+    /// ...
+    /// // conver to managed image if it is required to display it at some point of time
+    /// Bitmap managedImage = unmanagedImage.ToManagedImage( );
+    /// </code>
     /// </remarks>
     /// 
     public class UnmanagedImage : IDisposable
@@ -103,6 +141,10 @@ namespace AForge.Imaging
         /// 
         /// <param name="bitmapData">Locked bitmap data.</param>
         /// 
+        /// <remarks><note>Unlike <see cref="FromManagedImage(BitmapData)"/> method, this constructor does not make
+        /// copy of managed image. This means that managed image must stay locked for the time of using the instance
+        /// of unamanged image.</note></remarks>
+        /// 
         public UnmanagedImage( BitmapData bitmapData )
         {
             this.imageData   = bitmapData.Scan0;
@@ -182,6 +224,53 @@ namespace AForge.Imaging
         }
 
         /// <summary>
+        /// Copy unmanaged image.
+        /// </summary>
+        /// 
+        /// <param name="destImage">Destination image to copy this image to.</param>
+        /// 
+        /// <remarks><para>The method copies current unmanaged image to the specified image.
+        /// Size and pixel format of the destination image must be exactly the same.</para></remarks>
+        /// 
+        /// <exception cref="InvalidImagePropertiesException">Destination image has different size or pixel format.</exception>
+        /// 
+        public void Copy( UnmanagedImage destImage )
+        {
+            if (
+                ( width != destImage.width ) || ( height != destImage.height ) ||
+                ( pixelFormat != destImage.pixelFormat ) )
+            {
+                throw new InvalidImagePropertiesException( "Destination image has different size or pixel format." );
+            }
+
+            if ( stride == destImage.stride )
+            {
+                // copy entire image
+                AForge.SystemTools.CopyUnmanagedMemory( destImage.imageData, imageData, stride * height );
+            }
+            else
+            {
+                unsafe
+                {
+                    int dstStride = destImage.stride;
+                    int copyLength = ( stride < dstStride ) ? stride : dstStride;
+
+                    byte* src = (byte*) imageData.ToPointer( );
+                    byte* dst = (byte*) destImage.imageData.ToPointer( );
+
+                    // copy line by line
+                    for ( int i = 0; i < height; i++ )
+                    {
+                        AForge.SystemTools.CopyUnmanagedMemory( dst, src, copyLength );
+
+                        dst += dstStride;
+                        src += stride;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Allocate new image in unmanaged memory.
         /// </summary>
         /// 
@@ -256,6 +345,7 @@ namespace AForge.Imaging
 
             // allocate memory for the image
             IntPtr imageData = System.Runtime.InteropServices.Marshal.AllocHGlobal( stride * height );
+            AForge.SystemTools.SetUnmanagedMemory( imageData, 0, stride * height );
 
             UnmanagedImage image = new UnmanagedImage( imageData, width, height, stride, pixelFormat );
             image.mustBeDisposed = true;
@@ -348,7 +438,8 @@ namespace AForge.Imaging
         /// <returns>Returns new unmanaged image, which is a copy of source managed image.</returns>
         /// 
         /// <remarks><para>The method creates an exact copy of specified managed image, but allocated
-        /// in unmanaged memory.</para></remarks>
+        /// in unmanaged memory. This means that managed image may be unlocked right after call to this
+        /// method.</para></remarks>
         /// 
         /// <exception cref="UnsupportedImageFormatException">Unsupported pixel format of source image.</exception>
         /// 
@@ -373,6 +464,7 @@ namespace AForge.Imaging
             IntPtr dstImageData = System.Runtime.InteropServices.Marshal.AllocHGlobal( imageData.Stride * imageData.Height );
 
             UnmanagedImage image = new UnmanagedImage( dstImageData, imageData.Width, imageData.Height, imageData.Stride, pixelFormat );
+            AForge.SystemTools.CopyUnmanagedMemory( dstImageData, imageData.Scan0, imageData.Stride * imageData.Height );
             image.mustBeDisposed = true;
 
             return image;
