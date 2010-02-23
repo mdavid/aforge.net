@@ -1,0 +1,35 @@
+float number;
+
+struct PS_INPUT 
+{
+   float4 Position : POSITION0;
+   float2 Texcoord : TEXCOORD0;   
+};
+
+float4 PixelShaderMain( float2 textureCoordinate : TEXCOORD0 ) : COLOR0
+{
+   //number = 8.0;
+   float4 value;
+   float u = 0.0;
+   float v = 0.0;
+
+   u = textureCoordinate.x * number;
+   v = textureCoordinate.y * number;
+
+   if (fmod(u, 2.0) <= 1.0 && fmod(v, 2.0) <= 1.0 ||
+       fmod(u, 2.0) > 1.0 && fmod(v, 2.0) > 1.0)
+      value = float4( 0.0f, 0.0f, 0.0f, 1.0f );
+   else   
+      value = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+   
+   return value;   
+}
+
+//####### Entry point #########
+technique Chessboard_easy
+{
+   pass Pass_0
+   {
+      PixelShader = compile ps_2_0 PixelShaderMain();
+   }
+}

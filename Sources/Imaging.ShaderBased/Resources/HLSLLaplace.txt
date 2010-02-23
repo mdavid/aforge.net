@@ -1,0 +1,49 @@
+int width;
+int height;
+float factor;
+texture imageTexture;
+
+sampler2D imageMap = sampler_state
+{
+  Texture = (imageTexture);
+};
+
+float4 PixelShaderMain(float2 textureCoordinate : TEXCOORD0) : COLOR0
+{
+   //float xSize = 512, ySize = 512;
+   //int kernelSize = 9;
+   float2 delta = float2(1.0f / width, 1.0f / height);
+   float2 offset[9] = 
+   {
+      //first row
+      float2(-1.0f,  1.0f), 
+      float2( 0.0f,  1.0f),
+      float2( 1.0f,  1.0f), 
+      //second row
+      float2(-1.0f, 0.0f), 
+      float2( 0.0f,  0.0f),
+      float2( 1.0f,  0.0f),
+      //third row
+      float2(-1.0f, -1.0f), 
+      float2( 0.0f, -1.0f),
+      float2( 1.0f, -1.0f)  
+   };
+   
+   float kernel[9] = { 0.0f, -1.0f,  0.0f,
+                      -1.0f,  4.0f, -1.0f,
+                       0.0f, -1.0f,  0.0f };   
+   float4 value = float4(0.0f, 0.0f, 0.0f, 0.0f);
+   for (int i = 0; i < 9; i++ )
+   {
+      value += tex2D( imageMap, textureCoordinate + offset[i] * delta ) * kernel[i] * factor;
+   }
+   return value;
+}
+
+technique Chessboard
+{
+  pass Pass_0
+  {
+    PixelShader = compile ps_3_0 PixelShaderMain();
+  }
+}

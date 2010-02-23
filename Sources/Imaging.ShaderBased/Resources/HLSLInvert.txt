@@ -1,0 +1,19 @@
+texture imageTexture;
+
+sampler2D imageMap = sampler_state
+{
+  Texture = (imageTexture);
+};
+
+float4 PixelShaderMain(float2 textureCoordinate : TEXCOORD0) : COLOR0
+{
+  return 1 - tex2D(imageMap, textureCoordinate);
+}
+
+technique Chessboard
+{
+  pass Pass_0
+  {
+    PixelShader = compile ps_2_0 PixelShaderMain();
+  }
+}
