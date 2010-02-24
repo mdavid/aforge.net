@@ -31,21 +31,30 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\Release\Imaging.ShaderBased.XML</DocumentationFile>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <RegisterForComInterop>true</RegisterForComInterop>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Externals\XNA\Microsoft.Xna.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Externals\XNA\Microsoft.Xna.Framework.Game.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HLSLFilter\HLSLInvert.cs" />
     <Compile Include="HLSLFilter\HLSLLaplace.cs" />
     <Compile Include="HLSLFilter\HLSLOriginal.cs" />
     <Compile Include="HLSLFilter\HLSLChessboard.cs" />
+    <Compile Include="HLSLFilter\HLSLGrayscale.cs" />
+    <Compile Include="HLSLFilter\HLSLSepia.cs" />
+    <Compile Include="HLSLFilter\HLSLSobelEdgeDetector.cs" />
     <Compile Include="ImageConverter.cs" />
     <Compile Include="HLSLProcessor.cs" />
     <Compile Include="IShaderProcessor.cs" />
@@ -75,6 +84,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\HLSLLaplace.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HLSLGrayscale.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HLSLSepia.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HLSLSobelEdgeDetector.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

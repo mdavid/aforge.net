@@ -1,13 +1,21 @@
-texture imageTexture;
+// AForge Shader-Based Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Frank Nagl, 2009-2010
+// admin@franknagl.de
+//
 
-sampler2D imageMap = sampler_state
+texture image;
+
+sampler2D source = sampler_state
 {
-  Texture = (imageTexture);
+  Texture = (image);
 };
 
 float4 PixelShaderMain(float2 textureCoordinate : TEXCOORD0) : COLOR0
 {
-  return tex2D(imageMap, textureCoordinate);
+  return tex2D(source, textureCoordinate);
 }
 
 technique Chessboard

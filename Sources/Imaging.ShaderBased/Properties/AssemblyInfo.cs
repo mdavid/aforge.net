@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyTitle("Imaging.ShaderBased")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Shader-based image processing library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("AForge.NET")]
 [assembly: AssemblyProduct("Imaging.ShaderBased")]
-[assembly: AssemblyCopyright("Copyright ©  2010")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © AForge.NET, Frank Nagl  2010")]
+[assembly: AssemblyTrademark("AForge.NET")]
 [assembly: AssemblyCulture("")]
 
 // Durch Festlegen von ComVisible auf "false" werden die Typen in dieser Assembly unsichtbar 

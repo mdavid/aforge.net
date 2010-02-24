@@ -42,6 +42,21 @@ namespace ShaderBasedImageProcessor
             LaplaceLabel.Enabled = false;
             LaplaceStrengthLabel.Enabled = false;
             LaplaceTrackBar.Enabled = false;
+
+            GrayscaleRedTrackBar.Value = 213;
+            GrayscaleGreenTrackBar.Value = 715;
+            GrayscaleBlueTrackBar.Value = 72;
+            GrayscaleBlue.Enabled = false;
+            GrayscaleBlueTrackBar.Enabled = false;
+            GrayscaleBlueValue.Enabled = false;
+            GrayscaleGreen.Enabled = false;
+            GrayscaleGreenTrackBar.Enabled = false;
+            GrayscaleGreenValue.Enabled = false;
+            GrayscaleRed.Enabled = false;
+            GrayscaleRedTrackBar.Enabled = false;
+            GrayscaleRedValue.Enabled = false;
+            GrayscaleLabel.Enabled = false;
+
         }
 
         private void HLSLProcessorForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -92,9 +107,24 @@ namespace ShaderBasedImageProcessor
             LaplaceLabel.Enabled = true;
             LaplaceStrengthLabel.Enabled = true;
             LaplaceTrackBar.Enabled = true;
-            processor.Filter = new HLSLLaplace();
+            processor.Filter = new HLSLLaplace(3.0f);
         }
 
+        private void hLSLGrayscaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DisableOptions();
+            GrayscaleBlue.Enabled = true;
+            GrayscaleBlueTrackBar.Enabled = true;
+            GrayscaleBlueValue.Enabled = true;
+            GrayscaleGreen.Enabled = true;
+            GrayscaleGreenTrackBar.Enabled = true;
+            GrayscaleGreenValue.Enabled = true;
+            GrayscaleRed.Enabled = true;
+            GrayscaleRedTrackBar.Enabled = true;
+            GrayscaleRedValue.Enabled = true;
+            GrayscaleLabel.Enabled = true;
+            processor.Filter = new HLSLGrayscale(0.213f, 0.715f, 0.072f);
+        }
         #endregion toolstrip menu events
 
         #region trackbar events
@@ -102,9 +132,9 @@ namespace ShaderBasedImageProcessor
         {
             if (processor.Filter is HLSLLaplace)
             {
-                HLSLLaplace laplaceFilter;
-                laplaceFilter = (HLSLLaplace)processor.Filter;
-                laplaceFilter.Factor = LaplaceTrackBar.Value;
+                HLSLLaplace filter;
+                filter = (HLSLLaplace)processor.Filter;
+                filter.Factor = LaplaceTrackBar.Value;
                 LaplaceStrengthLabel.Text = LaplaceTrackBar.Value.ToString();
             }
         }
@@ -113,10 +143,43 @@ namespace ShaderBasedImageProcessor
         {
             if (processor.Filter is HLSLChessboard)
             {
-                HLSLChessboard chessFilter;
-                chessFilter = (HLSLChessboard)processor.Filter;
-                chessFilter.SquaresPerSide = chessBoardTrackBar.Value;
+                HLSLChessboard filter;
+                filter = (HLSLChessboard)processor.Filter;
+                filter.SquaresPerSide = chessBoardTrackBar.Value;
                 chessboardNumberLabel.Text = chessBoardTrackBar.Value.ToString();
+            }
+        }        
+        
+        private void GrayscaleRedTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            if (processor.Filter is HLSLGrayscale)
+            {
+                HLSLGrayscale filter;
+                filter = (HLSLGrayscale)processor.Filter;
+                filter.Red = GrayscaleRedTrackBar.Value / 1000.0f;
+                GrayscaleRedValue.Text = filter.Red.ToString();
+            }
+        }        
+
+        private void GrayscaleGreenTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            if (processor.Filter is HLSLGrayscale)
+            {
+                HLSLGrayscale filter;
+                filter = (HLSLGrayscale)processor.Filter;
+                filter.Green = GrayscaleGreenTrackBar.Value / 1000.0f;
+                GrayscaleGreenValue.Text = filter.Green.ToString();
+            }
+        }
+
+        private void GrayscaleBlueTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            if (processor.Filter is HLSLGrayscale)
+            {
+                HLSLGrayscale filter;
+                filter = (HLSLGrayscale)processor.Filter;
+                filter.Blue = GrayscaleBlueTrackBar.Value / 1000.0f;
+                GrayscaleBlueValue.Text = filter.Blue.ToString();
             }
         }
         #endregion trackbar events
