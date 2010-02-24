@@ -10,8 +10,55 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     using Microsoft.Xna.Framework.Graphics;
 
     /// <summary>
-    /// Shows original image without any filtering.
+    /// Chessboard image.
     /// </summary>
+    /// <remarks>
+    /// <para>No image filtering. Just creating a chessboard texture or image :-).</para>
+    /// 
+    /// <para>Sample usage:</para>
+    /// <code>
+    ///  // 1. Offline rendering
+    ///  // create HLSLProcessor, used as rendering framework
+    ///  HLSLProcessor processor = new HLSLProcessor();
+    ///  // starts HLSLProcessor
+    ///  processor.Begin( image );
+    ///  // create HLSLChessboard filter
+    ///  HLSLChessboard filter = new HLSLChessboard( );
+    ///  // optional: configure filter
+    ///  filter.SquaresPerSide = 10.0f;
+    ///  processor.Filter = filter;
+    ///  // apply the filter  
+    ///  Bitmap resultImage = processor.RenderToBitmap( );
+    ///  Texture2D resultTexture = processor.RenderToTexture( );
+    ///  processor.End( );
+    ///  
+    ///  // 2. Online rendering
+    ///  // create any windows control for rendering in
+    ///  Form myForm = new Form( );
+    ///  // create HLSLProcessor, used as rendering framework
+    ///  HLSLProcessor processor2 = new HLSLProcessor( );
+    ///  // starts HLSLProcessor
+    ///  processor2.Begin( image, myForm );
+    ///  // create HLSLChessboard filter
+    ///  HLSLChessboard filter2 = new HLSLChessboard( );
+    ///  // optional: configure filter
+    ///  filter2.SquaresPerSide = 10.0f;
+    ///  processor2.Filter = filter;
+    ///  // apply the filter
+    ///  myForm.Show( );
+    ///  while ( myForm.Created )
+    ///  {
+    ///      processor2.Render( );
+    ///      Application.DoEvents( );
+    ///  }
+    ///  processor2.End( );
+    /// </code>
+    /// 
+    /// <para><b>Initial image:</b></para>
+    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <para><b>Result image:</b></para>
+    /// <img src="img/imaging/HLSLChessboard.jpg" width="480" height="361" />
+    /// </remarks>
     public class HLSLChessboard : HLSLBaseFilter
     {
         /// <summary>

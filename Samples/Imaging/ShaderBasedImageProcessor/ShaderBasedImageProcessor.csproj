@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="Imaging.ShaderBased, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Imaging.ShaderBased\bin\Debug\Imaging.ShaderBased.dll</HintPath>
+      <HintPath>..\..\..\Release\Imaging.ShaderBased.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />

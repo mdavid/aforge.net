@@ -1,43 +1,58 @@
+// AForge Shader-Based Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Frank Nagl, 2009-2010
+// admin@franknagl.de
+//
+
+int version;
 int width;
 int height;
 float factor;
-texture imageTexture;
+texture image;
 
-sampler2D imageMap = sampler_state
+sampler2D source = sampler_state
 {
-  Texture = (imageTexture);
+  Texture = (image);
 };
 
-float4 PixelShaderMain(float2 textureCoordinate : TEXCOORD0) : COLOR0
+float4 PixelShaderMain(float2 texCoord : TEXCOORD0) : COLOR0
 {
-   //float xSize = 512, ySize = 512;
-   //int kernelSize = 9;
-   float2 delta = float2(1.0f / width, 1.0f / height);
-   float2 offset[9] = 
-   {
-      //first row
-      float2(-1.0f,  1.0f), 
-      float2( 0.0f,  1.0f),
-      float2( 1.0f,  1.0f), 
-      //second row
-      float2(-1.0f, 0.0f), 
-      float2( 0.0f,  0.0f),
-      float2( 1.0f,  0.0f),
-      //third row
-      float2(-1.0f, -1.0f), 
-      float2( 0.0f, -1.0f),
-      float2( 1.0f, -1.0f)  
-   };
-   
-   float kernel[9] = { 0.0f, -1.0f,  0.0f,
-                      -1.0f,  4.0f, -1.0f,
-                       0.0f, -1.0f,  0.0f };   
-   float4 value = float4(0.0f, 0.0f, 0.0f, 0.0f);
-   for (int i = 0; i < 9; i++ )
-   {
-      value += tex2D( imageMap, textureCoordinate + offset[i] * delta ) * kernel[i] * factor;
-   }
-   return value;
+	float2 delta = float2(1.0f / width, 1.0f / height);
+	float2 offset[9] = 
+	{
+		//first row
+		float2(-1.0f,  1.0f), 
+		float2( 0.0f,  1.0f),
+		float2( 1.0f,  1.0f), 
+		//second row
+		float2(-1.0f, 0.0f), 
+		float2( 0.0f,  0.0f),
+		float2( 1.0f,  0.0f),
+		//third row
+		float2(-1.0f, -1.0f), 
+		float2( 0.0f, -1.0f),
+		float2( 1.0f, -1.0f)  
+	};
+
+	float kernel1[9] = { 0.0f, 1.0f,  0.0f,
+						1.0f,-4.0f,  1.0f,
+						0.0f, 1.0f,  0.0f };    
+					     
+	float kernel2[9] = { 1.0f, 1.0f,  1.0f,
+						1.0f,-8.0f,  1.0f,
+						1.0f, 1.0f,  1.0f }; 					                       
+
+	float4 value = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < 9; i++ )
+	{
+		if (version == 0)
+			value += tex2D( source, texCoord + offset[i] * delta ) * kernel1[i] * factor;
+		if (version == 1)
+			value += tex2D( source, texCoord + offset[i] * delta ) * kernel2[i] * factor;			
+	}
+	return value;
 }
 
 technique Chessboard
