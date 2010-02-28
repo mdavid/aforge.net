@@ -21,13 +21,26 @@ namespace AForge.Imaging.ShaderBased
     /// </remarks>
     public abstract class HLSLBaseFilter
     {
+        /// <summary>The specified shader effect.</summary>
+        protected Effect effect;
+        /// <summary>The HLSL effect file, located in project's resources file.</summary>
+        protected string effectFile;
+
         /// <summary>
-        /// Gets the specified effect.
+        /// Initializes a new instance of the <see cref="HLSLBaseFilter"/> class.
+        /// </summary>
+        /// <param name="effectFile">The HLSL effect file, located in project's resources file.</param>
+        protected HLSLBaseFilter(string effectFile) 
+        {
+            this.effectFile = effectFile;
+        }
+
+        /// <summary>
+        /// Inits the specified effect.
         /// </summary>
         /// <param name="graphics">The XNA graphics device.</param>
-        /// <param name="effectFile">The effect file, located in project's resources file.</param>
         /// <returns></returns>
-        protected Effect GetEffect(GraphicsDevice graphics, string effectFile)
+        internal void InitEffect(GraphicsDevice graphics)
         {
             // Load the effect from Resources.resx file.
             ResourceManager resource =
@@ -39,19 +52,16 @@ namespace AForge.Imaging.ShaderBased
                                                                           null,
                                                                           CompilerOptions.None,
                                                                           TargetPlatform.Windows);
-            Effect effect = new Effect(graphics,
-                                       compiledeffect.GetEffectCode(),
-                                       CompilerOptions.None,
-                                       null);
-
-            return effect;
+            effect = new Effect(   graphics,
+                                   compiledeffect.GetEffectCode(),
+                                   CompilerOptions.None,
+                                   null);
         }
 
         /// <summary>
         /// Renders the specified effect.
         /// </summary>
-        /// <param name="graphics">The XNA graphics device.</param>
         /// <param name="info">The texture information of the texture, which will be processed.</param>
-        public abstract void RenderEffect(GraphicsDevice graphics, TextureInformation info);
+        internal abstract void RenderEffect(TextureInformation info);
     }
 }

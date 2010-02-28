@@ -51,15 +51,18 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/HLSLInvert.jpg" width="480" height="361" />
     /// </remarks>
-    public class HLSLInvert : HLSLBaseFilter
+    public sealed class HLSLInvert : HLSLBaseFilter
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HLSLInvert"/> class.
+        /// </summary>
+        public HLSLInvert() : base("HLSLInvert") { }
+
         /// <summary>
         /// Sets the HLSL based invert filter.
         /// </summary>        
-        public override void RenderEffect(GraphicsDevice graphics, TextureInformation info)            
+        internal override void RenderEffect(TextureInformation info)            
         {
-            Effect effect = GetEffect(graphics, "HLSLInvert");
-
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
             effect.CurrentTechnique.Passes[0].End();

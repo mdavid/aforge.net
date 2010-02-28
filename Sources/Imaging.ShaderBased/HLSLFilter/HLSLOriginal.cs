@@ -12,15 +12,17 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <summary>
     /// Shows original image without any filtering.
     /// </summary>
-    public class HLSLOriginal : HLSLBaseFilter
+    public sealed class HLSLOriginal : HLSLBaseFilter
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HLSLOriginal"/> class.
+        /// </summary>
+        public HLSLOriginal() : base("HLSLOriginal") { }
         /// <summary>
         /// Sets the HLSL based invert filter.
         /// </summary>        
-        public override void RenderEffect(GraphicsDevice graphics, TextureInformation info)
+        internal override void RenderEffect(TextureInformation info)
         {
-            Effect effect = GetEffect(graphics, "HLSLOriginal");
-
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
             effect.CurrentTechnique.Passes[0].End();
