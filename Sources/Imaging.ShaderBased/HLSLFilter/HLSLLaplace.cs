@@ -34,9 +34,8 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     ///  // starts HLSLProcessor
     ///  processor.Begin( image );
     ///  // create HLSLLaplace filter
-    ///  HLSLLaplace filter = new HLSLLaplace( );
+    ///  HLSLLaplace filter = new HLSLLaplace( HLSLLaplace.Versions.WithDiagonals );
     ///  // optional: configure filter
-    ///  filter.Version = HLSLLaplace.Versions.WithDiagonals;
     ///  filter.Factor = 3.0f;
     ///  processor.Filter = filter;
     ///  // apply the filter  
@@ -52,7 +51,7 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     ///  // starts HLSLProcessor
     ///  processor2.Begin( image, myForm );
     ///  // create HLSLLaplace filter
-    ///  HLSLLaplace filter2 = new HLSLLaplace( );
+    ///  HLSLLaplace filter2 = new HLSLLaplace( HLSLLaplace.Versions.WithDiagonals, 1.0f );
     ///  processor2.Filter = filter;
     ///  // apply the filter
     ///  myForm.Show( );
@@ -69,7 +68,7 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/HLSLLaplace.jpg" width="480" height="361" />
     /// </remarks>
-    public class HLSLLaplace : HLSLBaseFilter
+    public sealed class HLSLLaplace : HLSLBaseFilter
     {
         /// <summary>Two different versions of Laplace filter.</summary>
         public enum Versions
@@ -92,28 +91,12 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
         /// <summary>
         /// Initializes a new instance of the <see cref="HLSLLaplace"/> class.
         /// </summary>
-        public HLSLLaplace()
-        {
-            Factor = 1.0f;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HLSLLaplace"/> class.
-        /// </summary>
         /// <param name="version">The version of Laplace filter.</param>
         public HLSLLaplace(Versions version)
+            : base("HLSLLaplace")
         {
             Factor = 1.0f;
             Version = version;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HLSLLaplace"/> class.
-        /// </summary>
-        /// <param name="factor">Multiplication factor for stronger lines in edge image.</param>
-        public HLSLLaplace(float factor)
-        {
-            Factor = factor;
         }
 
         /// <summary>
@@ -122,6 +105,7 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
         /// <param name="version">The version of Laplace filter.</param>
         /// <param name="factor">Multiplication factor for stronger lines in edge image.</param>
         public HLSLLaplace(Versions version, float factor)
+            : base("HLSLLaplace")
         {
             Factor = factor;
             Version = version;
@@ -130,15 +114,12 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
         /// <summary>
         /// Sets the HLSL based invert filter.
         /// </summary>        
-        public override void RenderEffect(GraphicsDevice graphics, TextureInformation info)
+        internal override void RenderEffect(TextureInformation info)
         {
-            Effect effect = GetEffect(graphics, "HLSLLaplace");
-
             effect.Parameters["version"].SetValue((int)Version);
             effect.Parameters["factor"].SetValue(Factor);
             effect.Parameters["width"].SetValue(info.Width);
             effect.Parameters["height"].SetValue(info.Height);
-
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
             effect.CurrentTechnique.Passes[0].End();

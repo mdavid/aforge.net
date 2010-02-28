@@ -59,7 +59,7 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <para><b>Result image:</b></para>
     /// <img src="img/imaging/HLSLChessboard.jpg" width="480" height="361" />
     /// </remarks>
-    public class HLSLChessboard : HLSLBaseFilter
+    public sealed class HLSLChessboard : HLSLBaseFilter
     {
         /// <summary>
         /// Gets or sets the number of squares per side of the chessboard.
@@ -71,7 +71,7 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
         /// <summary>
         /// Initializes a new instance of the <see cref="HLSLChessboard"/> class.
         /// </summary>
-        public HLSLChessboard()
+        public HLSLChessboard() : base("HLSLChessboard")
         {
             SquaresPerSide = 8.0f;
         }
@@ -79,12 +79,9 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
         /// <summary>
         /// Sets the HLSL based invert filter.
         /// </summary>        
-        public override void RenderEffect(GraphicsDevice graphics, TextureInformation info)
+        internal override void RenderEffect(TextureInformation info)
         {
-            Effect effect = GetEffect(graphics, "HLSLChessboard");
-
             effect.Parameters["number"].SetValue(SquaresPerSide);
-
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
             effect.CurrentTechnique.Passes[0].End();
