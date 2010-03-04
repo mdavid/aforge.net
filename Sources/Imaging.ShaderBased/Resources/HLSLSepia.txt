@@ -1,0 +1,44 @@
+// AForge Shader-Based Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Frank Nagl, 2009-2010
+// admin@franknagl.de
+//
+
+float Q; 
+float I;
+texture image;
+
+sampler2D source = sampler_state
+{
+   Texture = (image);
+}; 
+
+float4 PixelShaderMain( float2 texCoord : TEXCOORD0 ) : COLOR0
+{
+   float y, i, q;   
+   float4 color = tex2D( source, texCoord );
+     
+   y = 0.299f * color.x + 0.587f * color.y + 0.114f * color.z;
+   // i = 0.596f * color.x - 0.274f * color.y - 0.322f * color.z; // original, no sepia
+   // q = 0.212f * color.x - 0.523f * color.y + 0.311f * color.z; // original, no sepia  
+   i = I; // 0.2f;
+   q = Q; // 0.0f;   
+   
+   color.x = 1.0f * y + 0.956f * i + 0.621f * q;
+   color.y = 1.0f * y - 0.272f * i - 0.647f * q;
+   color.z = 1.0f * y - 1.105f * i + 1.702f * q;
+   
+   return color;
+}
+
+technique Sepia
+{
+   pass Pass_0
+   {
+      PixelShader = compile ps_2_0 PixelShaderMain();
+   }
+
+}
+
