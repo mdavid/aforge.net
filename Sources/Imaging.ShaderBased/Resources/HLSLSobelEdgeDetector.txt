@@ -1,0 +1,46 @@
+bool isColored;
+int width;
+int height;
+texture image;
+
+sampler source = sampler_state
+{
+	Texture = <image>;
+};
+
+//  SobelX       SobelY         Neighbour Pixel
+//  1  0 -1      1  2  1        p20 p21 p22
+//  2  0 -2      0  0  0        p10  x  p12
+//  1  0 -1     -1 -2 -1        p00 p01 p02
+
+float4 PixelShaderMain(float2 texCoord : TEXCOORD0) : COLOR0 
+{
+	float2 delta = float2(1.0f / width, 1.0f / height);
+
+	// get neighbour pixel
+	float4 p20 = tex2D(source, texCoord + float2(-delta.x,  delta.y));
+	float4 p21 = tex2D(source, texCoord + float2( 0,    delta.y));
+	float4 p22 = tex2D(source, texCoord + float2( delta.x,  delta.y));
+	float4 p10 = tex2D(source, texCoord + float2(-delta.x,  0));
+	float4 p12 = tex2D(source, texCoord + float2( delta.x,  0));
+	float4 p00 = tex2D(source, texCoord + float2(-delta.x, -delta.y));
+	float4 p01 = tex2D(source, texCoord + float2( 0,   -delta.y));
+	float4 p02 = tex2D(source, texCoord + float2( delta.x, -delta.y));
+
+	float4 sobelX = p00 + 2 * p10 + p20 - p02 - 2 * p12 - p22;
+	float4 sobelY = p20 + 2 * p21 + p22 - p00 - 2 * p01 - p02;
+	float4 edgeSqr = sqrt(sobelX * sobelX + sobelY * sobelY);
+
+	if (!isColored)
+		edgeSqr = max(max(edgeSqr.r, edgeSqr.g), edgeSqr.b);
+
+	return edgeSqr; 
+}
+
+technique SobelEdgeFilter
+{
+    pass Pass0
+    {        
+        PixelShader = compile ps_2_0 PixelShaderMain();
+    }
+}

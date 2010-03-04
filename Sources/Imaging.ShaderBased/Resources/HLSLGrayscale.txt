@@ -1,0 +1,34 @@
+// AForge Shader-Based Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Frank Nagl, 2009-2010
+// admin@franknagl.de
+//
+
+float red; 
+float green; 
+float blue;
+texture image;
+
+sampler2D source = sampler_state
+{
+   Texture = (image);
+}; 
+
+float4 PixelShaderMain( float2 texCoord : TEXCOORD0 ) : COLOR0
+{
+   float4 color = tex2D( source, texCoord );
+   color = red * color.x + green * color.y + blue * color.z;   
+   return color;
+}
+
+technique GrayScale
+{
+   pass Pass_0
+   {
+      PixelShader = compile ps_2_0 PixelShaderMain();
+   }
+
+}
+
