@@ -29,6 +29,7 @@ namespace ShaderBasedImageProcessor
 
             processor = new HLSLProcessor();
             processor.Begin(bitmap, panel);
+            //processor.Filter = new HLSLOriginal();            
         }
 
         private void DisableOptions()
@@ -107,7 +108,7 @@ namespace ShaderBasedImageProcessor
             LaplaceLabel.Enabled = true;
             LaplaceStrengthLabel.Enabled = true;
             LaplaceTrackBar.Enabled = true;
-            processor.Filter = new HLSLLaplace(3.0f);
+            processor.Filter = new HLSLLaplace(HLSLLaplace.Versions.WithDiagonals, 3.0f);
         }
 
         private void hLSLGrayscaleToolStripMenuItem_Click(object sender, EventArgs e)

@@ -23,17 +23,19 @@ namespace AForge.Imaging.ShaderBased
         /// <summary>Windows control using for online rendering process.</summary>
         protected Control renderControl;
         GraphicsDevice graphics;
+        HLSLBaseFilter filter;
+
         /// <summary>
         /// Gets or sets the shader filter to apply to.
         /// </summary>
         /// <value>The shader filter to apply to.</value>
-        public HLSLBaseFilter Filter 
-        { 
-            get { return Filter; } 
-            set 
+        public HLSLBaseFilter Filter
+        {
+            get { return filter; }
+            set
             {
-                Filter = value;
-                Filter.InitEffect(graphics);
+                filter = value;
+                filter.InitEffect(graphics);
             }
         }
         Texture2D texture;
@@ -44,10 +46,7 @@ namespace AForge.Imaging.ShaderBased
         /// <summary>
         /// Initializes a new instance of the <see cref="HLSLProcessor"/> class.
         /// </summary>
-        public HLSLProcessor()
-        {
-            Filter = new HLSLOriginal();
-        }
+        public HLSLProcessor() { }
 
         private void Init(int w, int h)
         {
@@ -67,7 +66,10 @@ namespace AForge.Imaging.ShaderBased
             graphics = new GraphicsDevice(GraphicsAdapter.DefaultAdapter,
                 DeviceType.Hardware, renderControl.Handle, pp);
             spriteBatch = new SpriteBatch(graphics);
-            rt = new RenderTarget2D(graphics, w, h, 0, SurfaceFormat.Color);
+            rt = new RenderTarget2D(graphics, w, h, 0, SurfaceFormat.Color);  
+          
+            if (filter == null)
+                Filter = new HLSLOriginal();
         }
 
         #region IShaderProcessor Member
@@ -141,7 +143,7 @@ namespace AForge.Imaging.ShaderBased
         {
             graphics.Clear(Color.Black);
             spriteBatch.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-            Filter.RenderEffect(info);
+            filter.RenderEffect(info);
             spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             spriteBatch.End();
             graphics.Present();
@@ -157,7 +159,7 @@ namespace AForge.Imaging.ShaderBased
             graphics.Clear(Color.Black);
             graphics.SetRenderTarget(0, rt);
             spriteBatch.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-            Filter.RenderEffect(info);
+            filter.RenderEffect(info);
             spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             spriteBatch.End();
             graphics.SetRenderTarget(0, null);
@@ -174,7 +176,7 @@ namespace AForge.Imaging.ShaderBased
             graphics.Clear(Color.Black);
             graphics.SetRenderTarget(0, rt);
             spriteBatch.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-            Filter.RenderEffect(info);
+            filter.RenderEffect(info);
             spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             spriteBatch.End();
             graphics.SetRenderTarget(0, null);

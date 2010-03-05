@@ -40,7 +40,7 @@ namespace AForge.Imaging.ShaderBased
         /// </summary>
         /// <param name="graphics">The XNA graphics device.</param>
         /// <returns></returns>
-        internal void InitEffect(GraphicsDevice graphics)
+        public void InitEffect(GraphicsDevice graphics)
         {
             // Load the effect from Resources.resx file.
             ResourceManager resource =
