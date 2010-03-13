@@ -11,7 +11,7 @@ namespace AForge.Math.GeometryTests
     {
         private IShapeOptimizer optimizer = new AForge.Math.Geometry.LineStraighteningOptimizer( 3 );
 
-        [RowTest]
+        [Test]
         [Row( new int[] { 0, 0, 10, 0, 10, 10 }, new int[] { 0, 0, 10, 0, 10, 10 } )]
         [Row( new int[] { 0, 0, 10, 0, 5, 1 }, new int[] { 0, 0, 10, 0, 5, 1 } )]
         [Row( new int[] { 0, 0, 10, 0, 10, 10, 5, 5 }, new int[] { 0, 0, 10, 0, 10, 10 } )]
