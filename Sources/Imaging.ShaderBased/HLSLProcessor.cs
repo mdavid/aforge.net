@@ -35,7 +35,7 @@ namespace AForge.Imaging.ShaderBased
             set
             {
                 filter = value;
-                filter.InitEffect(graphics);
+                filter.Init(graphics);
             }
         }
         Texture2D texture;

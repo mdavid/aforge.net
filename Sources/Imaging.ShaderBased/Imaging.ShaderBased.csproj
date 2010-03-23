@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{87B817FD-E326-4E3B-96A9-EE4B38ECF78D}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -76,6 +76,7 @@
     <Compile Include="HLSLFilter\HLSLGrayscale.cs" />
     <Compile Include="HLSLFilter\HLSLSepia.cs" />
     <Compile Include="HLSLFilter\HLSLSobelEdgeDetector.cs" />
+    <Compile Include="HLSLFilter\HLSLReplaceChannel.cs" />
     <Compile Include="ImageConverter.cs" />
     <Compile Include="HLSLProcessor.cs" />
     <Compile Include="IShaderProcessor.cs" />
@@ -114,6 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\HLSLSobelEdgeDetector.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HLSLReplaceChannel.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
