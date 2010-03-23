@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Geometry\ClosePointsMergingOptimizer.cs" />
     <Compile Include="Geometry\FlatAnglesOptimizer.cs" />
     <Compile Include="Geometry\LineStraighteningOptimizer.cs" />
     <Compile Include="Geometry\ShapeOptimizerTestBase.cs" />
