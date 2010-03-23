@@ -7,9 +7,9 @@ using MbUnit.Framework;
 namespace AForge.Math.Geometry.Tests
 {
     [TestFixture]
-    public class LineStraighteningOptimizer
+    public class LineStraighteningOptimizerTest
     {
-        private IShapeOptimizer optimizer = new AForge.Math.Geometry.LineStraighteningOptimizer( 3 );
+        private IShapeOptimizer optimizer = new LineStraighteningOptimizer( 3 );
 
         [Test]
         [Row( new int[] { 0, 0, 10, 0, 10, 10 }, new int[] { 0, 0, 10, 0, 10, 10 } )]
