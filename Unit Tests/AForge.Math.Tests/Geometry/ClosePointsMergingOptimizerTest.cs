@@ -7,9 +7,9 @@ using MbUnit.Framework;
 namespace AForge.Math.Geometry.Tests
 {
     [TestFixture]
-    public class ClosePointsMergingOptimizer
+    public class ClosePointsMergingOptimizerTest
     {
-        private IShapeOptimizer optimizer = new AForge.Math.Geometry.ClosePointsMergingOptimizer( 3 );
+        private IShapeOptimizer optimizer = new ClosePointsMergingOptimizer( 3 );
 
         [Test]
         [Row( new int[] { 0, 0, 10, 0, 10, 10 }, new int[] { 0, 0, 10, 0, 10, 10 } )]

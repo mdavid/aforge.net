@@ -7,9 +7,9 @@ using MbUnit.Framework;
 namespace AForge.Math.Geometry.Tests
 {
     [TestFixture]
-    public class FlatAnglesOptimizer
+    public class FlatAnglesOptimizerTest
     {
-        private IShapeOptimizer optimizer = new AForge.Math.Geometry.FlatAnglesOptimizer( 160 );
+        private IShapeOptimizer optimizer = new FlatAnglesOptimizer( 160 );
 
         [Test]
         [Row( new int[] { 0, 0, 10, 0, 10, 10 }, new int[] { 0, 0, 10, 0, 10, 10 } )]
