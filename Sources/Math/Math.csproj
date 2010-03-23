@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>AForge.Math.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>AForge.Math.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
@@ -44,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Complex.cs" />
     <Compile Include="ContinuousHistogram.cs" />
+    <Compile Include="DoubleVector.cs" />
     <Compile Include="FourierTransform.cs" />
     <Compile Include="Gaussian.cs" />
     <Compile Include="Geometry\ClosePointsMergingOptimizer.cs" />

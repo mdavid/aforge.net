@@ -49,6 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoubleVectorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Geometry\ClosePointsMergingOptimizerTest.cs" />
     <Compile Include="Geometry\FlatAnglesOptimizerTest.cs" />
     <Compile Include="Geometry\LineStraighteningOptimizerTest.cs" />
