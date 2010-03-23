@@ -1,0 +1,42 @@
+// AForge Shader-Based Image Processing Library
+// AForge.NET framework
+// http://www.aforgenet.com/framework/
+//
+// Copyright © Frank Nagl, 2009-2010
+// admin@franknagl.de
+//
+
+int channel;
+float threshold;
+texture channelImage;
+
+// register: Important by using xna sprites, otherwise no other textures are working in shader
+sampler2D source : register(s0);
+
+sampler2D channelSampler = sampler_state
+{
+   Texture = (channelImage);
+};
+
+float4 ReplaceChannel_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+{  
+	float4 p1 = tex2D(source, texCoord ); // get the original color       
+	float4 p2 = tex2D(channelSampler , texCoord ); // get the channel texture color    	
+           
+	if(channel == 2 /* red */)
+			p1.r = p2.r;
+	if(channel == 1 /* green */)
+			p1.g = p2.g;
+	if(channel == 0 /* blue */)
+			p1.b = p2.b;			
+	
+	return p1;
+}
+
+technique ReplaceChannel
+{
+   pass ReplaceChannel
+   {
+       PixelShader = compile ps_2_0 ReplaceChannel_ps_main();
+   }
+}

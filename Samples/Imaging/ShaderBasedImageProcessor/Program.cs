@@ -37,7 +37,7 @@ namespace ShaderBasedImageProcessor
 
             #region TODO Frank Nagl: Delete this region.
             //Bitmap image = new Bitmap("sample1.jpg");
-
+            //
             //// 1. Offline rendering
             //// create HLSLProcessor, used as rendering framework
             //HLSLProcessor processor = new HLSLProcessor();
@@ -63,8 +63,11 @@ namespace ShaderBasedImageProcessor
             //// starts HLSLProcessor
             //processor2.Begin(image, myForm);
             //// create HLSLLaplace filter
-            //HLSLLaplace filter2 = new HLSLLaplace();
+            //HLSLReplaceChannel filter2 = new HLSLReplaceChannel();
             //processor2.Filter = filter2;
+            //filter2.Channel = RGB.R;
+            //filter2.ChannelTexture = filter2.CreateTexture("Threshold.png");            
+            
             //// apply the filter
             //myForm.Show();
             //while (myForm.Created)

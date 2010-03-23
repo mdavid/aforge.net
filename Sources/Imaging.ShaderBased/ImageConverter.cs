@@ -14,23 +14,35 @@ namespace AForge.Imaging.ShaderBased
     using System.Drawing.Imaging;
     using System.Runtime.InteropServices;
 
+    /// <summary>Represents the channel indices of ARGB structure.</summary>
+    public struct ARGB
+    {
+        /// <summary>Color channel <c>blue</c></summary>
+        public const short B = 0;
+        /// <summary>Color channel <c>green</c></summary>
+        public const short G = 1;
+        /// <summary>Color channel <c>red</c></summary>
+        public const short R = 2;
+        /// <summary>Transparence channel <c>alpha</c></summary>
+        public const short A = 3;
+    }
+
+    /// <summary>Represents the channel indices of RGB structure.</summary>
+    public struct RGB
+    {
+        /// <summary>Color channel <c>blue</c></summary>
+        public const short B = 0;
+        /// <summary>Color channel <c>green</c></summary>
+        public const short G = 1;
+        /// <summary>Color channel <c>red</c></summary>
+        public const short R = 2;
+    }
+
     /// <summary>
     /// Helper class for different Image converts. See function details for more information.
     /// </summary>
     public static class ImageConverter
     {
-        private struct ARGB
-        {
-            /// <summary>Color channel <c>blue</c></summary>
-            public const short B = 0;
-            /// <summary>Color channel <c>green</c></summary>
-            public const short G = 1;
-            /// <summary>Color channel <c>red</c></summary>
-            public const short R = 2;
-            /// <summary>Transparence channel <c>alpha</c></summary>
-            public const short A = 3;
-        }
-
         /// <summary>
         /// Converts Texture2D to 32 bit Bitmap.
         /// </summary>
@@ -134,6 +146,25 @@ namespace AForge.Imaging.ShaderBased
             return bitmap;
         }
 
+        /// <summary>
+        /// Converts Bitmap to Texture2D.
+        /// </summary>
+        /// <param name="bitmap">The bitmap object, which will be converted.</param>
+        /// <param name="graphicsDevice">The XNA graphics device.</param>
+        /// <param name="texture">The result texture.</param>
+        public static void BitmapToTexture( Bitmap bitmap,
+                                            GraphicsDevice graphicsDevice,
+                                            out Texture2D texture)
+        {
+            using (MemoryStream s = new MemoryStream())
+            {
+                bitmap.Save(s, ImageFormat.Bmp);
+                s.Seek(0, SeekOrigin.Begin);
+                texture = Texture2D.FromFile(graphicsDevice, s);
+
+                s.Seek(0, SeekOrigin.Begin);
+            }
+        }
 
         /// <summary>
         /// Converts Bitmap to Texture2D.
