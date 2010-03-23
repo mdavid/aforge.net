@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -42,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Complex.cs" />
     <Compile Include="ContinuousHistogram.cs" />
+    <Compile Include="DoubleVector.cs" />
     <Compile Include="FourierTransform.cs" />
     <Compile Include="Gaussian.cs" />
     <Compile Include="Geometry\ClosePointsMergingOptimizer.cs" />
