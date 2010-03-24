@@ -1,0 +1,32 @@
+ // AForge Shader-Based Image Processing Library
+ // AForge.NET framework
+ // http://www.aforgenet.com/framework/
+ //
+ // Copyright © Frank Nagl, 2009-2010
+ // admin@franknagl.de
+ //
+
+int threshold;
+ // register: Important by using xna sprites, otherwise no other textures are working in shader
+sampler2D source : register(s0);
+
+float4 Threshold_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+{  
+	float threshold = threshold / 255.0f;
+	float4 p = tex2D(source, texCoord );  // get the original color          	
+           
+	if(p.r >= threshold || p.g >= threshold || p.b >= threshold)
+		p.rgb = float3(1,1,1);
+	else
+		p.rgb = float3(0,0,0);
+	
+	return p; 
+}
+
+technique Threshold
+{
+   pass Threshold
+   {
+       PixelShader = compile ps_2_0 Threshold_ps_main();
+   }
+}

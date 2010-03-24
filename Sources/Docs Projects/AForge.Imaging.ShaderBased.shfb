@@ -1,0 +1,60 @@
+﻿<project schemaVersion="1.6.0.7">
+    <assemblies>
+        <assembly assemblyPath="..\..\Release\Imaging.ShaderBased.dll" xmlCommentsPath="..\..\Release\Imaging.ShaderBased.xml" commentsOnly="False" />
+        <assembly assemblyPath="..\..\Release\Microsoft.Xna.Framework.dll" xmlCommentsPath="" commentsOnly="False" />
+        <assembly assemblyPath="..\..\Release\Microsoft.Xna.Framework.Game.dll" xmlCommentsPath="" commentsOnly="False" />
+    </assemblies>
+    <additionalContent contentSiteMap="" topicFileTransform="">
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLInvert.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\sample1.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLChessboard.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLExtractChannel.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLGrayscale.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLLaplace.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLReplaceChannel.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLSepia.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLSobelEdgeDetector.jpg" destPath="img\shaderbased\" excludeItems="False" />
+        <contentItem sourcePath="..\Imaging.ShaderBased\Images\HLSLThreshold.jpg" destPath="img\shaderbased\" excludeItems="False" />
+    </additionalContent>
+    <ProjectSummary />
+    <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <HtmlHelp1xCompilerPath path="" />
+    <HtmlHelp2xCompilerPath path="" />
+    <OutputPath>..\..\Docs\</OutputPath>
+    <SandcastlePath path="" />
+    <WorkingPath path="" />
+    <CleanIntermediates>True</CleanIntermediates>
+    <KeepLogFile>True</KeepLogFile>
+    <BuildLogFile path="" />
+    <HelpFileFormat>HtmlHelp1x</HelpFileFormat>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <FrameworkVersion>2.0.50727</FrameworkVersion>
+    <IndentHtml>False</IndentHtml>
+    <Preliminary>False</Preliminary>
+    <RootNamespaceContainer>True</RootNamespaceContainer>
+    <RootNamespaceTitle>AForge.NET Framework - Imaging.ShaderBased Library</RootNamespaceTitle>
+    <HelpTitle>AForge.NET - Imaging.ShaderBased Library</HelpTitle>
+    <HtmlHelpName>AForge.Imaging.ShaderBased Library</HtmlHelpName>
+    <Language>en-US</Language>
+    <CopyrightHref />
+    <CopyrightText />
+    <FeedbackEMailAddress>admin@franknagl.com</FeedbackEMailAddress>
+    <FeedbackEMailLinkText>Feedback Contact</FeedbackEMailLinkText>
+    <HeaderText />
+    <FooterText>&lt;a href="http://www.aforgenet.com/" target="_blank"&gt;AForge.NET&lt;/a&gt; © 2009-2010</FooterText>
+    <ProjectLinkType>Local</ProjectLinkType>
+    <SdkLinkType>Msdn</SdkLinkType>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <PresentationStyle>vs2005</PresentationStyle>
+    <NamingMethod>Guid</NamingMethod>
+    <SyntaxFilters>CSharp</SyntaxFilters>
+    <ShowFeedbackControl>False</ShowFeedbackControl>
+    <BinaryTOC>True</BinaryTOC>
+    <IncludeFavorites>False</IncludeFavorites>
+    <CollectionTocStyle>Hierarchical</CollectionTocStyle>
+    <IncludeStopWordList>True</IncludeStopWordList>
+    <PlugInNamespaces>ms.vsipcc+, ms.vsexpresscc+</PlugInNamespaces>
+    <HelpFileVersion>1.0.0.0</HelpFileVersion>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+</project>

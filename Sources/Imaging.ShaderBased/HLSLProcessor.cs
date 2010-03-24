@@ -23,6 +23,11 @@ namespace AForge.Imaging.ShaderBased
         /// <summary>Windows control using for online rendering process.</summary>
         protected Control renderControl;
         GraphicsDevice graphics;
+        Texture2D texture;
+        Texture2D original;
+        SpriteBatch spriteBatch;
+        TextureInformation info;
+        RenderTarget2D rt;        
         HLSLBaseFilter filter;
 
         /// <summary>
@@ -38,10 +43,6 @@ namespace AForge.Imaging.ShaderBased
                 filter.Init(graphics);
             }
         }
-        Texture2D texture;
-        SpriteBatch spriteBatch;
-        TextureInformation info;
-        RenderTarget2D rt;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HLSLProcessor"/> class.
@@ -72,6 +73,30 @@ namespace AForge.Imaging.ShaderBased
                 Filter = new HLSLOriginal();
         }
 
+        /// <summary>
+        /// Changes the original texture.
+        /// Note: Texture has to be created with HLSLProcessor's graphics device.
+        /// </summary>
+        /// <param name="texture">The new texture.</param>
+        public void ChangeTexture(Texture2D texture)
+        {
+            if (this.texture == null)
+                throw new System.ArgumentException
+                    ("Texture can be changed primaly after starting HLSLProcessor. " +
+                     "Use HLSLProcessor.Begin(..)-method first.");
+            this.texture = texture;
+        }
+
+        /// <summary>
+        /// Resets the texture to original texture from starting ( HLSLProcessor.Begin(...) ).
+        /// </summary>
+        public void ResetTexture()
+        {
+            texture = original;
+            // store a copy of original texture
+            original = RenderToTexture();
+        }
+
         #region IShaderProcessor Member
 
         /// <summary>
@@ -98,7 +123,9 @@ namespace AForge.Imaging.ShaderBased
             this.renderControl = control;
             info = Texture2D.GetTextureInformation(file);
             Init(info.Width, info.Height);
-            texture = Texture2D.FromFile(graphics, file);            
+            texture = Texture2D.FromFile(graphics, file);
+            // store a copy of original texture
+            original = Texture2D.FromFile(graphics, file);
         }
 
         /// <summary>
@@ -125,6 +152,8 @@ namespace AForge.Imaging.ShaderBased
             this.renderControl = control;
             Init(bitmap.Width, bitmap.Height);
             ImageConverter.BitmapToTexture(bitmap, graphics, out texture, out info);
+            // store a copy of original texture
+            ImageConverter.BitmapToTexture(bitmap, graphics, out original);
         }
 
         /// <summary>

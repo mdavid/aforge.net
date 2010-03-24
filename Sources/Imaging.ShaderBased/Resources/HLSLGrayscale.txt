@@ -1,10 +1,10 @@
-// AForge Shader-Based Image Processing Library
-// AForge.NET framework
-// http://www.aforgenet.com/framework/
-//
-// Copyright © Frank Nagl, 2009-2010
-// admin@franknagl.de
-//
+ // AForge Shader-Based Image Processing Library
+ // AForge.NET framework
+ // http://www.aforgenet.com/framework/
+ //
+ // Copyright © Frank Nagl, 2009-2010
+ // admin@franknagl.de
+ //
 
 float red; 
 float green; 

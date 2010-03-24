@@ -1,0 +1,33 @@
+ // AForge Shader-Based Image Processing Library
+ // AForge.NET framework
+ // http://www.aforgenet.com/framework/
+ //
+ // Copyright © Frank Nagl, 2009-2010
+ // admin@franknagl.de
+ //
+
+int channel;
+ // register: Important by using xna sprites, otherwise no other textures are working in shader
+sampler2D source : register(s0);
+
+float4 ExtractChannel_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+{  
+	float4 p = tex2D(source, texCoord );  // get the original color          	
+           
+	if(channel == 2 /* red */)
+			p.rgb = float3(p.r, p.r, p.r);
+	if(channel == 1 /* green */)
+			p.rgb = float3(p.g, p.g, p.g);
+	if(channel == 0 /* blue */)
+			p.rgb = float3(p.b, p.b, p.b);			
+	
+	return p;
+}
+
+technique ExtractChannel
+{
+   pass ExtractChannel
+   {
+       PixelShader = compile ps_2_0 ExtractChannel_ps_main();
+   }
+}
