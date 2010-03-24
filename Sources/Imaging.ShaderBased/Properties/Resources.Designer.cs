@@ -10,11 +10,15 @@
 
 namespace AForge.Imaging.ShaderBased.Properties {
     using System;
-
-
+    
+    
     /// <summary>
-    /// Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>
+    // Diese Klasse wurde von der StronglyTypedResourceBuilder automatisch generiert
+    // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
+    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
+    // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -56,51 +60,310 @@ namespace AForge.Imaging.ShaderBased.Properties {
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///float number;
+        ///
+        ///float4 PixelShaderMain( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{
+        ///   //number = 8.0;
+        ///   float4 color;
+        ///   float u = 0.0;
+        ///   float v = 0.0;
+        ///
+        ///   u = texCoord.x * number;
+        ///   v = texCoord.y * number;
+        ///
+        ///   if (fmod(u, 2.0) &lt;= 1.0 &amp;&amp; fmod(v, 2.0) &lt;= 1.0 ||
+        ///       fmod(u, 2.0) &gt; 1.0 &amp;&amp; fmod(v, 2.0) &gt;  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string HLSLChessboard {
             get {
                 return ResourceManager.GetString("HLSLChessboard", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///int channel;
+        /// // register: Important by using xna sprites, otherwise no other textures are working in shader
+        ///sampler2D source : register(s0);
+        ///
+        ///float4 ExtractChannel_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{  
+        ///	float4 p = tex2D(source, texCoord );  // get the original color          	
+        ///           
+        ///	if(cha [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string HLSLExtractChannel {
+            get {
+                return ResourceManager.GetString("HLSLExtractChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///float red; 
+        ///float green; 
+        ///float blue;
+        ///texture image;
+        ///
+        ///sampler2D source = sampler_state
+        ///{
+        ///   Texture = (image);
+        ///}; 
+        ///
+        ///float4 PixelShaderMain( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{
+        ///   float4 color = tex2D( source, texCoord );
+        ///   color = red * color.x + green * color.y + blue * color.z;   
+        ///   return color; [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string HLSLGrayscale {
             get {
                 return ResourceManager.GetString("HLSLGrayscale", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///texture image;
+        ///
+        ///sampler2D source = sampler_state
+        ///{
+        ///  Texture = (image);
+        ///};
+        ///
+        ///float4 PixelShaderMain(float2 texCoord : TEXCOORD0) : COLOR0
+        ///{
+        ///  return 1 - tex2D(source, texCoord);
+        ///}
+        ///
+        ///technique Chessboard
+        ///{
+        ///  pass Pass_0
+        ///  {
+        ///    PixelShader = compile ps_2_0 PixelShaderMain();
+        ///  }
+        ///} ähnelt.
+        /// </summary>
         internal static string HLSLInvert {
             get {
                 return ResourceManager.GetString("HLSLInvert", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///int version;
+        ///int width;
+        ///int height;
+        ///float factor;
+        ///texture image;
+        ///
+        ///sampler2D source = sampler_state
+        ///{
+        ///  Texture = (image);
+        ///};
+        ///
+        ///float4 PixelShaderMain(float2 texCoord : TEXCOORD0) : COLOR0
+        ///{
+        ///	float2 delta = float2(1.0f / width, 1.0f / height);
+        ///	float2 offset[9] = 
+        ///	{
+        ///		//first row
+        ///		float2(-1.0f,  1.0f), [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string HLSLLaplace {
             get {
                 return ResourceManager.GetString("HLSLLaplace", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///texture image;
+        ///
+        ///sampler2D source = sampler_state
+        ///{
+        ///  Texture = (image);
+        ///};
+        ///
+        ///float4 PixelShaderMain(float2 textureCoordinate : TEXCOORD0) : COLOR0
+        ///{
+        ///  return tex2D(source, textureCoordinate);
+        ///}
+        ///
+        ///technique Chessboard
+        ///{
+        ///  pass Pass_0
+        ///  {
+        ///    PixelShader = compile ps_2_0 PixelShaderMain();
+        ///  }
+        ///} ähnelt.
+        /// </summary>
         internal static string HLSLOriginal {
             get {
                 return ResourceManager.GetString("HLSLOriginal", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///int channel;
+        ///float threshold;
+        ///texture channelImage;
+        ///
+        /// // register: Important by using xna sprites, otherwise no other textures are working in shader
+        ///sampler2D source : register(s0);
+        ///
+        ///sampler2D channelSampler = sampler_state
+        ///{
+        ///   Texture = (channelImage);
+        ///};
+        ///
+        ///float4 ReplaceChannel_ps_main( float2 texCoord :  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string HLSLReplaceChannel {
             get {
                 return ResourceManager.GetString("HLSLReplaceChannel", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///float Q; 
+        ///float I;
+        ///texture image;
+        ///
+        ///sampler2D source = sampler_state
+        ///{
+        ///   Texture = (image);
+        ///}; 
+        ///
+        ///float4 PixelShaderMain( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{
+        ///   float y, i, q;   
+        ///   float4 color = tex2D( source, texCoord );
+        ///     
+        ///   y = 0.299f * color.x + 0.587f * color.y + 0.114f * color.z;
+        ///    // i [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string HLSLSepia {
             get {
                 return ResourceManager.GetString("HLSLSepia", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        /// 
+        ///bool isColored;
+        ///int width;
+        ///int height;
+        ///texture image;
+        ///
+        ///sampler source = sampler_state
+        ///{
+        ///	Texture = &lt;image&gt;;
+        ///};
+        ///
+        /// //  SobelX       SobelY         Neighbour Pixel
+        /// //  1  0 -1      1  2  1        p20 p21 p22
+        /// //  2  0 -2      0  0  0        p10  x  p12
+        /// //  1  0 -1     -1 -2 -1        p00 p01 p02
+        ///
+        ///float4  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
         internal static string HLSLSobelEdgeDetector {
             get {
                 return ResourceManager.GetString("HLSLSobelEdgeDetector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///int threshold;
+        /// // register: Important by using xna sprites, otherwise no other textures are working in shader
+        ///sampler2D source : register(s0);
+        ///
+        ///float4 Threshold_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{  
+        ///	float threshold = threshold / 255.0f;
+        ///	float4 p = tex2D(source, texCoord );  // get the original c [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string HLSLThreshold {
+            get {
+                return ResourceManager.GetString("HLSLThreshold", resourceCulture);
             }
         }
     }

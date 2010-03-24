@@ -8,12 +8,14 @@
 namespace AForge.Imaging.ShaderBased.HLSLFilter
 {
     using Microsoft.Xna.Framework.Graphics;
+    using System;
 
     /// <summary>
-    /// Chessboard image.
+    /// Extract RGB channel from image.
     /// </summary>
-    /// <remarks>
-    /// <para>No image filtering. Just creating a chessboard texture or image :-).</para>
+    /// 
+    /// <remarks><para>Extracts specified channel of color image and returns
+    /// it as grayscale image.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -22,11 +24,11 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     ///  HLSLProcessor processor = new HLSLProcessor();
     ///  // starts HLSLProcessor
     ///  processor.Begin( image );
-    ///  // create HLSLChessboard filter
-    ///  HLSLChessboard filter = new HLSLChessboard( );
-    ///  // optional: configure filter
-    ///  filter.SquaresPerSide = 10.0f;
+    ///  // create HLSLExtractChannel filter
+    ///  HLSLExtractChannel filter = new HLSLExtractChannel( );
     ///  processor.Filter = filter;
+    ///  // optional: configure filter
+    ///  filter.Channel = RGB.R;
     ///  // apply the filter  
     ///  Bitmap resultImage = processor.RenderToBitmap( );
     ///  Texture2D resultTexture = processor.RenderToTexture( );
@@ -39,11 +41,11 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     ///  HLSLProcessor processor2 = new HLSLProcessor( );
     ///  // starts HLSLProcessor
     ///  processor2.Begin( image, myForm );
-    ///  // create HLSLChessboard filter
-    ///  HLSLChessboard filter2 = new HLSLChessboard( );
+    ///  // create HLSLExtractChannel filter
+    ///  HLSLExtractChannel filter2 = new HLSLExtractChannel( );
+    ///  processor2.Filter = filter2;  
     ///  // optional: configure filter
-    ///  filter2.SquaresPerSide = 10.0f;
-    ///  processor2.Filter = filter;
+    ///  filter2.Channel = RGB.R;
     ///  // apply the filter
     ///  myForm.Show( );
     ///  while ( myForm.Created )
@@ -57,35 +59,46 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <para><b>Initial image:</b></para>
     /// <img src="img/shaderbased/sample1.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
-    /// <img src="img/shaderbased/HLSLChessboard.jpg" width="480" height="361" />
+    /// <img src="img/shaderbased/HLSLExtractChannel.jpg" width="480" height="361" />
     /// </remarks>
-    public sealed class HLSLChessboard : HLSLBaseFilter
+    public sealed class HLSLExtractChannel : HLSLBaseFilter
     {
-        /// <summary>
-        /// Gets or sets the number of squares per side of the chessboard.
-        /// </summary>
-        /// <value>The squares per side.</value>
-        /// <remarks>Default value: 8.0</remarks>
-        public float SquaresPerSide { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HLSLChessboard"/> class.
-        /// </summary>
-        public HLSLChessboard() : base("HLSLChessboard")
+        private short channel;
+        
+        /// <summary>RGB channel to replace.</summary>
+        /// <remarks><para>Default value is set to <see cref="AForge.Imaging.ShaderBased.RGB.B"/>.</para></remarks>
+        /// <exception cref="ArgumentException">Invalid channel is specified.</exception>
+        public short Channel
         {
-            SquaresPerSide = 8.0f;
-        }
+            get { return channel; }
+            set 
+            {
+                if (value != RGB.R && value != RGB.G && value != RGB.B)
+                    throw new ArgumentException("Invalid channel is specified.");
+
+                if (effect == null)
+                    throw new ArgumentException("Channel" + InitMsg);
+
+                channel = value;
+                effect.Parameters["channel"].SetValue(channel);
+            }
+        }      
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HLSLReplaceChannel"/> class.
+        /// </summary>
+        public HLSLExtractChannel()
+            : base("HLSLExtractChannel") { }
 
         /// <summary>
-        /// Sets the HLSL based invert filter.
+        /// Sets the HLSL based SobelEdgeDetector filter.
         /// </summary>        
-        internal override void RenderEffect(TextureInformation info)
-        {
-            effect.Parameters["number"].SetValue(SquaresPerSide);
+        internal override void RenderEffect(TextureInformation info)            
+        {            
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
             effect.CurrentTechnique.Passes[0].End();
-            effect.End();
+            effect.End();            
         }
     }
 }

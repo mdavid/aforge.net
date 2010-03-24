@@ -74,9 +74,9 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// </code>
     /// 
     /// <para><b>Initial image:</b></para>
-    /// <img src="img/imaging/sample1.jpg" width="480" height="361" />
+    /// <img src="img/shaderbased/sample1.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
-    /// <img src="img/imaging/HLSLSobelEdgeDetector.jpg" width="480" height="361" />
+    /// <img src="img/shaderbased/HLSLSobelEdgeDetector.jpg" width="480" height="361" />
     /// </remarks>
     public sealed class HLSLSobelEdgeDetector : HLSLBaseFilter
     {

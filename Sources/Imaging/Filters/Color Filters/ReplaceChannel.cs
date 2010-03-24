@@ -13,7 +13,7 @@ namespace AForge.Imaging.Filters
     using System.Drawing.Imaging;
 
     /// <summary>
-    /// Replace RGB channel of color imgae.
+    /// Replace RGB channel of color image.
     /// </summary>
     /// 
     /// <remarks><para>Replaces specified RGB channel of color image with
