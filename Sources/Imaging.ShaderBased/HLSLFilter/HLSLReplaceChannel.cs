@@ -109,8 +109,9 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
             : base("HLSLReplaceChannel") { }
 
         /// <summary>
-        /// Sets the HLSL based SobelEdgeDetector filter.
+        /// Renders the HLSL based ReplaceChannel filter.
         /// </summary>        
+        /// <param name="info">The texture information of the texture, which will be processed.</param>
         internal override void RenderEffect(TextureInformation info)            
         {            
             effect.Begin();

@@ -288,6 +288,35 @@ namespace AForge.Imaging.ShaderBased.Properties {
         /// // admin@franknagl.de
         /// //
         ///
+        /// // RGB = 0
+        /// // RBG = 1
+        /// // BRG = 2
+        /// // BGR = 3
+        /// // GBR = 4 
+        /// // GRB = 5
+        ///int order;
+        /// // register: Important by using xna sprites, otherwise no other textures are working in shader
+        ///sampler2D source : register(s0);
+        ///
+        ///float4 RotateChannel_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{  
+        ///	float4 p = tex2D(sou [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string HLSLRotateChannels {
+            get {
+                return ResourceManager.GetString("HLSLRotateChannels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
         ///float Q; 
         ///float I;
         ///texture image;
@@ -364,6 +393,34 @@ namespace AForge.Imaging.ShaderBased.Properties {
         internal static string HLSLThreshold {
             get {
                 return ResourceManager.GetString("HLSLThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  // AForge Shader-Based Image Processing Library
+        /// // AForge.NET framework
+        /// // http://www.aforgenet.com/framework/
+        /// //
+        /// // Copyright © Frank Nagl, 2009-2010
+        /// // admin@franknagl.de
+        /// //
+        ///
+        ///bool binarization;
+        ///int r;
+        ///int g;
+        ///int b;
+        /// // register: Important by using xna sprites, otherwise no other textures are working in shader
+        ///sampler2D source : register(s0);
+        ///
+        ///float4 ThresholdRGB_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+        ///{  
+        ///	float r = r / 255.0f;
+        ///	float g = g / 255.0f;
+        ///	float b = b / 255.0f [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string HLSLThresholdRGB {
+            get {
+                return ResourceManager.GetString("HLSLThresholdRGB", resourceCulture);
             }
         }
     }

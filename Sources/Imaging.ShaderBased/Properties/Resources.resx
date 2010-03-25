@@ -139,6 +139,9 @@
   <data name="HLSLReplaceChannel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HLSLReplaceChannel.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="HLSLRotateChannels" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HLSLRotateChannels.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="HLSLSepia" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HLSLSepia.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -147,5 +150,8 @@
   </data>
   <data name="HLSLThreshold" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HLSLThreshold.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HLSLThresholdRGB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HLSLThresholdRGB.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

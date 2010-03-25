@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FFC939A6-E92B-4423-AA0C-DB314C76C7F7}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -64,20 +64,122 @@
       <HintPath>..\..\..\Release\Microsoft.Xna.Framework.Game.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OptionsForms\HLSLChessboardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLChessboardForm.Designer.cs">
+      <DependentUpon>HLSLChessboardForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HLSLProcessorForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HLSLProcessorForm.Designer.cs">
       <DependentUpon>HLSLProcessorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OptionsForms\HLSLLaplaceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLLaplaceForm.Designer.cs">
+      <DependentUpon>HLSLLaplaceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLGrayscaleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLGrayscaleForm.Designer.cs">
+      <DependentUpon>HLSLGrayscaleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLInvertForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLInvertForm.Designer.cs">
+      <DependentUpon>HLSLInvertForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLOriginalForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLOriginalForm.Designer.cs">
+      <DependentUpon>HLSLOriginalForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLThresholdRGBForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLThresholdRGBForm.Designer.cs">
+      <DependentUpon>HLSLThresholdRGBForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLThresholdForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLThresholdForm.Designer.cs">
+      <DependentUpon>HLSLThresholdForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLExtractChannelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLExtractChannelForm.Designer.cs">
+      <DependentUpon>HLSLExtractChannelForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLSepiaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLSepiaForm.Designer.cs">
+      <DependentUpon>HLSLSepiaForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLRotateChannelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsForms\HLSLRotateChannelForm.Designer.cs">
+      <DependentUpon>HLSLRotateChannelForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="OptionsForms\HLSLChessboardForm.resx">
+      <DependentUpon>HLSLChessboardForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="HLSLProcessorForm.resx">
       <DependentUpon>HLSLProcessorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLLaplaceForm.resx">
+      <DependentUpon>HLSLLaplaceForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLGrayscaleForm.resx">
+      <DependentUpon>HLSLGrayscaleForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLInvertForm.resx">
+      <DependentUpon>HLSLInvertForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLOriginalForm.resx">
+      <DependentUpon>HLSLOriginalForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLThresholdRGBForm.resx">
+      <DependentUpon>HLSLThresholdRGBForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLThresholdForm.resx">
+      <DependentUpon>HLSLThresholdForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLExtractChannelForm.resx">
+      <DependentUpon>HLSLExtractChannelForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLSepiaForm.resx">
+      <DependentUpon>HLSLSepiaForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsForms\HLSLRotateChannelForm.resx">
+      <DependentUpon>HLSLRotateChannelForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

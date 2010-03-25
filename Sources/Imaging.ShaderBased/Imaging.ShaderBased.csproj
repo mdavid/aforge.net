@@ -79,6 +79,8 @@
     <Compile Include="HLSLFilter\HLSLReplaceChannel.cs" />
     <Compile Include="HLSLFilter\HLSLExtractChannel.cs" />
     <Compile Include="HLSLFilter\HLSLThreshold.cs" />
+    <Compile Include="HLSLFilter\HLSLThresholdRGB.cs" />
+    <Compile Include="HLSLFilter\HLSLRotateChannels.cs" />
     <Compile Include="ImageConverter.cs" />
     <Compile Include="HLSLProcessor.cs" />
     <Compile Include="IShaderProcessor.cs" />
@@ -126,6 +128,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\HLSLThreshold.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HLSLThresholdRGB.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HLSLRotateChannels.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
