@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,41 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="HLSLChessboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLChessboard.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLExtractChannel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLExtractChannel.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLGrayscale" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLGrayScale.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLInvert" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLInvert.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLLaplace" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLLaplace.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLOriginal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLOriginal.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLReplaceChannel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLReplaceChannel.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLRotateChannels" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLRotateChannels.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLSepia" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLSepia.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLSobelEdgeDetector" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLSobelEdgeDetector.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLThreshold" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLThreshold.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="HLSLThresholdRGB" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HLSLThresholdRGB.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
 </root>

@@ -11,11 +11,10 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     using System;
 
     /// <summary>
-    /// Extract RGB channel from image.
+    /// Rotate RGB channels from image.
     /// </summary>
     /// 
-    /// <remarks><para>Extracts specified channel of color image and returns
-    /// it as grayscale image.</para>
+    /// <remarks><para>The filter rotates RGB channels by specified channel order.</para>
     /// 
     /// <para>Sample usage:</para>
     /// <code>
@@ -24,11 +23,11 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     ///  HLSLProcessor processor = new HLSLProcessor();
     ///  // starts HLSLProcessor
     ///  processor.Begin( image );
-    ///  // create HLSLExtractChannel filter
-    ///  HLSLExtractChannel filter = new HLSLExtractChannel( );
+    ///  // create HLSLRotateChannels filter
+    ///  HLSLRotateChannels filter = new HLSLRotateChannels( );
     ///  processor.Filter = filter;
     ///  // optional: configure filter
-    ///  filter.Channel = RGB.R;
+    ///  filter.Order = RGBOrder.GBR;
     ///  // apply the filter  
     ///  Bitmap resultImage = processor.RenderToBitmap( );
     ///  Texture2D resultTexture = processor.RenderToTexture( );
@@ -41,11 +40,11 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     ///  HLSLProcessor processor2 = new HLSLProcessor( );
     ///  // starts HLSLProcessor
     ///  processor2.Begin( image, myForm );
-    ///  // create HLSLExtractChannel filter
-    ///  HLSLExtractChannel filter2 = new HLSLExtractChannel( );
+    ///  // create HLSLRotateChannels filter
+    ///  HLSLRotateChannels filter2 = new HLSLRotateChannels( );
     ///  processor2.Filter = filter2;  
     ///  // optional: configure filter
-    ///  filter2.Channel = RGB.R;
+    ///  filter.Order = RGBOrder.GBR;
     ///  // apply the filter
     ///  myForm.Show( );
     ///  while ( myForm.Created )
@@ -59,39 +58,44 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <para><b>Initial image:</b></para>
     /// <img src="img/shaderbased/sample1.jpg" width="480" height="361" />
     /// <para><b>Result image:</b></para>
-    /// <img src="img/shaderbased/HLSLExtractChannel.jpg" width="480" height="361" />
+    /// <img src="img/shaderbased/HLSLRotateChannels.jpg" width="480" height="361" />
     /// </remarks>
-    public sealed class HLSLExtractChannel : HLSLBaseFilter
+    public sealed class HLSLRotateChannels : HLSLBaseFilter
     {
-        private short channel;
+        private RGBOrder order;
         
-        /// <summary>RGB channel to replace.</summary>
-        /// <remarks><para>Default value is set to <see cref="AForge.Imaging.ShaderBased.RGB.B"/>.</para></remarks>
-        /// <exception cref="ArgumentException">Invalid channel is specified.</exception>
-        public short Channel
+        /// <summary>The rotation order of RGB channels.</summary>
+        /// <remarks><para>Default value is set to <see cref="AForge.Imaging.ShaderBased.RGBOrder.GBR"/>.</para></remarks>
+        public RGBOrder Order
         {
-            get { return channel; }
+            get { return order; }
             set 
             {
-                if (value != RGB.R && value != RGB.G && value != RGB.B)
-                    throw new ArgumentException("Invalid channel is specified.");
-
                 if (effect == null)
-                    throw new ArgumentException("Channel" + InitMsg);
+                    throw new ArgumentException("RGB Order" + InitMsg);
 
-                channel = value;
-                effect.Parameters["channel"].SetValue(channel);
+                order = value;
+                effect.Parameters["order"].SetValue((int)order);
             }
         }      
         
         /// <summary>
         /// Initializes a new instance of the <see cref="HLSLReplaceChannel"/> class.
         /// </summary>
-        public HLSLExtractChannel()
-            : base("HLSLExtractChannel") { }
+        public HLSLRotateChannels()
+            : base("HLSLRotateChannels") { }
 
         /// <summary>
-        /// Renders the HLSL based ExtractChannel filter.
+        /// Sets the <see cref="Order"/> value to 
+        /// <see cref="AForge.Imaging.ShaderBased.RGBOrder.GBR"/>.
+        /// </summary>
+        protected override void PostInit()
+        {
+            Order = RGBOrder.GBR;
+        }
+
+        /// <summary>
+        /// Renders the HLSL based RotateChannels filter.
         /// </summary>        
         /// <param name="info">The texture information of the texture, which will be processed.</param>
         internal override void RenderEffect(TextureInformation info)            

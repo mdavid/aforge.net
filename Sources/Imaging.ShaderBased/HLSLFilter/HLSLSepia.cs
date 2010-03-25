@@ -116,8 +116,9 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
         }
 
         /// <summary>
-        /// Sets the HLSL based Sepia filter.
+        /// Renders the HLSL based Sepia filter.
         /// </summary>        
+        /// <param name="info">The texture information of the texture, which will be processed.</param>
         internal override void RenderEffect(TextureInformation info)            
         {
             effect.Parameters["Q"].SetValue(Q);

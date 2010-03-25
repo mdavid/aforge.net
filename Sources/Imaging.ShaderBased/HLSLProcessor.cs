@@ -69,8 +69,8 @@ namespace AForge.Imaging.ShaderBased
             spriteBatch = new SpriteBatch(graphics);
             rt = new RenderTarget2D(graphics, w, h, 0, SurfaceFormat.Color);  
           
-            if (filter == null)
-                Filter = new HLSLOriginal();
+            //if (filter == null)
+            //    Filter = new HLSLOriginal();
         }
 
         /// <summary>

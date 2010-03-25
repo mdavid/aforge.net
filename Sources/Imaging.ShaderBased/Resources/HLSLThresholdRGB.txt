@@ -1,0 +1,51 @@
+ // AForge Shader-Based Image Processing Library
+ // AForge.NET framework
+ // http://www.aforgenet.com/framework/
+ //
+ // Copyright © Frank Nagl, 2009-2010
+ // admin@franknagl.de
+ //
+
+bool binarization;
+int r;
+int g;
+int b;
+ // register: Important by using xna sprites, otherwise no other textures are working in shader
+sampler2D source : register(s0);
+
+float4 ThresholdRGB_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+{  
+	float r = r / 255.0f;
+	float g = g / 255.0f;
+	float b = b / 255.0f;
+	
+	float4 p = tex2D(source, texCoord );  // get the original color          	
+           
+	if(p.r > r) 
+	{
+		if (binarization) 	p.r = 1;
+	}
+	else 					p.r = 0;
+
+	if(p.g > g) 
+	{
+		if (binarization)	p.g = 1;
+	}
+	else					p.g = 0;
+	
+	if(p.b > b) 
+	{
+		if (binarization)	p.b = 1;
+	}
+	else					p.b = 0;
+		
+	return p; 
+}
+
+technique ThresholdRGB
+{
+   pass ThresholdRGB
+   {
+       PixelShader = compile ps_2_0 ThresholdRGB_ps_main();
+   }
+}

@@ -1,0 +1,38 @@
+ // AForge Shader-Based Image Processing Library
+ // AForge.NET framework
+ // http://www.aforgenet.com/framework/
+ //
+ // Copyright © Frank Nagl, 2009-2010
+ // admin@franknagl.de
+ //
+
+ // RGB = 0
+ // RBG = 1
+ // BRG = 2
+ // BGR = 3
+ // GBR = 4 
+ // GRB = 5
+int order;
+ // register: Important by using xna sprites, otherwise no other textures are working in shader
+sampler2D source : register(s0);
+
+float4 RotateChannels_ps_main( float2 texCoord : TEXCOORD0 ) : COLOR0
+{  
+	float4 p = tex2D(source, texCoord );  // get the original color          	
+    
+	if (order == 1)	 		p.rgb = float3(p.r, p.b, p.g);
+	else if (order == 2)	p.rgb = float3(p.b, p.r, p.g);
+	else if (order == 3)	p.rgb = float3(p.b, p.g, p.r);
+	else if (order == 4)	p.rgb = float3(p.g, p.b, p.r);
+	else if (order == 5)	p.rgb = float3(p.g, p.r, p.b);
+	
+	return p; 
+}
+
+technique RotateChannels
+{
+   pass RotateChannels
+   {
+       PixelShader = compile ps_2_0 RotateChannels_ps_main();
+   }
+}

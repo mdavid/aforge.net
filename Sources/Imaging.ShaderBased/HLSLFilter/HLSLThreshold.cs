@@ -17,8 +17,8 @@ namespace AForge.Imaging.ShaderBased.HLSLFilter
     /// <remarks>
     /// <para>
     /// The filter does image binarization using specified threshold value. All pixels (or 
-    /// one channel of them) with intensities equal or higher than threshold value are converted to white 
-    /// pixels. All other pixels with intensities below threshold value are converted to black pixels.
+    /// one channel of them) with intensities higher than threshold value are converted to white 
+    /// pixels. All other pixels with intensities equal or below threshold value are converted to black pixels.
     /// </para>
     /// 
     /// <para>Sample usage:</para>
