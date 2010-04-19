@@ -58,6 +58,7 @@
     <Compile Include="Geometry\ShapeOptimizerTestBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Geometry\SimpleShapeCheckerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
