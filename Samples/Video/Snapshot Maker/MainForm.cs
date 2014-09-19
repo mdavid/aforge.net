@@ -1,4 +1,4 @@
-﻿// Snapshot Maker sample application
+// Snapshot Maker sample application
 // AForge.NET Framework
 // http://www.aforgenet.com/framework/
 //
@@ -84,6 +84,17 @@ namespace Snapshot_Maker
             }
         }
 
+        public class ComboVideoItem
+        {
+            public VideoCapabilities vidcap;
+
+            public ComboVideoItem(VideoCapabilities value) { vidcap = value; }
+            public override string ToString() 
+            { 
+                return vidcap.FrameSize.Width.ToString() + " x " + vidcap.FrameSize.Height.ToString(); 
+            }
+        }
+
         // Collect supported video and snapshot sizes
         private void EnumeratedSupportedFrameSizes( VideoCaptureDevice videoDevice )
         {
@@ -101,7 +112,8 @@ namespace Snapshot_Maker
                 {
                     if ( !videoResolutionsCombo.Items.Contains( capabilty.FrameSize ) )
                     {
-                        videoResolutionsCombo.Items.Add( capabilty.FrameSize );
+                        ComboVideoItem cbi = new ComboVideoItem(capabilty);
+                        videoResolutionsCombo.Items.Add( cbi );
                     }
                 }
 
@@ -109,7 +121,8 @@ namespace Snapshot_Maker
                 {
                     if ( !snapshotResolutionsCombo.Items.Contains( capabilty.FrameSize ) )
                     {
-                        snapshotResolutionsCombo.Items.Add( capabilty.FrameSize );
+                        ComboVideoItem cbi = new ComboVideoItem(capabilty);
+                        snapshotResolutionsCombo.Items.Add( cbi );
                     }
                 }
 
@@ -138,13 +151,13 @@ namespace Snapshot_Maker
             {
                 if ( ( videoCapabilities != null ) && ( videoCapabilities.Length != 0 ) )
                 {
-                    videoDevice.DesiredFrameSize = (Size) videoResolutionsCombo.SelectedItem;
+                    videoDevice.VideoResolution = ((ComboVideoItem) videoResolutionsCombo.SelectedItem).vidcap;
                 }
 
                 if ( ( snapshotCapabilities != null ) && ( snapshotCapabilities.Length != 0 ) )
                 {
                     videoDevice.ProvideSnapshots = true;
-                    videoDevice.DesiredSnapshotSize = (Size) snapshotResolutionsCombo.SelectedItem;
+                    videoDevice.SnapshotResolution = ((ComboVideoItem)snapshotResolutionsCombo.SelectedItem).vidcap;
                     videoDevice.SnapshotFrame += new NewFrameEventHandler( videoDevice_SnapshotFrame );
                 }
 
